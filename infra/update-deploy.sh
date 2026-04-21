@@ -31,14 +31,12 @@ npm run build
 echo ""
 echo "4. Restarting services..."
 sudo systemctl restart panchanga-backend
-sudo systemctl restart panchanga-frontend
+sudo systemctl restart nginx
 
 echo ""
 echo "5. Checking service status..."
 sleep 3
 sudo systemctl status panchanga-backend --no-pager -l | head -15
-echo ""
-sudo systemctl status panchanga-frontend --no-pager -l | head -15
 
 echo ""
 echo "========================================="

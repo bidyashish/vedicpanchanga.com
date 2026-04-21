@@ -93,27 +93,7 @@ REACT_APP_BACKEND_URL=""
 PORT=3121
 EOF
 
-# Create frontend service
-cat > /etc/systemd/system/panchanga-frontend.service <<'EOF'
-[Unit]
-Description=Panchanga Frontend (Next.js)
-After=network.target
-
-[Service]
-Type=simple
-User=ubuntu
-Group=ubuntu
-WorkingDirectory=/apps/panchanga/frontend
-Environment=PATH=/usr/bin:/bin
-Environment=PORT=3121
-Environment=NODE_ENV=production
-ExecStart=/usr/bin/npm start
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-EOF
+# We don't need a systemd service for the frontend because NGINX will serve the static build!
 
 echo ""
 echo "3. Setting up Nginx..."
@@ -128,18 +108,18 @@ server {
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-Content-Type-Options "nosniff" always;
 
-    # Frontend
+    # Serve the static React build
+    root /apps/panchanga/frontend/build;
+    index index.html;
+
+    # Frontend routing
     location / {
-        proxy_pass http://localhost:3121;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        try_files $uri $uri/ /index.html;
     }
 
     # API routes -> Python Backend (FastAPI)
     location /api/ {
-        proxy_pass http://localhost:8001/api/;
+        proxy_pass http://127.0.0.1:8001/api/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -182,8 +162,8 @@ ufw --force enable
 echo ""
 echo "5. Starting services..."
 systemctl daemon-reload
-systemctl enable panchanga-backend panchanga-frontend nginx
-systemctl restart panchanga-backend panchanga-frontend nginx
+systemctl enable panchanga-backend nginx
+systemctl restart panchanga-backend nginx
 
 echo ""
 echo "========================================="
@@ -193,17 +173,17 @@ echo ""
 echo "Services status:"
 systemctl status panchanga-backend --no-pager -l
 echo ""
-systemctl status panchanga-frontend --no-pager -l
-echo ""
 echo "Ports:"
-echo "  Frontend: 3121"
+echo "  Frontend: 80/443 (Nginx static files)"
 echo "  Backend:  8001 (localhost only)"
+
 echo ""
 echo "Next steps:"
 echo "1. Point your domain DNS to this server IP"
 echo "2. Install SSL: sudo certbot --nginx -d vedicpanchanga.com -d www.vedicpanchanga.com"
+
 echo ""
 echo "Useful commands:"
 echo "  Check logs: sudo journalctl -u panchanga-backend -f"
-echo "  Restart:    sudo systemctl restart panchanga-backend panchanga-frontend"
+echo "  Restart:    sudo systemctl restart panchanga-backend"
 echo ""
