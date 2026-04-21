@@ -112,8 +112,7 @@ bash infra/update-deploy.sh
 sudo systemctl restart panchanga-backend panchanga-frontend
 ```
 
-முழு வரிசைப்படுத்தல் ஆவணங்கள் → [infra/README-DEPLOYMENT.md](./infra/README-DEPLOYMENT.md)  
-முழு உள்கட்டமைப்பு குறிப்பு → [infra/README-INFRA.md](./infra/README-INFRA.md)
+
 
 ## சோதனை
 

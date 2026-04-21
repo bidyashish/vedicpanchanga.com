@@ -113,8 +113,7 @@ bash infra/update-deploy.sh
 sudo systemctl restart panchanga-backend panchanga-frontend
 ```
 
-Full deployment docs → [infra/README-DEPLOYMENT.md](./infra/README-DEPLOYMENT.md)  
-Full infra reference → [infra/README-INFRA.md](./infra/README-INFRA.md)
+
 
 ## Testing
 
