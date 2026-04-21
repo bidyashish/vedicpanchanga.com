@@ -25,7 +25,7 @@ deactivate
 echo ""
 echo "3. Updating Next.js frontend..."
 cd /apps/panchanga/frontend
-npm install
+npm install --legacy-peer-deps
 npm run build
 
 echo ""

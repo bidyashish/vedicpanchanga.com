@@ -82,7 +82,7 @@ echo "2. Setting up Next.js frontend..."
 cd /apps/panchanga/frontend
 
 # Install dependencies
-npm install
+npm install --legacy-peer-deps
 
 # Build production
 npm run build
