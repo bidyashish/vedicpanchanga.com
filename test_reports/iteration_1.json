@@ -1,0 +1,48 @@
+{
+  "summary": "Backend-only testing of Vedic Astrology API (/api/calculate, /api/get-panchang). 19/20 pytest tests pass. All accuracy-critical math verified: Rahu-Ketu exactly 180° apart, D9/D2 sign formulas correct for every planet, Julian Day matches expected (2447892.7708 for New Delhi 1990-01-01 12:00 IST), Vimshottari Dasha gives 9 periods totaling ~120y with correct lord cycle, SAV total 338 (within tolerance 335-340), Sun in Sagittarius (sidereal Jan 1 1990), invalid date/time returns 400, Panchang returns all 5 limbs + sunrise/sunset/moonrise/moonset in IST ISO, Rahu Kaal/Yamaganda/Gulika windows, Abhijit Muhurta centered on midday (within 60s), and Rahu Kaal on Thursday 2024-01-04 falls in the 6th day-segment as per classical lookup. Default date defaults to today.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "/api/calculate",
+        "issue": "Ashtakavarga BAV rule for Moon-from-Moon contains an extra position '1' in BAV_RULES['Moon']['Moon'] = [1,3,6,7,8,10,11]. Classical Parashara table is [3,6,7,8,10,11] (6 positions, not 7). This inflates Moon BAV to 50 (classical 49) and SAV to 338 (classical 337). Within the user-specified tolerance (335-340) but technically off by 1 from the canonical Parashara numbers."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_vedic_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "(Optional, minor) In /app/backend/calculator.py, remove leading '1' from BAV_RULES['Moon']['Moon'] to make it [3,6,7,8,10,11] for canonical Parashara compliance (SAV will then equal 337 exactly).",
+    "(Optional) /api/calculate currently catches all exceptions and returns 500 with the exception message in detail; consider differentiating Pydantic validation failures (already 422) from internal errors. No functional impact."
+  ],
+  "critical_code_review_comments": [
+    "calculator.py line ~78: BAV_RULES['Moon']['Moon'] has 7 positions instead of classical 6 — see minor issue above.",
+    "server.py: ascendant calculation uses Placidus house system (b'P') just to get ASCMC[0]; correct since only ascendant is used and signs are whole-sign; functional.",
+    "server.py /api/calculate persists each request in MongoDB with a try/except that swallows all errors silently — acceptable for non-critical history but consider logging.",
+    "panchang.py _find_angle_time uses pure bisection over a fixed [ref_jd, ref_jd+max_days+0.5] window; since the angle is monotonic mod 360, this works because the (a-current)%360 trick wraps once per orbital period. Verified Abhijit/Rahu Kaal arithmetic against expected values (within 60s). Good.",
+    "panchang.py vara is computed from sunrise local-date isoweekday — correct Drik-style approach.",
+    "calculator.py uses MEAN_NODE for Rahu (not TRUE_NODE); both are accepted in classical practice but worth noting in UI.",
+    "No data-testid concerns (backend only).",
+    "Backend routes correctly all under /api prefix; CORS configured."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_vedic_api.py (created)"
+  ],
+  "success_rate": {
+    "backend": "95% (19/20 pytest cases)",
+    "frontend": "not tested (backend-only request)"
+  },
+  "test_credentials": "none required",
+  "seed_data_creation": "none — tests use sample New Delhi 1990-01-01 12:00 IST and a known Thursday (2024-01-04) for Rahu Kaal validation",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Pytest suite is at /app/backend/tests/test_vedic_api.py covering full chart contract, accuracy (D1/D2/D9, Rahu-Ketu, JD, Sun sign), Vimshottari Dasha integrity, Ashtakavarga totals, validation 400s, and complete Panchang verification (5 limbs, rise/set times in IST, inauspicious & auspicious windows, Thursday Rahu Kaal lookup, default-date-is-today). The single failing assertion is the canonical-vs-implemented Moon-from-Moon BAV row — this is informational only, SAV passes the user-specified tolerance. JUnit XML at /app/test_reports/pytest/pytest_results.xml.",
+  "rca of the issue": "Ashtakavarga Moon BAV: BAV_RULES['Moon']['Moon'] in /app/backend/calculator.py declares 7 contributing positions [1,3,6,7,8,10,11]. Standard Parashara Brihat Hora Shastra (Ashtakavarga Adhyaya) lists 6 positions [3,6,7,8,10,11] (excluding '1'). Adding position 1 means each chart's Moon-from-Moon contribution always lands +1 extra point on Moon's own sign, raising Moon BAV by exactly 1 and SAV by exactly 1 (338 vs 337). Mitigation: drop the leading 1 from the list — single-line fix, no other table is affected."
+}

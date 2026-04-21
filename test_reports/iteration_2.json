@@ -1,0 +1,42 @@
+{
+  "summary": "Full backend + frontend regression of Vedic Astrology Kundali + Drik Panchang. Backend: 44/44 pytest cases pass including the new comprehensive Kelowna 2026-04-20 Drik reference suite (sunrise 05:56 PT, Tithi Shukla Chaturthi ending 15:45, Nakshatra Rohini ending 13:38, Yoga Shobhana, Karana Vishti, Moonsign Vrishabha, Sunsign Mesha, Surya Nakshatra Ashwini Pada 2, Rahu Kalam 07:41-09:26, Brahma Muhurta 04:36-05:16, Shaka 1948 Parabhava, Vikram 2083 Siddharthi, Kali Ahargana 1872686, Ayanamsha 24.2245). SAV total now exactly 337 (was 338 last iter — fix verified). Frontend: Kundali default chart loads, all 12 Panchang sections render with non-empty cards, 7 auspicious + 3 inauspicious bands + Bhadra band visible, sunrise/sunset/moonrise/moonset shown in IST (not UTC midnight), Udaya Lagna lists 13 ascendant transits, date change to 2026-04-20 produces 'Monday, 20 April 2026' with Shukla Tritiya / Shukla Chaturthi tithi sequence and Vikram 2083 Siddharthi / Shaka 1948 Parabhava — all matching Drik. Zero console errors on Panchang load.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_vedic_api.py",
+    "/app/backend/tests/test_panchang_detailed.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "calculator.py BAV_RULES['Moon']['Moon'] correctly trimmed to 6 positions — SAV now equals canonical 337.",
+    "advanced_panchang.py: comprehensive Drik output verified field-by-field against published Drik values for Kelowna 2026-04-20; all 5 limbs + samvatsara names + muhurtas + lagna transits + chandrabalam + tarabalam + epoch calendars align within ~1 minute / exact name.",
+    "server.py /api/get-panchang correctly defaults detailed=true; lean payload still available via detailed=false (legacy tests updated to use it).",
+    "PanchangView.jsx: ~520 lines — borderline but cohesive. KV2/Section/TimeBand abstractions keep duplication low. Consider splitting into 3 sub-components if it grows further.",
+    "PanchangView.jsx fmtTime/fmtTimeDM correctly use IANA timezone from response.location.timezone — sunrise rendered as 05:51 am (Delhi today) not UTC midnight. Good.",
+    "Date input is browser-native (correct, intentional per app description; not shadcn).",
+    "All key UI elements have data-testid (panchang-view, section-*, band-*, lagna-*, panchang-date-input, panchang-fetch-btn, etc.) — strong testability.",
+    "No business-logic issues found in iteration 2."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_vedic_api.py (updated panchang fixtures to use detailed=false for legacy lean schema)",
+    "/app/backend/tests/test_panchang_detailed.py (new — Kelowna 2026-04-20 Drik reference suite, 24 tests)"
+  ],
+  "success_rate": {
+    "backend": "100% (44/44 pytest)",
+    "frontend": "100% (all required sections, bands, integrations & date refetch verified, no console errors)"
+  },
+  "test_credentials": "none required",
+  "seed_data_creation": "none — tests use Delhi default + Kelowna 2026-04-20 Drik reference + Thursday 2024-01-04 Rahu Kaal lookup",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Two test files cover the API: test_vedic_api.py (chart accuracy + lean panchang via detailed=false) and test_panchang_detailed.py (Kelowna Drik reference for the comprehensive payload). The detailed payload's schema keys are: sun_moon, vara, panchang(.tithi_sequence/.nakshatra_sequence/.yoga_sequence/.karana_sequence/.paksha), rashi_nakshatra(.moonsign_sequence/.moon_nakshatra_padas/.sunsign/.surya_nakshatra), lunar_month(.vikram_samvat/.shaka_samvat/.samvatsara_*/.chandramasa_*/.nirayana_solar_month/.pravishte_day/.paksha/.gujarati_samvat), ritu_ayana, auspicious_timings(7 keys), inauspicious_timings(rahu_kalam/yamaganda/gulika_kalam/dur_muhurtam[]/bhadra[]), udaya_lagna[], chandrabalam.good_rashis[], tarabalam.good_nakshatras[], shool_vasa, calendars. All UI sections in PanchangView.jsx use data-testid prefixes section-* and band-*. Frontend public URL is in frontend/.env REACT_APP_BACKEND_URL.",
+  "rca of the issue": "No bugs in iteration 2. Iteration 1's only minor issue (SAV=338 vs canonical 337) has been fixed in calculator.py BAV_RULES['Moon']['Moon'] and verified end-to-end (backend pytest + UI displays 337)."
+}

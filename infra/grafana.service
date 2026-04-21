@@ -1,0 +1,18 @@
+[Unit]
+Description=Grafana Server
+Documentation=http://docs.grafana.org
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=grafana
+Group=grafana
+Type=simple
+Restart=always
+RestartSec=5
+WorkingDirectory=/opt/grafana
+ExecStart=/opt/grafana/bin/grafana server \
+  --config=/etc/grafana/grafana.ini
+
+[Install]
+WantedBy=multi-user.target

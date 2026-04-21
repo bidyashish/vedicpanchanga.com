@@ -1,0 +1,36 @@
+{
+  "summary": "Iteration 5 — Muhurta Finder (P1) full-stack verification. Backend: 15/15 new pytest (6 unit + 9 HTTP API) PASS, full regression 87/87 pytest PASS including the 72 pre-existing cases. Frontend: Muhurta tab (data-testid nav-muhurta) is the third top nav, loads MuhurtaFinder form with all 8 data-testid'd controls (purpose-select with 8 options, start/end date pickers, city-input, rashi/nak selects, min-score range slider, find-btn). Scanning 2026-04-20..25 for Marriage with Birth Rāśi=Karka (4) and Birth Nakshatra=Pushya (8) returned muhurta-summary (6 days scanned, 5 matches) and muhurta-results-list with ResultCards rendering Score=100, Tithi Shukla Tritiya, Nakshatra Rohini, Abhijit 11:54-12:46 PM, Rahu Kala 07:29-09:06 AM, Sunrise-Sunset 05:51-06:48, FAVOURABLE section (5 reasons incl. Chandrabalam & Tarabalam). Score range 0-100 verified. Error handling verified: unknown purpose→400, end<start→400, range>120d→400. Timezone auto-resolves to Asia/Kolkata when null. Native filter changes scores. Language switcher (lang-switcher-hi/en) toggles all labels EN↔हिं (Muhūrta Finder → मुहूर्त खोज, Find Muhurtas → मुहूर्त खोजें). Kundali and Panchang tabs still load (smoke-regression). /api/calculate, /api/get-panchang, /api/ayanamsa-options regression — all 200 with expected payload (incl. vargas[d1..d60]).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_muhurta_api.py",
+    "/app/backend/tests/test_muhurta.py",
+    "/app/test_reports/pytest/iteration5_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "muhurta.py: clean, well-commented. Scoring capped to [0,100], Chandrabalam uses GOOD_CHANDRA_OFFSETS from panchang_constants (shared), Tarabalam star sub-cycle (1..9) uses classical good stars {Sampat, Kshema, Sadhaka, Mitra, Param Mitra}. Per-day errors are swallowed gracefully and returned as {error} entries; front-end correctly skips them (ResultCard only renders qualifying muhurtas).",
+    "server.py: MuhurtaRequest uses Pydantic validators ge=1/le=12 and ge=1/le=27 for rashi & nakshatra — good input validation. ValueError mapped to 400, generic to 500 with logging. No MongoDB _id leak.",
+    "MuhurtaFinder.jsx: all 8 required data-testids present (muhurta-form, muhurta-purpose-select, muhurta-start-date, muhurta-end-date, muhurta-city-input, muhurta-rashi-select, muhurta-nak-select, muhurta-min-score, muhurta-find-btn). Loading state renders MandalaLoader; error block has data-testid muhurta-error. Location autocomplete falls back to New Delhi if Nominatim fails (robust).",
+    "MuhurtaFinder.jsx line 141: `useMemo(()=>new Date().toISOString().slice(0,10), [])` — gives UTC date, so a user in IST late-night may see the previous day. Minor DX nit; not a bug but consider local date.",
+    "Hydration console warning observed: `<span> cannot be a child of <option>` — this is caused by the Emergent dev-tooling instrumentation (`x-excluded` span injected into <option> for source mapping), NOT app code. Benign in preview; will not appear in production build.",
+    "Regression: /api/calculate vargas payload (iteration-4) intact; Sayan ayanamsa fix (iteration-3) intact."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_muhurta_api.py (NEW — 9 HTTP-level pytest cases: purposes-list shape (8 items), happy path with tz=null auto-resolving to Asia/Kolkata, native-filter score delta, 3 error-400 cases, + 3 regression tests for /api/calculate /api/get-panchang /api/ayanamsa-options)"
+  ],
+  "success_rate": {
+    "backend": "100% (87/87 pytest — 6 new muhurta unit + 9 new muhurta API + 72 regression)",
+    "frontend": "100% — all acceptance criteria pass. nav-muhurta reachable; form renders with 8 purpose options; find-muhurtas returns 5 cards in <5s; ResultCards show score/tithi/nak/abhijit/rahu/sunrise-sunset/reasons/cautions; language toggle localises all Muhurta labels to Hindi; Kundali + Panchang regression smoke-OK."
+  },
+  "test_credentials": "none required",
+  "seed_data_creation": "Delhi (lat 28.6139, lon 77.2090, tz Asia/Kolkata) default used; Marriage purpose; 2026-04-20 to 2026-04-25 range; birth_rashi_id=4 (Karka) and birth_nakshatra_id=8 (Pushya) for filter tests.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Muhurta Finder feature is fully green. test_muhurta_api.py is the HTTP-level regression; test_muhurta.py covers unit logic. PURPOSES dict in /app/backend/muhurta.py has 8 purposes — if new ones added, update test_muhurta_purposes_list and test_list_purposes_shape. Language-switcher uses data-testid lang-switcher-en / lang-switcher-hi (not lang-toggle). Hydration warning about <span> inside <option> is from dev-tooling instrumentation, not app code — ignore. useMemo(today) uses UTC; minor edge case for late-night IST users.",
+  "rca of the issue": "N/A — no bugs found in scope of iteration 5."
+}

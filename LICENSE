@@ -1,0 +1,38 @@
+# Vedic Panchanga - License Information
+
+This project uses a dual-license structure:
+
+## Frontend License (MIT)
+The frontend application located in the `/frontend` directory is licensed under the MIT License.
+See [frontend/LICENSE](frontend/LICENSE) for the full MIT license text.
+
+## Backend License (AGPL-3.0)
+The backend API located in the `/backend` directory is licensed under the GNU Affero General Public License v3.0.
+See [backend/LICENSE](backend/LICENSE) for the full AGPL-3.0 license text.
+
+---
+
+## Summary
+
+- **Frontend** (`/frontend`): MIT License - permissive, allows commercial use
+- **Backend** (`/backend`): AGPL-3.0 - copyleft, requires source disclosure for network use
+
+## Important Notes
+
+1. If you use only the frontend code and replace the backend with your own implementation, only the MIT license applies.
+
+2. If you use the backend code (even as a service), you must:
+   - Disclose your source code
+   - License it under AGPL-3.0
+   - Preserve copyright notices
+   - State changes made to the code
+
+3. The Swiss Ephemeris library used by the backend has its own licensing terms for commercial use.
+   See: http://www.astro.com/swisseph/swephinfo_e.htm
+
+## Credits
+
+- Backend based on [Drik Panchanga](https://github.com/bdsatish/drik-panchanga#) by Satish BD (AGPL-3.0)
+- Frontend created independently (MIT)
+
+For questions about licensing, please refer to the individual LICENSE files in each directory.

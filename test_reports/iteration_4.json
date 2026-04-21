@@ -1,0 +1,41 @@
+{
+  "summary": "Iteration 4 testing of 16 divisional charts (D1..D60) and Share/Export feature. Backend: 15/15 new pytest pass + 57 regression = 72/72 total. /api/calculate now returns data.vargas with all 16 expected keys (d1, d2, d3, d4, d7, d9, d10, d12, d16, d20, d24, d27, d30, d40, d45, d60); data.varga_order = [1,2,3,4,7,9,10,12,16,20,24,27,30,40,45,60]; each varga payload exposes {chart{1..12:[abbrs]}, asc_sign(1-12), name, subtitle, division}. D9 navamsa formula matches per-planet recomputation ((lon*9)%360/30). D30 Trimshamsha uneven planetary segments verified via direct unit tests on vargas.varga_sign for both odd-sign (Aries: Mars 0-5, Sat 5-10, Jup 10-18, Merc 18-25, Ven 25-30) and even-sign (Taurus: Ven, Merc, Jup, Sat, Mars) and Capricorn 10° => Virgo(6). Backward-compat preserved: legacy d1_chart/d2_chart/d9_chart and d1_asc_sign all present and byte-identical to vargas['d1'/'d2'/'d9'].chart. Frontend: varga-tabs renders all 16 D-tabs with Sanskrit subtitles (RĀŚI, HORĀ, DREKKĀṆA, ..., ṢAṢṬYĀṀŚA). Tab-d30 click swaps chart-d30 with subtitle 'Misfortunes'; tab-d60 click swaps chart-d60 with subtitle 'Past-Life Karma'; default active is D1 with 'Physical Self / Body'. PNG button triggers actual download (kundali_d1.png); Share button gracefully falls back to download (navigator.canShare=false in headless); PDF button visible. South-Indian toggle works across divisional charts (D9 + D30 verified). Language EN/हिं toggle, Pancanga tab, Generate flow all OK. BONUS: the iteration-3 ayanamsa-payload bug is now FIXED — Sayan dropdown now correctly returns Aries 07°38'36\" Ascendant with Ayanāṁśa 0.0000° (was Pisces 13°55' before). Zero console errors throughout.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration4_vargas.py",
+    "/app/backend/tests/test_iteration3.py",
+    "/app/backend/tests/test_vedic_api.py",
+    "/app/backend/tests/test_panchang_detailed.py",
+    "/app/test_reports/pytest/iteration4_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "vargas.py is clean, well-commented; classical Parashara rules implemented for all 16 vargas. D30 special uneven segments correctly handled (5 planetary lords per sign, odd vs even).",
+    "calculator.py builds varga_charts in a single loop using varga_sign(); legacy d1/d2/d9 fields preserved by reading from vargas dict (no duplicate compute), so values are guaranteed identical. The line `p[f\"d{n}_sign\"] = p_sign` quietly mutates the planets dict for each varga — currently unused downstream but adds 16 keys per planet to JSON; consider not mutating or removing if not needed (minor: payload size grows ~20%).",
+    "App.js ChartTabs: PNG/PDF/Share use lazy dynamic imports of html2canvas + jspdf (good for bundle size). PDF cycles through all 16 vargas with 350ms setTab + render delay — works but on slow networks 16*~700ms ≈ 11s with no progress indicator; consider showing a spinner for UX.",
+    "Iteration-3 ayanamsa bug fixed (verified): Sayan now returns Aries 7°38' Asc and Ayanāṁśa label '0.0000° (Sāyana (Tropical))'.",
+    "All required data-testid present: varga-tabs, tab-d{n}, chart-d{n}, chart-download-png, chart-download-pdf, chart-share, ayanamsa-select, calculate-btn, birth-header, planets-table.",
+    "Zero console errors and zero pageerrors observed across full flow (calculate → tab-switch → south-toggle → png-download → share → ayanamsa-change → regenerate)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration4_vargas.py (NEW — 15 pytest cases: vargas structure shape, varga_order list, 16 expected keys, subtitles for D1/D30/D60, planets present in each varga, backward-compat d1/d2/d9 byte-equal, D9 navamsa formula per-planet, D30 Trimshamsha unit tests for both odd and even sign segments and Capricorn 10°)"
+  ],
+  "success_rate": {
+    "backend": "100% (72/72 pytest, 15 new + 57 regression)",
+    "frontend": "100% — all listed acceptance criteria pass (16 tabs, D30/D60 switching, PNG/PDF/Share buttons, South toggle on divisional, language toggle, panchang regression). Bonus: iteration-3 ayanamsa bug also verified fixed."
+  },
+  "test_credentials": "none required",
+  "seed_data_creation": "none — Delhi defaults (1990-01-01 12:00 IST, lat 28.6139, lon 77.2090) used for chart and 2024-01-04 for panchang regression",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iteration 4 is fully green. test_iteration4_vargas.py is the regression suite for divisional charts. If new vargas added, append entries to vargas.VARGA_ORDER + VARGA_NAMES + VARGA_SUBTITLE and update EXPECTED_VARGA_ORDER in the test. PDF export currently has no progress indicator — minor UX nit. Share button correctly falls back to PNG download when navigator.canShare returns false (e.g., in headless or non-mobile browsers).",
+  "rca of the issue": "No bugs found in scope of iteration 4. The previously reported iteration-3 ayanamsa-payload bug appears to have been fixed by main agent — Sayan ayanamsa now correctly flows from dropdown to backend and produces Aries 07°38'36\" Ascendant with Ayanāṁśa 0.0000° (verified via UI playwright run)."
+}

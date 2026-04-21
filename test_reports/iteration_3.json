@@ -1,0 +1,52 @@
+{
+  "summary": "Iteration 3 testing of Vedic Astrology Kundali + Drik Panchang. Backend: 57/57 pytest pass (44 regression + 13 new for ayanamsa selector & advanced panchang yogas). All 7 ayanamsa options return correct ascendants (Lahiri/Raman/KP-new/KP-old/KP-Khullar/Manoj => Pisces; Sayan tropical => Aries 7.6°). Panchang detailed payload includes auspicious_timings.amrit_kalam (with start/end/nakshatra), auspicious_timings.sarvartha_siddhi_yoga, auspicious_timings.amrita_siddhi_yoga, and inauspicious_timings.varjyam (all populated for 2024-01-04). Legacy fields (d1_chart, dasha, ashtakavarga SAV=337) preserved. Frontend: language switcher EN/हिं renders top-right (no flags), Hindi translations apply to all headings (ज्योतिष कुण्डली, जन्म विवरण, जन्म तिथि), persists across reload via localStorage. Birth header shows 'Local: Monday, 1 January 1990 at 12:00 pm' (timezone fix verified, no UTC 6:30 am). North chart displays rashi numbers; South Indian 4x4 grid renders with 12 cells & abbreviations. Panchang renders 2 Amrit Kalam, 2 Varjyam, 2 Sarvartha Siddhi, 1 Amrita Siddhi bands; Hindi labels (सूर्योदय/शुभ/अशुभ) translate correctly. Zero console errors. CRITICAL BUG: Frontend onSubmit() in App.js does NOT include `ayanamsa` in the API request body — selecting Sayan/Raman/etc. and clicking Generate still returns the Lahiri chart (verified: Sayan should give Aries 7.64° but UI shows Pisces 13°55').",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Ayanamsa dropdown -> Generate chart",
+        "issue": "App.js onSubmit() (lines 572-581) builds request body without `ayanamsa` field, so backend always falls back to Lahiri default regardless of user selection. Sayan selection should produce Ascendant=Aries 7.64° but UI keeps showing Pisces 13°55' (Lahiri). Birth-header label 'Ayanāṁśa: 23.7174° (N.C. Lahiri)' confirms wrong ayanamsa is being applied. Same bug affects Raman, KP variants, Manoj.",
+        "affected_selectors": ["[data-testid=\"ayanamsa-select\"]", "[data-testid=\"calculate-btn\"]", "[data-testid=\"birth-header\"]"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration3.py",
+    "/app/backend/tests/test_vedic_api.py",
+    "/app/backend/tests/test_panchang_detailed.py",
+    "/app/test_reports/pytest/pytest_results.xml",
+    "/app/test_reports/pytest/iteration3_results.xml"
+  ],
+  "action_items": [
+    "FIX App.js onSubmit (~line 573): include `ayanamsa: form.ayanamsa || 'lahiri'` in the calculate() body. Without this, the entire iteration-3 ayanamsa-selector feature is non-functional in the UI even though backend works correctly.",
+    "Optional: also include `ayanamsa` in the initial useEffect calculate({...DEFAULT_FORM}) call (already present in DEFAULT_FORM, so just verify spread carries it through)."
+  ],
+  "critical_code_review_comments": [
+    "App.js onSubmit drops form.ayanamsa from the payload — backend always receives no ayanamsa and defaults to lahiri. This makes the ayanamsa-select dropdown a no-op in the UI (blocking iteration-3 acceptance criterion).",
+    "ayanamsa.py: clean mapping of 7 IDs to swe SIDM_* constants; Sayan correctly returns (0, label) so caller skips FLG_SIDEREAL — verified by Aries 7.64° tropical ascendant.",
+    "advanced_panchang.py amrit_kalam/varjyam/sarvartha_siddhi_yoga/amrita_siddhi_yoga lists all populate correctly with start/end/nakshatra and surface in /api/get-panchang detailed response.",
+    "i18n.js LanguageSwitcher uses text labels only ('EN' / 'हिं') as required, no flags. Translations cover app_title, birth_details, date_of_birth, nav tabs, panchang section labels (शुभ/अशुभ/सूर्योदय). localStorage persistence works.",
+    "VedicChart.jsx north chart displays prominent rashi numbers 1-12 in each house diamond.",
+    "SouthIndianChart.jsx renders 4x4 grid with 12 sign cells, abbreviations (Pi/Ar/Ta/...), ascendant marker — verified by 12 cells & 'Pi'/'Ar' text presence.",
+    "Birth header date format correctly uses { timeZone: location.timezone } so Delhi 1990-01-01 12:00 IST shows '12:00 pm' (was '6:30 am' UTC before fix). Verified.",
+    "App.js DEFAULT_FORM includes ayanamsa:'lahiri' and chart_style:'north' — so the first auto-load works; only the manual onSubmit re-build is broken."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration3.py (NEW — 13 tests covering ayanamsa-options endpoint, 6 ayanamsa variants of /api/calculate, legacy field preservation, and detailed panchang yogas Amrit Kalam / Varjyam / Sarvartha Siddhi / Amrita Siddhi)"
+  ],
+  "success_rate": {
+    "backend": "100% (57/57 pytest)",
+    "frontend": "92% — language switcher, chart-style toggle, North/South charts, birth-header timezone fix, panchang yoga bands all work. The only failing flow is Ayanamsa change → Generate (returns Lahiri chart due to App.js payload bug)."
+  },
+  "test_credentials": "none required",
+  "seed_data_creation": "none — uses Delhi default (1990-01-01 12:00 IST) and 2024-01-04 for panchang",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend is fully verified for iteration 3 (test_iteration3.py covers all 7 ayanamsa variants and the new panchang yogas). After main agent fixes the App.js onSubmit payload to include `ayanamsa: form.ayanamsa`, retest the frontend flow: select Sayan from [data-testid=ayanamsa-select], click [data-testid=calculate-btn], wait for [data-testid=birth-header] to update — Ascendant in [data-testid=planets-table] should change from Pisces 13°55' (Lahiri) to Aries ~7.64° (Sayan tropical). Also verify the Ayanāṁśa label in birth-header shows '0.0000° (Sāyana (Tropical))' for Sayan. All other iteration-3 features (i18n, chart toggle, panchang yogas, timezone fix, rashi numbers) are working and don't need re-testing.",
+  "rca of the issue": "App.js onSubmit() (lines 572-581) constructs the calculate() request body by explicitly listing fields (birth_date, birth_time, latitude, longitude, timezone, place_name) and OMITS form.ayanamsa. Even though the dropdown correctly updates form.ayanamsa via update('ayanamsa', e.target.value), that value never reaches the backend. The CalculateRequest Pydantic model in server.py defaults missing ayanamsa to 'lahiri', so the backend silently returns the Lahiri chart. Reproduction: open app → switch [data-testid=ayanamsa-select] to 'sayan' → click [data-testid=calculate-btn] → observe birth-header still shows 'Ayanāṁśa: 23.7174° (N.C. Lahiri (Chitrapaksha))' and Ascendant=Pisces 13°55'22\" instead of expected Aries 7.6° / Ayanāṁśa 0.0°. Mitigation: add `ayanamsa: form.ayanamsa || 'lahiri'` (and optionally `chart_style` if backend ever needs it) to the body object in onSubmit. Single-line change in App.js."
+}

@@ -1,0 +1,18 @@
+[Unit]
+Description=Panchanga Frontend (Next.js)
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/apps/panchanga/frontend
+Environment=PATH=/usr/bin:/bin
+Environment=PORT=3121
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/npm start
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
