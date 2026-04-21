@@ -17,7 +17,7 @@
     "server.py: MuhurtaRequest uses Pydantic validators ge=1/le=12 and ge=1/le=27 for rashi & nakshatra — good input validation. ValueError mapped to 400, generic to 500 with logging. No MongoDB _id leak.",
     "MuhurtaFinder.jsx: all 8 required data-testids present (muhurta-form, muhurta-purpose-select, muhurta-start-date, muhurta-end-date, muhurta-city-input, muhurta-rashi-select, muhurta-nak-select, muhurta-min-score, muhurta-find-btn). Loading state renders MandalaLoader; error block has data-testid muhurta-error. Location autocomplete falls back to New Delhi if Nominatim fails (robust).",
     "MuhurtaFinder.jsx line 141: `useMemo(()=>new Date().toISOString().slice(0,10), [])` — gives UTC date, so a user in IST late-night may see the previous day. Minor DX nit; not a bug but consider local date.",
-    "Hydration console warning observed: `<span> cannot be a child of <option>` — this is caused by the Emergent dev-tooling instrumentation (`x-excluded` span injected into <option> for source mapping), NOT app code. Benign in preview; will not appear in production build.",
+    "Hydration console warning observed: `<span> cannot be a child of <option>` — this is caused by the dev-tooling instrumentation (`x-excluded` span injected into <option> for source mapping), NOT app code. Benign in preview; will not appear in production build.",
     "Regression: /api/calculate vargas payload (iteration-4) intact; Sayan ayanamsa fix (iteration-3) intact."
   ],
   "updated_files": [

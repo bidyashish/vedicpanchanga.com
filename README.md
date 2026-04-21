@@ -13,17 +13,18 @@ git clone https://github.com/bidyashish/vedicpanchanga.com
 cd vedicpanchanga.com
 
 # Or manual setup:
-# Terminal 1 - Backend (runs on port 8121)
+# Terminal 1 - Backend (runs on port 8001)
 cd backend
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-python api.py
+
+cd backend && source venv/bin/activate && uvicorn server:app --host 127.0.0.1 --port 8001 2>&1
 
 # Terminal 2 - Frontend (runs on port 3121)
 cd frontend
 npm install
-# .env.local is optional - defaults to http://localhost:8121
+# .env.local is optional - defaults to http://localhost:8001
 npm run dev
 ```
 
@@ -45,41 +46,89 @@ Open http://localhost:3121
 
 ```
 vedicpanchanga.com/
-├── backend/          # Python FastAPI server (port 8121)
+├── backend/          # Python FastAPI server (port 8001)
 ├── frontend/         # Next.js 15 application (port 3121)
-├── infra/           # Deployment scripts and infrastructure
-├── tests/           # Testing and verification scripts
-├── API.md           # API documentation
-├── CLAUDE.md        # AI assistant instructions
-└── README.md        # This file
+├── infra/            # Deployment scripts, systemd units, nginx, monitoring
+├── tests/            # API, timezone, load, and production tests
+├── memory/           # PRD and project context
+├── API.md            # API documentation
+├── AGENTS.md         # AI agent instructions
+└── README.md         # This file
 ```
+
+## Infrastructure & Deployment
+
+### Architecture
+
+```
+Internet → Cloudflare (DDoS) → Nginx (TLS termination) → Next.js (:3121) → FastAPI (:8001, localhost-only)
+                                                        ↕
+                                              Prometheus + Grafana (monitoring)
+```
+
+### Deploy to a Fresh VPS (Ubuntu 20.04+)
+
+```bash
+# 1. Clone & setup (one command)
+sudo mkdir -p /apps && cd /apps
+sudo git clone https://github.com/bidyashish/vedicpanchanga.com panchanga
+cd panchanga && sudo bash infra/setup-vps.sh
+
+# 2. SSL certificate
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d vedicpanchanga.com -d www.vedicpanchanga.com
+
+# 3. Auto-updates (optional, every 6h)
+bash infra/setup-cron.sh
+```
+
+That's it. The setup script handles Python venv, Node.js, Nginx, systemd services, and the firewall.
+
+### Security Hardening (built-in)
+
+| Layer | What's configured |
+|---|---|
+| **Firewall (UFW)** | Only ports 22, 80, 443 open; backend port 8001 blocked externally |
+| **Nginx** | HTTP→HTTPS redirect, HSTS, X-Frame-Options, CSP, XSS protection |
+| **TLS** | TLSv1.2+ only, strong ciphers, OCSP stapling via Certbot |
+| **Backend** | Binds to `127.0.0.1` only — never exposed to the internet |
+| **IP access** | Direct IP access returns `444` (connection dropped) |
+| **Auto-updates** | Cron pulls latest code, rebuilds, restarts — zero-downtime |
+
+> **Before production**: Change default Grafana passwords, restrict monitoring ports (9090/3002) to your IP, and enable `unattended-upgrades` for OS patches.
+
+### Daily Operations
+
+```bash
+# Check status
+sudo systemctl status panchanga-backend panchanga-frontend
+
+# View logs
+sudo journalctl -u panchanga-backend -f
+
+# Manual redeploy
+bash infra/update-deploy.sh
+
+# Restart
+sudo systemctl restart panchanga-backend panchanga-frontend
+```
+
+Full deployment docs → [infra/README-DEPLOYMENT.md](./infra/README-DEPLOYMENT.md)  
+Full infra reference → [infra/README-INFRA.md](./infra/README-INFRA.md)
 
 ## Testing
 
-The `tests/` directory contains various testing and verification scripts:
-
 ```bash
-# API Testing
-python tests/test_api.py                    # Basic API tests
-./tests/verify_apis.sh                      # Verify API endpoints
-
-# Timezone Testing
-python tests/test_timezones.py              # Test timezone calculations
-./tests/test_all_timezones.sh               # Test all timezone scenarios
-./tests/verify_timezones.py                 # Verify timezone accuracy
-
-# Load Testing
-python tests/stress_test_panchanga.py       # Stress test calculations
-python tests/stress_test_rate_limited.py    # Test rate limiting
-
-# Production Testing
-./tests/test_production_api.sh              # Test production deployment
+python tests/test_api.py                 # API tests
+python tests/test_timezones.py            # Timezone calculations
+python tests/stress_test_panchanga.py     # Load testing
+./tests/test_production_api.sh            # Production smoke test
 ```
 
 ## API Documentation
 
-Main endpoint: `http://localhost:3121/api/v1/panchanga`
-Full docs: See [API.md](./API.md) • Backend docs: `http://localhost:8121/docs`
+Main endpoint: `http://localhost:3121/api/v1/panchanga`  
+Full docs: See [API.md](./API.md) • Interactive docs: `http://localhost:8001/docs`
 
 ## License
 

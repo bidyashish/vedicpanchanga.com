@@ -69,7 +69,7 @@ User=ubuntu
 Group=ubuntu
 WorkingDirectory=/apps/panchanga/backend
 Environment=PATH=/apps/panchanga/backend/venv/bin:/usr/bin:/bin
-ExecStart=/apps/panchanga/backend/venv/bin/uvicorn api:app --host 127.0.0.1 --port 8121
+ExecStart=/apps/panchanga/backend/venv/bin/uvicorn api:app --host 127.0.0.1 --port 8001
 Restart=always
 RestartSec=10
 
@@ -89,7 +89,7 @@ npm run build
 
 # Create .env.local
 cat > .env.local <<'EOF'
-NEXT_PUBLIC_API_URL=http://localhost:8121
+NEXT_PUBLIC_API_URL=http://localhost:8001
 PORT=3121
 EOF
 
@@ -192,7 +192,7 @@ systemctl status panchanga-frontend --no-pager -l
 echo ""
 echo "Ports:"
 echo "  Frontend: 3121"
-echo "  Backend:  8121 (localhost only)"
+echo "  Backend:  8001 (localhost only)"
 echo ""
 echo "Next steps:"
 echo "1. Point your domain DNS to this server IP"

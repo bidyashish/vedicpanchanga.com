@@ -5,7 +5,7 @@ Complete infrastructure setup files for replicating the Vedic Panchanga applicat
 ## 📁 Files Overview
 
 ### Application Services
-- **panchanga-backend.service** - Systemd service for FastAPI backend (port 8121)
+- **panchanga-backend.service** - Systemd service for FastAPI backend (port 8001)
 - **panchanga-frontend.service** - Systemd service for Next.js frontend (port 3121)
 - **nginx-vedicpanchanga.conf** - Nginx reverse proxy with HTTPS and security headers
 
@@ -109,7 +109,7 @@ sudo bash infra/setup-firewall.sh
 - **80/tcp** - HTTP (redirects to HTTPS)
 - **443/tcp** - HTTPS (public access)
 - **3121/tcp** - Next.js frontend (internal)
-- **8121/tcp** - FastAPI backend (localhost only)
+- **8001/tcp** - FastAPI backend (localhost only)
 
 ### Monitoring Ports
 - **3002/tcp** - Grafana (public access)
@@ -215,13 +215,13 @@ sudo journalctl -u prometheus -f
 ### Debugging
 ```bash
 # Check listening ports
-sudo ss -tlnp | grep -E ':(3121|8121|3002|9090|9100)'
+sudo ss -tlnp | grep -E ':(3121|8001|3002|9090|9100)'
 
 # Check firewall
 sudo ufw status verbose
 
 # Test backend
-curl http://localhost:8121/
+curl http://localhost:8001/
 
 # Test frontend
 curl http://localhost:3121/
@@ -231,7 +231,7 @@ curl http://localhost:3121/
 
 ### Change Ports
 Edit service files and update:
-- `panchanga-backend.service` - Change `--port 8121`
+- `panchanga-backend.service` - Change `--port 8001`
 - `panchanga-frontend.service` - Change `PORT=3121`
 - `nginx-vedicpanchanga.conf` - Update proxy_pass URLs
 - `.env.local` - Update `NEXT_PUBLIC_API_URL` and `PORT`

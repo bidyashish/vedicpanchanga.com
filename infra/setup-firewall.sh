@@ -30,7 +30,7 @@ ufw allow 9256/tcp comment 'Process Exporter'
 
 # Block direct backend access
 ufw deny 8000 comment 'Block direct backend access'
-ufw deny 8121 comment 'Block direct backend access'
+ufw deny 8001 comment 'Block direct backend access'
 
 # Enable firewall
 echo "Enabling firewall..."
