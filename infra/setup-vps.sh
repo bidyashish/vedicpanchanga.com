@@ -69,7 +69,7 @@ User=ubuntu
 Group=ubuntu
 WorkingDirectory=/apps/panchanga/backend
 Environment=PATH=/apps/panchanga/backend/venv/bin:/usr/bin:/bin
-ExecStart=/apps/panchanga/backend/venv/bin/uvicorn api:app --host 127.0.0.1 --port 8001
+ExecStart=/apps/panchanga/backend/venv/bin/uvicorn server:app --host 127.0.0.1 --port 8001
 Restart=always
 RestartSec=10
 
