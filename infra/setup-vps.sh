@@ -89,7 +89,7 @@ npm run build
 
 # Create .env.local
 cat > .env.local <<'EOF'
-NEXT_PUBLIC_API_URL=http://localhost:8001
+REACT_APP_BACKEND_URL=""
 PORT=3121
 EOF
 
@@ -137,18 +137,13 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    # API v1 routes - through Next.js
-    location /api/v1/ {
-        proxy_pass http://localhost:3121;
+    # API routes -> Python Backend (FastAPI)
+    location /api/ {
+        proxy_pass http://localhost:8001/api/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    # Block direct Python backend access
-    location /api/ {
-        return 403;
     }
 }
 
