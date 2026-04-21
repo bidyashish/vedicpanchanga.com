@@ -169,9 +169,19 @@ nginx -t
 
 echo ""
 echo "4. Setting up firewall..."
-ufw allow 22/tcp
-ufw allow 80/tcp
-ufw allow 443/tcp
+ufw allow 22/tcp comment 'SSH'
+ufw allow 80/tcp comment 'HTTP'
+ufw allow 443/tcp comment 'HTTPS'
+
+# Monitoring ports (external access)
+ufw allow 3002/tcp comment 'Grafana'
+ufw allow 9090/tcp comment 'Prometheus'
+ufw allow 9100/tcp comment 'Node Exporter'
+
+# Block direct backend access
+ufw deny 8000 comment 'Block direct backend access (legacy)'
+ufw deny 8001 comment 'Block direct backend access (current)'
+
 ufw --force enable
 
 echo ""
