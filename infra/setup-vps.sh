@@ -84,14 +84,14 @@ cd /apps/panchanga/frontend
 # Install dependencies
 npm install --legacy-peer-deps
 
-# Build production
-npm run build
-
-# Create .env.local
-cat > .env.local <<'EOF'
+# Create .env.production FIRST so the build picks it up
+cat > .env.production <<'EOF'
 REACT_APP_BACKEND_URL=""
 PORT=3121
 EOF
+
+# Build production
+npm run build
 
 # We don't need a systemd service for the frontend because NGINX will serve the static build!
 
