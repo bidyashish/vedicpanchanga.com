@@ -26,7 +26,6 @@ type Dict = Record<string, string>;
 const en: Dict = {
   brand_name: "VedicPanchanga",
   brand_domain: "vedicpanchanga.com",
-  brand_tagline: "Sidereal · Lahiri",
   app_title: "Jyotiṣa Kuṇḍalī",
   app_subtitle: "Vedic birth chart drawn in the North-Indian tradition",
   sidereal_lahiri: "Sidereal · Lahiri",
@@ -133,7 +132,6 @@ const en: Dict = {
 const hi: Dict = {
   brand_name: "वैदिक पञ्चाङ्ग",
   brand_domain: "vedicpanchanga.com",
-  brand_tagline: "सायन · लाहिड़ी",
   app_title: "ज्योतिष कुण्डली",
   app_subtitle: "उत्तर भारतीय परम्परा में निर्मित वैदिक जन्म-कुण्डली",
   sidereal_lahiri: "सायन · लाहिड़ी",

@@ -61,9 +61,6 @@ export function TopBar({
             <div className="font-serif text-lead lg:text-base text-ink font-semibold tracking-tight">
               {t("brand_name")}
             </div>
-            <div className="eyebrow-accent mt-px">
-              {t("brand_tagline")}
-            </div>
           </div>
           {/* Mobile: short brand */}
           <div className="font-serif text-body text-ink font-semibold tracking-tight sm:hidden">
