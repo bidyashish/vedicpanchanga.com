@@ -67,7 +67,7 @@ pytest tests/test_iteration4_vargas.py::test_d30 # single test
 
 | File               | Key                  | Purpose                                                                 |
 | ------------------ | -------------------- | ----------------------------------------------------------------------- |
-| `backend/.env`     | `CORS_ORIGINS`       | Optional; defaults to `*`. Comma-separated origins.                     |
+| `backend/.env`     | `CORS_ORIGINS`       | Comma-separated allowlist. Dev default: `http://localhost:3121`. Prod: `setup-vps.sh` writes `https://vedicpanchanga.com,https://www.vedicpanchanga.com`. |
 | `frontend/.env`    | `VITE_BACKEND_URL`   | Backend origin. Leave empty in prod → same-origin `/api` via Nginx.     |
 | `frontend/.env`    | `VITE_ADSENSE_CLIENT`, `VITE_ADSENSE_SLOT_*` | Optional. Unset → dashed placeholders in ad slots. |
 

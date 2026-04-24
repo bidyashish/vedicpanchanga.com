@@ -16,7 +16,15 @@ export function localeFor(lang: LangId | string | undefined): string {
   return LANG_TO_LOCALE[lang] ?? "en-IN";
 }
 
-export function formatTime(iso?: string | null, tz?: string, locale = "en-IN"): string {
+// Read the active locale from <html lang>, which I18nProvider keeps in sync.
+// Lets formatters be locale-aware without callers threading a `locale` prop.
+function activeLocale(): string {
+  if (typeof document === "undefined") return "en-IN";
+  const docLang = document.documentElement.lang;
+  return LANG_TO_LOCALE[docLang] ?? "en-IN";
+}
+
+export function formatTime(iso?: string | null, tz?: string, locale = activeLocale()): string {
   if (!iso) return "—";
   return new Date(iso).toLocaleTimeString(locale, {
     hour: "2-digit",
@@ -30,7 +38,7 @@ export function formatTimeWithDate(
   iso?: string | null,
   tz?: string,
   refDate?: string,
-  locale = "en-IN",
+  locale = activeLocale(),
 ): string {
   if (!iso) return "—";
   const d = new Date(iso);
@@ -58,7 +66,7 @@ export function formatTimeRange(
   startIso?: string,
   endIso?: string,
   tz?: string,
-  locale = "en-IN",
+  locale = activeLocale(),
 ): string {
   if (!startIso || !endIso) return "—";
   try {
@@ -87,7 +95,7 @@ export function daysFromNow(days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-export function formatBirthDate(iso: string, tz: string, locale = "en-IN"): string {
+export function formatBirthDate(iso: string, tz: string, locale = activeLocale()): string {
   return new Date(iso).toLocaleString(locale, {
     dateStyle: "full",
     timeStyle: "short",
@@ -95,7 +103,7 @@ export function formatBirthDate(iso: string, tz: string, locale = "en-IN"): stri
   });
 }
 
-export function formatLongDate(iso: string, locale = "en-IN"): string {
+export function formatLongDate(iso: string, locale = activeLocale()): string {
   return new Date(iso + "T12:00:00").toLocaleDateString(locale, {
     weekday: "long",
     day: "numeric",
@@ -104,7 +112,7 @@ export function formatLongDate(iso: string, locale = "en-IN"): string {
   });
 }
 
-export function formatShortDate(iso: string, locale = "en-IN"): string {
+export function formatShortDate(iso: string, locale = activeLocale()): string {
   return new Date(iso).toLocaleDateString(locale, {
     year: "numeric",
     month: "short",
@@ -112,7 +120,7 @@ export function formatShortDate(iso: string, locale = "en-IN"): string {
   });
 }
 
-export function formatDayMonthYear(iso: string, locale = "en-IN"): string {
+export function formatDayMonthYear(iso: string, locale = activeLocale()): string {
   return new Date(iso + "T12:00:00").toLocaleDateString(locale, {
     day: "numeric",
     month: "long",

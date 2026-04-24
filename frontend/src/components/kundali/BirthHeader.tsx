@@ -1,5 +1,5 @@
 import { useI18n } from "@/i18n";
-import { formatBirthDate, localeFor } from "@/lib/format";
+import { formatBirthDate } from "@/lib/format";
 import type { ChartData } from "@/types/api";
 
 interface Props {
@@ -8,9 +8,9 @@ interface Props {
 }
 
 export function BirthHeader({ data, placeName }: Props) {
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
   const b = data.birth;
-  const fmt = formatBirthDate(b.local_time, b.timezone, localeFor(lang));
+  const fmt = formatBirthDate(b.local_time, b.timezone);
   return (
     <div
       data-testid="birth-header"

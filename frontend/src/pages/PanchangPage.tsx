@@ -11,7 +11,6 @@ import {
   formatTimeWithDate,
   formatLongDate,
   hoursToHMS,
-  localeFor,
   todayISO,
 } from "@/lib/format";
 import type { LocationChoice, PanchangData, TransitItem } from "@/types/api";

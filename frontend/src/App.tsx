@@ -25,10 +25,10 @@ export default function App() {
   const [sharedLocation, setSharedLocation] = useState<LocationChoice>(DEFAULT_LOCATION);
 
   useEffect(() => {
-    if (view === "kundali") {
-      window.history.replaceState(null, "", "#");
-    } else {
-      window.history.replaceState(null, "", `#${view}`);
+    const desired = view === "kundali" ? "" : `#${view}`;
+    if (window.location.hash !== desired) {
+      const url = window.location.pathname + window.location.search + desired;
+      window.history.replaceState(null, "", url);
     }
   }, [view]);
 

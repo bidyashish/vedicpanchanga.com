@@ -76,6 +76,15 @@ pip install -r requirements.txt
 deactivate
 chown -R "$RUN_USER:$RUN_GROUP" "$APP_DIR/backend/venv"
 
+# Production CORS allowlist — only the public domain, no localhost. Frontend is
+# served same-origin via Nginx so cross-origin XHR is impossible from the app
+# itself; this lockdown blocks third-party sites from calling the API directly.
+cat > "$APP_DIR/backend/.env" <<'EOF'
+CORS_ORIGINS=https://vedicpanchanga.com,https://www.vedicpanchanga.com
+EOF
+chown "$RUN_USER:$RUN_GROUP" "$APP_DIR/backend/.env"
+chmod 640 "$APP_DIR/backend/.env"
+
 cat > /etc/systemd/system/panchanga-backend.service <<EOF
 [Unit]
 Description=Panchanga Backend API (FastAPI on :8001)

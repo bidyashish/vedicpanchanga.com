@@ -1,8 +1,6 @@
 import { useI18n } from "@/i18n";
+import { formatShortDate } from "@/lib/format";
 import type { DashaPeriod } from "@/types/api";
-
-const fmt = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" });
 
 export function DashaTable({ dasha }: { dasha: DashaPeriod[] }) {
   const { t } = useI18n();
@@ -28,8 +26,8 @@ export function DashaTable({ dasha }: { dasha: DashaPeriod[] }) {
             <tr key={i} className="border-b border-parchment-200/60 last:border-0">
               <td className="py-2.5 pr-3 font-semibold text-crimson">{d.lord}</td>
               <td className="py-2.5 pr-3 tabular-nums">{d.years}</td>
-              <td className="py-2.5 pr-3 tabular-nums">{fmt(d.start)}</td>
-              <td className="py-2.5 tabular-nums">{fmt(d.end)}</td>
+              <td className="py-2.5 pr-3 tabular-nums">{formatShortDate(d.start)}</td>
+              <td className="py-2.5 tabular-nums">{formatShortDate(d.end)}</td>
             </tr>
           ))}
         </tbody>

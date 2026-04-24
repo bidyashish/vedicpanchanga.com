@@ -4,7 +4,7 @@ import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { AdSlot } from "@/components/shell/AdSlot";
 import { fetchMuhurtaPurposes, findMuhurtas } from "@/lib/api";
-import { formatTimeRange, todayISO, daysFromNow } from "@/lib/format";
+import { formatDayMonthYear, formatTimeRange, todayISO, daysFromNow } from "@/lib/format";
 import type {
   LocationChoice,
   MuhurtaPurpose,
@@ -36,7 +36,6 @@ function scoreColor(s: number): string {
 function ResultCard({ m, tz }: { m: MuhurtaResult; tz?: string }) {
   const { t } = useI18n();
   const color = scoreColor(m.score);
-  const dt = new Date(m.date + "T12:00:00");
   return (
     <div
       data-testid={`muhurta-result-${m.date}`}
@@ -48,11 +47,7 @@ function ResultCard({ m, tz }: { m: MuhurtaResult; tz?: string }) {
             {m.weekday}
           </p>
           <h4 className="font-serif text-2xl text-ink mt-0.5">
-            {dt.toLocaleDateString("en-IN", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
+            {formatDayMonthYear(m.date)}
           </h4>
           <p className="text-sm text-ink-soft mt-1">
             {m.tithi} · {m.paksha?.replace(" Paksha", "")} · {m.nakshatra} · {m.moon_rashi}

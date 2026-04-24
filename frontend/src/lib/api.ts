@@ -68,6 +68,13 @@ export function findMuhurtas(req: MuhurtaRequest): Promise<MuhurtaResponse> {
   });
 }
 
+function activeAcceptLanguage(): string {
+  if (typeof document === "undefined") return "en";
+  const lang = document.documentElement.lang || "en";
+  // Nominatim honours BCP-47; en fallback keeps results readable for everyone.
+  return `${lang},en;q=0.7`;
+}
+
 export async function geocode(query: string, limit = 6): Promise<NominatimResult[]> {
   if (query.length < 2) return [];
   const url = new URL("https://nominatim.openstreetmap.org/search");
@@ -77,7 +84,7 @@ export async function geocode(query: string, limit = 6): Promise<NominatimResult
   url.searchParams.set("addressdetails", "1");
   try {
     const res = await fetch(url.toString(), {
-      headers: { "Accept-Language": "en" },
+      headers: { "Accept-Language": activeAcceptLanguage() },
     });
     if (!res.ok) return [];
     return (await res.json()) as NominatimResult[];
@@ -93,7 +100,7 @@ export async function reverseGeocode(lat: number, lon: number): Promise<string |
   url.searchParams.set("format", "json");
   try {
     const res = await fetch(url.toString(), {
-      headers: { "Accept-Language": "en" },
+      headers: { "Accept-Language": activeAcceptLanguage() },
     });
     if (!res.ok) return null;
     const data = (await res.json()) as { display_name?: string };

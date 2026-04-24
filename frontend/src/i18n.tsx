@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -251,15 +252,29 @@ const I18nContext = createContext<I18nContextValue>({
 });
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<LangId>(() => {
+  const [lang, setLangState] = useState<LangId>(() => {
     const saved = typeof window !== "undefined" ? localStorage.getItem("jk_lang") : null;
-    return (saved as LangId) || "en";
+    const initial = ((saved as LangId) || "en") as LangId;
+    // Set <html lang> synchronously so format.ts sees the right locale on
+    // the very first render (matters when user has Hindi in localStorage).
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = initial;
+    }
+    return initial;
   });
+
+  // Wrap setLang so document.lang updates BEFORE React re-renders consumers.
+  // Otherwise the render after a language switch would still see the old
+  // <html lang> and locale-aware formatters would render in the wrong locale.
+  const setLang = useCallback((next: LangId) => {
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = next;
+    }
+    setLangState(next);
+  }, []);
+
   useEffect(() => {
     localStorage.setItem("jk_lang", lang);
-    if (typeof document !== "undefined") {
-      document.documentElement.lang = lang;
-    }
   }, [lang]);
 
   const value = useMemo<I18nContextValue>(
@@ -268,7 +283,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       setLang,
       t: (key: string) => translations[lang]?.[key] ?? translations.en[key] ?? key,
     }),
-    [lang],
+    [lang, setLang],
   );
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
