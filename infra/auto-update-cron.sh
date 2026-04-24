@@ -66,8 +66,8 @@ else
     log "WARNING: Virtual environment not found"
 fi
 
-# Update frontend
-log "Updating Next.js frontend..."
+# Update frontend (Vite + React, served statically by Nginx from dist/)
+log "Updating frontend..."
 cd "$APP_DIR/frontend"
 if npm install >> "$LOG_FILE" 2>&1; then
     log "Frontend dependencies installed"
@@ -77,28 +77,28 @@ else
 fi
 
 if npm run build >> "$LOG_FILE" 2>&1; then
-    log "Frontend build successful"
+    log "Frontend build successful (dist/ updated)"
 else
     log "ERROR: Frontend build failed"
     exit 1
 fi
 
-# Restart services
-log "Restarting services..."
+# Restart services. Nginx only needs a reload to flush its open-file cache.
+log "Restarting backend and reloading nginx..."
 systemctl restart panchanga-backend >> "$LOG_FILE" 2>&1
-systemctl restart panchanga-frontend >> "$LOG_FILE" 2>&1
+systemctl reload nginx >> "$LOG_FILE" 2>&1
 
 # Wait a moment for services to start
 sleep 5
 
 # Check service status
-if systemctl is-active --quiet panchanga-backend && systemctl is-active --quiet panchanga-frontend; then
+if systemctl is-active --quiet panchanga-backend && systemctl is-active --quiet nginx; then
     log "✅ Services restarted successfully"
     log "New version deployed: ${REMOTE:0:8}"
 else
-    log "⚠️  WARNING: One or more services failed to start"
+    log "⚠️  WARNING: One or more services failed"
     systemctl status panchanga-backend --no-pager >> "$LOG_FILE" 2>&1
-    systemctl status panchanga-frontend --no-pager >> "$LOG_FILE" 2>&1
+    systemctl status nginx --no-pager >> "$LOG_FILE" 2>&1
 fi
 
 log "Auto-update complete!"

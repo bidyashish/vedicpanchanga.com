@@ -23,9 +23,9 @@ pip install -r requirements.txt
 deactivate
 
 echo ""
-echo "3. Updating Next.js frontend..."
+echo "3. Updating Vite + React frontend..."
 cd /apps/panchanga/frontend
-npm install --legacy-peer-deps
+npm install
 npm run build
 
 echo ""

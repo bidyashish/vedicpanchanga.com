@@ -1,171 +1,192 @@
 # Vedic Panchanga
 
+Drik Panchang calculator with a modern web interface. Computes traditional Hindu Panchanga elements, divisional charts (D1–D60), Vimshottari Daśā, Aṣṭakavarga and auspicious Muhūrta windows for any date (5000 BCE – 5000 CE) and any location.
 
-Drik Panchang calculator with modern web interface. Calculate traditional Panchanga for any date (5000 BCE - 5000 CE) and location.
+**Live**: <https://vedicpanchanga.com>
 
-⭐ **If you find this project useful, please consider giving it a star on GitHub!** It helps others discover this tool.
+⭐ If this project is useful to you, please star the repo — it helps others find it.
 
-## Quick Start
+---
+
+## Tech stack
+
+| Layer    | Stack |
+| -------- | ----- |
+| Backend  | Python 3 · FastAPI · PySwissEph (Swiss Ephemeris) · `uvicorn` on `127.0.0.1:8001` |
+| Frontend | Vite · React 19 · TypeScript · Tailwind CSS v3 · hash-routed SPA on port 3121 |
+| Infra    | Cloudflare → Nginx (TLS, static-file host) → FastAPI loopback · Prometheus + Grafana optional |
+
+There is **no** database. Calculations are stateless; the backend persists nothing.
+
+---
+
+## Run locally (developer setup)
+
+Requires Python 3.10+ and Node.js 20+.
 
 ```bash
-# Clone repository
+# 1. Clone
 git clone https://github.com/bidyashish/vedicpanchanga.com
 cd vedicpanchanga.com
 
-# Or manual setup:
-# Terminal 1 - Backend (runs on port 8001)
+# 2. Backend (terminal 1) — FastAPI on :8001
 cd backend
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+python3 -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
+uvicorn server:app --host 127.0.0.1 --port 8001 --reload
 
-cd backend && source venv/bin/activate && uvicorn server:app --host 127.0.0.1 --port 8001 2>&1
-
-# Terminal 2 - Frontend (runs on port 3121)
+# 3. Frontend (terminal 2) — Vite dev server on :3121
 cd frontend
+cp .env.example .env            # sets VITE_BACKEND_URL=http://localhost:8001
 npm install
-# .env.local is optional - defaults to http://localhost:8001
 npm run dev
 ```
 
-Open http://localhost:3121
+Open <http://localhost:3121>.
+
+### Frontend commands
+
+```bash
+npm run dev       # Vite dev server with HMR
+npm run build     # tsc --noEmit && vite build → dist/
+npm run preview   # serve the built bundle
+npm run lint      # type-check only (tsc --noEmit)
+```
+
+### Backend tests
+
+```bash
+cd backend && source venv/bin/activate
+pytest tests/ -v                                 # run all
+pytest tests/test_muhurta.py -v                  # single suite
+pytest tests/test_iteration4_vargas.py::test_d30 # single test
+```
+
+### Environment variables
+
+| File               | Key                  | Purpose                                                                 |
+| ------------------ | -------------------- | ----------------------------------------------------------------------- |
+| `backend/.env`     | `CORS_ORIGINS`       | Optional; defaults to `*`. Comma-separated origins.                     |
+| `frontend/.env`    | `VITE_BACKEND_URL`   | Backend origin. Leave empty in prod → same-origin `/api` via Nginx.     |
+| `frontend/.env`    | `VITE_ADSENSE_CLIENT`, `VITE_ADSENSE_SLOT_*` | Optional. Unset → dashed placeholders in ad slots. |
+
+Vite bakes `VITE_*` vars in at **build time**, so edit `.env` and rebuild — restarting isn't enough.
+
+---
 
 ## Features
 
-**Panchanga Elements**: Tithi • Nakshatra • Yoga • Karana • Vaara
-**Timings**: Sunrise/Sunset • Moonrise/Moonset • Rahu Kala • Yama Ganda • Gulika • Abhijit
-**Astronomical**: Planetary positions • Vimsottari Dasha • Ayanamsha (Lahiri)
-**Modern UI**: Dark/Light mode • 100,000+ locations • Responsive design
+- **Jyotiṣa Kuṇḍalī** · birth chart with 16 divisional charts (D1–D60), North- or South-Indian style
+- **Drik Pañcāṅga** · Tithi · Nakṣatra · Yoga · Karaṇa · Vāra, Sun/Moon timings, Rāhu Kāla, Abhijit & more
+- **Muhūrta Finder** · scan up to 120 days for Marriage, Gṛha Praveś, Business, Travel etc. with 0–100 scoring
+- **Vimshottari Mahādaśā** · full 120-year planetary cycle from birth
+- **Aṣṭakavarga** · Bhinnāṣṭakavarga per planet + Sarvāṣṭakavarga totals
+- **Multi-ayanāṁśa** · NC Lahiri (default), KP New/Old, BV Raman, KP Khullar, Sāyana, Manoj
+- **Bilingual UI** · English + हिन्दी, with Devanagari web fonts (Tiro Devanagari Hindi, Noto Serif Devanagari)
 
-## Tech Stack
+---
 
-**Backend**: Python • FastAPI • PySwisseph
-**Frontend**: Next.js 15 • React 19 • TypeScript • Tailwind CSS v4 • Shadcn/ui
-
-## Project Structure
-
-```
-vedicpanchanga.com/
-├── backend/          # Python FastAPI server (port 8001)
-├── frontend/         # Next.js 15 application (port 3121)
-├── infra/            # Deployment scripts, systemd units, nginx, monitoring
-├── tests/            # API, timezone, load, and production tests
-├── memory/           # PRD and project context
-├── API.md            # API documentation
-├── AGENTS.md         # AI agent instructions
-└── README.md         # This file
-```
-
-## Infrastructure & Deployment
-
-### Architecture
-
-```
-Internet → Cloudflare (DDoS) → Nginx (TLS termination) → Next.js (:3121) → FastAPI (:8001, localhost-only)
-                                                        ↕
-                                              Prometheus + Grafana (monitoring)
-```
-
-### Deploy to a Fresh VPS (Ubuntu 20.04+)
+## Deploy to a VPS (Ubuntu 22.04 / 24.04)
 
 ```bash
-# 1. Clone & setup (one command)
+# 1. Clone into the canonical path
 sudo mkdir -p /apps && cd /apps
 sudo git clone https://github.com/bidyashish/vedicpanchanga.com panchanga
-cd panchanga && sudo bash infra/setup-vps.sh
+cd panchanga
 
-# 2. SSL certificate
-sudo apt install certbot python3-certbot-nginx -y
+# 2. Provision — installs nginx, Node 20, Python venv, systemd unit, firewall
+sudo bash infra/setup-vps.sh
+
+# 3. SSL certificate
+sudo apt install -y certbot python3-certbot-nginx
 sudo certbot --nginx -d vedicpanchanga.com -d www.vedicpanchanga.com
 
-# 3. Auto-updates (optional, every 6h)
+# 4. (Optional) Auto-update from GitHub every 6 h
 bash infra/setup-cron.sh
 ```
 
-That's it. The setup script handles Python venv, Node.js, Nginx, systemd services, and the firewall.
+The setup script is idempotent and re-runnable. It writes `panchanga-backend.service` (runs `uvicorn server:app` on `127.0.0.1:8001`) and an Nginx vhost that serves the static Vite build from `frontend/dist/` with 1-year cache on fingerprinted `/assets/`.
 
-### Security Hardening (built-in)
-
-| Layer | What's configured |
-|---|---|
-| **Firewall (UFW)** | Only ports 22, 80, 443 open; backend port 8001 blocked externally |
-| **Nginx** | HTTP→HTTPS redirect, HSTS, X-Frame-Options, CSP, XSS protection |
-| **TLS** | TLSv1.2+ only, strong ciphers, OCSP stapling via Certbot |
-| **Backend** | Binds to `127.0.0.1` only — never exposed to the internet |
-| **IP access** | Direct IP access returns `444` (connection dropped) |
-| **Auto-updates** | Cron pulls latest code, rebuilds, restarts — zero-downtime |
-
-> **Before production**: Change default Grafana passwords, restrict monitoring ports (9090/3002) to your IP, and enable `unattended-upgrades` for OS patches.
-
-### Daily Operations
+### Manual redeploy
 
 ```bash
-# Check status
-sudo systemctl status panchanga-backend panchanga-frontend
-
-# View logs
-sudo journalctl -u panchanga-backend -f
-
-# Manual redeploy
-bash infra/update-deploy.sh
-
-# Restart
-sudo systemctl restart panchanga-backend panchanga-frontend
+sudo bash /apps/panchanga/infra/update-deploy.sh
 ```
 
+### Security posture baked in
 
+| Layer        | What's configured |
+| ------------ | ----------------- |
+| UFW firewall | Only 22/80/443 open externally; 8001 actively denied |
+| Backend      | Binds to `127.0.0.1` only; never reachable from the internet |
+| Nginx        | Security headers (X-Frame-Options, nosniff, Referrer-Policy); direct-IP requests return `444` |
+| TLS          | Certbot auto-renews LE certs with strong ciphers |
+| Monitoring   | Ports 3002/9090/9100 open by default — **restrict to your admin IP before going live** |
 
-## Testing
+---
 
-```bash
-python tests/test_api.py                 # API tests
-python tests/test_timezones.py            # Timezone calculations
-python tests/stress_test_panchanga.py     # Load testing
-./tests/test_production_api.sh            # Production smoke test
+## Project structure
+
+```
+vedicpanchanga.com/
+├── backend/                 # Python FastAPI server (port 8001)
+│   ├── server.py            # entry: uvicorn server:app
+│   ├── calculator.py        # compute_chart (planets, houses, dashas, ashtakavarga)
+│   ├── panchang.py          # basic panchang
+│   ├── advanced_panchang.py # detailed Drik panchang
+│   ├── vargas.py            # 16 divisional charts
+│   ├── ayanamsa.py          # ayanamsa options
+│   ├── muhurta.py           # muhurta scoring engine
+│   ├── ephe/                # Swiss Ephemeris data files (REQUIRED)
+│   └── tests/               # pytest suites
+├── frontend/                # Vite + React + TypeScript (port 3121)
+│   ├── index.html
+│   ├── src/
+│   │   ├── App.tsx          # shell (top bar + hash-routed pages + footer)
+│   │   ├── pages/           # KundaliPage, PanchangPage, MuhurtaPage
+│   │   ├── components/
+│   │   │   ├── shell/       # TopBar, Footer, AdSlot
+│   │   │   ├── common/      # CitySearch, MandalaLoader, LanguageSwitcher
+│   │   │   ├── kundali/     # BirthForm, ChartTabs, VedicChart, SouthIndianChart, tables
+│   │   │   └── panchang/    # Section, TimeBand
+│   │   ├── lib/             # api.ts (typed fetch), format.ts, planets.ts
+│   │   ├── types/api.ts     # TypeScript shapes for all backend responses
+│   │   └── i18n.tsx         # English + Hindi dictionaries
+│   └── vite.config.ts
+├── infra/
+│   ├── setup-vps.sh         # one-shot VPS provisioning
+│   ├── setup-cron.sh        # install auto-update cron
+│   ├── auto-update-cron.sh  # pulls, rebuilds, reloads — run by cron
+│   ├── update-deploy.sh     # manual redeploy helper
+│   └── setup-monitoring.sh  # Prometheus + Grafana installer
+├── AGENTS.md                # canonical brief for AI coding agents
+├── CLAUDE.md                # Claude-specific notes (architecture reality + gotchas)
+└── README.md                # this file
 ```
 
-## API Documentation
+---
 
-Main endpoint: `http://localhost:3121/api/v1/panchanga`  
-Full docs: See [API.md](./API.md) • Interactive docs: `http://localhost:8001/docs`
+## API
+
+All endpoints are mounted under `/api` on the backend (not `/api/v1`). In production the browser hits them via the Nginx `/api/` proxy on the same origin.
+
+| Method | Path                     | Purpose                                          |
+| ------ | ------------------------ | ------------------------------------------------ |
+| POST   | `/api/calculate`         | Full Kundali (planets, 16 vargas, dasha, ashtakavarga) |
+| GET    | `/api/get-panchang`      | Drik Panchang for a date + location              |
+| GET    | `/api/ayanamsa-options`  | List available ayanamsa systems                  |
+| GET    | `/api/muhurta-purposes`  | List muhurta purpose categories                  |
+| POST   | `/api/find-muhurta`      | Scan a date range for auspicious windows         |
+
+Interactive Swagger UI in dev: <http://localhost:8001/docs>.
+
+---
 
 ## License
 
-**Backend**: AGPL-3.0 • **Frontend**: MIT
-
-## Contributing
-
-We welcome contributions! Here's how you can help:
-
-### 🐛 Found a Bug?/### 💡 Have a Feature Request?
-[Open an issue](https://github.com/bidyashish/vedicpanchanga.com/issues/new) with details about the problem and steps to reproduce.
-
-
-### ⭐ Support the Project
-- **Star this repository** to help others find it
-- Share it with others who might find it useful
-- Report issues and suggest improvements
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=bidyashish/vedicpanchanga.com&type=Date)](https://star-history.com/#bidyashish/vedicpanchanga.com&Date)
-
-## Contributors
-
-Thanks to all the contributors who have helped make this project better!
-
-[![Contributors](https://contrib.rocks/image?repo=bidyashish/vedicpanchanga.com)](https://github.com/bidyashish/vedicpanchanga.com/graphs/contributors)
-
-## Trending
-
-<a href="https://github.com/trending/python?since=daily" target="_blank">
-  <img src="https://img.shields.io/badge/Trending-Python-blue?style=for-the-badge&logo=github" alt="Trending Python">
-</a>
-<a href="https://github.com/trending/javascript?since=daily" target="_blank">
-  <img src="https://img.shields.io/badge/Trending-JavaScript-yellow?style=for-the-badge&logo=github" alt="Trending JavaScript">
-</a>
+**Backend**: AGPL-3.0 · **Frontend**: MIT
 
 ## Credits
 
-Based on [Drik Panchanga](https://github.com/bdsatish/drik-panchanga) by Satish BD.
-Uses Swiss Ephemeris for astronomical calculations.
+Based on [Drik Panchanga](https://github.com/bdsatish/drik-panchanga) by Satish BD. Astronomical calculations via [Swiss Ephemeris](https://www.astro.com/swisseph/).
