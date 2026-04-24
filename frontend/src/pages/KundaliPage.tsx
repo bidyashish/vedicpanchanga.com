@@ -81,38 +81,34 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   };
 
   return (
-    <section className="pt-4 sm:pt-5 pb-10" data-testid="kundali-page">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 xl:gap-8">
+    <section className="pt-3 sm:pt-4 pb-8" data-testid="kundali-page">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
         {/* Left sidebar — form */}
         <aside className="lg:col-span-4 xl:col-span-3">
-          <div className="card card-lift p-5 lg:p-6 lg:sticky lg:top-20">
-            <h2 className="font-serif text-xl lg:text-2xl text-ink mb-1">
-              {t("birth_details")}
-            </h2>
-            <p className="text-xs text-ink-soft mb-5">{t("enter_native_time_place")}</p>
+          <div className="card p-4 sm:p-5 lg:sticky lg:top-16">
+            <h2 className="heading-section">{t("birth_details")}</h2>
+            <p className="meta mb-4">{t("enter_native_time_place")}</p>
             <BirthForm form={form} setForm={setForm} onSubmit={onSubmit} loading={loading} />
             {error && (
               <div
                 data-testid="error-banner"
-                className="mt-4 border border-crimson/40 bg-crimson/5 text-crimson text-xs p-3 rounded-sm"
+                className="mt-3 border border-rose/40 bg-rose/5 text-rose text-mini px-3 py-2 rounded-sm"
               >
                 {error}
               </div>
             )}
-            <div className="mt-5 hidden lg:block">
+            <div className="mt-4 hidden lg:block">
               <AdSlot slot="sidebar" minHeight={240} />
             </div>
           </div>
         </aside>
 
         {/* Middle — chart + data */}
-        <div className="lg:col-span-8 xl:col-span-6 space-y-5 lg:space-y-6">
+        <div className="lg:col-span-8 xl:col-span-6 space-y-4">
           {loading && !data && (
-            <div className="flex flex-col items-center justify-center py-24 gap-4">
-              <MandalaLoader size={64} />
-              <p className="font-serif text-ink-soft italic text-sm">
-                {t("consulting_heavens")}
-              </p>
+            <div className="flex flex-col items-center justify-center py-20 gap-3">
+              <MandalaLoader size={48} />
+              <p className="meta italic">{t("consulting_heavens")}</p>
             </div>
           )}
           {data && (
@@ -129,7 +125,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
 
         {/* Right rail — large tower ad, only on xl+ */}
         <aside className="hidden xl:block xl:col-span-3">
-          <div className="lg:sticky lg:top-20 space-y-4">
+          <div className="lg:sticky lg:top-16 space-y-3">
             <AdSlot slot="sidebar" minHeight={600} />
           </div>
         </aside>

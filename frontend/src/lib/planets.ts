@@ -12,18 +12,20 @@ export const PLANET_LONG_NAMES: Record<string, string> = {
   Lg: "Lagna",
 };
 
+// CSS variables resolved at draw time so the chart colours follow the
+// active theme. `currentColor` falls back through `<svg color="…">`.
 export const PLANET_COLORS: Record<string, string> = {
-  Su: "#B26329",
-  Mo: "#3E5E8C",
-  Ma: "#B05543",
-  Me: "#1B5E20",
-  Ju: "#B8860B",
-  Ve: "#8E44AD",
-  Sa: "#4A4A4A",
-  Ra: "#5D4037",
-  Ke: "#5D4037",
-  As: "#993D2E",
-  Lg: "#993D2E",
+  Su: "var(--accent-sun)",
+  Mo: "var(--accent-moon)",
+  Ma: "var(--danger)",
+  Me: "var(--success)",
+  Ju: "var(--accent-amber)",
+  Ve: "rgb(168 85 247)",  // violet-500 — readable in both themes
+  Sa: "var(--ink-soft)",
+  Ra: "var(--ink-soft)",
+  Ke: "var(--ink-soft)",
+  As: "var(--primary)",
+  Lg: "var(--primary)",
 };
 
 export function planetTitle(abbr: string): string {
@@ -31,7 +33,7 @@ export function planetTitle(abbr: string): string {
 }
 
 export function planetColor(abbr: string): string {
-  return PLANET_COLORS[abbr] ?? "#2C241B";
+  return PLANET_COLORS[abbr] ?? "var(--ink)";
 }
 
 export const SIGN_SHORT = [

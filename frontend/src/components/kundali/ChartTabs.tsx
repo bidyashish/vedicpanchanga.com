@@ -30,12 +30,12 @@ export function ChartTabs({ data, chartStyle }: Props) {
 
   return (
     <div
-      className="card card-lift p-5 lg:p-8"
+      className="card p-4 sm:p-5"
       data-testid="chart-tabs"
     >
       <div
         role="tablist"
-        className="flex gap-1 sm:gap-2 border-b border-parchment-200 mb-5 overflow-x-auto scrollbar-hide pb-0"
+        className="flex gap-1 sm:gap-2 border-b border-parchment-200 mb-4 overflow-x-auto scrollbar-hide pb-0"
         data-testid="varga-tabs"
       >
         {vargaKeys.map((n) => {
@@ -50,14 +50,15 @@ export function ChartTabs({ data, chartStyle }: Props) {
               role="tab"
               aria-selected={selected}
               onClick={() => setTab(key)}
-              className={`py-3 px-3 text-xs font-semibold whitespace-nowrap border-b-2 transition-all flex flex-col items-start min-w-[72px] ${
+              title={label}
+              className={`py-2.5 px-3 font-semibold whitespace-nowrap border-b-2 transition-colors flex flex-col items-start shrink-0 ${
                 selected
-                  ? "text-crimson border-crimson"
-                  : "text-ink-soft border-transparent hover:text-crimson"
+                  ? "text-saffron border-saffron"
+                  : "text-ink-soft border-transparent hover:text-saffron"
               }`}
             >
-              <span className="tracking-wide text-sm">D{n}</span>
-              <span className="text-[10px] tracking-[0.06em] text-gold mt-0.5 normal-case">
+              <span className="text-meta leading-none">D{n}</span>
+              <span className="text-micro text-ink-muted mt-1 normal-case font-medium leading-none">
                 {label}
               </span>
             </button>

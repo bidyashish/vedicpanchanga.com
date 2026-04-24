@@ -20,7 +20,7 @@ function TransitList({
   tz,
   refDate,
   labelFn,
-  accent = "#2C241B",
+  accent = "var(--ink)",
 }: {
   items?: TransitItem[];
   tz?: string;
@@ -28,15 +28,18 @@ function TransitList({
   labelFn: (it: TransitItem) => string;
   accent?: string;
 }) {
-  if (!items?.length) return <div className="text-sm text-ink-soft">—</div>;
+  if (!items?.length) return <div className="meta">—</div>;
   return (
-    <ul className="space-y-1.5">
+    <ul className="divide-y divide-parchment-200">
       {items.map((it, i) => (
-        <li key={i} className="flex items-baseline justify-between gap-3 text-sm">
-          <span className="font-serif text-base" style={{ color: accent }}>
+        <li
+          key={i}
+          className="flex items-baseline justify-between gap-3 py-1.5"
+        >
+          <span className="text-meta font-medium" style={{ color: accent }}>
             {labelFn(it)}
           </span>
-          <span className="text-xs text-ink-soft tabular-nums">
+          <span className="text-mini text-ink-soft num shrink-0">
             upto {formatTimeWithDate(it.ends_at ?? it.end, tz, refDate)}
           </span>
         </li>
@@ -47,16 +50,14 @@ function TransitList({
 
 function KV2({ rows }: { rows: { label: string; value: React.ReactNode }[] }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-2">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-0">
       {rows.map((r, i) => (
         <div
           key={i}
-          className="flex items-baseline justify-between border-b border-parchment-200/50 py-2 gap-3"
+          className="flex items-baseline justify-between border-b border-parchment-200 py-1.5 gap-3 last:border-0 sm:[&:nth-last-child(2)]:border-0"
         >
-          <span className="text-[11px] uppercase tracking-[0.15em] text-ink-soft font-semibold">
-            {r.label}
-          </span>
-          <span className="font-serif text-base text-ink text-right">{r.value}</span>
+          <span className="text-mini text-ink-soft">{r.label}</span>
+          <span className="text-meta text-ink text-right font-medium num">{r.value}</span>
         </div>
       ))}
     </div>
@@ -132,12 +133,12 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
   return (
     <section
       data-testid="panchang-view"
-      className="pt-4 pb-10 grid grid-cols-1 xl:grid-cols-12 gap-6 xl:gap-8"
+      className="pt-3 sm:pt-4 pb-8 grid grid-cols-1 xl:grid-cols-12 gap-4 xl:gap-5"
     >
-      <div className="xl:col-span-9 space-y-6">
+      <div className="xl:col-span-9 space-y-3">
         {/* Controls */}
-        <div className="card card-lift p-5 lg:p-6">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+        <div className="card p-3 sm:p-4">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-end">
             <div className="md:col-span-3">
               <label className="field-label">{t("date")}</label>
               <input
@@ -160,15 +161,17 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
               <button
                 data-testid="use-my-location-btn"
                 onClick={useGeo}
-                className="btn-ghost w-full px-3 py-2.5"
+                className="btn-ghost w-full"
               >
                 <svg
-                  width="14"
-                  height="14"
+                  width="16"
+                  height="16"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 >
                   <circle cx="12" cy="10" r="3" />
                   <path d="M12 2a8 8 0 0 1 8 8c0 5.4-8 12-8 12S4 15.4 4 10a8 8 0 0 1 8-8z" />
@@ -181,14 +184,17 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 data-testid="panchang-fetch-btn"
                 onClick={() => run()}
                 disabled={loading}
-                className="btn-primary w-full px-4 py-2.5"
+                className="btn-primary w-full"
               >
                 {loading ? t("loading") : t("show_panchang")}
               </button>
             </div>
           </div>
           {error && (
-            <div data-testid="panchang-error" className="mt-3 text-xs text-crimson">
+            <div
+              data-testid="panchang-error"
+              className="mt-4 text-sm text-rose font-medium bg-rose/5 border border-rose/30 rounded-md px-3 py-2"
+            >
               {error}
             </div>
           )}
@@ -203,48 +209,51 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
 
         {data && (
           <>
-            <div className="card p-5 lg:p-6">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-ink-soft font-semibold">
-                {t("panchang_title")}
-              </p>
-              <h2
-                className="font-serif text-3xl lg:text-4xl text-crimson mt-1"
-                data-testid="panchang-title"
-              >
-                {formatLongDate(data.date)}
-              </h2>
-              <p className="text-sm text-ink-soft mt-1">
-                {loc.place_name} · {data.location.timezone}
-              </p>
-              <div className="divider-ornate my-3">
-                <span className="font-serif italic text-sm">{t("panchang_stamp")}</span>
+            <div className="card p-4 sm:p-5">
+              <div className="flex items-baseline justify-between gap-3 flex-wrap">
+                <div>
+                  <p className="eyebrow-accent">{t("panchang_title")}</p>
+                  <h2 className="heading-page mt-0.5" data-testid="panchang-title">
+                    {formatLongDate(data.date)}
+                  </h2>
+                </div>
+                <p className="text-mini text-ink-soft text-right">
+                  {loc.place_name}
+                  <br className="sm:hidden" />
+                  <span className="hidden sm:inline"> · </span>
+                  {data.location.timezone}
+                </p>
               </div>
             </div>
 
             <Section title="Sun &amp; Moon" testId="section-sun-moon">
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
                 <TimeCard
                   label={t("sunrise")}
                   value={formatTime(data.sun_moon.sunrise, tz)}
-                  color="var(--saffron)"
+                  color="var(--accent-sun)"
+                  icon="☀"
                   testId="sunrise-block"
                 />
                 <TimeCard
                   label={t("sunset")}
                   value={formatTime(data.sun_moon.sunset, tz)}
-                  color="var(--crimson)"
+                  color="var(--accent-sun)"
+                  icon="◐"
                   testId="sunset-block"
                 />
                 <TimeCard
                   label={t("moonrise")}
                   value={formatTimeWithDate(data.sun_moon.moonrise, tz, refDate)}
-                  color="var(--ink)"
+                  color="var(--accent-moon)"
+                  icon="☾"
                   testId="moonrise-block"
                 />
                 <TimeCard
                   label={t("moonset")}
                   value={formatTimeWithDate(data.sun_moon.moonset, tz, refDate)}
-                  color="var(--ink)"
+                  color="var(--accent-moon)"
+                  icon="○"
                   testId="moonset-block"
                 />
               </div>
@@ -253,49 +262,51 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
             <AdSlot slot="inline" minHeight={120} />
 
             <Section title="Panchānga" subtitle="Five Limbs" testId="section-panchang-limbs">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <LimbCol label="Tithi" accent="#993D2E">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+                <LimbCol label="Tithi" accent="var(--accent-sun)">
                   <TransitList
                     items={data.panchang.tithi_sequence}
                     tz={tz}
                     refDate={refDate}
                     labelFn={(x) => x.name ?? ""}
-                    accent="#993D2E"
+                    accent="var(--accent-sun)"
                   />
                 </LimbCol>
-                <LimbCol label="Nakṣatra" accent="#B26329">
+                <LimbCol label="Nakṣatra" accent="var(--accent-amber)">
                   <TransitList
                     items={data.panchang.nakshatra_sequence}
                     tz={tz}
                     refDate={refDate}
                     labelFn={(x) => x.name ?? ""}
-                    accent="#B26329"
+                    accent="var(--accent-amber)"
                   />
                 </LimbCol>
-                <LimbCol label="Yoga" accent="#2C241B">
+                <LimbCol label="Yoga" accent="var(--accent-moon)">
                   <TransitList
                     items={data.panchang.yoga_sequence}
                     tz={tz}
                     refDate={refDate}
                     labelFn={(x) => x.name ?? ""}
+                    accent="var(--accent-moon)"
                   />
                 </LimbCol>
-                <LimbCol label="Karaṇa" accent="#2C241B">
+                <LimbCol label="Karaṇa" accent="var(--accent-moon)">
                   <TransitList
                     items={data.panchang.karana_sequence}
                     tz={tz}
                     refDate={refDate}
                     labelFn={(k) => (k.is_bhadra ? `${k.name ?? ""} (Bhadra)` : (k.name ?? ""))}
+                    accent="var(--accent-moon)"
                   />
                 </LimbCol>
-                <LimbCol label="Vāra" accent="#993D2E">
-                  <p className="font-serif text-base text-crimson">
-                    {data.vara.sanskrit}{" "}
-                    <span className="text-ink-soft text-xs">({data.vara.english})</span>
+                <LimbCol label="Vāra" accent="var(--accent-sun)">
+                  <p className="value-strong">
+                    <span style={{ color: "var(--accent-sun)" }}>{data.vara.sanskrit}</span>{" "}
+                    <span className="text-ink-soft font-normal">({data.vara.english})</span>
                   </p>
                 </LimbCol>
-                <LimbCol label="Pakṣa" accent="#2C241B">
-                  <p className="font-serif text-base text-ink">{data.panchang.paksha}</p>
+                <LimbCol label="Pakṣa" accent="var(--accent-moon)">
+                  <p className="value-strong">{data.panchang.paksha}</p>
                 </LimbCol>
               </div>
             </Section>
@@ -322,9 +333,9 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
             </Section>
 
             <Section title="Rāśi &amp; Nakṣatra" testId="section-rashi-nak">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <p className="text-[11px] uppercase tracking-[0.15em] text-ink-soft font-semibold mb-2">
+                  <p className="eyebrow text-saffron mb-3">
                     Moonsign (Chandra Rāśi)
                   </p>
                   <TransitList
@@ -332,9 +343,9 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     tz={tz}
                     refDate={refDate}
                     labelFn={(s) => s.rashi ?? s.name ?? ""}
-                    accent="#993D2E"
+                    accent="var(--accent-sun)"
                   />
-                  <p className="text-[11px] uppercase tracking-[0.15em] text-ink-soft font-semibold mt-4 mb-2">
+                  <p className="eyebrow text-indigo mt-6 mb-3">
                     Nakṣatra Pāda
                   </p>
                   <TransitList
@@ -342,25 +353,25 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     tz={tz}
                     refDate={refDate}
                     labelFn={(p) => `${p.nakshatra ?? ""} Pāda ${p.pada ?? ""}`}
-                    accent="#635647"
+                    accent="var(--accent-moon)"
                   />
                 </div>
                 <div>
-                  <p className="text-[11px] uppercase tracking-[0.15em] text-ink-soft font-semibold mb-2">
+                  <p className="eyebrow text-saffron mb-3">
                     Sunsign (Sūrya Rāśi)
                   </p>
-                  <p className="font-serif text-base text-crimson">
+                  <p className="font-serif text-2xl font-medium" style={{ color: "var(--accent-sun)" }}>
                     {data.rashi_nakshatra.sunsign.rashi}
                   </p>
-                  <p className="text-[11px] uppercase tracking-[0.15em] text-ink-soft font-semibold mt-4 mb-2">
+                  <p className="eyebrow text-gold mt-6 mb-3">
                     Sūrya Nakṣatra
                   </p>
-                  <p className="font-serif text-base text-saffron">
-                    {data.rashi_nakshatra.surya_nakshatra.name} · Pāda{" "}
-                    {data.rashi_nakshatra.surya_nakshatra.pada}
-                    <span className="text-ink-soft text-xs ml-2">
-                      upto {formatTimeWithDate(data.rashi_nakshatra.surya_nakshatra.ends_at, tz, refDate)}
-                    </span>
+                  <p className="font-serif text-xl text-ink font-medium leading-snug">
+                    {data.rashi_nakshatra.surya_nakshatra.name}
+                    <span className="text-ink-soft"> · Pāda {data.rashi_nakshatra.surya_nakshatra.pada}</span>
+                  </p>
+                  <p className="text-sm text-ink-soft num mt-1">
+                    upto {formatTimeWithDate(data.rashi_nakshatra.surya_nakshatra.ends_at, tz, refDate)}
                   </p>
                 </div>
               </div>
@@ -386,7 +397,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   testId="band-brahma"
                   title="Brahma Muhūrta"
                   window={data.auspicious_timings.brahma_muhurta}
-                  color="#2F7D32"
+                  color="var(--success)"
                   desc="Sacred hour before dawn"
                   tz={tz}
                   refDate={refDate}
@@ -395,7 +406,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   testId="band-pratah"
                   title="Pratāḥ Sandhyā"
                   window={data.auspicious_timings.pratah_sandhya}
-                  color="#2F7D32"
+                  color="var(--success)"
                   desc="Morning twilight ritual"
                   tz={tz}
                   refDate={refDate}
@@ -404,7 +415,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   testId="band-abhijit"
                   title="Abhijit Muhūrta"
                   window={data.auspicious_timings.abhijit}
-                  color="#2F7D32"
+                  color="var(--success)"
                   desc="Auspicious midday"
                   tz={tz}
                   refDate={refDate}
@@ -413,7 +424,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   testId="band-vijay"
                   title="Vijay Muhūrta"
                   window={data.auspicious_timings.vijay_muhurta}
-                  color="#2F7D32"
+                  color="var(--success)"
                   desc="Victory hour"
                   tz={tz}
                   refDate={refDate}
@@ -422,7 +433,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   testId="band-godhuli"
                   title="Godhūli Muhūrta"
                   window={data.auspicious_timings.godhuli_muhurta}
-                  color="#2F7D32"
+                  color="var(--success)"
                   desc="Twilight bridging sunset"
                   tz={tz}
                   refDate={refDate}
@@ -431,7 +442,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   testId="band-sayahna"
                   title="Sāyaṁ Sandhyā"
                   window={data.auspicious_timings.sayahna_sandhya}
-                  color="#2F7D32"
+                  color="var(--success)"
                   desc="Evening twilight ritual"
                   tz={tz}
                   refDate={refDate}
@@ -440,7 +451,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   testId="band-nishita"
                   title="Niśīta Muhūrta"
                   window={data.auspicious_timings.nishita_muhurta}
-                  color="#2F7D32"
+                  color="var(--success)"
                   desc="Mid-night meditation hour"
                   tz={tz}
                   refDate={refDate}
@@ -451,7 +462,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     testId={`band-amrit-${i}`}
                     title="Amṛit Kāḷam"
                     window={a}
-                    color="#1B5E20"
+                    color="var(--success)"
                     desc={`Nectar window · ${a.nakshatra ?? ""}`}
                     tz={tz}
                     refDate={refDate}
@@ -463,7 +474,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     testId={`band-sarvartha-${i}`}
                     title="Sarvārtha Siddhi Yoga"
                     window={s}
-                    color="#2F7D32"
+                    color="var(--success)"
                     desc={`All endeavors succeed · ${s.nakshatra ?? ""}`}
                     tz={tz}
                     refDate={refDate}
@@ -475,7 +486,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     testId={`band-amrita-siddhi-${i}`}
                     title="Amṛita Siddhi Yoga"
                     window={s}
-                    color="#1B5E20"
+                    color="var(--success)"
                     desc={`Supremely auspicious · ${s.nakshatra ?? ""}`}
                     tz={tz}
                     refDate={refDate}
@@ -490,7 +501,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   testId="band-rahu"
                   title="Rāhu Kālam"
                   window={data.inauspicious_timings.rahu_kalam}
-                  color="#993D2E"
+                  color="var(--danger)"
                   desc="Avoid new undertakings"
                   tz={tz}
                   refDate={refDate}
@@ -499,7 +510,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   testId="band-yamaganda"
                   title="Yamagaṇḍa"
                   window={data.inauspicious_timings.yamaganda}
-                  color="#B26329"
+                  color="var(--accent-sun)"
                   desc="Avoid travel & new ventures"
                   tz={tz}
                   refDate={refDate}
@@ -508,7 +519,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   testId="band-gulika"
                   title="Gulika Kālam"
                   window={data.inauspicious_timings.gulika_kalam}
-                  color="#635647"
+                  color="var(--ink-soft)"
                   desc="Son of Saturn · neutral-inauspicious"
                   tz={tz}
                   refDate={refDate}
@@ -519,7 +530,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     testId={`band-dur-${i}`}
                     title={`Dur Muhūrtam #${dm.muhurta_number}`}
                     window={dm}
-                    color="#7A2E22"
+                    color="var(--danger)"
                     desc="Avoid auspicious work"
                     tz={tz}
                     refDate={refDate}
@@ -531,7 +542,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     testId={`band-bhadra-${i}`}
                     title="Bhadra (Viṣṭi)"
                     window={b}
-                    color="#993D2E"
+                    color="var(--danger)"
                     desc="Vishti karana · inauspicious"
                     tz={tz}
                     refDate={refDate}
@@ -543,7 +554,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     testId={`band-varjyam-${i}`}
                     title="Varjyam"
                     window={v}
-                    color="#993D2E"
+                    color="var(--danger)"
                     desc={`Moon's nak poison point · ${v.nakshatra ?? ""}`}
                     tz={tz}
                     refDate={refDate}
@@ -557,15 +568,15 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
               subtitle={t("udaya_lagna_sub")}
               testId="section-udaya"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-1">
                 {data.udaya_lagna.map((l, i) => (
                   <div
                     key={i}
-                    className="flex items-baseline justify-between border-b border-parchment-200/50 py-1.5 gap-3 text-sm"
+                    className="flex items-baseline justify-between border-b border-parchment-200/70 py-2.5 gap-3"
                     data-testid={`lagna-${i}`}
                   >
-                    <span className="font-serif text-base text-ink">{l.rashi}</span>
-                    <span className="text-xs text-ink-soft tabular-nums">
+                    <span className="font-serif text-lg text-ink font-medium">{l.rashi}</span>
+                    <span className="text-sm text-ink-soft num">
                       {formatTimeWithDate(l.start, tz, refDate)} —{" "}
                       {formatTimeWithDate(l.end, tz, refDate)}
                     </span>
@@ -657,17 +668,29 @@ function TimeCard({
   label,
   value,
   color,
+  icon,
   testId,
 }: {
   label: string;
   value: string;
   color: string;
+  icon?: string;
   testId?: string;
 }) {
   return (
-    <div className="p-4 bg-parchment-100 border border-parchment-200 rounded-sm" data-testid={testId}>
-      <p className="text-[11px] uppercase tracking-[0.15em] text-ink-soft font-semibold">{label}</p>
-      <p className="font-serif text-2xl tabular-nums mt-1" style={{ color }}>
+    <div
+      className="px-3 py-2 bg-parchment-50 border border-parchment-200 rounded-sm"
+      data-testid={testId}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <p className="eyebrow">{label}</p>
+        {icon && (
+          <span className="text-base leading-none opacity-80" style={{ color }} aria-hidden="true">
+            {icon}
+          </span>
+        )}
+      </div>
+      <p className="text-lead num mt-0.5 font-semibold" style={{ color }}>
         {value}
       </p>
     </div>
@@ -686,8 +709,8 @@ function LimbCol({
   return (
     <div>
       <p
-        className="text-[11px] uppercase tracking-[0.15em] font-semibold mb-2"
-        style={{ color: accent }}
+        className="eyebrow-lg mb-1.5 pb-1 border-b"
+        style={{ color: accent, borderColor: "var(--border)" }}
       >
         {label}
       </p>

@@ -41,14 +41,21 @@ interface Props {
 export function VedicChart({ houseMap, ascSign, title, testId }: Props) {
   const signForHouse = (h: number) => ((ascSign - 1 + (h - 1)) % 12) + 1;
 
+  // CSS variables resolved at render so colours follow the active theme.
+  const lineCol = "var(--ink-soft)";
+  const innerCol = "var(--accent-amber)";
+  const signCol = "var(--primary)";
+  const surfaceCol = "var(--surface)";
+  const ascCol = "var(--primary)";
+
   return (
     <div className="w-full" data-testid={testId}>
       {title && (
-        <h3 className="font-serif text-xl lg:text-2xl text-center text-crimson mb-3 tracking-wide">
+        <h3 className="font-serif text-base sm:text-lg text-center text-saffron mb-2 font-semibold">
           {title}
         </h3>
       )}
-      <div className="ornate-frame bg-parchment-50 p-3 sm:p-4 rounded-sm aspect-square w-full max-w-lg mx-auto">
+      <div className="ornate-frame p-3 sm:p-4 rounded-md aspect-square w-full max-w-lg mx-auto" style={{ background: "var(--surface-soft)" }}>
         <svg
           viewBox="0 0 500 500"
           className="kundali-svg w-full h-full"
@@ -56,18 +63,18 @@ export function VedicChart({ houseMap, ascSign, title, testId }: Props) {
         >
           <rect
             x="0" y="0" width="500" height="500"
-            fill="#FCFAF5" stroke="#993D2E" strokeWidth="2.5"
+            style={{ fill: surfaceCol, stroke: lineCol }} strokeWidth="2"
           />
-          <line x1="0" y1="0" x2="500" y2="500" stroke="#993D2E" strokeWidth="1.5" />
-          <line x1="500" y1="0" x2="0" y2="500" stroke="#993D2E" strokeWidth="1.5" />
+          <line x1="0" y1="0" x2="500" y2="500" style={{ stroke: lineCol }} strokeWidth="1.2" />
+          <line x1="500" y1="0" x2="0" y2="500" style={{ stroke: lineCol }} strokeWidth="1.2" />
           <polygon
             points="250,0 500,250 250,500 0,250"
-            fill="none" stroke="#993D2E" strokeWidth="1.5"
+            fill="none" style={{ stroke: lineCol }} strokeWidth="1.2"
           />
           <polygon
             points="250,24 476,250 250,476 24,250"
-            fill="none" stroke="#C5A059" strokeWidth="0.6"
-            strokeDasharray="4 4" opacity="0.5"
+            fill="none" style={{ stroke: innerCol }} strokeWidth="0.6"
+            strokeDasharray="4 4" opacity="0.4"
           />
 
           {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => {
@@ -83,10 +90,10 @@ export function VedicChart({ houseMap, ascSign, title, testId }: Props) {
                   textAnchor={labelPos.anchor}
                   dominantBaseline="middle"
                   className="font-serif"
-                  fontSize="22"
+                  fontSize="20"
                   fontWeight="700"
-                  fill="#993D2E"
-                  opacity="0.95"
+                  style={{ fill: signCol }}
+                  opacity="0.9"
                 >
                   {sign}
                 </text>
@@ -106,9 +113,9 @@ export function VedicChart({ houseMap, ascSign, title, testId }: Props) {
                         textAnchor="middle"
                         dominantBaseline="middle"
                         className="font-serif"
-                        fontSize="20"
+                        fontSize="18"
                         fontWeight={isAsc ? 800 : 600}
-                        fill={isAsc ? "#993D2E" : planetColor(abbr)}
+                        style={{ fill: isAsc ? ascCol : planetColor(abbr) }}
                       >
                         {abbr}
                       </text>

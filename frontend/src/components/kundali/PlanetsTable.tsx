@@ -13,35 +13,35 @@ export function PlanetsTable({ planets, ascendant }: Props) {
   return (
     <div
       data-testid="planets-table"
-      className="card p-5 lg:p-6 overflow-x-auto"
+      className="card p-4 sm:p-5 overflow-x-auto"
     >
-      <h3 className="font-serif text-xl text-ink mb-4">{t("graha_positions")}</h3>
-      <table className="w-full text-left border-collapse text-sm">
+      <h3 className="heading-section mb-3">{t("graha_positions")}</h3>
+      <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="text-ink-soft uppercase text-[11px] tracking-wider border-b-2 border-parchment-200">
-            <th className="py-2 pr-3">Body</th>
-            <th className="py-2 pr-3">Sign</th>
-            <th className="py-2 pr-3 tabular-nums">Degree</th>
-            <th className="py-2 pr-3">Lord</th>
-            <th className="py-2 pr-3">Nakṣatra</th>
-            <th className="py-2 pr-3">Pāda</th>
-            <th className="py-2 pr-3">House</th>
-            <th className="py-2">R</th>
+          <tr className="eyebrow-lg border-b border-parchment-200">
+            <th className="py-2 pr-3 font-bold">Body</th>
+            <th className="py-2 pr-3 font-bold">Sign</th>
+            <th className="py-2 pr-3 font-bold num">Degree</th>
+            <th className="py-2 pr-3 font-bold">Lord</th>
+            <th className="py-2 pr-3 font-bold">Nakṣatra</th>
+            <th className="py-2 pr-3 font-bold">Pāda</th>
+            <th className="py-2 pr-3 font-bold">House</th>
+            <th className="py-2 font-bold">R</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-meta">
           {rows.map((p) => (
-            <tr key={p.name} className="border-b border-parchment-200/60 last:border-0">
-              <td className="py-2.5 pr-3 font-semibold" style={{ color: planetColor(p.abbr) }}>
+            <tr key={p.name} className="border-b border-parchment-200 last:border-0">
+              <td className="py-2 pr-3 font-semibold" style={{ color: planetColor(p.abbr) }}>
                 {p.name}
               </td>
-              <td className="py-2.5 pr-3">{p.sign}</td>
-              <td className="py-2.5 pr-3 tabular-nums">{p.dms}</td>
-              <td className="py-2.5 pr-3">{p.sign_lord}</td>
-              <td className="py-2.5 pr-3">{p.nakshatra}</td>
-              <td className="py-2.5 pr-3 tabular-nums">{p.nakshatra_pada}</td>
-              <td className="py-2.5 pr-3 tabular-nums">{p.house ?? "—"}</td>
-              <td className="py-2.5 text-crimson font-bold">{p.retrograde ? "℞" : ""}</td>
+              <td className="py-2 pr-3">{p.sign}</td>
+              <td className="py-2 pr-3 num">{p.dms}</td>
+              <td className="py-2 pr-3">{p.sign_lord}</td>
+              <td className="py-2 pr-3">{p.nakshatra}</td>
+              <td className="py-2 pr-3 num">{p.nakshatra_pada}</td>
+              <td className="py-2 pr-3 num">{p.house ?? "—"}</td>
+              <td className="py-2 text-saffron font-bold">{p.retrograde ? "℞" : ""}</td>
             </tr>
           ))}
         </tbody>

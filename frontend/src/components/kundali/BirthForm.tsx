@@ -57,7 +57,7 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
         e.preventDefault();
         onSubmit();
       }}
-      className="space-y-4"
+      className="space-y-3"
     >
       <div>
         <label className="field-label">{t("date_of_birth")}</label>
@@ -114,7 +114,7 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
       <div>
         <label className="field-label">{t("chart_style")}</label>
         <div
-          className="flex rounded-sm border border-parchment-200 overflow-hidden"
+          className="flex rounded-sm border border-parchment-200 overflow-hidden p-0.5 gap-0.5 bg-parchment-100"
           data-testid="chart-style-toggle"
         >
           {[
@@ -126,10 +126,10 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
               type="button"
               data-testid={`chart-style-${o.id}`}
               onClick={() => update("chart_style", o.id)}
-              className={`flex-1 px-3 py-2 text-xs font-semibold tracking-wide transition-colors ${
+              className={`flex-1 px-2 py-1.5 text-mini font-medium rounded-2xs transition-colors ${
                 form.chart_style === o.id
-                  ? "bg-crimson text-parchment-50"
-                  : "bg-white text-ink hover:bg-parchment-100"
+                  ? "bg-white text-saffron shadow-card"
+                  : "text-ink-soft hover:text-ink"
               }`}
             >
               {o.label}
@@ -137,7 +137,7 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
           ))}
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2.5">
         <div>
           <label className="field-label">{t("latitude")}</label>
           <input
@@ -146,7 +146,7 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
             step="0.000001"
             value={form.latitude}
             onChange={(e) => update("latitude", parseFloat(e.target.value))}
-            className="field"
+            className="field num"
           />
         </div>
         <div>
@@ -157,7 +157,7 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
             step="0.000001"
             value={form.longitude}
             onChange={(e) => update("longitude", parseFloat(e.target.value))}
-            className="field"
+            className="field num"
           />
         </div>
       </div>
@@ -165,7 +165,7 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
         data-testid="calculate-btn"
         type="submit"
         disabled={loading}
-        className="btn-primary w-full px-6 py-3"
+        className="btn-primary w-full"
       >
         {loading ? (
           <>

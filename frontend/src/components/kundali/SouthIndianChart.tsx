@@ -31,36 +31,40 @@ export function SouthIndianChart({ houseMap, ascSign, title, testId }: Props) {
   }
 
   const CELL = 125;
+  const lineCol = "var(--ink-soft)";
+  const innerCol = "var(--accent-amber)";
+  const signCol = "var(--primary)";
+  const ascCol = "var(--primary)";
+  const dimCol = "var(--ink-soft)";
+  const innerSurface = "var(--surface-soft)";
+  const baseSurface = "var(--surface)";
 
   return (
     <div className="w-full" data-testid={testId}>
       {title && (
-        <h3 className="font-serif text-xl lg:text-2xl text-center text-crimson mb-3 tracking-wide">
+        <h3 className="font-serif text-base sm:text-lg text-center text-saffron mb-2 font-semibold">
           {title}
         </h3>
       )}
-      <div className="ornate-frame bg-parchment-50 p-3 sm:p-4 rounded-sm aspect-square w-full max-w-lg mx-auto">
+      <div className="ornate-frame p-3 sm:p-4 rounded-md aspect-square w-full max-w-lg mx-auto" style={{ background: "var(--surface-soft)" }}>
         <svg
           viewBox="0 0 500 500"
           className="kundali-svg w-full h-full"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <rect x="0" y="0" width="500" height="500" fill="#FCFAF5" stroke="#993D2E" strokeWidth="2.5" />
-          <line x1="0" y1="125" x2="500" y2="125" stroke="#993D2E" strokeWidth="1.5" />
-          <line x1="0" y1="375" x2="500" y2="375" stroke="#993D2E" strokeWidth="1.5" />
-          <line x1="125" y1="0" x2="125" y2="500" stroke="#993D2E" strokeWidth="1.5" />
-          <line x1="375" y1="0" x2="375" y2="500" stroke="#993D2E" strokeWidth="1.5" />
-          <line x1="250" y1="0" x2="250" y2="125" stroke="#993D2E" strokeWidth="1.5" />
-          <line x1="250" y1="375" x2="250" y2="500" stroke="#993D2E" strokeWidth="1.5" />
-          <line x1="0" y1="250" x2="125" y2="250" stroke="#993D2E" strokeWidth="1.5" />
-          <line x1="375" y1="250" x2="500" y2="250" stroke="#993D2E" strokeWidth="1.5" />
+          <rect x="0" y="0" width="500" height="500" style={{ fill: baseSurface, stroke: lineCol }} strokeWidth="2" />
+          <line x1="0" y1="125" x2="500" y2="125" style={{ stroke: lineCol }} strokeWidth="1.2" />
+          <line x1="0" y1="375" x2="500" y2="375" style={{ stroke: lineCol }} strokeWidth="1.2" />
+          <line x1="125" y1="0" x2="125" y2="500" style={{ stroke: lineCol }} strokeWidth="1.2" />
+          <line x1="375" y1="0" x2="375" y2="500" style={{ stroke: lineCol }} strokeWidth="1.2" />
+          <line x1="250" y1="0" x2="250" y2="125" style={{ stroke: lineCol }} strokeWidth="1.2" />
+          <line x1="250" y1="375" x2="250" y2="500" style={{ stroke: lineCol }} strokeWidth="1.2" />
+          <line x1="0" y1="250" x2="125" y2="250" style={{ stroke: lineCol }} strokeWidth="1.2" />
+          <line x1="375" y1="250" x2="500" y2="250" style={{ stroke: lineCol }} strokeWidth="1.2" />
 
-          <rect x="125" y="125" width="250" height="250" fill="#F4F1E8" stroke="#C5A059" strokeWidth="0.75" strokeDasharray="4 4" opacity="0.8" />
-          <text x="250" y="240" textAnchor="middle" fontSize="22" className="font-serif" fill="#C5A059" fontStyle="italic">
+          <rect x="125" y="125" width="250" height="250" style={{ fill: innerSurface, stroke: innerCol }} strokeWidth="0.6" strokeDasharray="4 4" opacity="0.5" />
+          <text x="250" y="258" textAnchor="middle" fontSize="20" className="font-serif" style={{ fill: innerCol }} fontStyle="italic">
             Rāśi Kuṇḍalī
-          </text>
-          <text x="250" y="270" textAnchor="middle" fontSize="14" className="font-serif" fill="#993D2E" opacity="0.8">
-            ॥ दक्षिण भारतीय ॥
           </text>
 
           {Array.from({ length: 12 }, (_, i) => i + 1).map((sign) => {
@@ -71,9 +75,9 @@ export function SouthIndianChart({ houseMap, ascSign, title, testId }: Props) {
               <g key={sign} data-testid={`${testId}-cell-${sign}`}>
                 {isAscSign && (
                   <>
-                    <line x1={pos.x + 8} y1={pos.y + 8} x2={pos.x + 38} y2={pos.y + 38} stroke="#B26329" strokeWidth="2" />
-                    <line x1={pos.x + 8} y1={pos.y + 38} x2={pos.x + 38} y2={pos.y + 8} stroke="#B26329" strokeWidth="2" />
-                    <text x={pos.x + 62} y={pos.y + 28} fontSize="16" fontWeight="700" className="font-serif" fill="#B26329">
+                    <line x1={pos.x + 8} y1={pos.y + 8} x2={pos.x + 38} y2={pos.y + 38} style={{ stroke: ascCol }} strokeWidth="2" />
+                    <line x1={pos.x + 8} y1={pos.y + 38} x2={pos.x + 38} y2={pos.y + 8} style={{ stroke: ascCol }} strokeWidth="2" />
+                    <text x={pos.x + 62} y={pos.y + 28} fontSize="16" fontWeight="700" className="font-serif" style={{ fill: ascCol }}>
                       Lg
                     </text>
                   </>
@@ -81,14 +85,14 @@ export function SouthIndianChart({ houseMap, ascSign, title, testId }: Props) {
                 <text
                   x={pos.x + CELL - 10} y={pos.y + 22}
                   textAnchor="end" fontSize="18" fontWeight="700"
-                  className="font-serif" fill="#993D2E" opacity="0.95"
+                  className="font-serif" style={{ fill: signCol }} opacity="0.95"
                 >
                   {sign}
                 </text>
                 <text
                   x={pos.x + CELL - 10} y={pos.y + 40}
-                  textAnchor="end" fontSize="12"
-                  fill="#635647"
+                  textAnchor="end" fontSize="11"
+                  style={{ fill: dimCol }}
                 >
                   {SIGN_SHORT[sign - 1]}
                 </text>
@@ -105,7 +109,7 @@ export function SouthIndianChart({ houseMap, ascSign, title, testId }: Props) {
                         x={px} y={py}
                         fontSize="18" fontWeight="600"
                         className="font-serif"
-                        fill={planetColor(abbr)}
+                        style={{ fill: planetColor(abbr) }}
                       >
                         {abbr}
                       </text>
