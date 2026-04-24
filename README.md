@@ -89,24 +89,41 @@ Vite bakes `VITE_*` vars in at **build time**, so edit `.env` and rebuild — re
 
 ## Deploy to a VPS (Ubuntu 22.04 / 24.04)
 
+The site sits behind Cloudflare. TLS uses a **Cloudflare Origin Certificate** (free, 15-year, no rate limits, no auto-renew). `setup-vps.sh` is idempotent — re-running it never breaks TLS as long as the cert files are in place.
+
 ```bash
 # 1. Clone into the canonical path
 sudo mkdir -p /apps && cd /apps
 sudo git clone https://github.com/bidyashish/vedicpanchanga.com panchanga
 cd panchanga
 
-# 2. Provision — installs nginx, Node 20, Python venv, systemd unit, firewall
+# 2. First pass — installs nginx, Node 20, Python venv, systemd unit, firewall.
+#    On first run it warns that no Origin Cert is present and writes an HTTP-only
+#    Nginx config so the site is reachable on port 80.
 sudo bash infra/setup-vps.sh
 
-# 3. SSL certificate
-sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d vedicpanchanga.com -d www.vedicpanchanga.com
+# 3. Generate a Cloudflare Origin Certificate (one-time, ~3 minutes):
+#      Cloudflare dashboard → SSL/TLS → Origin Server → Create Certificate
+#      (defaults: RSA 2048, vedicpanchanga.com + *.vedicpanchanga.com, 15 years)
+#    Paste the two PEM blobs onto the VPS:
+sudo mkdir -p /etc/ssl/cloudflare
+sudo nano /etc/ssl/cloudflare/origin.pem   # paste the certificate
+sudo nano /etc/ssl/cloudflare/origin.key   # paste the private key
+sudo chmod 600 /etc/ssl/cloudflare/origin.key
 
-# 4. (Optional) Auto-update from GitHub every 6 h
+# 4. Re-run setup. It now detects the cert and emits a TLS Nginx config
+#    (HTTP→HTTPS redirect, HSTS, Cloudflare real-IP, port 443 with TLS 1.2/1.3).
+sudo bash infra/setup-vps.sh
+
+# 5. Cloudflare → SSL/TLS → Overview → set mode to Full (strict).
+
+# 6. (Optional) Auto-update from GitHub every 6 h
 bash infra/setup-cron.sh
 ```
 
-The setup script is idempotent and re-runnable. It writes `panchanga-backend.service` (runs `uvicorn server:app` on `127.0.0.1:8001`) and an Nginx vhost that serves the static Vite build from `frontend/dist/` with 1-year cache on fingerprinted `/assets/`.
+While step 3–4 are pending, set Cloudflare's SSL/TLS mode to **Flexible** — the site loads immediately over CF-edge HTTPS terminating to plain HTTP at the origin.
+
+`setup-vps.sh` writes `panchanga-backend.service` (runs `uvicorn server:app` on `127.0.0.1:8001`) and an Nginx vhost that serves the static Vite build from `frontend/dist/` with 1-year cache on fingerprinted `/assets/`. It also writes `backend/.env` with a tight `CORS_ORIGINS` allowlist (production domain only).
 
 ### Manual redeploy
 
@@ -120,8 +137,9 @@ sudo bash /apps/panchanga/infra/update-deploy.sh
 | ------------ | ----------------- |
 | UFW firewall | Only 22/80/443 open externally; 8001 actively denied |
 | Backend      | Binds to `127.0.0.1` only; never reachable from the internet |
-| Nginx        | Security headers (X-Frame-Options, nosniff, Referrer-Policy); direct-IP requests return `444` |
-| TLS          | Certbot auto-renews LE certs with strong ciphers |
+| Nginx        | HSTS + X-Frame-Options + nosniff + Referrer-Policy; direct-IP requests return `444`; HTTP→HTTPS redirect |
+| TLS          | Cloudflare Origin Certificate (15-year, no auto-renew, no rate limits). TLS 1.2/1.3 only |
+| CORS         | `CORS_ORIGINS` locked to production domains; same-origin via Nginx proxy in browser |
 | Monitoring   | Ports 3002/9090/9100 open by default — **restrict to your admin IP before going live** |
 
 ---
