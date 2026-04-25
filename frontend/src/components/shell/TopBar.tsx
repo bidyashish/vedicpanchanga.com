@@ -113,7 +113,7 @@ export function TopBar({
             aria-expanded={drawerOpen}
             aria-controls="mobile-nav-drawer"
             onClick={() => setDrawerOpen((v) => !v)}
-            className="md:hidden inline-flex items-center justify-center w-8 h-8 rounded-sm border border-parchment-200 bg-white text-ink hover:border-saffron hover:text-saffron focus:outline-none focus:ring-2 focus:ring-saffron/30 transition-colors"
+            className="md:hidden inline-flex items-center justify-center w-8 h-8 rounded-sm border border-parchment-200 bg-white text-ink hover:border-saffron hover:text-saffron focus:outline-hidden focus:ring-2 focus:ring-saffron/30 transition-colors"
           >
             {drawerOpen ? (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">

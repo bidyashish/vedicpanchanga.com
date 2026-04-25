@@ -1,17 +1,17 @@
 """Vedic Astrology Calculator using Swiss Ephemeris (Lahiri Ayanamsa)."""
+
 from __future__ import annotations
 
-import os
+from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 import pytz
 import swisseph as swe
-from datetime import datetime
 from timezonefinder import TimezoneFinder
 
-from ayanamsa import set_ayanamsa, AYANAMSA_OPTIONS
-from vargas import varga_sign, VARGA_ORDER, VARGA_NAMES, VARGA_SUBTITLE
+from ayanamsa import set_ayanamsa
+from vargas import VARGA_NAMES, VARGA_ORDER, VARGA_SUBTITLE, varga_sign
 
 # Configure Swiss Ephemeris
 EPHE_PATH = str(Path(__file__).parent / "ephe")
@@ -21,34 +21,100 @@ swe.set_sid_mode(swe.SIDM_LAHIRI)
 _TF = TimezoneFinder()
 
 SIGNS = [
-    "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
-    "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces",
+    "Aries",
+    "Taurus",
+    "Gemini",
+    "Cancer",
+    "Leo",
+    "Virgo",
+    "Libra",
+    "Scorpio",
+    "Sagittarius",
+    "Capricorn",
+    "Aquarius",
+    "Pisces",
 ]
 
 SIGN_LORDS = [
-    "Mars", "Venus", "Mercury", "Moon", "Sun", "Mercury",
-    "Venus", "Mars", "Jupiter", "Saturn", "Saturn", "Jupiter",
+    "Mars",
+    "Venus",
+    "Mercury",
+    "Moon",
+    "Sun",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Saturn",
+    "Jupiter",
 ]
 
 NAKSHATRAS = [
-    "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", "Ardra",
-    "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni",
-    "Uttara Phalguni", "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha",
-    "Jyeshtha", "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana",
-    "Dhanishta", "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada",
+    "Ashwini",
+    "Bharani",
+    "Krittika",
+    "Rohini",
+    "Mrigashira",
+    "Ardra",
+    "Punarvasu",
+    "Pushya",
+    "Ashlesha",
+    "Magha",
+    "Purva Phalguni",
+    "Uttara Phalguni",
+    "Hasta",
+    "Chitra",
+    "Swati",
+    "Vishakha",
+    "Anuradha",
+    "Jyeshtha",
+    "Mula",
+    "Purva Ashadha",
+    "Uttara Ashadha",
+    "Shravana",
+    "Dhanishta",
+    "Shatabhisha",
+    "Purva Bhadrapada",
+    "Uttara Bhadrapada",
     "Revati",
 ]
 
 # Vimshottari Dasha periods (years) - Mahadasha sequence starts from nakshatra lord
 NAKSHATRA_LORDS = [
-    "Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"
+    "Ketu",
+    "Venus",
+    "Sun",
+    "Moon",
+    "Mars",
+    "Rahu",
+    "Jupiter",
+    "Saturn",
+    "Mercury",
 ]
 # Nakshatra index -> lord (repeats every 9)
 DASHA_YEARS = {
-    "Ketu": 7, "Venus": 20, "Sun": 6, "Moon": 10, "Mars": 7,
-    "Rahu": 18, "Jupiter": 16, "Saturn": 19, "Mercury": 17,
+    "Ketu": 7,
+    "Venus": 20,
+    "Sun": 6,
+    "Moon": 10,
+    "Mars": 7,
+    "Rahu": 18,
+    "Jupiter": 16,
+    "Saturn": 19,
+    "Mercury": 17,
 }
-DASHA_SEQUENCE = ["Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"]
+DASHA_SEQUENCE = [
+    "Ketu",
+    "Venus",
+    "Sun",
+    "Moon",
+    "Mars",
+    "Rahu",
+    "Jupiter",
+    "Saturn",
+    "Mercury",
+]
 
 PLANET_ORDER = [
     ("Sun", swe.SUN, "Su"),
@@ -66,74 +132,74 @@ PLANET_ORDER = [
 # Source: Classical Parasara texts (standard Prastarashtakavarga tables)
 BAV_RULES = {
     "Sun": {
-        "Sun":  [1,2,4,7,8,9,10,11],
-        "Moon": [3,6,10,11],
-        "Mars": [1,2,4,7,8,9,10,11],
-        "Mercury": [3,5,6,9,10,11,12],
-        "Jupiter": [5,6,9,11],
-        "Venus": [6,7,12],
-        "Saturn": [1,2,4,7,8,9,10,11],
-        "Asc": [3,4,6,10,11,12],
+        "Sun": [1, 2, 4, 7, 8, 9, 10, 11],
+        "Moon": [3, 6, 10, 11],
+        "Mars": [1, 2, 4, 7, 8, 9, 10, 11],
+        "Mercury": [3, 5, 6, 9, 10, 11, 12],
+        "Jupiter": [5, 6, 9, 11],
+        "Venus": [6, 7, 12],
+        "Saturn": [1, 2, 4, 7, 8, 9, 10, 11],
+        "Asc": [3, 4, 6, 10, 11, 12],
     },
     "Moon": {
-        "Sun":  [3,6,7,8,10,11],
-        "Moon": [3,6,7,8,10,11],
-        "Mars": [2,3,5,6,9,10,11],
-        "Mercury": [1,3,4,5,7,8,10,11],
-        "Jupiter": [1,4,7,8,10,11,12],
-        "Venus": [3,4,5,7,9,10,11],
-        "Saturn": [3,5,6,11],
-        "Asc": [3,6,10,11],
+        "Sun": [3, 6, 7, 8, 10, 11],
+        "Moon": [3, 6, 7, 8, 10, 11],
+        "Mars": [2, 3, 5, 6, 9, 10, 11],
+        "Mercury": [1, 3, 4, 5, 7, 8, 10, 11],
+        "Jupiter": [1, 4, 7, 8, 10, 11, 12],
+        "Venus": [3, 4, 5, 7, 9, 10, 11],
+        "Saturn": [3, 5, 6, 11],
+        "Asc": [3, 6, 10, 11],
     },
     "Mars": {
-        "Sun":  [3,5,6,10,11],
-        "Moon": [3,6,11],
-        "Mars": [1,2,4,7,8,10,11],
-        "Mercury": [3,5,6,11],
-        "Jupiter": [6,10,11,12],
-        "Venus": [6,8,11,12],
-        "Saturn": [1,4,7,8,9,10,11],
-        "Asc": [1,3,6,10,11],
+        "Sun": [3, 5, 6, 10, 11],
+        "Moon": [3, 6, 11],
+        "Mars": [1, 2, 4, 7, 8, 10, 11],
+        "Mercury": [3, 5, 6, 11],
+        "Jupiter": [6, 10, 11, 12],
+        "Venus": [6, 8, 11, 12],
+        "Saturn": [1, 4, 7, 8, 9, 10, 11],
+        "Asc": [1, 3, 6, 10, 11],
     },
     "Mercury": {
-        "Sun":  [5,6,9,11,12],
-        "Moon": [2,4,6,8,10,11],
-        "Mars": [1,2,4,7,8,9,10,11],
-        "Mercury": [1,3,5,6,9,10,11,12],
-        "Jupiter": [6,8,11,12],
-        "Venus": [1,2,3,4,5,8,9,11],
-        "Saturn": [1,2,4,7,8,9,10,11],
-        "Asc": [1,2,4,6,8,10,11],
+        "Sun": [5, 6, 9, 11, 12],
+        "Moon": [2, 4, 6, 8, 10, 11],
+        "Mars": [1, 2, 4, 7, 8, 9, 10, 11],
+        "Mercury": [1, 3, 5, 6, 9, 10, 11, 12],
+        "Jupiter": [6, 8, 11, 12],
+        "Venus": [1, 2, 3, 4, 5, 8, 9, 11],
+        "Saturn": [1, 2, 4, 7, 8, 9, 10, 11],
+        "Asc": [1, 2, 4, 6, 8, 10, 11],
     },
     "Jupiter": {
-        "Sun":  [1,2,3,4,7,8,9,10,11],
-        "Moon": [2,5,7,9,11],
-        "Mars": [1,2,4,7,8,10,11],
-        "Mercury": [1,2,4,5,6,9,10,11],
-        "Jupiter": [1,2,3,4,7,8,10,11],
-        "Venus": [2,5,6,9,10,11],
-        "Saturn": [3,5,6,12],
-        "Asc": [1,2,4,5,6,7,9,10,11],
+        "Sun": [1, 2, 3, 4, 7, 8, 9, 10, 11],
+        "Moon": [2, 5, 7, 9, 11],
+        "Mars": [1, 2, 4, 7, 8, 10, 11],
+        "Mercury": [1, 2, 4, 5, 6, 9, 10, 11],
+        "Jupiter": [1, 2, 3, 4, 7, 8, 10, 11],
+        "Venus": [2, 5, 6, 9, 10, 11],
+        "Saturn": [3, 5, 6, 12],
+        "Asc": [1, 2, 4, 5, 6, 7, 9, 10, 11],
     },
     "Venus": {
-        "Sun":  [8,11,12],
-        "Moon": [1,2,3,4,5,8,9,11,12],
-        "Mars": [3,5,6,9,11,12],
-        "Mercury": [3,5,6,9,11],
-        "Jupiter": [5,8,9,10,11],
-        "Venus": [1,2,3,4,5,8,9,10,11],
-        "Saturn": [3,4,5,8,9,10,11],
-        "Asc": [1,2,3,4,5,8,9,11],
+        "Sun": [8, 11, 12],
+        "Moon": [1, 2, 3, 4, 5, 8, 9, 11, 12],
+        "Mars": [3, 5, 6, 9, 11, 12],
+        "Mercury": [3, 5, 6, 9, 11],
+        "Jupiter": [5, 8, 9, 10, 11],
+        "Venus": [1, 2, 3, 4, 5, 8, 9, 10, 11],
+        "Saturn": [3, 4, 5, 8, 9, 10, 11],
+        "Asc": [1, 2, 3, 4, 5, 8, 9, 11],
     },
     "Saturn": {
-        "Sun":  [1,2,4,7,8,10,11],
-        "Moon": [3,6,11],
-        "Mars": [3,5,6,10,11,12],
-        "Mercury": [6,8,9,10,11,12],
-        "Jupiter": [5,6,11,12],
-        "Venus": [6,11,12],
-        "Saturn": [3,5,6,11],
-        "Asc": [1,3,4,6,10,11],
+        "Sun": [1, 2, 4, 7, 8, 10, 11],
+        "Moon": [3, 6, 11],
+        "Mars": [3, 5, 6, 10, 11, 12],
+        "Mercury": [6, 8, 9, 10, 11, 12],
+        "Jupiter": [5, 6, 11, 12],
+        "Venus": [6, 11, 12],
+        "Saturn": [3, 5, 6, 11],
+        "Asc": [1, 3, 4, 6, 10, 11],
     },
 }
 
@@ -188,7 +254,9 @@ def format_dms(deg_in_sign: float) -> str:
     return f"{d:02d}° {m:02d}' {s:02d}\""
 
 
-def compute_vimshottari_dasha(moon_longitude: float, birth_dt_utc: datetime) -> List[Dict[str, Any]]:
+def compute_vimshottari_dasha(
+    moon_longitude: float, birth_dt_utc: datetime
+) -> List[Dict[str, Any]]:
     """Compute Vimshottari Mahadasha sequence starting from birth."""
     # Nakshatra index & how far into it
     nak_span = 360.0 / 27  # 13.333..
@@ -205,24 +273,28 @@ def compute_vimshottari_dasha(moon_longitude: float, birth_dt_utc: datetime) -> 
     current_start = birth_dt_utc
     # First dasha has balance
     first_end = _add_years(current_start, balance_years)
-    result.append({
-        "lord": lord,
-        "start": current_start.isoformat(),
-        "end": first_end.isoformat(),
-        "years": round(balance_years, 3),
-    })
+    result.append(
+        {
+            "lord": lord,
+            "start": current_start.isoformat(),
+            "end": first_end.isoformat(),
+            "years": round(balance_years, 3),
+        }
+    )
     current_start = first_end
     # Next 8 Mahadashas
     for i in range(1, 9):
         next_lord = DASHA_SEQUENCE[(start_idx + i) % 9]
         yrs = DASHA_YEARS[next_lord]
         end = _add_years(current_start, yrs)
-        result.append({
-            "lord": next_lord,
-            "start": current_start.isoformat(),
-            "end": end.isoformat(),
-            "years": yrs,
-        })
+        result.append(
+            {
+                "lord": next_lord,
+                "start": current_start.isoformat(),
+                "end": end.isoformat(),
+                "years": yrs,
+            }
+        )
         current_start = end
     return result
 
@@ -230,14 +302,19 @@ def compute_vimshottari_dasha(moon_longitude: float, birth_dt_utc: datetime) -> 
 def _add_years(dt: datetime, years: float) -> datetime:
     """Add fractional years (365.25 days/year) to a UTC datetime."""
     from datetime import timedelta
+
     return dt + timedelta(days=years * 365.25)
 
 
-def compute_ashtakavarga(planets: Dict[str, Dict[str, Any]], asc_sign: int) -> Dict[str, Any]:
+def compute_ashtakavarga(
+    planets: Dict[str, Dict[str, Any]], asc_sign: int
+) -> Dict[str, Any]:
     """Compute BAV (Bhinnashtakavarga) and SAV (Sarvashtakavarga)."""
     # sign positions 1-12 for each contributor
-    contributor_signs = {name: planets[name]["sign_id"] for name in
-                         ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]}
+    contributor_signs = {
+        name: planets[name]["sign_id"]
+        for name in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
+    }
     contributor_signs["Asc"] = asc_sign
 
     bav = {}  # planet -> list[12] of points per sign (index 0 = Aries)
@@ -246,7 +323,7 @@ def compute_ashtakavarga(planets: Dict[str, Dict[str, Any]], asc_sign: int) -> D
         for contributor, positions in rules.items():
             base_sign = contributor_signs[contributor]  # 1-12
             for pos in positions:
-                target_sign = ((base_sign - 1 + pos - 1) % 12)  # 0-11
+                target_sign = (base_sign - 1 + pos - 1) % 12  # 0-11
                 sign_points[target_sign] += 1
         bav[planet] = sign_points
 
@@ -258,9 +335,17 @@ def compute_ashtakavarga(planets: Dict[str, Dict[str, Any]], asc_sign: int) -> D
     return {"bav": bav, "sav": sav}
 
 
-def compute_chart(year: int, month: int, day: int, hour: int, minute: int,
-                  latitude: float, longitude: float, timezone_name: str | None = None,
-                  ayanamsa: str = "lahiri") -> Dict[str, Any]:
+def compute_chart(
+    year: int,
+    month: int,
+    day: int,
+    hour: int,
+    minute: int,
+    latitude: float,
+    longitude: float,
+    timezone_name: str | None = None,
+    ayanamsa: str = "lahiri",
+) -> Dict[str, Any]:
     """Main calculation entry. Takes LOCAL time + timezone; returns full chart JSON."""
 
     # Resolve timezone
@@ -274,7 +359,9 @@ def compute_chart(year: int, month: int, day: int, hour: int, minute: int,
 
     # Julian Day (UT)
     jd_ut = swe.julday(
-        utc_dt.year, utc_dt.month, utc_dt.day,
+        utc_dt.year,
+        utc_dt.month,
+        utc_dt.day,
         utc_dt.hour + utc_dt.minute / 60 + utc_dt.second / 3600,
     )
 
@@ -297,7 +384,7 @@ def compute_chart(year: int, month: int, day: int, hour: int, minute: int,
     planets["Ketu"] = _planet_entry("Ketu", "Ke", ketu_lon, False)
 
     # Ascendant
-    cusps, ascmc = swe.houses_ex(jd_ut, latitude, longitude, b'P', sidereal_flag)
+    cusps, ascmc = swe.houses_ex(jd_ut, latitude, longitude, b"P", sidereal_flag)
     asc_lon = ascmc[0] % 360
     asc_sign = sign_index_from_longitude(asc_lon)
     asc_entry = _planet_entry("Ascendant", "As", asc_lon, False)
@@ -335,14 +422,26 @@ def compute_chart(year: int, month: int, day: int, hour: int, minute: int,
     d9_chart = varga_charts["d9"]["chart"]
 
     # Vimshottari Dasha
-    dasha = compute_vimshottari_dasha(planets["Moon"]["longitude"], utc_dt.replace(tzinfo=None))
+    dasha = compute_vimshottari_dasha(
+        planets["Moon"]["longitude"], utc_dt.replace(tzinfo=None)
+    )
 
     # Ashtakavarga
     ashtakavarga = compute_ashtakavarga(planets, asc_sign)
 
     # Build planets table (ordered)
     planets_list = []
-    for name in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"]:
+    for name in [
+        "Sun",
+        "Moon",
+        "Mars",
+        "Mercury",
+        "Jupiter",
+        "Venus",
+        "Saturn",
+        "Rahu",
+        "Ketu",
+    ]:
         planets_list.append(planets[name])
 
     return {
@@ -392,7 +491,9 @@ def _planet_entry(name: str, abbr: str, lon: float, retro: bool) -> Dict[str, An
     }
 
 
-def _build_house_map(planets: Dict[str, Dict[str, Any]], asc_sign: int, key: str) -> Dict[int, List[str]]:
+def _build_house_map(
+    planets: Dict[str, Dict[str, Any]], asc_sign: int, key: str
+) -> Dict[int, List[str]]:
     """Return dict house (1-12) -> list of planet abbreviations, using whole-sign houses."""
     houses: Dict[int, List[str]] = {i: [] for i in range(1, 13)}
     for p in planets.values():

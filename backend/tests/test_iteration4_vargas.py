@@ -1,4 +1,5 @@
 """Iteration 4 backend tests: 16 divisional charts D1..D60."""
+
 import os
 from pathlib import Path
 
@@ -39,6 +40,7 @@ def chart():
 
 # --------------- vargas top-level structure ---------------
 
+
 class TestVargasStructure:
     def test_varga_order_field(self, chart):
         assert "varga_order" in chart, "varga_order missing"
@@ -47,7 +49,9 @@ class TestVargasStructure:
     def test_vargas_keys_present(self, chart):
         assert "vargas" in chart, "vargas dict missing"
         keys = set(chart["vargas"].keys())
-        assert keys == EXPECTED_VARGA_KEYS, f"varga keys mismatch: {keys ^ EXPECTED_VARGA_KEYS}"
+        assert (
+            keys == EXPECTED_VARGA_KEYS
+        ), f"varga keys mismatch: {keys ^ EXPECTED_VARGA_KEYS}"
 
     def test_each_varga_shape(self, chart):
         for key, v in chart["vargas"].items():
@@ -61,7 +65,9 @@ class TestVargasStructure:
             for h in range(1, 13):
                 assert str(h) in ch or h in ch, f"{key} chart missing house {h}"
             # asc_sign in 1..12
-            assert 1 <= v["asc_sign"] <= 12, f"{key} asc_sign out of range: {v['asc_sign']}"
+            assert (
+                1 <= v["asc_sign"] <= 12
+            ), f"{key} asc_sign out of range: {v['asc_sign']}"
 
     def test_d1_subtitle(self, chart):
         assert chart["vargas"]["d1"]["subtitle"] == "Physical Self / Body"
@@ -84,6 +90,7 @@ class TestVargasStructure:
 
 
 # --------------- backward compatibility ---------------
+
 
 class TestBackwardCompat:
     def test_legacy_d1_d2_d9_present(self, chart):
@@ -110,6 +117,7 @@ class TestBackwardCompat:
 
 # --------------- D9 navamsa formula sanity ---------------
 
+
 class TestNavamsaFormula:
     def test_d9_formula_for_each_planet(self, chart):
         # For each planet, recompute navamsa sign and ensure it matches what's in
@@ -122,32 +130,36 @@ class TestNavamsaFormula:
             expected_house = ((expected_sign - d9_asc) % 12) + 1
             ch = d9["chart"]
             cell = ch.get(str(expected_house), ch.get(expected_house, []))
-            assert p["abbr"] in cell, (
-                f"{p['name']} expected in D9 house {expected_house} but got {cell}"
-            )
+            assert (
+                p["abbr"] in cell
+            ), f"{p['name']} expected in D9 house {expected_house} but got {cell}"
 
 
 # --------------- D30 Trimshamsha special rules ---------------
 # Direct unit test against the vargas module to verify uneven planetary segments.
+
 
 class TestD30TrimshamshaUnit:
     def test_module_import(self):
         # Use absolute import path; backend dir is on sys.path via uvicorn but
         # not pytest. Add it.
         import sys
+
         sys.path.insert(0, "/app/backend")
         from vargas import varga_sign  # noqa: F401
 
     def _vs(self, lon, n):
         import sys
+
         sys.path.insert(0, "/app/backend")
         from vargas import varga_sign
+
         return varga_sign(lon, n)
 
     def test_d30_odd_sign_aries_segments(self):
         # Aries (sign 1, odd): Mars 0-5 -> Aries(1); Sat 5-10 -> Aquarius(11);
         # Jup 10-18 -> Sg(9); Merc 18-25 -> Ge(3); Ven 25-30 -> Li(7)
-        assert self._vs(0 + 2, 30) == 1   # 2° Aries
+        assert self._vs(0 + 2, 30) == 1  # 2° Aries
         assert self._vs(0 + 7, 30) == 11
         assert self._vs(0 + 14, 30) == 9
         assert self._vs(0 + 22, 30) == 3

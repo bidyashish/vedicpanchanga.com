@@ -1,4 +1,5 @@
 """Iteration 3 backend tests: ayanamsa selector + advanced panchang yogas (Amrit/Varjyam/Siddhi)."""
+
 import os
 from pathlib import Path
 
@@ -24,10 +25,19 @@ DELHI_PAYLOAD = {
     "place_name": "New Delhi",
 }
 
-EXPECTED_AYANAMSA_IDS = {"lahiri", "kp_new", "kp_old", "raman", "kp_khullar", "sayan", "manoj"}
+EXPECTED_AYANAMSA_IDS = {
+    "lahiri",
+    "kp_new",
+    "kp_old",
+    "raman",
+    "kp_khullar",
+    "sayan",
+    "manoj",
+}
 
 
 # ==================== /api/ayanamsa-options ====================
+
 
 class TestAyanamsaOptions:
     def test_returns_seven_options(self):
@@ -49,6 +59,7 @@ class TestAyanamsaOptions:
 
 # ==================== /api/calculate with ayanamsa variations ====================
 
+
 def _calc(ayanamsa: str):
     payload = {**DELHI_PAYLOAD, "ayanamsa": ayanamsa}
     r = requests.post(f"{BASE_URL}/api/calculate", json=payload, timeout=30)
@@ -69,18 +80,18 @@ class TestAyanamsaCalculate:
         # so subtracting Raman gives ~Pisces 15° (still Pisces).
         assert asc["sign"] == "Pisces", f"Raman asc sign: {asc['sign']}"
         # Degree-in-sign should be roughly 15° (within 1°)
-        assert 14.0 <= asc["degree_in_sign"] <= 17.0, (
-            f"Raman degree_in_sign expected ~15°, got {asc['degree_in_sign']}"
-        )
+        assert (
+            14.0 <= asc["degree_in_sign"] <= 17.0
+        ), f"Raman degree_in_sign expected ~15°, got {asc['degree_in_sign']}"
 
     def test_sayan_tropical_ascendant_aries(self):
         c = _calc("sayan")
         asc = c["ascendant"]
         # Tropical (no sidereal shift): ascendant should land in Aries ~7.6°
         assert asc["sign"] == "Aries", f"Sayan asc sign: {asc['sign']}"
-        assert 6.5 <= asc["degree_in_sign"] <= 9.0, (
-            f"Sayan degree_in_sign expected ~7.6°, got {asc['degree_in_sign']}"
-        )
+        assert (
+            6.5 <= asc["degree_in_sign"] <= 9.0
+        ), f"Sayan degree_in_sign expected ~7.6°, got {asc['degree_in_sign']}"
 
     def test_kp_new_and_kp_old_consistent(self):
         c1 = _calc("kp_new")
@@ -89,7 +100,9 @@ class TestAyanamsaCalculate:
         assert c1["ascendant"]["sign"] == "Pisces"
         assert c2["ascendant"]["sign"] == "Pisces"
         # Within ~0.5° of each other
-        diff = abs(c1["ascendant"]["degree_in_sign"] - c2["ascendant"]["degree_in_sign"])
+        diff = abs(
+            c1["ascendant"]["degree_in_sign"] - c2["ascendant"]["degree_in_sign"]
+        )
         assert diff < 1.0, f"KP new/old asc differ by {diff}"
 
     def test_kp_khullar_returns_chart(self):
@@ -103,11 +116,19 @@ class TestAyanamsaCalculate:
 
 # ==================== Legacy fields preserved ====================
 
+
 class TestLegacyFieldsPreserved:
     def test_dasha_ashtakavarga_charts_intact_with_ayanamsa_param(self):
         c = _calc("lahiri")
         # All legacy top-level fields
-        for f in ["d1_chart", "d2_chart", "d9_chart", "dasha", "ashtakavarga", "planets_data"]:
+        for f in [
+            "d1_chart",
+            "d2_chart",
+            "d9_chart",
+            "dasha",
+            "ashtakavarga",
+            "planets_data",
+        ]:
             assert f in c, f"Missing legacy field {f}"
         # SAV total still 337 with Lahiri
         sav_total = sum(c["ashtakavarga"]["sav"])
@@ -118,15 +139,20 @@ class TestLegacyFieldsPreserved:
 
 # ==================== /api/get-panchang advanced timings ====================
 
+
 @pytest.fixture(scope="module")
 def panchang_detailed():
-    r = requests.get(f"{BASE_URL}/api/get-panchang", params={
-        "latitude": 28.6139,
-        "longitude": 77.2090,
-        "timezone": "Asia/Kolkata",
-        "date": "2024-01-04",
-        "detailed": "true",
-    }, timeout=30)
+    r = requests.get(
+        f"{BASE_URL}/api/get-panchang",
+        params={
+            "latitude": 28.6139,
+            "longitude": 77.2090,
+            "timezone": "Asia/Kolkata",
+            "date": "2024-01-04",
+            "detailed": "true",
+        },
+        timeout=30,
+    )
     assert r.status_code == 200, r.text
     return r.json()
 

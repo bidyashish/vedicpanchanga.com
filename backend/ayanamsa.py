@@ -1,16 +1,17 @@
 """Ayanamsa options supported by the app."""
+
 import swisseph as swe
 
 # Keyed by a user-friendly ID. Each entry: (swe constant, display label, notes)
 # Use None for 'sayan' (tropical — no sidereal shift applied).
 AYANAMSA_OPTIONS = {
-    "lahiri":        (swe.SIDM_LAHIRI,             "N.C. Lahiri (Chitrapaksha)"),
-    "kp_new":        (swe.SIDM_KRISHNAMURTI_VP291, "K.P. New (Krishnamurti VP291)"),
-    "kp_old":        (swe.SIDM_KRISHNAMURTI,       "K.P. Old (Krishnamurti)"),
-    "raman":         (swe.SIDM_RAMAN,              "B.V. Raman"),
-    "kp_khullar":    (swe.SIDM_TRUE_CITRA,         "K.P. Khullar (True Chitrapaksha)"),
-    "sayan":         (None,                        "Sāyana (Tropical)"),
-    "manoj":         (swe.SIDM_LAHIRI_ICRC,        "Manoj (Lahiri ICRC)"),
+    "lahiri": (swe.SIDM_LAHIRI, "N.C. Lahiri (Chitrapaksha)"),
+    "kp_new": (swe.SIDM_KRISHNAMURTI_VP291, "K.P. New (Krishnamurti VP291)"),
+    "kp_old": (swe.SIDM_KRISHNAMURTI, "K.P. Old (Krishnamurti)"),
+    "raman": (swe.SIDM_RAMAN, "B.V. Raman"),
+    "kp_khullar": (swe.SIDM_TRUE_CITRA, "K.P. Khullar (True Chitrapaksha)"),
+    "sayan": (None, "Sāyana (Tropical)"),
+    "manoj": (swe.SIDM_LAHIRI_ICRC, "Manoj (Lahiri ICRC)"),
 }
 
 

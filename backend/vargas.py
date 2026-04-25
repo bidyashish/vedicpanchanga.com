@@ -63,17 +63,34 @@ VARGA_SUBTITLE = {
 
 SIGN_QUALITY = {
     # 1 = movable (chara), 2 = fixed (sthira), 3 = dual (dwi-swabhava)
-    1: 1, 4: 1, 7: 1, 10: 1,
-    2: 2, 5: 2, 8: 2, 11: 2,
-    3: 3, 6: 3, 9: 3, 12: 3,
+    1: 1,
+    4: 1,
+    7: 1,
+    10: 1,
+    2: 2,
+    5: 2,
+    8: 2,
+    11: 2,
+    3: 3,
+    6: 3,
+    9: 3,
+    12: 3,
 }
 
 SIGN_ELEMENT = {
     # 1 = fire, 2 = earth, 3 = air, 4 = water
-    1: 1, 5: 1, 9: 1,
-    2: 2, 6: 2, 10: 2,
-    3: 3, 7: 3, 11: 3,
-    4: 4, 8: 4, 12: 4,
+    1: 1,
+    5: 1,
+    9: 1,
+    2: 2,
+    6: 2,
+    10: 2,
+    3: 3,
+    7: 3,
+    11: 3,
+    4: 4,
+    8: 4,
+    12: 4,
 }
 
 
@@ -85,8 +102,8 @@ def _add_sign(sign: int, offset: int) -> int:
 def varga_sign(longitude: float, n: int) -> int:
     """Return 1-12 sign id for the given longitude in divisional chart D<n>."""
     longitude = longitude % 360
-    sign = int(longitude // 30) + 1             # 1-12
-    deg_in_sign = longitude - (sign - 1) * 30   # 0-30
+    sign = int(longitude // 30) + 1  # 1-12
+    deg_in_sign = longitude - (sign - 1) * 30  # 0-30
     is_odd = sign % 2 == 1
 
     if n == 1:
@@ -162,17 +179,25 @@ def varga_sign(longitude: float, n: int) -> int:
         # Odd: Mars(Ar)0-5, Sat(Aq)5-10, Jup(Sg)10-18, Merc(Ge)18-25, Ven(Li)25-30
         # Even: Ven(Ta)0-5, Merc(Vi)5-12, Jup(Pi)12-20, Sat(Cp)20-25, Mars(Sc)25-30
         if is_odd:
-            if deg_in_sign < 5:   return 1    # Aries (Mars)
-            if deg_in_sign < 10:  return 11   # Aquarius (Saturn)
-            if deg_in_sign < 18:  return 9    # Sagittarius (Jupiter)
-            if deg_in_sign < 25:  return 3    # Gemini (Mercury)
-            return 7                            # Libra (Venus)
+            if deg_in_sign < 5:
+                return 1  # Aries (Mars)
+            if deg_in_sign < 10:
+                return 11  # Aquarius (Saturn)
+            if deg_in_sign < 18:
+                return 9  # Sagittarius (Jupiter)
+            if deg_in_sign < 25:
+                return 3  # Gemini (Mercury)
+            return 7  # Libra (Venus)
         else:
-            if deg_in_sign < 5:   return 2    # Taurus (Venus)
-            if deg_in_sign < 12:  return 6    # Virgo (Mercury)
-            if deg_in_sign < 20:  return 12   # Pisces (Jupiter)
-            if deg_in_sign < 25:  return 10   # Capricorn (Saturn)
-            return 8                            # Scorpio (Mars)
+            if deg_in_sign < 5:
+                return 2  # Taurus (Venus)
+            if deg_in_sign < 12:
+                return 6  # Virgo (Mercury)
+            if deg_in_sign < 20:
+                return 12  # Pisces (Jupiter)
+            if deg_in_sign < 25:
+                return 10  # Capricorn (Saturn)
+            return 8  # Scorpio (Mars)
 
     if n == 40:
         # Khavedamsha: odd from Aries, even from Libra

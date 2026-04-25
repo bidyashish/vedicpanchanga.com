@@ -1,12 +1,112 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Class-based dark mode (was darkMode: "class" in v3 config). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ────────────────────────────────────────────────────────────
+   Theme tokens. Colors are wired through CSS rgb-channel vars
+   (--surface-rgb, --primary-rgb, etc.) declared further down,
+   so dark mode flips palette by overriding those vars rather
+   than the higher-level color tokens here. Tailwind v4's
+   color-mix() opacity modifiers (bg-saffron/10) work fine
+   against rgb() expressions.
+   ──────────────────────────────────────────────────────────── */
+@theme {
+  --font-sans: "Manrope", "Hind", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Fraunces", ui-serif, Georgia, serif;
+  --font-deva: "Tiro Devanagari Hindi", "Noto Serif Devanagari", "Hind", serif;
+  --font-deva-body: "Hind", "Noto Serif Devanagari", "Tiro Devanagari Hindi", sans-serif;
+
+  /* Brand scale — Pumpkin Spice. Static (does not flip in dark mode). */
+  --color-pumpkin-50:  #fff0e5;
+  --color-pumpkin-100: #ffe0cc;
+  --color-pumpkin-200: #ffc299;
+  --color-pumpkin-300: #ffa366;
+  --color-pumpkin-400: #ff8533;
+  --color-pumpkin-500: #ff6600;
+  --color-pumpkin-600: #cc5200;
+  --color-pumpkin-700: #993d00;
+  --color-pumpkin-800: #662900;
+  --color-pumpkin-900: #331400;
+  --color-pumpkin-950: #240e00;
+
+  /* Surface tier — names retained for compatibility with existing JSX. */
+  --color-parchment-50:  rgb(var(--surface-rgb));
+  --color-parchment-100: rgb(var(--surface-soft-rgb));
+  --color-parchment-200: rgb(var(--border-rgb));
+  --color-parchment-300: rgb(var(--border-strong-rgb));
+
+  /* Primary accent */
+  --color-crimson:       rgb(var(--primary-rgb));
+  --color-crimson-dark:  rgb(var(--primary-hover-rgb));
+  --color-crimson-light: rgb(var(--primary-soft-rgb));
+
+  --color-saffron:       rgb(var(--primary-rgb));
+  --color-saffron-dark:  rgb(var(--primary-hover-rgb));
+  --color-saffron-light: rgb(var(--primary-soft-rgb));
+
+  --color-gold:       rgb(var(--text-muted-rgb));
+  --color-gold-dark:  rgb(var(--text-soft-rgb));
+  --color-gold-light: rgb(var(--surface-soft-rgb));
+
+  --color-indigo:      rgb(var(--accent-moon-rgb));
+  --color-indigo-dark: rgb(var(--accent-moon-rgb));
+  --color-indigo-soft: rgb(var(--primary-soft-rgb));
+
+  --color-ink:       rgb(var(--text-rgb));
+  --color-ink-soft:  rgb(var(--text-soft-rgb));
+  --color-ink-muted: rgb(var(--text-muted-rgb));
+
+  --color-leaf:       rgb(var(--success-rgb));
+  --color-leaf-light: rgb(var(--success-rgb));
+
+  --color-rose: rgb(var(--danger-rgb));
+
+  /* Container scale — adds the missing `max-w-screen-3xl` utility. */
+  --container-screen-3xl: 1792px;
+
+  /* Restrained corner radii. */
+  --radius-2xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+
+  /* Shadows — overridden in `.dark` for higher contrast. */
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-lift: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-glow: 0 0 0 3px rgb(var(--primary-rgb) / 0.18);
+
+  /* Semantic font scale — every component should reach for one of
+     these instead of text-[Npx]. */
+  --text-micro: 10px;
+  --text-micro--line-height: 1.4;
+  --text-micro--letter-spacing: 0.04em;
+  --text-tiny: 11px;
+  --text-tiny--line-height: 1.4;
+  --text-mini: 12px;
+  --text-mini--line-height: 1.45;
+  --text-meta: 13px;
+  --text-meta--line-height: 1.5;
+  --text-body: 14px;
+  --text-body--line-height: 1.55;
+  --text-lead: 15px;
+  --text-lead--line-height: 1.55;
+  --text-title: 18px;
+  --text-title--line-height: 1.35;
+  --text-heading: 22px;
+  --text-heading--line-height: 1.25;
+  --text-display: 28px;
+  --text-display--line-height: 1.15;
+
+  --tracking-eyebrow: 0.1em;
+}
 
 @layer base {
   /* ────────────────────────────────────────────────────────────
-     Theme variables. RGB-channel form so that Tailwind utility
-     opacity modifiers like `bg-parchment-50/40` keep working.
-     Dark mode flips values via the `.dark` class on <html>.
+     Underlying RGB-channel vars consumed by the @theme tokens
+     above. Dark mode overrides these in `.dark` — the higher
+     level color/shadow tokens recompute automatically.
      ──────────────────────────────────────────────────────────── */
   :root {
     color-scheme: light;
@@ -93,21 +193,6 @@
     --indigo-soft: rgb(219 234 254);
     --rose: var(--danger);
 
-    /* Typography */
-    --font-sans: "Manrope", "Hind", ui-sans-serif, system-ui, sans-serif;
-    --font-serif: "Fraunces", ui-serif, Georgia, serif;
-    --font-deva: "Tiro Devanagari Hindi", "Noto Serif Devanagari", "Hind", serif;
-    --font-deva-body: "Hind", "Noto Serif Devanagari", "Tiro Devanagari Hindi", sans-serif;
-
-    /* Geometry — restrained */
-    --radius-sm: 4px;
-    --radius-md: 6px;
-    --radius-lg: 8px;
-    --radius-xl: 10px;
-
-    /* Shadows */
-    --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04);
-    --shadow-lift: 0 4px 12px rgba(15, 23, 42, 0.08);
   }
 
   /* ──────── Dark theme — comfortable charcoal, not pitch black ──────── */

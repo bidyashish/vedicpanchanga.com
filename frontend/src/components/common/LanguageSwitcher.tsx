@@ -1,7 +1,7 @@
 import { LANGUAGES, useI18n, type LangId } from "@/i18n";
 
 const SELECT_BASE =
-  "appearance-none bg-white border border-parchment-200 hover:border-saffron text-ink font-semibold rounded-md cursor-pointer focus:outline-none focus:border-saffron focus:ring-2 focus:ring-saffron/30 transition-colors min-h-[40px]";
+  "appearance-none bg-white border border-parchment-200 hover:border-saffron text-ink font-semibold rounded-md cursor-pointer focus:outline-hidden focus:border-saffron focus:ring-2 focus:ring-saffron/30 transition-colors min-h-[40px]";
 
 export function LanguageSwitcher({ testId = "lang-switcher" }: { testId?: string }) {
   const { lang, setLang } = useI18n();

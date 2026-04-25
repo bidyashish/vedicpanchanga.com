@@ -4,10 +4,12 @@ Each purpose has preferred Tithis, Nakshatras, Weekdays, Yogas and specific cave
 We score each day (0–100) then rank. Optionally filter by the native's Chandrabalam
 (Moon sign compatibility) and Tarabalam (birth nakshatra compatibility).
 """
+
 from __future__ import annotations
 
-from datetime import date as date_cls, timedelta
-from typing import Dict, Any, List, Optional
+from datetime import date as date_cls
+from datetime import timedelta
+from typing import Any, Dict, List, Optional
 
 from advanced_panchang import compute_detailed_panchang
 from constants import NAKSHATRAS
@@ -22,15 +24,38 @@ PURPOSES: Dict[str, Dict[str, Any]] = {
     "marriage": {
         "label": "Marriage (Vivāha)",
         "good_tithis": {2, 3, 5, 7, 10, 11, 12, 13, 17, 18, 20, 22, 25, 26, 27, 28},
-        "good_nakshatras": {4, 5, 10, 12, 13, 15, 17, 19, 21, 22, 26, 27},  # Ro,Mri,Ma,U.Ph,Ha,Sw,An,Mu,U.As,Shr,U.Bh,Re
+        "good_nakshatras": {
+            4,
+            5,
+            10,
+            12,
+            13,
+            15,
+            17,
+            19,
+            21,
+            22,
+            26,
+            27,
+        },  # Ro,Mri,Ma,U.Ph,Ha,Sw,An,Mu,U.As,Shr,U.Bh,Re
         "good_weekdays": {1, 3, 4, 5},  # Mon Wed Thu Fri
-        "avoid_weekdays": {2, 6, 7},     # Tue Sat Sun
+        "avoid_weekdays": {2, 6, 7},  # Tue Sat Sun
         "bad_tithis": {4, 9, 14, 19, 24, 29, 30, 15},  # Rikta, Amavasya, Purnima
     },
     "griha_pravesh": {
         "label": "Griha Praveśa (Housewarming)",
         "good_tithis": {2, 3, 5, 7, 10, 11, 12, 13, 17, 18, 20, 22, 25, 26, 27, 28},
-        "good_nakshatras": {4, 5, 12, 14, 17, 21, 22, 25, 26},  # Ro,Mri,Ha,Ch,An,U.As,Shr,P.Bh,U.Bh
+        "good_nakshatras": {
+            4,
+            5,
+            12,
+            14,
+            17,
+            21,
+            22,
+            25,
+            26,
+        },  # Ro,Mri,Ha,Ch,An,U.As,Shr,P.Bh,U.Bh
         "good_weekdays": {1, 3, 4, 5},
         "avoid_weekdays": {2, 7},
         "bad_tithis": {4, 9, 14, 30, 15, 19, 24, 29},
@@ -38,23 +63,46 @@ PURPOSES: Dict[str, Dict[str, Any]] = {
     "business": {
         "label": "Business / Venture (Vyāpāra)",
         "good_tithis": {1, 2, 3, 5, 7, 10, 11, 13, 16, 17, 18, 20, 22, 25, 26, 28},
-        "good_nakshatras": {1, 4, 5, 8, 12, 13, 14, 17, 21, 22, 23, 27},  # Asw,Ro,Mri,Pu,Ha,Ch,Sw,An,Shr,Dha,Re
-        "good_weekdays": {3, 4},         # Wed Thu (best)
-        "avoid_weekdays": {7},           # Sunday
+        "good_nakshatras": {
+            1,
+            4,
+            5,
+            8,
+            12,
+            13,
+            14,
+            17,
+            21,
+            22,
+            23,
+            27,
+        },  # Asw,Ro,Mri,Pu,Ha,Ch,Sw,An,Shr,Dha,Re
+        "good_weekdays": {3, 4},  # Wed Thu (best)
+        "avoid_weekdays": {7},  # Sunday
         "bad_tithis": {4, 9, 14, 30},
     },
     "travel": {
         "label": "Travel (Yātrā)",
         "good_tithis": {1, 2, 3, 5, 7, 10, 11, 13, 16, 17, 18, 20, 22, 25, 26, 28},
         "good_nakshatras": {1, 8, 13, 17, 19, 21, 22, 23, 27},
-        "good_weekdays": {1, 3, 5},      # Mon Wed Fri
+        "good_weekdays": {1, 3, 5},  # Mon Wed Fri
         "avoid_weekdays": {2, 6, 7},
         "bad_tithis": {4, 9, 14, 30, 15},
     },
     "education": {
         "label": "Vidyārambha (Learning)",
         "good_tithis": {2, 3, 5, 7, 10, 11, 12, 13, 17, 18, 20, 22, 25, 26, 27, 28},
-        "good_nakshatras": {1, 7, 8, 13, 14, 15, 17, 22, 27},  # Asw,Pun,Pu,Ha,Ch,Sw,An,Shr,Re
+        "good_nakshatras": {
+            1,
+            7,
+            8,
+            13,
+            14,
+            15,
+            17,
+            22,
+            27,
+        },  # Asw,Pun,Pu,Ha,Ch,Sw,An,Shr,Re
         "good_weekdays": {1, 3, 4, 5},
         "avoid_weekdays": {2, 7},
         "bad_tithis": {4, 9, 14, 30},
@@ -79,7 +127,13 @@ PURPOSES: Dict[str, Dict[str, Any]] = {
     "medical": {
         "label": "Medical / Surgery",
         "good_tithis": {2, 3, 5, 7, 11, 12, 13, 17, 18, 20, 22, 25, 26},
-        "good_nakshatras": {1, 5, 8, 22, 27},  # Ashwini, Mrigashira, Pushya, Shravana, Revati
+        "good_nakshatras": {
+            1,
+            5,
+            8,
+            22,
+            27,
+        },  # Ashwini, Mrigashira, Pushya, Shravana, Revati
         "good_weekdays": {1, 3, 4, 5},
         "avoid_weekdays": {7},
         "bad_tithis": {4, 9, 14, 30, 15},
@@ -113,8 +167,12 @@ def _chandrabalam_score(current_sign_id: int, birth_sign_id: Optional[int]) -> i
     return 0
 
 
-def score_day(panch: Dict[str, Any], purpose_cfg: Dict[str, Any],
-              birth_nak_idx: Optional[int], birth_sign_id: Optional[int]) -> Dict[str, Any]:
+def score_day(
+    panch: Dict[str, Any],
+    purpose_cfg: Dict[str, Any],
+    birth_nak_idx: Optional[int],
+    birth_sign_id: Optional[int],
+) -> Dict[str, Any]:
     """Score a panchang day for a purpose. Returns dict with score and reasons."""
     reasons: List[str] = []
     reasons_bad: List[str] = []
@@ -197,8 +255,8 @@ def find_muhurtas(
     latitude: float,
     longitude: float,
     timezone_name: Optional[str] = None,
-    birth_rashi_id: Optional[int] = None,       # 1-12
-    birth_nakshatra_id: Optional[int] = None,   # 1-27
+    birth_rashi_id: Optional[int] = None,  # 1-12
+    birth_nakshatra_id: Optional[int] = None,  # 1-27
     min_score: int = 60,
     limit: int = 30,
 ) -> Dict[str, Any]:
@@ -221,7 +279,9 @@ def find_muhurtas(
     for i in range(span):
         d = s + timedelta(days=i)
         try:
-            panch = compute_detailed_panchang(d.isoformat(), latitude, longitude, timezone_name)
+            panch = compute_detailed_panchang(
+                d.isoformat(), latitude, longitude, timezone_name
+            )
             if resolved_tz is None:
                 resolved_tz = panch.get("location", {}).get("timezone")
             sc = score_day(panch, cfg, birth_nak_idx0, birth_rashi_id)
@@ -250,7 +310,9 @@ def find_muhurtas(
             "native_rashi_id": birth_rashi_id,
             "native_rashi": RASHI_NAMES[birth_rashi_id - 1] if birth_rashi_id else None,
             "native_nakshatra_id": birth_nakshatra_id,
-            "native_nakshatra": NAKSHATRAS[birth_nak_idx0] if birth_nak_idx0 is not None else None,
+            "native_nakshatra": (
+                NAKSHATRAS[birth_nak_idx0] if birth_nak_idx0 is not None else None
+            ),
         },
         "total_matches": len(qualifying),
         "muhurtas": qualifying,

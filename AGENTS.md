@@ -126,7 +126,9 @@ The frontend proxies these through Next.js API routes at `/api/v1/*`.
 
 ```bash
 # Backend unit tests (from project root)
-cd backend && source venv/bin/activate
+cd backend && 
+source venv/bin/activate
+source venv/bin/activate.fish
 pytest ../tests/ -v
 
 # Specific suites

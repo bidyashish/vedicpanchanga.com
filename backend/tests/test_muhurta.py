@@ -1,9 +1,13 @@
 """Tests for the Muhurta finder module."""
-import sys, os
+
+import os
+import sys
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import pytest
-from muhurta import find_muhurtas, list_purposes, PURPOSES
+
+from muhurta import find_muhurtas, list_purposes
 
 
 def test_list_purposes_shape():
@@ -12,7 +16,9 @@ def test_list_purposes_shape():
     assert len(p) >= 5
     ids = {x["id"] for x in p}
     # core purposes should be present
-    assert {"marriage", "griha_pravesh", "business", "travel", "education"}.issubset(ids)
+    assert {"marriage", "griha_pravesh", "business", "travel", "education"}.issubset(
+        ids
+    )
     for x in p:
         assert "id" in x and "label" in x
 
@@ -21,9 +27,13 @@ def test_find_muhurtas_marriage_range():
     """Scan 7 days — should return scored results and a resolved timezone."""
     r = find_muhurtas(
         "marriage",
-        "2026-04-20", "2026-04-26",
-        latitude=28.6139, longitude=77.2090, timezone_name=None,
-        min_score=0, limit=30,
+        "2026-04-20",
+        "2026-04-26",
+        latitude=28.6139,
+        longitude=77.2090,
+        timezone_name=None,
+        min_score=0,
+        limit=30,
     )
     assert r["purpose"] == "marriage"
     assert r["date_range"]["days_scanned"] == 7
@@ -35,8 +45,17 @@ def test_find_muhurtas_marriage_range():
     assert isinstance(top["reasons"], list)
     assert isinstance(top["cautions"], list)
     # must include the classical fields
-    for field in ("tithi", "nakshatra", "vara", "paksha", "moon_rashi",
-                  "abhijit", "rahu_kalam", "sunrise", "sunset"):
+    for field in (
+        "tithi",
+        "nakshatra",
+        "vara",
+        "paksha",
+        "moon_rashi",
+        "abhijit",
+        "rahu_kalam",
+        "sunrise",
+        "sunset",
+    ):
         assert field in top
 
 
@@ -44,9 +63,13 @@ def test_marriage_avoids_rikta_tithis():
     """Rikta tithis (4, 9, 14) should get penalized for marriage."""
     r = find_muhurtas(
         "marriage",
-        "2026-04-20", "2026-05-20",
-        latitude=28.6139, longitude=77.2090, timezone_name="Asia/Kolkata",
-        min_score=0, limit=100,
+        "2026-04-20",
+        "2026-05-20",
+        latitude=28.6139,
+        longitude=77.2090,
+        timezone_name="Asia/Kolkata",
+        min_score=0,
+        limit=100,
     )
     # Any day whose tithi contains "Chaturthi", "Navami" or "Chaturdashi" must not be top-ranked
     for d in r["all_days"]:
@@ -54,21 +77,34 @@ def test_marriage_avoids_rikta_tithis():
             continue
         if any(t in d["tithi"] for t in ("Chaturthi", "Navami", "Chaturdashi")):
             # penalty applied => should be below 75
-            assert d["score"] < 75, f"{d['date']} tithi {d['tithi']} scored {d['score']}"
+            assert (
+                d["score"] < 75
+            ), f"{d['date']} tithi {d['tithi']} scored {d['score']}"
 
 
 def test_tarabalam_filter_changes_score():
     """Adding a native birth nakshatra must change at least one day's score."""
     base = find_muhurtas(
-        "marriage", "2026-04-20", "2026-04-26",
-        latitude=28.6139, longitude=77.2090, timezone_name="Asia/Kolkata",
-        min_score=0, limit=30,
+        "marriage",
+        "2026-04-20",
+        "2026-04-26",
+        latitude=28.6139,
+        longitude=77.2090,
+        timezone_name="Asia/Kolkata",
+        min_score=0,
+        limit=30,
     )
     with_filter = find_muhurtas(
-        "marriage", "2026-04-20", "2026-04-26",
-        latitude=28.6139, longitude=77.2090, timezone_name="Asia/Kolkata",
-        birth_rashi_id=4, birth_nakshatra_id=8,
-        min_score=0, limit=30,
+        "marriage",
+        "2026-04-20",
+        "2026-04-26",
+        latitude=28.6139,
+        longitude=77.2090,
+        timezone_name="Asia/Kolkata",
+        birth_rashi_id=4,
+        birth_nakshatra_id=8,
+        min_score=0,
+        limit=30,
     )
     # Filter info must be echoed back
     assert with_filter["filter"]["native_rashi_id"] == 4
@@ -94,9 +130,14 @@ def test_bad_inputs():
 
 def test_score_capped_0_100():
     r = find_muhurtas(
-        "business", "2026-04-20", "2026-04-30",
-        latitude=19.0760, longitude=72.8777, timezone_name="Asia/Kolkata",
-        min_score=0, limit=100,
+        "business",
+        "2026-04-20",
+        "2026-04-30",
+        latitude=19.0760,
+        longitude=72.8777,
+        timezone_name="Asia/Kolkata",
+        min_score=0,
+        limit=100,
     )
     for d in r["all_days"]:
         if "error" in d:

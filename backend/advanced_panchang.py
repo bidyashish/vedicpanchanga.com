@@ -1,32 +1,73 @@
 """Drik-style detailed Panchang with all traditional elements."""
+
 from __future__ import annotations
 
 import calendar as _cal
-from datetime import datetime, date as date_cls, timedelta
-from typing import Dict, Any, Optional, List
+from datetime import date as date_cls
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional
 
 import pytz
 import swisseph as swe
 from timezonefinder import TimezoneFinder
 
 from constants import (
-    NAKSHATRAS, YOGAS, SIGNS, tithi_name, karana_name,
-    VARA_NAMES, VARA_ENGLISH,
-    RAHU_KAAL_SEGMENT, YAMAGANDA_SEGMENT, GULIKA_SEGMENT,
+    GULIKA_SEGMENT,
+    NAKSHATRAS,
+    RAHU_KAAL_SEGMENT,
+    SIGNS,
+    VARA_ENGLISH,
+    VARA_NAMES,
+    YAMAGANDA_SEGMENT,
+    YOGAS,
+    karana_name,
+    tithi_name,
 )
 from panchang_constants import (
-    SAMVATSARAS, CHANDRA_MASA, NIRAYANA_MONTHS, SHAKA_MONTHS,
-    SIGN_TO_VEDIC_RITU, SIGN_TO_DRIK_RITU,
-    DISHA_SHOOL, RAHU_VASA, CHANDRA_VASA,
-    DUR_MUHURTA, GOOD_TARA_OFFSETS, GOOD_CHANDRA_OFFSETS, RASHI_NAMES,
+    CHANDRA_MASA,
+    CHANDRA_VASA,
+    DISHA_SHOOL,
+    DUR_MUHURTA,
+    GOOD_CHANDRA_OFFSETS,
+    NIRAYANA_MONTHS,
+    RAHU_VASA,
+    RASHI_NAMES,
+    SAMVATSARAS,
+    SHAKA_MONTHS,
+    SIGN_TO_DRIK_RITU,
+    SIGN_TO_VEDIC_RITU,
 )
 
 # Varjyam starting ghatika (out of 60) for each of 27 nakshatras (Ashwini=idx 0)
 # Source: classical muhurta tables (Drik reference).
 VARJYAM_GHATIKAS = [
-    50, 24, 30, 40, 14, 21, 30, 20, 32,
-    30, 20, 18, 21, 20, 14, 14, 10, 14,
-    56, 24, 20, 10, 10, 18, 16, 24, 30,
+    50,
+    24,
+    30,
+    40,
+    14,
+    21,
+    30,
+    20,
+    32,
+    30,
+    20,
+    18,
+    21,
+    20,
+    14,
+    14,
+    10,
+    14,
+    56,
+    24,
+    20,
+    10,
+    10,
+    18,
+    16,
+    24,
+    30,
 ]
 VARJYAM_DURATION_GHATIKAS = 1.6  # 1 ghatika 36 vighati (fixed across all nakshatras)
 
@@ -39,25 +80,57 @@ AMRIT_KALAM_DURATION_GHATIKAS = 1.6
 
 # Sarvartha Siddhi Yoga: nakshatras (0-indexed) allowed per isoweekday (1=Mon..7=Sun)
 SARVARTHA_SIDDHI = {
-    1: {3, 4, 7, 17},                    # Mon: Rohini(3), Mrigashira(4), Pushya(7), Anuradha(16)... adjusting
-    2: {0, 2, 8, 25},                    # Tue: Ashwini(0), Krittika(2), Ashlesha(8), Uttara Bhadrapada(25)
-    3: {0, 2, 3, 4, 12, 16},             # Wed: Ashwini, Krittika, Rohini, Mrigashira, Hasta, Anuradha
-    4: {0, 6, 7, 16, 26},                # Thu: Ashwini, Punarvasu(6), Pushya(7), Anuradha(16), Revati(26)
-    5: {0, 6, 16, 21, 26},               # Fri: Ashwini, Punarvasu, Anuradha, Shravana(21), Revati
-    6: {3, 14, 21},                      # Sat: Rohini, Swati(14), Shravana
-    7: {0, 7, 10, 11, 12, 18, 20, 25},   # Sun: Ashwini, Pushya, Purva Phalguni(10), Uttara Phalguni(11),
-                                         #      Hasta(12), Mula(18), Uttara Ashadha(20), Uttara Bhadrapada
+    1: {
+        3,
+        4,
+        7,
+        17,
+    },  # Mon: Rohini(3), Mrigashira(4), Pushya(7), Anuradha(16)... adjusting
+    2: {
+        0,
+        2,
+        8,
+        25,
+    },  # Tue: Ashwini(0), Krittika(2), Ashlesha(8), Uttara Bhadrapada(25)
+    3: {
+        0,
+        2,
+        3,
+        4,
+        12,
+        16,
+    },  # Wed: Ashwini, Krittika, Rohini, Mrigashira, Hasta, Anuradha
+    4: {
+        0,
+        6,
+        7,
+        16,
+        26,
+    },  # Thu: Ashwini, Punarvasu(6), Pushya(7), Anuradha(16), Revati(26)
+    5: {0, 6, 16, 21, 26},  # Fri: Ashwini, Punarvasu, Anuradha, Shravana(21), Revati
+    6: {3, 14, 21},  # Sat: Rohini, Swati(14), Shravana
+    7: {
+        0,
+        7,
+        10,
+        11,
+        12,
+        18,
+        20,
+        25,
+    },  # Sun: Ashwini, Pushya, Purva Phalguni(10), Uttara Phalguni(11),
+    #      Hasta(12), Mula(18), Uttara Ashadha(20), Uttara Bhadrapada
 }
 
 # Amrita Siddhi Yoga: exact weekday + nakshatra pair
 AMRITA_SIDDHI = {
-    1: {4},    # Mon + Mrigashira
-    2: {0},    # Tue + Ashwini
-    3: {16},   # Wed + Anuradha
-    4: {7},    # Thu + Pushya
-    5: {26},   # Fri + Revati
-    6: {3},    # Sat + Rohini
-    7: {12},   # Sun + Hasta
+    1: {4},  # Mon + Mrigashira
+    2: {0},  # Tue + Ashwini
+    3: {16},  # Wed + Anuradha
+    4: {7},  # Thu + Pushya
+    5: {26},  # Fri + Revati
+    6: {3},  # Sat + Rohini
+    7: {12},  # Sun + Hasta
 }
 
 _TF = TimezoneFinder()
@@ -66,6 +139,7 @@ NAK_SPAN = 360.0 / 27
 SIGN_SPAN = 30.0
 
 # ---- Helpers ----
+
 
 def _jd_to_local(jd_ut: Optional[float], tz: pytz.BaseTzInfo) -> Optional[datetime]:
     if jd_ut is None or jd_ut <= 0:
@@ -118,9 +192,11 @@ def _sun_trop(jd: float) -> float:
     return swe.calc_ut(jd, swe.SUN, swe.FLG_SWIEPH)[0][0] % 360
 
 
-def _find_angle_time(ref_jd: float, target_deg: float, angle_type: str,
-                     max_days: float = 1.5) -> Optional[float]:
+def _find_angle_time(
+    ref_jd: float, target_deg: float, angle_type: str, max_days: float = 1.5
+) -> Optional[float]:
     """Bisection search for JD when named angle reaches target modular value."""
+
     def f(jd):
         s, m = _sun_moon_sid(jd)
         if angle_type == "tithi":
@@ -150,11 +226,12 @@ def _find_angle_time(ref_jd: float, target_deg: float, angle_type: str,
 
 def _ascendant_at(jd: float, lat: float, lon: float) -> float:
     """Sidereal ascendant longitude at given JD."""
-    cusps, ascmc = swe.houses_ex(jd, lat, lon, b'P', swe.FLG_SIDEREAL)
+    cusps, ascmc = swe.houses_ex(jd, lat, lon, b"P", swe.FLG_SIDEREAL)
     return ascmc[0] % 360
 
 
 # ---- Samvat / Calendars ----
+
 
 def _shaka_samvatsara(shaka_year: int) -> str:
     """Name of Prabhavadi samvatsara for a Shaka year."""
@@ -224,6 +301,7 @@ def _nirayana_solar_date(sun_sid: float, jd: float):
 
 # ---- Ritu / Ayana ----
 
+
 def _ritu_ayana(sun_sid: float, sun_trop: float):
     """Compute Drik (tropical) and Vedic (sidereal) Ritu and Ayana."""
     sid_sign = int(sun_sid // 30) + 1
@@ -245,6 +323,7 @@ def _ritu_ayana(sun_sid: float, sun_trop: float):
 
 # ---- Nakshatra pada transitions within a 24h window ----
 
+
 def _nakshatra_padas_in_window(start_jd: float, end_jd: float) -> List[Dict]:
     """Return list of {pada, nakshatra, ends_at_jd} intervals within [start_jd, end_jd]."""
     out = []
@@ -258,11 +337,13 @@ def _nakshatra_padas_in_window(start_jd: float, end_jd: float) -> List[Dict]:
         pada_end_deg = nak_idx * NAK_SPAN + (pada_idx + 1) * (NAK_SPAN / 4)
         end_of_pada = _find_angle_time(cursor, pada_end_deg, "moon", max_days=2.0)
         ends = min(end_of_pada, end_jd) if end_of_pada else end_jd
-        out.append({
-            "nakshatra": NAKSHATRAS[nak_idx],
-            "pada": pada_idx + 1,
-            "ends_at_jd": ends,
-        })
+        out.append(
+            {
+                "nakshatra": NAKSHATRAS[nak_idx],
+                "pada": pada_idx + 1,
+                "ends_at_jd": ends,
+            }
+        )
         if end_of_pada and end_of_pada < end_jd:
             cursor = end_of_pada + 1e-5
         else:
@@ -288,21 +369,25 @@ def _compute_varjyam_amrit(nakshatras_with_starts: List[Dict], tz) -> Dict:
         v_start = n["start_jd"] + VARJYAM_GHATIKAS[n["nak_idx"]] * ghatika_jd
         v_end = v_start + VARJYAM_DURATION_GHATIKAS * ghatika_jd
         if v_start < n["end_jd"]:  # only include if it falls within this nakshatra span
-            varjyam.append({
-                "start": _iso(max(v_start, n["start_jd"]), tz),
-                "end": _iso(min(v_end, n["end_jd"]), tz),
-                "nakshatra": NAKSHATRAS[n["nak_idx"]],
-            })
+            varjyam.append(
+                {
+                    "start": _iso(max(v_start, n["start_jd"]), tz),
+                    "end": _iso(min(v_end, n["end_jd"]), tz),
+                    "nakshatra": NAKSHATRAS[n["nak_idx"]],
+                }
+            )
         # Amrit Kalam
         a_start = n["start_jd"] + AMRIT_KALAM_GHATIKAS[n["nak_idx"]] * ghatika_jd
         a_end = a_start + AMRIT_KALAM_DURATION_GHATIKAS * ghatika_jd
         # Amrit may wrap past end, in which case skip or clip
         if a_start < n["end_jd"]:
-            amrit.append({
-                "start": _iso(max(a_start, n["start_jd"]), tz),
-                "end": _iso(min(a_end, n["end_jd"]), tz),
-                "nakshatra": NAKSHATRAS[n["nak_idx"]],
-            })
+            amrit.append(
+                {
+                    "start": _iso(max(a_start, n["start_jd"]), tz),
+                    "end": _iso(min(a_end, n["end_jd"]), tz),
+                    "nakshatra": NAKSHATRAS[n["nak_idx"]],
+                }
+            )
     return {"varjyam": varjyam, "amrit_kalam": amrit}
 
 
@@ -315,17 +400,21 @@ def _compute_siddhi_yogas(nakshatras_in_window: List[Dict], vara_iso: int, tz) -
     for n in nakshatras_in_window:
         n_idx0 = n["nak_idx"]
         if n_idx0 in sarv_set:
-            sarvartha.append({
-                "start": _iso(n["start_jd"], tz),
-                "end": _iso(n["end_jd"], tz),
-                "nakshatra": NAKSHATRAS[n_idx0],
-            })
+            sarvartha.append(
+                {
+                    "start": _iso(n["start_jd"], tz),
+                    "end": _iso(n["end_jd"], tz),
+                    "nakshatra": NAKSHATRAS[n_idx0],
+                }
+            )
         if n_idx0 in amr_set:
-            amrita.append({
-                "start": _iso(n["start_jd"], tz),
-                "end": _iso(n["end_jd"], tz),
-                "nakshatra": NAKSHATRAS[n_idx0],
-            })
+            amrita.append(
+                {
+                    "start": _iso(n["start_jd"], tz),
+                    "end": _iso(n["end_jd"], tz),
+                    "nakshatra": NAKSHATRAS[n_idx0],
+                }
+            )
     return {"sarvartha_siddhi": sarvartha, "amrita_siddhi": amrita}
 
 
@@ -358,11 +447,13 @@ def _nakshatras_with_bounds(start_jd: float, end_jd: float) -> List[Dict]:
         nak_idx = int(m // NAK_SPAN)
         nak_end_deg = (nak_idx + 1) * NAK_SPAN
         end_jd_nak = _find_angle_time(cursor, nak_end_deg, "moon", max_days=2.0)
-        out.append({
-            "nak_idx": nak_idx,
-            "start_jd": cursor_start,
-            "end_jd": end_jd_nak if end_jd_nak else end_jd,
-        })
+        out.append(
+            {
+                "nak_idx": nak_idx,
+                "start_jd": cursor_start,
+                "end_jd": end_jd_nak if end_jd_nak else end_jd,
+            }
+        )
         if end_jd_nak and end_jd_nak < end_jd:
             cursor = end_jd_nak + 1e-5
             cursor_start = end_jd_nak
@@ -379,11 +470,13 @@ def _nakshatras_with_bounds(start_jd: float, end_jd: float) -> List[Dict]:
         nak_end_deg = (nak_idx + 1) * NAK_SPAN
         end = _find_angle_time(cursor, nak_end_deg, "moon", max_days=2.0)
         ends = min(end, end_jd) if end else end_jd
-        out.append({
-            "name": NAKSHATRAS[nak_idx],
-            "index": nak_idx + 1,
-            "ends_at_jd": ends,
-        })
+        out.append(
+            {
+                "name": NAKSHATRAS[nak_idx],
+                "index": nak_idx + 1,
+                "ends_at_jd": ends,
+            }
+        )
         if end and end < end_jd:
             cursor = end + 1e-5
         else:
@@ -402,17 +495,18 @@ def _nakshatras_in_window(start_jd: float, end_jd: float) -> List[Dict]:
         nak_end_deg = (nak_idx + 1) * NAK_SPAN
         end = _find_angle_time(cursor, nak_end_deg, "moon", max_days=2.0)
         ends = min(end, end_jd) if end else end_jd
-        out.append({
-            "name": NAKSHATRAS[nak_idx],
-            "index": nak_idx + 1,
-            "ends_at_jd": ends,
-        })
+        out.append(
+            {
+                "name": NAKSHATRAS[nak_idx],
+                "index": nak_idx + 1,
+                "ends_at_jd": ends,
+            }
+        )
         if end and end < end_jd:
             cursor = end + 1e-5
         else:
             break
     return out
-
 
 
 def _tithis_in_window(start_jd: float, end_jd: float) -> List[Dict]:
@@ -427,12 +521,14 @@ def _tithis_in_window(start_jd: float, end_jd: float) -> List[Dict]:
         t_end_deg = t_idx * 12
         end = _find_angle_time(cursor, t_end_deg, "tithi", max_days=2.0)
         ends = min(end, end_jd) if end else end_jd
-        out.append({
-            "index": t_idx,
-            "name": tithi_name(t_idx),
-            "paksha": "Shukla Paksha" if t_idx <= 15 else "Krishna Paksha",
-            "ends_at_jd": ends,
-        })
+        out.append(
+            {
+                "index": t_idx,
+                "name": tithi_name(t_idx),
+                "paksha": "Shukla Paksha" if t_idx <= 15 else "Krishna Paksha",
+                "ends_at_jd": ends,
+            }
+        )
         if end and end < end_jd:
             cursor = end + 1e-5
         else:
@@ -452,11 +548,13 @@ def _yogas_in_window(start_jd: float, end_jd: float) -> List[Dict]:
         y_end_deg = (y_idx + 1) * NAK_SPAN
         end = _find_angle_time(cursor, y_end_deg, "yoga", max_days=2.0)
         ends = min(end, end_jd) if end else end_jd
-        out.append({
-            "index": y_idx + 1,
-            "name": YOGAS[y_idx],
-            "ends_at_jd": ends,
-        })
+        out.append(
+            {
+                "index": y_idx + 1,
+                "name": YOGAS[y_idx],
+                "ends_at_jd": ends,
+            }
+        )
         if end and end < end_jd:
             cursor = end + 1e-5
         else:
@@ -476,12 +574,14 @@ def _karanas_in_window(start_jd: float, end_jd: float) -> List[Dict]:
         h_end_deg = (h_idx + 1) * 6
         end = _find_angle_time(cursor, h_end_deg, "tithi", max_days=2.0)
         ends = min(end, end_jd) if end else end_jd
-        out.append({
-            "half_index": h_idx,
-            "name": karana_name(h_idx),
-            "ends_at_jd": ends,
-            "is_bhadra": karana_name(h_idx) == "Vishti",
-        })
+        out.append(
+            {
+                "half_index": h_idx,
+                "name": karana_name(h_idx),
+                "ends_at_jd": ends,
+                "is_bhadra": karana_name(h_idx) == "Vishti",
+            }
+        )
         if end and end < end_jd:
             cursor = end + 1e-5
         else:
@@ -500,12 +600,14 @@ def _moonsigns_in_window(start_jd: float, end_jd: float) -> List[Dict]:
         end_deg = (sid + 1) * 30
         end = _find_angle_time(cursor, end_deg, "moon", max_days=3.5)
         ends = min(end, end_jd) if end else end_jd
-        out.append({
-            "index": sid + 1,
-            "name": SIGNS[sid],
-            "rashi": RASHI_NAMES[sid],
-            "ends_at_jd": ends,
-        })
+        out.append(
+            {
+                "index": sid + 1,
+                "name": SIGNS[sid],
+                "rashi": RASHI_NAMES[sid],
+                "ends_at_jd": ends,
+            }
+        )
         if end and end < end_jd:
             cursor = end + 1e-5
         else:
@@ -513,7 +615,9 @@ def _moonsigns_in_window(start_jd: float, end_jd: float) -> List[Dict]:
     return out
 
 
-def _udaya_lagna_in_window(start_jd: float, end_jd: float, lat: float, lon: float) -> List[Dict]:
+def _udaya_lagna_in_window(
+    start_jd: float, end_jd: float, lat: float, lon: float
+) -> List[Dict]:
     """Sign transits of the Ascendant over the window."""
     out = []
     cursor = start_jd
@@ -537,12 +641,14 @@ def _udaya_lagna_in_window(start_jd: float, end_jd: float, lat: float, lon: floa
                 break
         end = (lo + hi) / 2
         ends = min(end, end_jd)
-        out.append({
-            "sign": SIGNS[sign],
-            "rashi": RASHI_NAMES[sign],
-            "start_jd": cursor,
-            "end_jd": ends,
-        })
+        out.append(
+            {
+                "sign": SIGNS[sign],
+                "rashi": RASHI_NAMES[sign],
+                "start_jd": cursor,
+                "end_jd": ends,
+            }
+        )
         if end < end_jd:
             cursor = end + 1e-5
         else:
@@ -551,6 +657,7 @@ def _udaya_lagna_in_window(start_jd: float, end_jd: float, lat: float, lon: floa
 
 
 # ---- Muhurta Timings ----
+
 
 def _muhurta_timings(sunrise_jd, sunset_jd, next_sunrise_jd, tz):
     """Auspicious muhurtas."""
@@ -592,13 +699,28 @@ def _muhurta_timings(sunrise_jd, sunset_jd, next_sunrise_jd, tz):
     nishita_end = sunset_jd + 8 * muhurta_night
 
     return {
-        "brahma_muhurta": {"start": _iso(brahma_start, tz), "end": _iso(brahma_end, tz)},
-        "pratah_sandhya": {"start": _iso(pratah_start, tz), "end": _iso(pratah_end, tz)},
+        "brahma_muhurta": {
+            "start": _iso(brahma_start, tz),
+            "end": _iso(brahma_end, tz),
+        },
+        "pratah_sandhya": {
+            "start": _iso(pratah_start, tz),
+            "end": _iso(pratah_end, tz),
+        },
         "abhijit": {"start": _iso(abhijit_start, tz), "end": _iso(abhijit_end, tz)},
         "vijay_muhurta": {"start": _iso(vijay_start, tz), "end": _iso(vijay_end, tz)},
-        "godhuli_muhurta": {"start": _iso(godhuli_start, tz), "end": _iso(godhuli_end, tz)},
-        "sayahna_sandhya": {"start": _iso(sayahna_start, tz), "end": _iso(sayahna_end, tz)},
-        "nishita_muhurta": {"start": _iso(nishita_start, tz), "end": _iso(nishita_end, tz)},
+        "godhuli_muhurta": {
+            "start": _iso(godhuli_start, tz),
+            "end": _iso(godhuli_end, tz),
+        },
+        "sayahna_sandhya": {
+            "start": _iso(sayahna_start, tz),
+            "end": _iso(sayahna_end, tz),
+        },
+        "nishita_muhurta": {
+            "start": _iso(nishita_start, tz),
+            "end": _iso(nishita_end, tz),
+        },
         "madhyahna": _iso(madhyahna_jd, tz),
     }
 
@@ -612,15 +734,18 @@ def _dur_muhurtam(sunrise_jd, sunset_jd, vara_iso, tz):
     for idx in DUR_MUHURTA.get(vara_iso, []):
         start = sunrise_jd + (idx - 1) * muhurta_day
         end = sunrise_jd + idx * muhurta_day
-        result.append({
-            "muhurta_number": idx,
-            "start": _iso(start, tz),
-            "end": _iso(end, tz),
-        })
+        result.append(
+            {
+                "muhurta_number": idx,
+                "start": _iso(start, tz),
+                "end": _iso(end, tz),
+            }
+        )
     return result
 
 
 # ---- Tarabalam / Chandrabalam ----
+
 
 def _tarabalam(current_nak_idx: int) -> Dict:
     """Return nakshatras with good tarabalam (offset from birth nakshatra)."""
@@ -648,6 +773,7 @@ def _chandrabalam(current_sign_id: int) -> Dict:
 
 
 # ---- Lunar month (Chaitradi) ----
+
 
 def _chandramasa(tithi_idx: int, sun_sign_id: int) -> Dict:
     """Approx Amanta & Purnimanta lunar month based on Sun's sign at Amavasya/Purnima."""
@@ -685,6 +811,7 @@ def _chandramasa(tithi_idx: int, sun_sign_id: int) -> Dict:
 
 # ---- Main comprehensive function ----
 
+
 def compute_detailed_panchang(
     target_date: str,
     latitude: float,
@@ -701,8 +828,12 @@ def compute_detailed_panchang(
 
     local_midnight = tz.localize(datetime(y, mo, d, 0, 0))
     utc_midnight = local_midnight.astimezone(pytz.utc)
-    jd_start = swe.julday(utc_midnight.year, utc_midnight.month, utc_midnight.day,
-                          utc_midnight.hour + utc_midnight.minute / 60)
+    jd_start = swe.julday(
+        utc_midnight.year,
+        utc_midnight.month,
+        utc_midnight.day,
+        utc_midnight.hour + utc_midnight.minute / 60,
+    )
 
     geopos = (longitude, latitude, 0)
 
@@ -711,13 +842,16 @@ def compute_detailed_panchang(
     sunset_jd = _rise_trans(jd_start, swe.SUN, geopos, swe.CALC_SET)
     if sunrise_jd and sunset_jd and sunset_jd < sunrise_jd:
         sunset_jd = _rise_trans(sunrise_jd, swe.SUN, geopos, swe.CALC_SET)
-    next_sunrise_jd = _rise_trans(sunset_jd if sunset_jd else jd_start + 0.5,
-                                  swe.SUN, geopos, swe.CALC_RISE)
+    next_sunrise_jd = _rise_trans(
+        sunset_jd if sunset_jd else jd_start + 0.5, swe.SUN, geopos, swe.CALC_RISE
+    )
     moonrise_jd = _rise_trans(jd_start, swe.MOON, geopos, swe.CALC_RISE)
     moonset_jd = _rise_trans(jd_start, swe.MOON, geopos, swe.CALC_SET)
 
     dinaman_h = (sunset_jd - sunrise_jd) * 24 if sunrise_jd and sunset_jd else None
-    ratriman_h = (next_sunrise_jd - sunset_jd) * 24 if next_sunrise_jd and sunset_jd else None
+    ratriman_h = (
+        (next_sunrise_jd - sunset_jd) * 24 if next_sunrise_jd and sunset_jd else None
+    )
 
     ref_jd = sunrise_jd if sunrise_jd else jd_start
     end_of_day_jd = next_sunrise_jd if next_sunrise_jd else ref_jd + 1.0
@@ -770,12 +904,14 @@ def compute_detailed_panchang(
     padas_iso = _attach_iso(padas)
     udaya_iso = []
     for it in udaya_lagnas:
-        udaya_iso.append({
-            "sign": it["sign"],
-            "rashi": it["rashi"],
-            "start": _iso(it["start_jd"], tz),
-            "end": _iso(it["end_jd"], tz),
-        })
+        udaya_iso.append(
+            {
+                "sign": it["sign"],
+                "rashi": it["rashi"],
+                "start": _iso(it["start_jd"], tz),
+                "end": _iso(it["end_jd"], tz),
+            }
+        )
 
     # Current state (first entry of each)
     current_tithi = tithis_iso[0] if tithis_iso else None
@@ -802,10 +938,12 @@ def compute_detailed_panchang(
     prev_end_jd = ref_jd
     for k in karanas:
         if karana_name(k["half_index"]) == "Vishti":
-            bhadra.append({
-                "start": _iso(prev_end_jd, tz),
-                "end": _iso(k["ends_at_jd"], tz),
-            })
+            bhadra.append(
+                {
+                    "start": _iso(prev_end_jd, tz),
+                    "end": _iso(k["ends_at_jd"], tz),
+                }
+            )
         prev_end_jd = k["ends_at_jd"]
 
     # Samvat / calendars
@@ -815,7 +953,9 @@ def compute_detailed_panchang(
 
     # Vikram Samvat: generally Gregorian + 56 or 57. Starts Chaitra Shukla Pratipada.
     # Simpler: derive from date - if date is on/after Chaitra start of year, vikram = greg + 57; else +56
-    chaitra_start = date_cls(greg_date.year, 3, 22 if not _cal.isleap(greg_date.year) else 21)
+    chaitra_start = date_cls(
+        greg_date.year, 3, 22 if not _cal.isleap(greg_date.year) else 21
+    )
     vikram_year = greg_date.year + (57 if greg_date >= chaitra_start else 56)
     # Gujarati Samvat starts on Kartika Shukla Pratipada (around Oct-Nov); approx
     gujarati_year = vikram_year - 1
@@ -827,7 +967,9 @@ def compute_detailed_panchang(
     niriyana_month = _nirayana_solar_date(sun_sid, ref_jd)
 
     # Chandramasa (Purnimanta / Amanta)
-    chandramasa = _chandramasa(current_tithi["index"] if current_tithi else 1, sun_sign_id)
+    chandramasa = _chandramasa(
+        current_tithi["index"] if current_tithi else 1, sun_sign_id
+    )
 
     # Ritu / Ayana
     ritu = _ritu_ayana(sun_sid, sun_trop)
@@ -839,8 +981,12 @@ def compute_detailed_panchang(
     # JD at local noon for reporting
     noon_local = tz.localize(datetime(y, mo, d, 12, 0))
     noon_utc = noon_local.astimezone(pytz.utc)
-    noon_jd = swe.julday(noon_utc.year, noon_utc.month, noon_utc.day,
-                         noon_utc.hour + noon_utc.minute / 60)
+    noon_jd = swe.julday(
+        noon_utc.year,
+        noon_utc.month,
+        noon_utc.day,
+        noon_utc.hour + noon_utc.minute / 60,
+    )
     ayanamsha = swe.get_ayanamsa_ut(noon_jd)
     kali_ahargana = int(round(noon_jd - KALI_START_JD))
     kali_year = greg_date.year + 3101 + (1 if greg_date.month >= 3 else 0)
@@ -888,7 +1034,11 @@ def compute_detailed_panchang(
             "yoga_sequence": yogas_iso,
             "karana": current_karana,
             "karana_sequence": karanas_iso,
-            "paksha": "Shukla Paksha" if current_tithi and current_tithi["index"] <= 15 else "Krishna Paksha",
+            "paksha": (
+                "Shukla Paksha"
+                if current_tithi and current_tithi["index"] <= 15
+                else "Krishna Paksha"
+            ),
         },
         "rashi_nakshatra": {
             "moonsign": current_moonsign,
@@ -915,7 +1065,11 @@ def compute_detailed_panchang(
             "gujarati_samvat": gujarati_year,
             "chandramasa_amanta": chandramasa["amanta"],
             "chandramasa_purnimanta": chandramasa["purnimanta"],
-            "paksha": "Shukla Paksha" if current_tithi and current_tithi["index"] <= 15 else "Krishna Paksha",
+            "paksha": (
+                "Shukla Paksha"
+                if current_tithi and current_tithi["index"] <= 15
+                else "Krishna Paksha"
+            ),
             "pravishte_day": niriyana_month["day"],
             "nirayana_solar_month": niriyana_month["month"],
         },
@@ -979,4 +1133,3 @@ def _eight_segments(sunrise_jd, sunset_jd, tz):
         e = s + seg
         out.append({"start": _iso(s, tz), "end": _iso(e, tz)})
     return out
-

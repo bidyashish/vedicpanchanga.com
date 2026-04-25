@@ -32,7 +32,7 @@ cd vedicpanchanga.com
 # 2. Backend (terminal 1) — FastAPI on :8001
 cd backend
 python3 -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+source venv/bin/activate.fish        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn server:app --host 127.0.0.1 --port 8001 --reload
 

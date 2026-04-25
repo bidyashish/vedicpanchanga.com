@@ -1,5 +1,7 @@
 """HTTP-level tests for Muhurta Finder endpoints + regression for existing endpoints."""
+
 import os
+
 import pytest
 import requests
 
@@ -20,8 +22,16 @@ def test_muhurta_purposes_list(api):
     data = r.json()
     assert isinstance(data, list)
     ids = {x["id"] for x in data}
-    expected = {"marriage", "griha_pravesh", "business", "travel",
-                "education", "vehicle", "namakarana", "medical"}
+    expected = {
+        "marriage",
+        "griha_pravesh",
+        "business",
+        "travel",
+        "education",
+        "vehicle",
+        "namakarana",
+        "medical",
+    }
     assert expected.issubset(ids), f"Missing: {expected - ids}"
     assert len(data) == 8
     for x in data:
@@ -57,7 +67,15 @@ def test_find_muhurta_happy_path(api):
         if "error" in day:
             continue
         assert 0 <= day["score"] <= 100
-        for f in ("tithi", "nakshatra", "vara", "sunrise", "sunset", "abhijit", "rahu_kalam"):
+        for f in (
+            "tithi",
+            "nakshatra",
+            "vara",
+            "sunrise",
+            "sunset",
+            "abhijit",
+            "rahu_kalam",
+        ):
             assert f in day
 
 
@@ -95,42 +113,64 @@ def test_find_muhurta_with_native_filters(api):
 
 # -- Error handling ---------------------------------------------------
 def test_find_muhurta_unknown_purpose(api):
-    r = api.post(f"{BASE_URL}/api/find-muhurta", json={
-        "purpose": "not_a_real_purpose",
-        "start_date": "2026-04-20", "end_date": "2026-04-22",
-        "latitude": 28.6, "longitude": 77.2,
-    }, timeout=30)
+    r = api.post(
+        f"{BASE_URL}/api/find-muhurta",
+        json={
+            "purpose": "not_a_real_purpose",
+            "start_date": "2026-04-20",
+            "end_date": "2026-04-22",
+            "latitude": 28.6,
+            "longitude": 77.2,
+        },
+        timeout=30,
+    )
     assert r.status_code == 400
 
 
 def test_find_muhurta_end_before_start(api):
-    r = api.post(f"{BASE_URL}/api/find-muhurta", json={
-        "purpose": "marriage",
-        "start_date": "2026-04-26", "end_date": "2026-04-20",
-        "latitude": 28.6, "longitude": 77.2,
-    }, timeout=30)
+    r = api.post(
+        f"{BASE_URL}/api/find-muhurta",
+        json={
+            "purpose": "marriage",
+            "start_date": "2026-04-26",
+            "end_date": "2026-04-20",
+            "latitude": 28.6,
+            "longitude": 77.2,
+        },
+        timeout=30,
+    )
     assert r.status_code == 400
 
 
 def test_find_muhurta_range_too_large(api):
-    r = api.post(f"{BASE_URL}/api/find-muhurta", json={
-        "purpose": "marriage",
-        "start_date": "2026-01-01", "end_date": "2026-12-31",
-        "latitude": 28.6, "longitude": 77.2,
-    }, timeout=30)
+    r = api.post(
+        f"{BASE_URL}/api/find-muhurta",
+        json={
+            "purpose": "marriage",
+            "start_date": "2026-01-01",
+            "end_date": "2026-12-31",
+            "latitude": 28.6,
+            "longitude": 77.2,
+        },
+        timeout=30,
+    )
     assert r.status_code == 400
 
 
 # -- Regression on existing endpoints --------------------------------
 def test_calculate_regression(api):
-    r = api.post(f"{BASE_URL}/api/calculate", json={
-        "birth_date": "1990-01-01",
-        "birth_time": "12:00",
-        "latitude": 28.6139,
-        "longitude": 77.2090,
-        "timezone": "Asia/Kolkata",
-        "ayanamsa": "lahiri",
-    }, timeout=60)
+    r = api.post(
+        f"{BASE_URL}/api/calculate",
+        json={
+            "birth_date": "1990-01-01",
+            "birth_time": "12:00",
+            "latitude": 28.6139,
+            "longitude": 77.2090,
+            "timezone": "Asia/Kolkata",
+            "ayanamsa": "lahiri",
+        },
+        timeout=60,
+    )
     assert r.status_code == 200
     d = r.json()
     assert "id" in d
@@ -140,10 +180,16 @@ def test_calculate_regression(api):
 
 
 def test_get_panchang_regression(api):
-    r = api.get(f"{BASE_URL}/api/get-panchang",
-                params={"latitude": 28.6139, "longitude": 77.2090,
-                        "date": "2026-04-20", "timezone": "Asia/Kolkata"},
-                timeout=60)
+    r = api.get(
+        f"{BASE_URL}/api/get-panchang",
+        params={
+            "latitude": 28.6139,
+            "longitude": 77.2090,
+            "date": "2026-04-20",
+            "timezone": "Asia/Kolkata",
+        },
+        timeout=60,
+    )
     assert r.status_code == 200
     d = r.json()
     assert "panchang" in d

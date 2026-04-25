@@ -1,19 +1,20 @@
-from fastapi import FastAPI, APIRouter, HTTPException
-from dotenv import load_dotenv
-from starlette.middleware.cors import CORSMiddleware
-import os
 import logging
+import os
 from pathlib import Path
-from pydantic import BaseModel, Field
 from typing import Optional
 
-from calculator import compute_chart
+from dotenv import load_dotenv
+from fastapi import APIRouter, FastAPI, HTTPException
+from pydantic import BaseModel, Field
+from starlette.middleware.cors import CORSMiddleware
+
 from advanced_panchang import compute_detailed_panchang
 from ayanamsa import AYANAMSA_OPTIONS
-from muhurta import find_muhurtas, list_purposes, PURPOSES
+from calculator import compute_chart
+from muhurta import find_muhurtas, list_purposes
 
 ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
+load_dotenv(ROOT_DIR / ".env")
 
 app = FastAPI(title="Vedic Astrology API")
 api_router = APIRouter(prefix="/api")
@@ -44,8 +45,13 @@ def calculate(req: CalculateRequest):
 
     try:
         return compute_chart(
-            year=year, month=month, day=day, hour=hour, minute=minute,
-            latitude=req.latitude, longitude=req.longitude,
+            year=year,
+            month=month,
+            day=day,
+            hour=hour,
+            minute=minute,
+            latitude=req.latitude,
+            longitude=req.longitude,
             timezone_name=req.timezone,
             ayanamsa=req.ayanamsa or "lahiri",
         )
@@ -57,10 +63,7 @@ def calculate(req: CalculateRequest):
 @api_router.get("/ayanamsa-options")
 async def get_ayanamsa_options():
     """List available ayanamsa choices."""
-    return [
-        {"id": k, "label": v[1]}
-        for k, v in AYANAMSA_OPTIONS.items()
-    ]
+    return [{"id": k, "label": v[1]} for k, v in AYANAMSA_OPTIONS.items()]
 
 
 @api_router.get("/get-panchang")
@@ -76,11 +79,14 @@ def get_panchang(
     tarabalam, chandrabalam, etc.
     """
     from datetime import date as date_cls
+
     if not date:
         date = date_cls.today().isoformat()
     try:
         return compute_detailed_panchang(
-            target_date=date, latitude=latitude, longitude=longitude,
+            target_date=date,
+            latitude=latitude,
+            longitude=longitude,
             timezone_name=timezone,
         )
     except Exception as e:
@@ -139,13 +145,13 @@ app.include_router(api_router)
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=os.environ.get("CORS_ORIGINS", "*").split(","),
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
