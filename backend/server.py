@@ -8,7 +8,6 @@ from pydantic import BaseModel, Field
 from typing import Optional
 
 from calculator import compute_chart
-from panchang import compute_panchang
 from advanced_panchang import compute_detailed_panchang
 from ayanamsa import AYANAMSA_OPTIONS
 from muhurta import find_muhurtas, list_purposes, PURPOSES
@@ -70,24 +69,17 @@ def get_panchang(
     longitude: float,
     date: Optional[str] = None,
     timezone: Optional[str] = None,
-    detailed: bool = True,
 ):
     """Get Drik-style daily Panchang for a location and date (default: today local).
 
-    When `detailed=true` (default) returns the full Drik Panchang: samvatsara, muhurtas,
-    calendars, lagna transits, tarabalam/chandrabalam, etc. Set `detailed=false` for a
-    lean payload (legacy behaviour).
+    Returns the full Drik Panchang: samvatsara, muhurtas, calendars, lagna transits,
+    tarabalam, chandrabalam, etc.
     """
     from datetime import date as date_cls
     if not date:
         date = date_cls.today().isoformat()
     try:
-        if detailed:
-            return compute_detailed_panchang(
-                target_date=date, latitude=latitude, longitude=longitude,
-                timezone_name=timezone,
-            )
-        return compute_panchang(
+        return compute_detailed_panchang(
             target_date=date, latitude=latitude, longitude=longitude,
             timezone_name=timezone,
         )
