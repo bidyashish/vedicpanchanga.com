@@ -1,12 +1,18 @@
 import { useEffect } from "react";
 import { Section } from "@/components/panchang/Section";
 import { SUPPORT_EMAIL, CONTACT_EMAIL } from "@/lib/contact";
+import { applySeo } from "@/lib/seo";
 
 const GITHUB_URL = "https://github.com/bidyashish/vedicpanchanga.com";
 
 export function TermsPage() {
   useEffect(() => {
-    document.title = "Terms of Use · vedicpanchanga.com";
+    applySeo({
+      title: "Terms of Use · Vedic Panchanga",
+      description:
+        "Terms of Use for vedicpanchanga.com — service is provided as-is, with no warranty or guarantee of accuracy. Use at your own risk.",
+      canonical: "https://vedicpanchanga.com/terms",
+    });
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
 

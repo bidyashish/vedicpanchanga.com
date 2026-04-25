@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Common asset paths — explicitly allowed (already permitted by *)
+Allow: /assets/
+Allow: /og-image.png
+Allow: /favicon.svg
+Allow: /favicon.png
+
+Sitemap: https://vedicpanchanga.com/sitemap.xml

@@ -1,12 +1,18 @@
 import { useEffect } from "react";
 import { Section } from "@/components/panchang/Section";
 import { SUPPORT_EMAIL, CONTACT_EMAIL } from "@/lib/contact";
+import { applySeo } from "@/lib/seo";
 
 const GITHUB_URL = "https://github.com/bidyashish/vedicpanchanga.com";
 
 export function PrivacyPage() {
   useEffect(() => {
-    document.title = "Privacy Policy · vedicpanchanga.com";
+    applySeo({
+      title: "Privacy Policy · Vedic Panchanga",
+      description:
+        "Privacy Policy for vedicpanchanga.com — how we handle data, cookies and Google AdSense advertising. We do not require login and do not store personal data.",
+      canonical: "https://vedicpanchanga.com/privacy",
+    });
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
 

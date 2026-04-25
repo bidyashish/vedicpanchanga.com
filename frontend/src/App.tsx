@@ -7,7 +7,29 @@ import { PanchangPage } from "@/pages/PanchangPage";
 import { MuhurtaPage } from "@/pages/MuhurtaPage";
 import { PrivacyPage } from "@/pages/PrivacyPage";
 import { TermsPage } from "@/pages/TermsPage";
+import { applySeo } from "@/lib/seo";
 import type { LocationChoice } from "@/types/api";
+
+const HOME_SEO_BY_VIEW: Record<"kundali" | "panchang" | "muhurta", { title: string; description: string; canonical: string }> = {
+  kundali: {
+    title: "Vedic Panchanga — Free Drik Panchang, Kundali & Muhūrta Calculator",
+    description:
+      "Free Vedic Panchanga calculator: daily Drik Panchang, North & South Indian Kundali (birth chart), Vimśottarī Daśā, divisional charts, and Muhūrta finder. Sidereal Lahiri, Swiss Ephemeris precision.",
+    canonical: "https://vedicpanchanga.com/",
+  },
+  panchang: {
+    title: "Daily Drik Panchang — Tithi, Nakshatra, Yoga, Karana · Vedic Panchanga",
+    description:
+      "Daily Drik Panchang for any date and location: tithi, nakshatra, yoga, karana, sunrise/sunset, Rāhu kāla, Abhijit muhūrta, Chandrabalam and Tārabalam.",
+    canonical: "https://vedicpanchanga.com/#panchang",
+  },
+  muhurta: {
+    title: "Muhūrta Finder — Auspicious Timings for Any Undertaking · Vedic Panchanga",
+    description:
+      "Find auspicious muhūrta windows by purpose, date range and location. Purpose-based scoring with explainable reasons; native filters for Chandrabalam and Tārabalam.",
+    canonical: "https://vedicpanchanga.com/#muhurta",
+  },
+};
 
 export type View = "kundali" | "panchang" | "muhurta" | "privacy" | "terms";
 
@@ -75,6 +97,13 @@ export default function App() {
   }, []);
 
   const isLegal = view === "privacy" || view === "terms";
+
+  // Keep homepage SEO synced when toggling calculator tabs.
+  // Privacy/Terms pages set their own SEO inside their own useEffect.
+  useEffect(() => {
+    if (view === "privacy" || view === "terms") return;
+    applySeo(HOME_SEO_BY_VIEW[view]);
+  }, [view]);
 
   return (
     <div className="parchment-bg min-h-screen flex flex-col">

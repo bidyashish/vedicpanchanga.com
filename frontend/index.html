@@ -3,26 +3,139 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#FAF7F2" />
-    <meta name="description" content="Vedic Panchanga — free Drik Panchang calculator. Compute Kundali, Nakshatra, Tithi, Muhurta for any date (5000 BCE–5000 CE) and location." />
-    <meta name="keywords" content="vedic panchanga, drik panchang, kundali, birth chart, nakshatra, tithi, muhurta, jyotisha, ayanamsa, lahiri" />
-    <meta property="og:title" content="Vedic Panchanga — Drik Panchang Calculator" />
-    <meta property="og:description" content="Kundali, Panchanga and Muhurta calculator rooted in Swiss Ephemeris. Sidereal (Lahiri) with full divisional charts." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://vedicpanchanga.com/" />
+    <meta name="theme-color" content="#FAF7F2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+
+    <!-- Primary SEO -->
+    <title>Vedic Panchanga — Free Drik Panchang, Kundali &amp; Muhūrta Calculator</title>
+    <meta name="description" content="Free Vedic Panchanga calculator: daily Drik Panchang, North &amp; South Indian Kundali (birth chart), Vimśottarī Daśā, divisional charts, and Muhūrta finder. Sidereal (Lahiri) accuracy from 5000 BCE to 5000 CE, powered by Swiss Ephemeris." />
+    <meta name="keywords" content="vedic panchanga, drik panchang, panchang today, kundali, birth chart, jyotisha, nakshatra, tithi, yoga, karana, muhurta, shubh muhurat, vimshottari dasha, ashtakavarga, navamsa, vargas, ayanamsa, lahiri, swiss ephemeris, sidereal astrology" />
+    <meta name="author" content="Vedic Panchanga" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta name="googlebot" content="index, follow" />
     <link rel="canonical" href="https://vedicpanchanga.com/" />
 
+    <!-- Open Graph (Facebook, LinkedIn, WhatsApp, Slack) -->
+    <meta property="og:site_name" content="Vedic Panchanga" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Vedic Panchanga — Free Drik Panchang, Kundali &amp; Muhūrta" />
+    <meta property="og:description" content="Daily Drik Panchang, sidereal Kundali (Lahiri), divisional charts, Vimśottarī Daśā and Muhūrta finder. Free, accurate, no signup." />
+    <meta property="og:url" content="https://vedicpanchanga.com/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="hi_IN" />
+    <meta property="og:image" content="https://vedicpanchanga.com/og-image.png" />
+    <meta property="og:image:secure_url" content="https://vedicpanchanga.com/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Vedic Panchanga — Drik Panchang, Kundali and Muhūrta calculator" />
+
+    <!-- Facebook page reference -->
+    <meta property="article:publisher" content="https://www.facebook.com/profile.php?id=61581542717930" />
+    <meta property="og:see_also" content="https://www.facebook.com/profile.php?id=61581542717930" />
+    <meta property="og:see_also" content="https://github.com/bidyashish/vedicpanchanga.com" />
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Vedic Panchanga — Free Drik Panchang, Kundali &amp; Muhūrta" />
+    <meta name="twitter:description" content="Daily Drik Panchang, sidereal Kundali (Lahiri), divisional charts, Vimśottarī Daśā and Muhūrta finder. Free, accurate, no signup." />
+    <meta name="twitter:image" content="https://vedicpanchanga.com/og-image.png" />
+    <meta name="twitter:image:alt" content="Vedic Panchanga — Drik Panchang, Kundali and Muhūrta calculator" />
+
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/favicon.svg" color="#cc5200" />
+
+    <!-- Hosting / locale hints -->
+    <meta name="application-name" content="Vedic Panchanga" />
+    <meta name="apple-mobile-web-app-title" content="VedicPanchanga" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- AdSense ownership verification (also satisfies AdSense crawler header check) -->
+    <meta name="google-adsense-account" content="ca-pub-5806576477282997" />
+
+    <!-- Performance hints -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=Hind:wght@400;500;600;700&family=Tiro+Devanagari+Hindi:ital@0;1&family=Noto+Serif+Devanagari:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
 
-    <title>Vedic Panchanga — Drik Panchang &amp; Kundali Calculator</title>
+    <!-- Structured data: WebSite + WebApplication + Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://vedicpanchanga.com/#website",
+          "url": "https://vedicpanchanga.com/",
+          "name": "Vedic Panchanga",
+          "description": "Free Vedic Panchanga calculator: Drik Panchang, Kundali, Muhūrta and divisional charts.",
+          "inLanguage": ["en", "hi"],
+          "publisher": { "@id": "https://vedicpanchanga.com/#org" }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://vedicpanchanga.com/#app",
+          "name": "Vedic Panchanga",
+          "url": "https://vedicpanchanga.com/",
+          "applicationCategory": "LifestyleApplication",
+          "operatingSystem": "Web",
+          "browserRequirements": "Requires JavaScript",
+          "isAccessibleForFree": true,
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+          "featureList": [
+            "Drik Panchang (tithi, nakshatra, yoga, karana)",
+            "North & South Indian Kundali",
+            "16 divisional charts (D1–D60)",
+            "Vimśottarī Mahādaśā",
+            "Aṣṭakavarga totals",
+            "Muhūrta finder with purpose-based scoring",
+            "Sidereal — Lahiri ayanāṁśa",
+            "Swiss Ephemeris precision (5000 BCE – 5000 CE)"
+          ],
+          "image": "https://vedicpanchanga.com/og-image.png",
+          "publisher": { "@id": "https://vedicpanchanga.com/#org" }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://vedicpanchanga.com/#org",
+          "name": "Vedic Panchanga",
+          "url": "https://vedicpanchanga.com/",
+          "logo": "https://vedicpanchanga.com/apple-touch-icon.png",
+          "sameAs": [
+            "https://www.facebook.com/profile.php?id=61581542717930",
+            "https://github.com/bidyashish/vedicpanchanga.com"
+          ],
+          "contactPoint": [
+            {
+              "@type": "ContactPoint",
+              "contactType": "customer support",
+              "email": "support@vedicpanchanga.com",
+              "availableLanguage": ["English", "Hindi"]
+            },
+            {
+              "@type": "ContactPoint",
+              "contactType": "general",
+              "email": "contact@vedicpanchanga.com"
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>
+      Vedic Panchanga is a free calculator for Drik Panchang, Kundali (Vedic
+      birth chart) and Muhūrta. JavaScript must be enabled to run the
+      interactive calculations.
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

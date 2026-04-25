@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff8f1"/>
+      <stop offset="55%" stop-color="#ffeedb"/>
+      <stop offset="100%" stop-color="#ffd9b3"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.78" cy="0.5" r="0.55">
+      <stop offset="0%" stop-color="#ff8533" stop-opacity="0.35"/>
+      <stop offset="60%" stop-color="#ff8533" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#ff8533" stop-opacity="0"/>
+    </radialGradient>
+    <style>
+      .brand   { font-family: 'Fraunces', 'Times New Roman', serif; font-weight: 700; fill: #1a0f00; }
+      .accent  { fill: #cc5200; }
+      .tag     { font-family: 'Manrope', 'Helvetica Neue', sans-serif; font-weight: 600; fill: #5a3413; letter-spacing: 0.02em; }
+      .small   { font-family: 'Manrope', 'Helvetica Neue', sans-serif; font-weight: 500; fill: #7a4a1f; }
+      .domain  { font-family: 'Manrope', 'Helvetica Neue', sans-serif; font-weight: 600; fill: #cc5200; letter-spacing: 0.06em; text-transform: uppercase; }
+      .stamp   { font-family: 'Noto Serif Devanagari', 'Tiro Devanagari Hindi', serif; fill: #cc5200; font-weight: 600; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- Decorative mandala on the right -->
+  <g transform="translate(940 315)" opacity="0.95">
+    <circle r="220" fill="none" stroke="#cc5200" stroke-width="1.4" opacity="0.20"/>
+    <circle r="180" fill="none" stroke="#cc5200" stroke-width="1.6" opacity="0.55"/>
+    <circle r="140" fill="none" stroke="#1a0f00" stroke-width="1.2" opacity="0.40"/>
+    <circle r="92"  fill="none" stroke="#cc5200" stroke-width="1.6" opacity="0.85"/>
+    <circle r="50"  fill="none" stroke="#1a0f00" stroke-width="1.2" opacity="0.55"/>
+    <!-- Spokes -->
+    <g stroke="#1a0f00" stroke-width="0.9" opacity="0.45">
+      <!-- 16 spokes at 22.5deg -->
+      <line x1="0" y1="-200" x2="0" y2="-100"/>
+      <line x1="0" y1="200"  x2="0" y2="100"/>
+      <line x1="-200" y1="0" x2="-100" y2="0"/>
+      <line x1="200"  y1="0" x2="100"  y2="0"/>
+      <line x1="-141.4" y1="-141.4" x2="-70.7" y2="-70.7"/>
+      <line x1="141.4"  y1="141.4"  x2="70.7"  y2="70.7"/>
+      <line x1="-141.4" y1="141.4"  x2="-70.7" y2="70.7"/>
+      <line x1="141.4"  y1="-141.4" x2="70.7"  y2="-70.7"/>
+      <line x1="-76.5"  y1="-184.8" x2="-38.3" y2="-92.4"/>
+      <line x1="76.5"   y1="184.8"  x2="38.3"  y2="92.4"/>
+      <line x1="-184.8" y1="-76.5"  x2="-92.4" y2="-38.3"/>
+      <line x1="184.8"  y1="76.5"   x2="92.4"  y2="38.3"/>
+      <line x1="184.8"  y1="-76.5"  x2="92.4"  y2="-38.3"/>
+      <line x1="-184.8" y1="76.5"   x2="-92.4" y2="38.3"/>
+      <line x1="76.5"   y1="-184.8" x2="38.3"  y2="-92.4"/>
+      <line x1="-76.5"  y1="184.8"  x2="-38.3" y2="92.4"/>
+    </g>
+    <!-- Petal dots on the inner ring -->
+    <g fill="#cc5200">
+      <circle cx="0"   cy="-92" r="4"/>
+      <circle cx="0"   cy="92"  r="4"/>
+      <circle cx="-92" cy="0"   r="4"/>
+      <circle cx="92"  cy="0"   r="4"/>
+      <circle cx="-65" cy="-65" r="3"/>
+      <circle cx="65"  cy="65"  r="3"/>
+      <circle cx="-65" cy="65"  r="3"/>
+      <circle cx="65"  cy="-65" r="3"/>
+    </g>
+    <circle r="14" fill="#cc5200"/>
+    <circle r="6"  fill="#fff8f1"/>
+  </g>
+
+  <!-- Sanskrit stamp -->
+  <text x="80" y="120" class="stamp" font-size="34">॥ पञ्चाङ्ग ॥</text>
+
+  <!-- Brand wordmark -->
+  <text x="80" y="280" class="brand" font-size="96">Vedic</text>
+  <text x="80" y="380" class="brand accent" font-size="96">Panchanga</text>
+
+  <!-- Tagline -->
+  <text x="80" y="445" class="tag" font-size="32">Drik Panchang · Kundali · Muhūrta</text>
+  <text x="80" y="485" class="small" font-size="22">Free, accurate, sidereal (Lahiri) — 5000 BCE to 5000 CE</text>
+
+  <!-- Footer rule + domain -->
+  <line x1="80" y1="540" x2="560" y2="540" stroke="#cc5200" stroke-width="1.5" opacity="0.4"/>
+  <text x="80" y="575" class="domain" font-size="22">vedicpanchanga.com</text>
+</svg>
