@@ -12,10 +12,15 @@
    against rgb() expressions.
    ──────────────────────────────────────────────────────────── */
 @theme {
-  --font-sans: "Manrope", "Hind", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Fraunces", ui-serif, Georgia, serif;
-  --font-deva: "Tiro Devanagari Hindi", "Noto Serif Devanagari", "Hind", serif;
-  --font-deva-body: "Hind", "Noto Serif Devanagari", "Tiro Devanagari Hindi", sans-serif;
+  /* System fonts first — instant first paint on iOS/macOS, Windows,
+     Android. Inter loads in the background and swaps in via
+     font-display: swap (declared on the Google Fonts URL). */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter",
+    "Segoe UI Variable", "Segoe UI", system-ui, Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-serif: var(--font-sans);
+  --font-deva: "Noto Sans Devanagari", "Hind", var(--font-sans);
+  --font-deva-body: "Noto Sans Devanagari", "Hind", var(--font-sans);
 
   /* Brand scale — Pumpkin Spice. Static (does not flip in dark mode). */
   --color-pumpkin-50:  #fff0e5;
@@ -78,26 +83,27 @@
   --shadow-glow: 0 0 0 3px rgb(var(--primary-rgb) / 0.18);
 
   /* Semantic font scale — every component should reach for one of
-     these instead of text-[Npx]. */
-  --text-micro: 10px;
+     these instead of text-[Npx]. Tuned for WCAG-compliant body text
+     (16px floor) and stronger heading hierarchy. */
+  --text-micro: 11px;
   --text-micro--line-height: 1.4;
   --text-micro--letter-spacing: 0.04em;
-  --text-tiny: 11px;
-  --text-tiny--line-height: 1.4;
-  --text-mini: 12px;
-  --text-mini--line-height: 1.45;
-  --text-meta: 13px;
-  --text-meta--line-height: 1.5;
-  --text-body: 14px;
-  --text-body--line-height: 1.55;
-  --text-lead: 15px;
-  --text-lead--line-height: 1.55;
-  --text-title: 18px;
+  --text-tiny: 12px;
+  --text-tiny--line-height: 1.45;
+  --text-mini: 13px;
+  --text-mini--line-height: 1.5;
+  --text-meta: 14px;
+  --text-meta--line-height: 1.55;
+  --text-body: 16px;
+  --text-body--line-height: 1.6;
+  --text-lead: 17px;
+  --text-lead--line-height: 1.6;
+  --text-title: 20px;
   --text-title--line-height: 1.35;
-  --text-heading: 22px;
-  --text-heading--line-height: 1.25;
-  --text-display: 28px;
-  --text-display--line-height: 1.15;
+  --text-heading: 24px;
+  --text-heading--line-height: 1.3;
+  --text-display: 32px;
+  --text-display--line-height: 1.2;
 
   --tracking-eyebrow: 0.1em;
 }
@@ -231,7 +237,11 @@
     --leaf-soft: rgb(20 83 45 / 0.4);
   }
 
-  html { -webkit-text-size-adjust: 100%; }
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;  /* No grey flash on mobile tap */
+    text-size-adjust: 100%;
+  }
 
   html, body, #root {
     margin: 0;
@@ -239,33 +249,43 @@
     background-color: var(--bg);
     color: var(--ink);
     font-family: var(--font-sans);
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 16px;
+    line-height: 1.55;
+    font-feature-settings: "cv11", "ss01", "ss03";  /* Inter alternates */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    min-height: 100vh;
+    min-height: 100dvh;  /* Honors mobile dynamic viewport (no jump on URL bar) */
   }
 
+  /* Tap targets need ≥44px box on touch devices (Apple HIG, WCAG 2.5.5). */
+  button, a, [role="button"], input, select, textarea {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;  /* Removes 300ms double-tap delay */
+  }
+
+  /* Devanagari needs slightly more leading for stacked diacritics. */
   html[lang="hi"], html[lang="sa"], html[lang="mr"], html[lang="bn"] {
     font-family: var(--font-deva-body);
-    line-height: 1.65;
+    font-size: 17px;
+    line-height: 1.7;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-serif);
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    line-height: 1.2;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    letter-spacing: -0.018em;
+    line-height: 1.25;
     color: var(--ink);
-    font-optical-sizing: auto;
+    font-feature-settings: "ss01", "cv11";  /* Inter's tabular digits + alt 1/0 */
   }
 
   html[lang="hi"] :is(h1,h2,h3,h4,h5,h6),
   html[lang="sa"] :is(h1,h2,h3,h4,h5,h6),
-  html[lang="mr"] :is(h1,h2,h3,h4,h5,h6) {
-    font-family: var(--font-deva), var(--font-serif);
-    line-height: 1.4;
+  html[lang="mr"] :is(h1,h2,h3,h4,h5,h6),
+  html[lang="bn"] :is(h1,h2,h3,h4,h5,h6) {
+    font-family: var(--font-deva);
+    line-height: 1.45;
     letter-spacing: 0;
   }
 
@@ -273,10 +293,12 @@
 
   ::selection { background-color: var(--primary-soft); color: var(--ink); }
 
+  /* Visible focus ring with halo — keyboard-only (no flash on click). */
   *:focus-visible {
     outline: 2px solid var(--primary);
     outline-offset: 2px;
-    border-radius: 3px;
+    box-shadow: 0 0 0 4px rgb(var(--primary-rgb) / 0.15);
+    border-radius: 4px;
   }
 
   a { color: var(--primary); text-decoration-thickness: 1px; text-underline-offset: 3px; }
@@ -290,15 +312,20 @@
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
   }
+  /* Default card body padding — generous on mobile, tighter on desktop. */
+  .card-body { padding: 1.25rem; }
+  @media (min-width: 768px) { .card-body { padding: 1.5rem; } }
+  @media (min-width: 1024px) { .card-body { padding: 1.75rem; } }
+
   .card-lift { transition: box-shadow 180ms ease, border-color 180ms ease; }
   .card-lift:hover { box-shadow: var(--shadow-lift); border-color: var(--border-strong); }
 
   .field-label {
     display: block;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--ink-soft);
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.45rem;
     text-transform: none;
   }
 
@@ -306,13 +333,18 @@
     width: 100%;
     background-color: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 0.45rem 0.65rem;
-    font-size: 13.5px;
-    line-height: 1.4;
+    border-radius: var(--radius-md);
+    padding: 0.6875rem 0.875rem;  /* 11px 14px — generous, comfortable */
+    /* 16px on mobile prevents iOS Safari from auto-zooming on focus.
+       Drops to 15px on >=md to feel proportional to wider layouts. */
+    font-size: 16px;
+    line-height: 1.5;
     color: var(--ink);
-    min-height: 34px;
+    min-height: 44px;  /* WCAG 2.5.5 touch target */
     transition: border-color 140ms ease, box-shadow 140ms ease;
+  }
+  @media (min-width: 768px) {
+    .field { font-size: 15px; min-height: 40px; padding: 0.5625rem 0.8125rem; }
   }
   .field::placeholder { color: var(--ink-muted); }
   .field:hover { border-color: var(--border-strong); }
@@ -334,14 +366,16 @@
     background: var(--primary);
     color: #ffffff;
     font-weight: 600;
-    font-size: 13.5px;
-    padding: 0.45rem 0.95rem;
-    min-height: 34px;
-    border-radius: var(--radius-sm);
-    box-shadow: 0 1px 1px rgba(15, 23, 42, 0.06);
-    transition: background-color 140ms ease, box-shadow 140ms ease;
+    font-size: 15px;
+    padding: 0.6875rem 1.25rem;
+    min-height: 44px;  /* Touch target */
+    border-radius: var(--radius-md);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+    transition: background-color 140ms ease, box-shadow 140ms ease, transform 80ms ease;
+    user-select: none;
   }
   .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+  .btn-primary:active:not(:disabled) { transform: translateY(1px); box-shadow: none; }
   .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
   .dark .btn-primary { color: rgb(15 23 42); }
 
@@ -354,27 +388,34 @@
     border: 1px solid var(--border);
     color: var(--ink);
     font-weight: 500;
-    font-size: 13.5px;
-    padding: 0.45rem 0.85rem;
-    min-height: 34px;
-    border-radius: var(--radius-sm);
-    transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+    font-size: 15px;
+    padding: 0.6875rem 1.125rem;
+    min-height: 44px;
+    border-radius: var(--radius-md);
+    transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 80ms ease;
+    user-select: none;
   }
   .btn-ghost:hover {
     background-color: var(--surface-soft);
     border-color: var(--border-strong);
     color: var(--primary);
   }
+  .btn-ghost:active { transform: translateY(1px); }
+
+  /* On desktop where mouse precision is high, buttons can collapse a bit. */
+  @media (min-width: 768px) {
+    .btn-primary, .btn-ghost { min-height: 40px; padding-top: 0.5625rem; padding-bottom: 0.5625rem; }
+  }
 
   .tag {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    padding: 0.15rem 0.55rem;
+    padding: 0.2rem 0.65rem;
     background-color: var(--surface-soft);
     border: 1px solid var(--border);
     border-radius: 999px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--ink-soft);
   }
@@ -409,7 +450,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.18em;
@@ -425,78 +466,106 @@
   .scrollbar-hide { scrollbar-width: none; }
 
   /* ───────── Typography utilities — semantic, theme-aware ─────────
-     Use these instead of arbitrary text-[Npx] / tracking-[…]. */
+     Use these instead of arbitrary text-[Npx] / tracking-[…].
+     Sizes meet WCAG 1.4.4 (16px body floor, ≥14px for prose labels). */
   .eyebrow {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
-    line-height: 1.4;
+    line-height: 1.45;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--ink-muted);
   }
   .eyebrow-accent {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
-    line-height: 1.4;
+    line-height: 1.45;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--primary);
   }
   .eyebrow-lg {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
-    line-height: 1.4;
+    line-height: 1.45;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--ink-muted);
   }
   .label {
-    font-size: 13px;
-    line-height: 1.5;
+    font-size: 14px;
+    line-height: 1.55;
     color: var(--ink-soft);
     font-weight: 500;
   }
   .label-strong {
-    font-size: 13px;
-    line-height: 1.5;
+    font-size: 14px;
+    line-height: 1.55;
     color: var(--ink-soft);
     font-weight: 600;
   }
   .value {
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 15px;
+    line-height: 1.55;
     color: var(--ink);
   }
   .value-strong {
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 15px;
+    line-height: 1.55;
     color: var(--ink);
     font-weight: 600;
   }
   .meta {
-    font-size: 12px;
-    line-height: 1.5;
+    font-size: 13px;
+    line-height: 1.55;
     color: var(--ink-soft);
   }
+  /* Stripe / Linear / Vercel-style heading scale: bigger jumps,
+     heavier weight, tighter tracking as size grows. */
   .heading-section {
-    font-family: var(--font-serif);
-    font-size: 18px;
+    font-family: var(--font-sans);
+    font-size: 20px;
     line-height: 1.3;
     color: var(--ink);
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.014em;
   }
   .heading-page {
-    font-family: var(--font-serif);
-    font-size: 24px;
-    line-height: 1.2;
+    font-family: var(--font-sans);
+    font-size: 30px;
+    line-height: 1.15;
     color: var(--ink);
-    font-weight: 600;
-    letter-spacing: -0.012em;
+    font-weight: 700;
+    letter-spacing: -0.024em;
   }
   @media (min-width: 640px) {
-    .heading-page { font-size: 28px; }
-    .heading-section { font-size: 20px; }
+    .heading-section { font-size: 22px; letter-spacing: -0.016em; }
+    .heading-page    { font-size: 38px; letter-spacing: -0.028em; }
+  }
+  @media (min-width: 1024px) {
+    .heading-page    { font-size: 44px; letter-spacing: -0.03em; }
+  }
+
+  /* Devanagari script is visually denser per glyph; bump every step
+     so Hindi reads as easily as English at the same hierarchy level. */
+  :is(html[lang="hi"], html[lang="sa"], html[lang="mr"], html[lang="bn"]) {
+    & .heading-page    { font-size: 32px; letter-spacing: -0.012em; }
+    & .heading-section { font-size: 22px; letter-spacing: -0.008em; }
+    & .field-label     { font-size: 15px; }
+    & .field           { font-size: 17px; }
+    & .label, & .label-strong { font-size: 15px; }
+    & .value, & .value-strong { font-size: 16px; }
+  }
+  @media (min-width: 640px) {
+    :is(html[lang="hi"], html[lang="sa"], html[lang="mr"], html[lang="bn"]) {
+      & .heading-page    { font-size: 40px; }
+      & .heading-section { font-size: 24px; }
+    }
+  }
+  @media (min-width: 1024px) {
+    :is(html[lang="hi"], html[lang="sa"], html[lang="mr"], html[lang="bn"]) {
+      & .heading-page { font-size: 46px; }
+    }
   }
 }
 
