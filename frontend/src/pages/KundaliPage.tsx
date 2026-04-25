@@ -37,6 +37,12 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
     timezone: sharedLocation.timezone,
   }));
   const [data, setData] = useState<ChartData | null>(null);
+  const [submittedPlaceName, setSubmittedPlaceName] = useState<string>(
+    sharedLocation.place_name,
+  );
+  const [submittedChartStyle, setSubmittedChartStyle] = useState<"north" | "south">(
+    DEFAULT_FORM.chart_style,
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const didAutoRunRef = useRef(false);
@@ -55,9 +61,11 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
         ayanamsa: body.ayanamsa as never,
       });
       setData(result);
+      setSubmittedPlaceName(body.place_name);
+      setSubmittedChartStyle(body.chart_style);
     } catch (e) {
       setError((e as Error).message || "Failed to compute chart");
-      setData(null);
+      // Keep previous chart visible on error rather than wiping it.
     } finally {
       setLoading(false);
     }
@@ -71,6 +79,10 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   }, []);
 
   const onSubmit = () => {
+    if (!Number.isFinite(form.latitude) || !Number.isFinite(form.longitude)) {
+      setError("Please enter valid latitude and longitude, or pick a city.");
+      return;
+    }
     onLocationChange({
       place_name: form.place_name,
       latitude: form.latitude,
@@ -113,8 +125,8 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
           )}
           {data && (
             <>
-              <BirthHeader data={data} placeName={form.place_name} />
-              <ChartTabs data={data} chartStyle={form.chart_style} />
+              <BirthHeader data={data} placeName={submittedPlaceName} />
+              <ChartTabs data={data} chartStyle={submittedChartStyle} />
               <AdSlot slot="inline" minHeight={120} className="my-2" />
               <PlanetsTable planets={data.planets_data} ascendant={data.ascendant} />
               <DashaTable dasha={data.dasha} />

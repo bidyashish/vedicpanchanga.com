@@ -76,7 +76,11 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
           data-testid="birth-time-input"
           type="time"
           value={form.birth_time}
-          onChange={(e) => update("birth_time", e.target.value)}
+          onChange={(e) => {
+            update("birth_time", e.target.value);
+            // Dismiss the native time picker once a value is chosen.
+            e.currentTarget.blur();
+          }}
           className="field"
           required
         />
@@ -144,8 +148,11 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
             data-testid="latitude-input"
             type="number"
             step="0.000001"
-            value={form.latitude}
-            onChange={(e) => update("latitude", parseFloat(e.target.value))}
+            value={Number.isFinite(form.latitude) ? form.latitude : ""}
+            onChange={(e) => {
+              const v = e.target.value;
+              update("latitude", v === "" ? Number.NaN : parseFloat(v));
+            }}
             className="field num"
           />
         </div>
@@ -155,8 +162,11 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
             data-testid="longitude-input"
             type="number"
             step="0.000001"
-            value={form.longitude}
-            onChange={(e) => update("longitude", parseFloat(e.target.value))}
+            value={Number.isFinite(form.longitude) ? form.longitude : ""}
+            onChange={(e) => {
+              const v = e.target.value;
+              update("longitude", v === "" ? Number.NaN : parseFloat(v));
+            }}
             className="field num"
           />
         </div>
