@@ -19,7 +19,6 @@ const DEFAULT_FORM: BirthFormState = {
   longitude: 77.209,
   timezone: "Asia/Kolkata",
   ayanamsa: "lahiri",
-  chart_style: "north",
 };
 
 interface Props {
@@ -40,9 +39,6 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   const [submittedPlaceName, setSubmittedPlaceName] = useState<string>(
     sharedLocation.place_name,
   );
-  const [submittedChartStyle, setSubmittedChartStyle] = useState<"north" | "south">(
-    DEFAULT_FORM.chart_style,
-  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const didAutoRunRef = useRef(false);
@@ -62,7 +58,6 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
       });
       setData(result);
       setSubmittedPlaceName(body.place_name);
-      setSubmittedChartStyle(body.chart_style);
     } catch (e) {
       setError((e as Error).message || "Failed to compute chart");
       // Keep previous chart visible on error rather than wiping it.
@@ -126,7 +121,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
           {data && (
             <>
               <BirthHeader data={data} placeName={submittedPlaceName} />
-              <ChartTabs data={data} chartStyle={submittedChartStyle} />
+              <ChartTabs data={data} />
               <AdSlot slot="inline" minHeight={120} className="my-2" />
               <PlanetsTable planets={data.planets_data} ascendant={data.ascendant} />
               <DashaTable dasha={data.dasha} />

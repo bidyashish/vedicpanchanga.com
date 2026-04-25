@@ -7,14 +7,31 @@ import type { ChartData } from "@/types/api";
 
 interface Props {
   data: ChartData;
-  chartStyle: "north" | "south";
 }
 
-export function ChartTabs({ data, chartStyle }: Props) {
+const STYLE_KEY = "jk_chart_style";
+
+function loadStyle(): "north" | "south" {
+  if (typeof window === "undefined") return "north";
+  const v = window.localStorage.getItem(STYLE_KEY);
+  return v === "south" ? "south" : "north";
+}
+
+export function ChartTabs({ data }: Props) {
   const { t, lang } = useI18n();
   const vargaKeys = data.varga_order ?? [1, 2, 9];
   const [tab, setTab] = useState<string>(`d${vargaKeys[0] ?? 1}`);
+  const [chartStyle, setChartStyleState] = useState<"north" | "south">(loadStyle);
   const vargas = data.vargas ?? {};
+
+  const setChartStyle = (s: "north" | "south") => {
+    setChartStyleState(s);
+    try {
+      window.localStorage.setItem(STYLE_KEY, s);
+    } catch {
+      /* ignore quota errors */
+    }
+  };
 
   const active = vargas[tab] ?? {
     chart: data.d1_chart,
@@ -29,41 +46,59 @@ export function ChartTabs({ data, chartStyle }: Props) {
   const ChartComponent = chartStyle === "south" ? SouthIndianChart : VedicChart;
 
   return (
-    <div
-      className="card p-4 sm:p-5"
-      data-testid="chart-tabs"
-    >
-      <div
-        role="tablist"
-        className="flex gap-1 sm:gap-2 border-b border-parchment-200 mb-4 overflow-x-auto scrollbar-hide pb-0"
-        data-testid="varga-tabs"
-      >
-        {vargaKeys.map((n) => {
-          const key = `d${n}`;
-          const v = vargas[key];
-          const selected = tab === key;
-          const label = v ? vargaName(n, v.name, lang) : "";
-          return (
+    <div className="card p-4 sm:p-5" data-testid="chart-tabs">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 pb-3 border-b border-parchment-200">
+        {/* Chart style: North / South */}
+        <div
+          role="tablist"
+          aria-label={t("chart_style")}
+          data-testid="chart-style-toggle"
+          className="inline-flex rounded-sm border border-parchment-200 overflow-hidden p-0.5 gap-0.5 bg-parchment-100 shrink-0"
+        >
+          {[
+            { id: "north" as const, label: t("north_indian") },
+            { id: "south" as const, label: t("south_indian") },
+          ].map((o) => (
             <button
-              key={key}
-              data-testid={`tab-${key}`}
+              key={o.id}
+              type="button"
               role="tab"
-              aria-selected={selected}
-              onClick={() => setTab(key)}
-              title={label}
-              className={`py-2.5 px-3 font-semibold whitespace-nowrap border-b-2 transition-colors flex flex-col items-start shrink-0 ${
-                selected
-                  ? "text-saffron border-saffron"
-                  : "text-ink-soft border-transparent hover:text-saffron"
+              aria-selected={chartStyle === o.id}
+              data-testid={`chart-style-${o.id}`}
+              onClick={() => setChartStyle(o.id)}
+              className={`px-3 py-1.5 text-mini font-medium rounded-2xs transition-colors whitespace-nowrap ${
+                chartStyle === o.id
+                  ? "bg-white text-saffron shadow-card"
+                  : "text-ink-soft hover:text-ink"
               }`}
             >
-              <span className="text-meta leading-none">D{n}</span>
-              <span className="text-micro text-ink-muted mt-1 normal-case font-medium leading-none">
-                {label}
-              </span>
+              {o.label}
             </button>
-          );
-        })}
+          ))}
+        </div>
+
+        {/* Varga dropdown */}
+        <label className="sr-only" htmlFor="varga-select">
+          Divisional chart
+        </label>
+        <select
+          id="varga-select"
+          data-testid="varga-select"
+          value={tab}
+          onChange={(e) => setTab(e.target.value)}
+          className="field num flex-1 min-w-[180px] sm:max-w-xs"
+        >
+          {vargaKeys.map((n) => {
+            const key = `d${n}`;
+            const v = vargas[key];
+            const label = v ? vargaName(n, v.name, lang) : "";
+            return (
+              <option key={key} value={key}>
+                D{n}{label ? ` — ${label}` : ""}
+              </option>
+            );
+          })}
+        </select>
       </div>
 
       <div className="bg-parchment-50 p-2 rounded-sm">

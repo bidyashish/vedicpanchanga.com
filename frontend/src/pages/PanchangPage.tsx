@@ -5,7 +5,10 @@ import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { Section } from "@/components/panchang/Section";
 import { TimeBand } from "@/components/panchang/TimeBand";
 import { AdSlot } from "@/components/shell/AdSlot";
-import { fetchPanchang, reverseGeocode } from "@/lib/api";
+import { VedicChart } from "@/components/kundali/VedicChart";
+import { SouthIndianChart } from "@/components/kundali/SouthIndianChart";
+import { PlanetsTable } from "@/components/kundali/PlanetsTable";
+import { calculateChart, fetchPanchang, reverseGeocode } from "@/lib/api";
 import {
   formatTime,
   formatTimeWithDate,
@@ -13,7 +16,27 @@ import {
   hoursToHMS,
   todayISO,
 } from "@/lib/format";
-import type { LocationChoice, PanchangData, TransitItem } from "@/types/api";
+import type {
+  ChartData,
+  LocationChoice,
+  PanchangData,
+  TransitItem,
+} from "@/types/api";
+
+// Pull HH:MM (24h, in the given timezone) out of an ISO datetime.
+// Used to anchor the Lagna Kundali to local sunrise.
+function localTimeFromIso(iso: string, tz?: string): string {
+  try {
+    return new Date(iso).toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: tz,
+    });
+  } catch {
+    return "06:00";
+  }
+}
 
 function TransitList({
   items,
@@ -69,20 +92,55 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
   const [date, setDate] = useState(todayISO());
   const [loc, setLoc] = useState<LocationChoice>(defaultLocation);
   const [data, setData] = useState<PanchangData | null>(null);
+  const [chart, setChart] = useState<ChartData | null>(null);
+  const [chartTime, setChartTime] = useState<string>("");
+  const [chartStyle, setChartStyle] = useState<"north" | "south">("north");
   const [loading, setLoading] = useState(false);
+  const [chartLoading, setChartLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const run = async (overrides: Partial<LocationChoice> & { date?: string } = {}) => {
     setLoading(true);
     setError(null);
     try {
+      const lat = overrides.latitude ?? loc.latitude;
+      const lon = overrides.longitude ?? loc.longitude;
+      const tz = overrides.timezone === undefined ? loc.timezone : overrides.timezone;
+      const reqDate = overrides.date ?? date;
+      const placeName = overrides.place_name ?? loc.place_name;
+
       const d = await fetchPanchang({
-        latitude: overrides.latitude ?? loc.latitude,
-        longitude: overrides.longitude ?? loc.longitude,
-        date: overrides.date ?? date,
-        timezone: overrides.timezone === undefined ? loc.timezone : overrides.timezone,
+        latitude: lat,
+        longitude: lon,
+        date: reqDate,
+        timezone: tz,
       });
       setData(d);
+
+      // Fetch the Lagna Kundali at local sunrise (the standard convention).
+      // Failures here are non-fatal — panchang is the primary content.
+      const sunriseIso = d.sun_moon?.sunrise;
+      if (sunriseIso) {
+        const time = localTimeFromIso(sunriseIso, d.location.timezone);
+        setChartTime(time);
+        setChartLoading(true);
+        try {
+          const c = await calculateChart({
+            birth_date: d.date,
+            birth_time: time,
+            latitude: lat,
+            longitude: lon,
+            timezone: d.location.timezone,
+            place_name: placeName,
+            ayanamsa: "lahiri",
+          });
+          setChart(c);
+        } catch {
+          /* keep previous chart silently */
+        } finally {
+          setChartLoading(false);
+        }
+      }
     } catch (e) {
       setError((e as Error).message || "Failed to fetch Panchang");
       setData(null);
@@ -225,6 +283,81 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 </p>
               </div>
             </div>
+
+            <Section
+              title="Lagna Kuṇḍalī"
+              subtitle={
+                chartTime
+                  ? `Sunrise · ${formatLongDate(data.date)} at ${chartTime}`
+                  : "Sunrise chart"
+              }
+              testId="section-lagna-kundali"
+            >
+              {chartLoading && !chart ? (
+                <div className="flex flex-col items-center py-10 gap-2">
+                  <MandalaLoader size={36} />
+                  <p className="meta italic">{t("consulting_heavens")}</p>
+                </div>
+              ) : chart ? (
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-5">
+                  <div className="lg:col-span-3 space-y-3">
+                    <div
+                      className="inline-flex rounded-sm border border-parchment-200 overflow-hidden p-0.5 gap-0.5 bg-parchment-100"
+                      data-testid="lagna-chart-style-toggle"
+                    >
+                      {[
+                        { id: "north" as const, label: t("north_indian") },
+                        { id: "south" as const, label: t("south_indian") },
+                      ].map((o) => (
+                        <button
+                          key={o.id}
+                          type="button"
+                          data-testid={`lagna-chart-style-${o.id}`}
+                          onClick={() => setChartStyle(o.id)}
+                          className={`px-3 py-1 text-mini font-medium rounded-2xs transition-colors ${
+                            chartStyle === o.id
+                              ? "bg-white text-saffron shadow-card"
+                              : "text-ink-soft hover:text-ink"
+                          }`}
+                        >
+                          {o.label}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="bg-parchment-50 p-2 rounded-sm">
+                      {chartStyle === "south" ? (
+                        <SouthIndianChart
+                          houseMap={chart.d1_chart}
+                          ascSign={chart.d1_asc_sign}
+                          title="Rāśi · D1"
+                          testId="lagna-chart-south"
+                        />
+                      ) : (
+                        <VedicChart
+                          houseMap={chart.d1_chart}
+                          ascSign={chart.d1_asc_sign}
+                          title="Rāśi · D1"
+                          testId="lagna-chart-north"
+                        />
+                      )}
+                    </div>
+                    <p className="text-mini text-ink-soft text-center italic">
+                      Lagna at {chart.ascendant.sign} {chart.ascendant.dms} ·
+                      Nakṣatra {chart.ascendant.nakshatra} (Pāda{" "}
+                      {chart.ascendant.nakshatra_pada})
+                    </p>
+                  </div>
+                  <div className="lg:col-span-2">
+                    <PlanetsTable
+                      planets={chart.planets_data}
+                      ascendant={chart.ascendant}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <p className="meta italic">Chart unavailable for this location.</p>
+              )}
+            </Section>
 
             <Section title="Sun &amp; Moon" testId="section-sun-moon">
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">

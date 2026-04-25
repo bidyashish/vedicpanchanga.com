@@ -13,7 +13,6 @@ export interface BirthFormState {
   longitude: number;
   timezone: string | null;
   ayanamsa: string;
-  chart_style: "north" | "south";
 }
 
 const FALLBACK_AYANAMSAS: AyanamsaOption[] = [
@@ -114,32 +113,6 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
             </option>
           ))}
         </select>
-      </div>
-      <div>
-        <label className="field-label">{t("chart_style")}</label>
-        <div
-          className="flex rounded-sm border border-parchment-200 overflow-hidden p-0.5 gap-0.5 bg-parchment-100"
-          data-testid="chart-style-toggle"
-        >
-          {[
-            { id: "north" as const, label: t("north_indian") },
-            { id: "south" as const, label: t("south_indian") },
-          ].map((o) => (
-            <button
-              key={o.id}
-              type="button"
-              data-testid={`chart-style-${o.id}`}
-              onClick={() => update("chart_style", o.id)}
-              className={`flex-1 px-2 py-1.5 text-mini font-medium rounded-2xs transition-colors ${
-                form.chart_style === o.id
-                  ? "bg-white text-saffron shadow-card"
-                  : "text-ink-soft hover:text-ink"
-              }`}
-            >
-              {o.label}
-            </button>
-          ))}
-        </div>
       </div>
       <div className="grid grid-cols-2 gap-2.5">
         <div>

@@ -47,9 +47,10 @@ class TestKelownaReference:
                   "udaya_lagna", "chandrabalam", "tarabalam", "shool_vasa", "calendars"]:
             assert k in kelowna, f"missing section {k}"
 
-    def test_sunrise_around_0556(self, kelowna):
+    def test_sunrise_around_0554(self, kelowna):
+        # Apparent upper-limb sunrise with refraction (matches drikpanchang).
         sr = kelowna["sun_moon"]["sunrise"]
-        assert sr.startswith("2026-04-20T05:56"), sr
+        assert sr.startswith("2026-04-20T05:54"), sr
 
     def test_tithi_shukla_chaturthi(self, kelowna):
         first = kelowna["panchang"]["tithi_sequence"][0]
@@ -78,14 +79,15 @@ class TestKelownaReference:
         assert sn["name"] == "Ashwini" and sn["pada"] == 2
 
     def test_rahu_kalam_window(self, kelowna):
+        # Derived from sunrise/sunset; shifts ~1 min earlier with apparent rise/set.
         rk = kelowna["inauspicious_timings"]["rahu_kalam"]
-        assert rk["start"].startswith("2026-04-20T07:41")
-        assert rk["end"].startswith("2026-04-20T09:26")
+        assert rk["start"].startswith("2026-04-20T07:40")
+        assert rk["end"].startswith("2026-04-20T09:25")
 
     def test_brahma_muhurta_window(self, kelowna):
         bm = kelowna["auspicious_timings"]["brahma_muhurta"]
-        assert bm["start"].startswith("2026-04-20T04:36")
-        assert bm["end"].startswith("2026-04-20T05:16")
+        assert bm["start"].startswith("2026-04-20T04:35")
+        assert bm["end"].startswith("2026-04-20T05:15")
 
     def test_shaka_samvat_1948_parabhava(self, kelowna):
         lm = kelowna["lunar_month"]

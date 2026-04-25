@@ -93,8 +93,12 @@ def _iso(jd_ut: Optional[float], tz: pytz.BaseTzInfo) -> Optional[str]:
 
 
 def _rise_trans(jd_start: float, body: int, geopos, which: int) -> Optional[float]:
+    # Use Swiss Ephemeris' default: apparent upper-limb rise/set with refraction.
+    # That matches the convention used by drikpanchang and most published panchangs.
+    # Passing BIT_DISC_CENTER would compute geometric centre-of-disc rise/set, which
+    # is ~1 min off (sunrise too late, sunset too early).
     try:
-        res, tret = swe.rise_trans(jd_start, body, which | swe.BIT_DISC_CENTER, geopos)
+        res, tret = swe.rise_trans(jd_start, body, which, geopos)
         if res == 0:
             return tret[0]
     except Exception:
@@ -657,10 +661,12 @@ def _chandramasa(tithi_idx: int, sun_sign_id: int) -> Dict:
     # Simplified: use Sun's sidereal sign mapping.
     # Sun in sign X => lunar month NIRAYANA of sign X? Slight offset - standard rule:
     #   Sun in Pisces (12): Chaitra; Aries (1): Vaishakha; etc.
-    # In our NIRAYANA_MONTHS, index by (sun_sign - 1) gives us the solar month name.
-    # But *lunar* chandramasa mapping: Sun in Pisces -> Chaitra, Sun in Aries -> Vaishakha ...
-    # So chandramasa_name[sun_sign - 1] where indexing: Pisces(12)->Chaitra, Aries(1)->Vaishakha,...
-    lunar_idx = (sun_sign_id - 1 + 0) % 12  # Sun in Aries (1) -> Vaishakha (index 1)
+    # Standard Chaitradi rule: lunar month is named after the sign whose sankrānti
+    # falls within it. Mesha sankrānti (Sun → Aries, sign 1) falls in lunar Vaishakha,
+    # Vrishabha (sign 2) in Jyeshtha, ... and Mīna (sign 12) in Chaitra.
+    #   sun sign 1  → CHANDRA_MASA[1] = Vaishakha
+    #   sun sign 12 → CHANDRA_MASA[0] = Chaitra
+    lunar_idx = sun_sign_id % 12
     amanta_name = CHANDRA_MASA[lunar_idx]
     # Purnimanta month is the next one vs Amanta during Krishna paksha
     if tithi_idx <= 15:
