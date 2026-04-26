@@ -1,5 +1,10 @@
 # Vedic Panchanga
 
+> **English** · [हिन्दी](README.hi.md) · [தமிழ்](README.ta.md) ·
+> [中文](docs/i18n/README.zh.md) · [日本語](docs/i18n/README.ja.md) ·
+> [Español](docs/i18n/README.es.md) · [Deutsch](docs/i18n/README.de.md) ·
+> [Português](docs/i18n/README.pt.md) · [Français](docs/i18n/README.fr.md)
+
 Drik Panchang calculator with a modern web interface. Computes traditional Hindu Panchanga elements, divisional charts (D1–D60), Vimshottari Daśā, Aṣṭakavarga and auspicious Muhūrta windows for any date (5000 BCE – 5000 CE) and any location.
 
 **Live**: <https://vedicpanchanga.com>
