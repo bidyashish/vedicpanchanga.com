@@ -226,6 +226,24 @@ def _find_angle_time(
     return (lo + hi) / 2
 
 
+def _segment_start(
+    cursor_jd: float, segment_start_deg: float, angle_type: str, max_back: float
+) -> Optional[float]:
+    """Most recent JD (before cursor_jd) when named angle equalled segment_start_deg.
+
+    Implemented as a forward search from `cursor_jd - max_back`. Safe as long as
+    `max_back` exceeds the longest possible segment duration for this angle type
+    (else the bisection wraps past cursor_jd and returns the *next* cycle's start
+    rather than the current segment's true start).
+    """
+    return _find_angle_time(
+        cursor_jd - max_back,
+        segment_start_deg,
+        angle_type,
+        max_days=max_back + 0.5,
+    )
+
+
 def _ascendant_at(jd: float, lat: float, lon: float) -> float:
     """Sidereal ascendant longitude at given JD."""
     cusps, ascmc = swe.houses_ex(jd, lat, lon, b"P", swe.FLG_SIDEREAL)
@@ -490,22 +508,27 @@ def _nakshatras_in_window(start_jd: float, end_jd: float) -> List[Dict]:
     out = []
     cursor = start_jd
     safety = 0
+    seg_start: Optional[float] = None
     while cursor < end_jd and safety < 6:
         safety += 1
         _, m = _sun_moon_sid(cursor)
         nak_idx = int(m // NAK_SPAN)
         nak_end_deg = (nak_idx + 1) * NAK_SPAN
+        if seg_start is None:
+            seg_start = _segment_start(cursor, nak_idx * NAK_SPAN, "moon", max_back=2.0)
         end = _find_angle_time(cursor, nak_end_deg, "moon", max_days=2.0)
         ends = min(end, end_jd) if end else end_jd
         out.append(
             {
                 "name": NAKSHATRAS[nak_idx],
                 "index": nak_idx + 1,
+                "start_jd": seg_start,
                 "ends_at_jd": ends,
             }
         )
         if end and end < end_jd:
             cursor = end + 1e-5
+            seg_start = end
         else:
             break
     return out
@@ -515,12 +538,17 @@ def _tithis_in_window(start_jd: float, end_jd: float) -> List[Dict]:
     out = []
     cursor = start_jd
     safety = 0
+    seg_start: Optional[float] = None
     while cursor < end_jd and safety < 4:
         safety += 1
         s, m = _sun_moon_sid(cursor)
         diff = (m - s) % 360
         t_idx = int(diff // 12) + 1
         t_end_deg = t_idx * 12
+        if seg_start is None:
+            # First segment in the window may have started before sunrise
+            # (often the previous afternoon). Bisect backward to find when.
+            seg_start = _segment_start(cursor, (t_idx - 1) * 12, "tithi", max_back=2.0)
         end = _find_angle_time(cursor, t_end_deg, "tithi", max_days=2.0)
         ends = min(end, end_jd) if end else end_jd
         out.append(
@@ -528,11 +556,13 @@ def _tithis_in_window(start_jd: float, end_jd: float) -> List[Dict]:
                 "index": t_idx,
                 "name": tithi_name(t_idx),
                 "paksha": "Shukla Paksha" if t_idx <= 15 else "Krishna Paksha",
+                "start_jd": seg_start,
                 "ends_at_jd": ends,
             }
         )
         if end and end < end_jd:
             cursor = end + 1e-5
+            seg_start = end  # next segment begins exactly when this one ends
         else:
             break
     return out
@@ -542,23 +572,28 @@ def _yogas_in_window(start_jd: float, end_jd: float) -> List[Dict]:
     out = []
     cursor = start_jd
     safety = 0
+    seg_start: Optional[float] = None
     while cursor < end_jd and safety < 4:
         safety += 1
         s, m = _sun_moon_sid(cursor)
         total = (s + m) % 360
         y_idx = int(total // NAK_SPAN)
         y_end_deg = (y_idx + 1) * NAK_SPAN
+        if seg_start is None:
+            seg_start = _segment_start(cursor, y_idx * NAK_SPAN, "yoga", max_back=2.0)
         end = _find_angle_time(cursor, y_end_deg, "yoga", max_days=2.0)
         ends = min(end, end_jd) if end else end_jd
         out.append(
             {
                 "index": y_idx + 1,
                 "name": YOGAS[y_idx],
+                "start_jd": seg_start,
                 "ends_at_jd": ends,
             }
         )
         if end and end < end_jd:
             cursor = end + 1e-5
+            seg_start = end
         else:
             break
     return out
@@ -568,24 +603,31 @@ def _karanas_in_window(start_jd: float, end_jd: float) -> List[Dict]:
     out = []
     cursor = start_jd
     safety = 0
+    seg_start: Optional[float] = None
     while cursor < end_jd and safety < 6:
         safety += 1
         s, m = _sun_moon_sid(cursor)
         diff = (m - s) % 360
         h_idx = int(diff // 6)
         h_end_deg = (h_idx + 1) * 6
+        if seg_start is None:
+            # Karana spans 6° of moon-sun separation (~half a tithi, max ~15h).
+            # 1.5 days is comfortably longer than any karana.
+            seg_start = _segment_start(cursor, h_idx * 6, "tithi", max_back=1.5)
         end = _find_angle_time(cursor, h_end_deg, "tithi", max_days=2.0)
         ends = min(end, end_jd) if end else end_jd
         out.append(
             {
                 "half_index": h_idx,
                 "name": karana_name(h_idx),
+                "start_jd": seg_start,
                 "ends_at_jd": ends,
                 "is_bhadra": karana_name(h_idx) == "Vishti",
             }
         )
         if end and end < end_jd:
             cursor = end + 1e-5
+            seg_start = end
         else:
             break
     return out
@@ -895,6 +937,9 @@ def compute_detailed_panchang(
             cp = dict(it)
             cp["ends_at"] = _iso(it[jd_key], tz)
             cp.pop(jd_key, None)
+            if "start_jd" in cp:
+                cp["starts_at"] = _iso(cp["start_jd"], tz)
+                cp.pop("start_jd", None)
             out.append(cp)
         return out
 
