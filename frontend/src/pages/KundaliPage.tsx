@@ -191,7 +191,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
               <ChartTabs data={data} />
               <AdSlot slot="inline" minHeight={120} className="my-2" />
               <PlanetsTable planets={data.planets_data} ascendant={data.ascendant} />
-              <DashaTable dasha={data.dasha} />
+              <DashaTable dasha={data.dasha} dashaAntar={data.dasha_antar} />
               <AshtakavargaTable ashtakavarga={data.ashtakavarga} />
             </>
           )}

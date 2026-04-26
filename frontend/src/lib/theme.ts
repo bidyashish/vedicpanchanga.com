@@ -38,7 +38,7 @@ export function setStoredTheme(theme: Theme): void {
 
 /** Run before React mounts to prevent flash-of-wrong-theme. */
 export function bootstrapTheme(): Theme {
-  const t = getStoredTheme() ?? getSystemTheme();
+  const t = getStoredTheme() ?? "light";
   applyTheme(t);
   return t;
 }

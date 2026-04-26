@@ -62,6 +62,17 @@ export interface DashaPeriod {
   years: number;
 }
 
+export interface AntardashaPeriod {
+  lord: string;
+  start: string;
+  end: string;
+  years: number;
+}
+
+export interface Mahadasha extends DashaPeriod {
+  antardashas: AntardashaPeriod[];
+}
+
 export interface Ashtakavarga {
   bav: Record<string, number[]>;
   sav: number[];
@@ -80,6 +91,7 @@ export interface ChartData {
   vargas: Record<string, VargaChart>;
   varga_order: number[];
   dasha: DashaPeriod[];
+  dasha_antar?: Mahadasha[];
   ashtakavarga: Ashtakavarga;
 }
 

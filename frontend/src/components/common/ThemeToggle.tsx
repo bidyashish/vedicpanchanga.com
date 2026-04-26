@@ -2,28 +2,18 @@ import { useEffect, useState } from "react";
 import {
   applyTheme,
   getStoredTheme,
-  getSystemTheme,
   setStoredTheme,
   type Theme,
 } from "@/lib/theme";
 
 export function ThemeToggle({ testId = "theme-toggle" }: { testId?: string }) {
   const [theme, setTheme] = useState<Theme>(
-    () => getStoredTheme() ?? getSystemTheme(),
+    () => getStoredTheme() ?? "light",
   );
 
   useEffect(() => {
     applyTheme(theme);
   }, [theme]);
-
-  // Track system changes only when the user has not pinned a choice.
-  useEffect(() => {
-    if (getStoredTheme()) return;
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = () => setTheme(mq.matches ? "dark" : "light");
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
 
   const toggle = () => {
     const next: Theme = theme === "dark" ? "light" : "dark";
