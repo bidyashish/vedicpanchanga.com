@@ -1,40 +1,26 @@
-"""Backend API tests: /api/calculate (Vedic chart) and /api/get-panchang.
+"""HTTP integration tests for `/api/calculate` and `/api/get-panchang`.
 
-Validates accuracy of Swiss Ephemeris based calculations for the
-Vedic Astrology Kundali web app.
+Sample anchor: `DELHI_BIRTH` (1990-01-01 12:00 New Delhi). Numbers like the
+Julian Day, classical BAV totals (Su=48, Mo=49, …, SAV=337), Sun's sign
+(Sagittarius) are all true for that birth and act as regression checks.
 """
 
-import os
+from __future__ import annotations
 
 import pytest
-import requests
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL")
-if not BASE_URL:
-    # Fallback to frontend .env (since tests run on same host)
-    from pathlib import Path
-
-    env_path = Path("/app/frontend/.env")
-    if env_path.exists():
-        for line in env_path.read_text().splitlines():
-            if line.startswith("REACT_APP_BACKEND_URL"):
-                BASE_URL = line.split("=", 1)[1].strip()
-                break
-BASE_URL = BASE_URL.rstrip("/")
-
-SAMPLE_PAYLOAD = {
-    "birth_date": "1990-01-01",
-    "birth_time": "12:00",
-    "latitude": 28.6139,
-    "longitude": 77.2090,
-    "timezone": "Asia/Kolkata",
-    "place_name": "New Delhi",
-}
+pytestmark = pytest.mark.http
 
 
 @pytest.fixture(scope="module")
-def chart():
-    r = requests.post(f"{BASE_URL}/api/calculate", json=SAMPLE_PAYLOAD, timeout=30)
+def chart(api, base_url):
+    payload = {
+        "birth_date": "1990-01-01", "birth_time": "12:00",
+        "latitude": 28.6139, "longitude": 77.2090,
+        "timezone": "Asia/Kolkata", "place_name": "New Delhi",
+        "ayanamsa": "lahiri",
+    }
+    r = api.post(f"{base_url}/api/calculate", json=payload, timeout=30)
     assert r.status_code == 200, f"Status {r.status_code}: {r.text}"
     return r.json()
 
@@ -201,28 +187,20 @@ class TestAshtakavarga:
 
 
 class TestCalculateValidation:
-    def test_invalid_date_returns_400(self):
-        r = requests.post(
-            f"{BASE_URL}/api/calculate",
-            json={
-                "birth_date": "not-a-date",
-                "birth_time": "12:00",
-                "latitude": 28.6,
-                "longitude": 77.2,
-            },
+    def test_invalid_date_returns_400(self, api, base_url):
+        r = api.post(
+            f"{base_url}/api/calculate",
+            json={"birth_date": "not-a-date", "birth_time": "12:00",
+                  "latitude": 28.6, "longitude": 77.2},
             timeout=15,
         )
         assert r.status_code == 400, f"Got {r.status_code}: {r.text}"
 
-    def test_invalid_time_returns_400(self):
-        r = requests.post(
-            f"{BASE_URL}/api/calculate",
-            json={
-                "birth_date": "1990-01-01",
-                "birth_time": "garbage",
-                "latitude": 28.6,
-                "longitude": 77.2,
-            },
+    def test_invalid_time_returns_400(self, api, base_url):
+        r = api.post(
+            f"{base_url}/api/calculate",
+            json={"birth_date": "1990-01-01", "birth_time": "garbage",
+                  "latitude": 28.6, "longitude": 77.2},
             timeout=15,
         )
         assert r.status_code == 400
@@ -232,16 +210,11 @@ class TestCalculateValidation:
 
 
 @pytest.fixture(scope="module")
-def panchang_today():
-    # legacy lean payload (detailed=false)
-    r = requests.get(
-        f"{BASE_URL}/api/get-panchang",
-        params={
-            "latitude": 28.6139,
-            "longitude": 77.2090,
-            "timezone": "Asia/Kolkata",
-            "detailed": "false",
-        },
+def panchang_today(api, base_url):
+    r = api.get(
+        f"{base_url}/api/get-panchang",
+        params={"latitude": 28.6139, "longitude": 77.2090,
+                "timezone": "Asia/Kolkata", "detailed": "false"},
         timeout=30,
     )
     assert r.status_code == 200, f"Status {r.status_code}: {r.text}"
@@ -249,17 +222,13 @@ def panchang_today():
 
 
 @pytest.fixture(scope="module")
-def panchang_thursday():
-    # 2024-01-04 was a Thursday — request lean payload
-    r = requests.get(
-        f"{BASE_URL}/api/get-panchang",
-        params={
-            "latitude": 28.6139,
-            "longitude": 77.2090,
-            "timezone": "Asia/Kolkata",
-            "date": "2024-01-04",
-            "detailed": "false",
-        },
+def panchang_thursday(api, base_url):
+    # 2024-01-04 was a Thursday.
+    r = api.get(
+        f"{base_url}/api/get-panchang",
+        params={"latitude": 28.6139, "longitude": 77.2090,
+                "timezone": "Asia/Kolkata", "date": "2024-01-04",
+                "detailed": "false"},
         timeout=30,
     )
     assert r.status_code == 200, f"Status {r.status_code}: {r.text}"
@@ -267,81 +236,69 @@ def panchang_thursday():
 
 
 class TestPanchang:
+    """Sanity checks against the current detailed-panchang shape
+    (`sun_moon`, `panchang.{tithi,nakshatra,yoga,karana}`,
+    `auspicious_timings.abhijit`, `inauspicious_timings.rahu_kalam`)."""
+
     def test_five_limbs_present(self, panchang_today):
-        # Vara uses sanskrit/english naming; others use 'name'
-        assert "vara" in panchang_today
-        assert (
-            "sanskrit" in panchang_today["vara"] and "english" in panchang_today["vara"]
-        )
-        for k in ["tithi", "nakshatra", "yoga", "karana"]:
-            assert k in panchang_today, f"Missing {k}"
-            assert "name" in panchang_today[k], f"{k} missing 'name'"
+        assert {"sanskrit", "english"} <= set(panchang_today["vara"].keys())
+        p = panchang_today["panchang"]
+        for k in ("tithi", "nakshatra", "yoga", "karana"):
+            assert "name" in p[k], f"{k} missing 'name'"
 
     def test_sun_moon_times_iso(self, panchang_today):
-        sun = panchang_today["sun"]
-        moon = panchang_today["moon"]
-        assert sun["sunrise"] and "T" in sun["sunrise"]
-        assert sun["sunset"] and "T" in sun["sunset"]
-        # IST timezone offset in ISO
-        assert "+05:30" in sun["sunrise"], f"Sunrise not in IST: {sun['sunrise']}"
-        assert "+05:30" in sun["sunset"]
-        assert moon["moonrise"] is None or "T" in moon["moonrise"]
-        assert moon["moonset"] is None or "T" in moon["moonset"]
+        sm = panchang_today["sun_moon"]
+        assert "T" in sm["sunrise"] and "+05:30" in sm["sunrise"]
+        assert "T" in sm["sunset"] and "+05:30" in sm["sunset"]
+        for opt in ("moonrise", "moonset"):
+            assert sm.get(opt) is None or "T" in sm[opt]
 
     def test_inauspicious_windows(self, panchang_today):
-        ins = panchang_today["inauspicious"]
-        for key in ["rahu_kaal", "yamaganda", "gulika"]:
-            seg = ins[key]
-            assert seg is not None, f"{key} missing"
-            assert seg["start"] and seg["end"]
+        ins = panchang_today["inauspicious_timings"]
+        for key in ("rahu_kalam", "yamaganda", "gulika_kalam"):
+            assert ins[key]["start"] and ins[key]["end"]
 
     def test_abhijit_centered_on_midday(self, panchang_today):
         from datetime import datetime
 
-        ab = panchang_today["auspicious"]["abhijit_muhurta"]
-        sun = panchang_today["sun"]
-        sr = datetime.fromisoformat(sun["sunrise"])
-        ss = datetime.fromisoformat(sun["sunset"])
+        ab = panchang_today["auspicious_timings"]["abhijit"]
+        sm = panchang_today["sun_moon"]
+        sr = datetime.fromisoformat(sm["sunrise"])
+        ss = datetime.fromisoformat(sm["sunset"])
         ab_s = datetime.fromisoformat(ab["start"])
         ab_e = datetime.fromisoformat(ab["end"])
         midday = sr + (ss - sr) / 2
         center = ab_s + (ab_e - ab_s) / 2
-        assert (
-            abs((center - midday).total_seconds()) < 60
-        ), f"Abhijit center {center} vs midday {midday}"
+        # Abhijit is the 8th of 15 day-muhūrtas; its mid-point coincides with
+        # solar noon to within a minute.
+        assert abs((center - midday).total_seconds()) < 60
 
     def test_thursday_rahu_kaal_is_6th_segment(self, panchang_thursday):
         from datetime import datetime
 
-        # Verify it's Thursday (vara)
         assert panchang_thursday["vara"]["english"] == "Thursday"
-        sun = panchang_thursday["sun"]
-        sr = datetime.fromisoformat(sun["sunrise"])
-        ss = datetime.fromisoformat(sun["sunset"])
+        sm = panchang_thursday["sun_moon"]
+        sr = datetime.fromisoformat(sm["sunrise"])
+        ss = datetime.fromisoformat(sm["sunset"])
         seg_dur = (ss - sr) / 8
-        # 6th segment: index 5 (0-based) - between sr+5*seg and sr+6*seg
+        # Thursday's Rāhu kālam is the 6th of 8 day-eighths (segments are
+        # 0-indexed: index 5 → start sr+5·seg, end sr+6·seg).
         expected_start = sr + 5 * seg_dur
         expected_end = sr + 6 * seg_dur
-        rk = panchang_thursday["inauspicious"]["rahu_kaal"]
+        rk = panchang_thursday["inauspicious_timings"]["rahu_kalam"]
         rk_s = datetime.fromisoformat(rk["start"])
         rk_e = datetime.fromisoformat(rk["end"])
-        assert (
-            abs((rk_s - expected_start).total_seconds()) < 60
-        ), f"Rahu Kaal start {rk_s} vs expected 6th-segment start {expected_start}"
+        assert abs((rk_s - expected_start).total_seconds()) < 60
         assert abs((rk_e - expected_end).total_seconds()) < 60
 
-    def test_default_date_is_today(self):
+    def test_default_date_is_today(self, api, base_url):
         from datetime import date as date_cls
 
-        r = requests.get(
-            f"{BASE_URL}/api/get-panchang",
-            params={
-                "latitude": 28.6139,
-                "longitude": 77.2090,
-                "timezone": "Asia/Kolkata",
-            },
+        r = api.get(
+            f"{base_url}/api/get-panchang",
+            params={"latitude": 28.6139, "longitude": 77.2090,
+                    "timezone": "Asia/Kolkata"},
             timeout=30,
         )
         assert r.status_code == 200
-        data = r.json()
-        assert data["date"] == date_cls.today().isoformat()
+        assert r.json()["date"] == date_cls.today().isoformat()

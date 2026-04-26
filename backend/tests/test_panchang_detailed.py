@@ -1,30 +1,21 @@
-"""Detailed Drik Panchang verification — comprehensive /api/get-panchang.
+"""Detailed Drik Panchang verification.
 
-Uses Kelowna BC, 2026-04-20 as the canonical Drik reference.
+Anchor reference: Kelowna, BC on 2026-04-20 — values were captured from
+drikpanchang.com and serve as the regression baseline. Do not change the
+expected values without explicit approval (see CLAUDE.md note).
 """
 
-import os
+from __future__ import annotations
 
 import pytest
-import requests
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL")
-if not BASE_URL:
-    from pathlib import Path
-
-    p = Path("/app/frontend/.env")
-    if p.exists():
-        for line in p.read_text().splitlines():
-            if line.startswith("REACT_APP_BACKEND_URL"):
-                BASE_URL = line.split("=", 1)[1].strip()
-                break
-BASE_URL = BASE_URL.rstrip("/")
+pytestmark = pytest.mark.http
 
 
 @pytest.fixture(scope="module")
-def kelowna():
-    r = requests.get(
-        f"{BASE_URL}/api/get-panchang",
+def kelowna(api, base_url):
+    r = api.get(
+        f"{base_url}/api/get-panchang",
         params={
             "latitude": 49.8871,
             "longitude": -119.4960,
@@ -38,9 +29,9 @@ def kelowna():
 
 
 @pytest.fixture(scope="module")
-def delhi_default():
-    r = requests.get(
-        f"{BASE_URL}/api/get-panchang",
+def delhi_default(api, base_url):
+    r = api.get(
+        f"{base_url}/api/get-panchang",
         params={
             "latitude": 28.6139,
             "longitude": 77.2090,
