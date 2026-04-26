@@ -16,23 +16,12 @@ from fpdf import FPDF
 from dasha_extras import compute_pratyantars
 
 from .i18n import DASHA_LORD_ABBR, t
+from .layout import MARGIN, page_header, section_title
 from .text import BOLD, DEV_REGULAR, LATIN_REGULAR, REGULAR, draw_text
 
 
 PAGE_LABEL_ANTAR = "Vimshottari Dasha — Antardasha"
 PAGE_LABEL_PRATY = "Vimshottari Dasha — Pratyantar"
-
-
-def _draw_header(pdf: FPDF, name: str, label: str) -> None:
-    margin = 14
-    page_w = pdf.w
-    pdf.set_line_width(0.6)
-    pdf.set_draw_color(0, 0, 0)
-    pdf.rect(margin, margin, page_w - 2 * margin, 16)
-    draw_text(pdf, margin + 6, margin + 11, name or "—",
-              LATIN_REGULAR, BOLD, 11)
-    draw_text(pdf, page_w - margin - 6, margin + 11, label,
-              LATIN_REGULAR, REGULAR, 9, anchor="right")
 
 
 def _fmt_date_short(iso: str) -> str:
@@ -98,17 +87,15 @@ def draw_antardasha_page(
         return
 
     pdf.add_page()
-    _draw_header(pdf, name, PAGE_LABEL_ANTAR)
+    page_header(pdf, name, PAGE_LABEL_ANTAR)
 
-    margin = 14
     page_w = pdf.w
-    inner_w = page_w - 2 * margin
-    cur_y = margin + 22
-
-    family = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
+    inner_w = page_w - 2 * MARGIN
     title = "Vimshottari Dasha — Antardasha" if lang == "en" else "विंशोत्तरी दशा — अन्तर्दशा"
-    draw_text(pdf, page_w / 2, cur_y + 12, title, family, BOLD, 14, anchor="center")
-    cur_y += 22
+    cur_y = section_title(
+        pdf, MARGIN, MARGIN + 22, inner_w, title,
+        "Each Mahādaśā block lists its 9 Antardaśā sub-period end dates",
+    )
 
     # 3×3 grid of blocks
     cols = 3
@@ -123,7 +110,7 @@ def draw_antardasha_page(
         if col == 0 and idx > 0:
             cur_y += row_block_h + gap
             row_block_h = 0
-        bx = margin + col * (block_w + gap)
+        bx = MARGIN + col * (block_w + gap)
         years = (datetime.fromisoformat(md["end"]) - datetime.fromisoformat(md["start"])).days / 365.25
         title_str = f"{_abbr(md['lord'])} — {round(years, 1)} yr"
         subtitle = f"{_fmt_date_short(md['start'])} to {_fmt_date_short(md['end'])}"
@@ -149,10 +136,9 @@ def draw_pratyantar_pages(
     if not mahadashas:
         return
 
-    margin = 14
     page_w = pdf.w
     page_h = pdf.h
-    inner_w = page_w - 2 * margin
+    inner_w = page_w - 2 * MARGIN
 
     cols = 3
     gap = 6
@@ -162,7 +148,6 @@ def draw_pratyantar_pages(
     body_h = line_h * 9
     block_h = head_h + body_h + 4
 
-    family = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
     title = "Vimshottari Dasha — Pratyantar" if lang == "en" else "विंशोत्तरी दशा — प्रत्यन्तर"
 
     page_no = 0
@@ -174,10 +159,11 @@ def draw_pratyantar_pages(
         nonlocal page_no, cur_y, row_block_h, cur_col
         page_no += 1
         pdf.add_page()
-        _draw_header(pdf, name, f"{PAGE_LABEL_PRATY} — page {page_no}")
-        y = margin + 22
-        draw_text(pdf, page_w / 2, y + 12, title, family, BOLD, 14, anchor="center")
-        cur_y = y + 22
+        page_header(pdf, name, f"{PAGE_LABEL_PRATY} — page {page_no}")
+        cur_y = section_title(
+            pdf, MARGIN, MARGIN + 22, inner_w, title,
+            "Each Antardaśā block lists its 9 Pratyantar sub-period end dates",
+        )
         row_block_h = 0
         cur_col = 0
 
@@ -190,16 +176,16 @@ def draw_pratyantar_pages(
             if ad_end <= birth_dt:
                 # Antardasha already elapsed at birth → skip; nothing useful to show.
                 continue
-            if cur_col == 0 and cur_y + block_h > page_h - margin - 14:
+            if cur_col == 0 and cur_y + block_h > page_h - MARGIN - 14:
                 _new_page()
             if cur_col >= cols:
                 cur_y += row_block_h + gap
                 cur_col = 0
                 row_block_h = 0
-                if cur_y + block_h > page_h - margin - 14:
+                if cur_y + block_h > page_h - MARGIN - 14:
                     _new_page()
 
-            bx = margin + cur_col * (block_w + gap)
+            bx = MARGIN + cur_col * (block_w + gap)
             title_str = f"{_abbr(md['lord'])} — {_abbr(ad['lord'])}"
             subtitle = f"{_fmt_date_short(ad['start'])} to {_fmt_date_short(ad['end'])}"
             pratyantars = compute_pratyantars(ad)

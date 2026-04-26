@@ -23,7 +23,9 @@ from .detail_pages import (
     draw_planet_varga_matrix,
 )
 from .jaimini_page import draw_jaimini_page
+from .layout import page_footer
 from .relations_page import draw_friendship_page, draw_kalsarpa_page
+from .toc_page import draw_toc_page
 from .formatters import (
     fmt_ayan,
     fmt_dasha_balance,
@@ -61,6 +63,16 @@ from .text import (
 PAGE_W_PT, PAGE_H_PT = 595.28, 841.89  # A4 in pt
 
 
+class _ReportPDF(FPDF):
+    """FPDF subclass that auto-stamps the standard footer on every page.
+    fpdf2 invokes `footer()` right before a new page is added and again at
+    finalisation, so each page gets its number drawn while its font subset
+    is still mutable."""
+
+    def footer(self) -> None:  # noqa: D401 — fpdf2 hook
+        page_footer(self)
+
+
 def _build_basic_rows(
     *,
     name: str,
@@ -79,6 +91,27 @@ def _build_basic_rows(
     sun_moon = (panchang_data or {}).get("sun_moon", {}) or {}
 
     birth_local = datetime.fromisoformat(birth["local_time"])
+
+    # The top-level `panchang.karana` reflects sunrise; for a birth chart we
+    # want the karana (and tithi/yoga) active at the moment of birth itself.
+    # Walk each sequence and pick the first entry whose end is after birth.
+    def _at_birth(seq, fallback):
+        if not seq:
+            return fallback or {}
+        for entry in seq:
+            ends = entry.get("ends_at")
+            if not ends:
+                continue
+            try:
+                if datetime.fromisoformat(ends) > birth_local:
+                    return entry
+            except Exception:
+                continue
+        return seq[-1] if seq else (fallback or {})
+
+    tithi_at_birth = _at_birth(panchang.get("tithi_sequence"), panchang.get("tithi"))
+    yoga_at_birth = _at_birth(panchang.get("yoga_sequence"), panchang.get("yoga"))
+    karana_at_birth = _at_birth(panchang.get("karana_sequence"), panchang.get("karana"))
     weekday_label = t(lang, WEEKDAY_KEYS[birth_local.weekday()])
     sid_str = local_sidereal_time(birth["julian_day"], birth["longitude"])
     julian_int = int(round(birth["julian_day"]))
@@ -106,11 +139,11 @@ def _build_basic_rows(
     else:
         rasi_lord_disp = nak_lord_disp = moon_sign_disp = nak_pada_str = ""
 
-    tithi_full = (panchang.get("tithi") or {}).get("name", "")
+    tithi_full = tithi_at_birth.get("name", "")
     tithi_parts = tithi_full.split(" ", 1)
     tithi_disp = tithi_parts[1] if len(tithi_parts) == 2 else tithi_full
-    yoga_disp = (panchang.get("yoga") or {}).get("name", "")
-    karana_disp = (panchang.get("karana") or {}).get("name", "")
+    yoga_disp = yoga_at_birth.get("name", "")
+    karana_disp = karana_at_birth.get("name", "")
     sunrise_disp = fmt_hms_local(sun_moon.get("sunrise", ""))
     sunset_disp = fmt_hms_local(sun_moon.get("sunset", ""))
 
@@ -158,10 +191,10 @@ def render_pdf(
     if lang not in ("en", "hi"):
         lang = "en"
 
-    pdf = FPDF(unit="pt", format="A4")
+    pdf = _ReportPDF(unit="pt", format="A4")
     pdf.set_auto_page_break(False)
-    pdf.add_page()
     register_fonts(pdf)
+    pdf.add_page()
     pdf.set_margins(0, 0, 0)
 
     sex_label = (
@@ -236,37 +269,59 @@ def render_pdf(
               (DEV_REGULAR if lang == "hi" else LATIN_REGULAR),
               REGULAR, 7, anchor="center")
 
-    # ---- additional pages ----
-    draw_planet_long_table(pdf, chart_data, name or "", lang)
-    draw_dasha_long(pdf, chart_data, name or "", lang)
-    draw_antardasha_page(pdf, chart_data, name or "", lang)
-    draw_pratyantar_pages(pdf, chart_data, name or "", lang)
-    draw_varga_pages(pdf, chart_data, name or "", lang)
-    draw_planet_varga_matrix(pdf, chart_data, name or "", lang)
-    draw_jaimini_page(pdf, chart_data, name or "", lang)
-    draw_friendship_page(pdf, chart_data, name or "", lang)
-    draw_kalsarpa_page(pdf, chart_data, name or "", lang)
+    # ---- additional pages, tracking each section's start page for the TOC ----
+    sections: List[Tuple[str, int]] = [("Traditional Birth Summary", 1)]
+
+    def _track(label: str, fn) -> None:
+        before = pdf.pages_count
+        fn()
+        if pdf.pages_count > before:
+            sections.append((label, before + 1))
+
+    _track("Planetary Positions",
+           lambda: draw_planet_long_table(pdf, chart_data, name or "", lang))
+    _track("Vimshottari Mahadasha",
+           lambda: draw_dasha_long(pdf, chart_data, name or "", lang))
+    _track("Vimshottari Antardasha",
+           lambda: draw_antardasha_page(pdf, chart_data, name or "", lang))
+    _track("Vimshottari Pratyantar",
+           lambda: draw_pratyantar_pages(pdf, chart_data, name or "", lang))
+    _track("Shodashvarga (D1–D60)",
+           lambda: draw_varga_pages(pdf, chart_data, name or "", lang))
+    _track("Planet × Varga Matrix",
+           lambda: draw_planet_varga_matrix(pdf, chart_data, name or "", lang))
+    _track("Jaimini — Karakamsa & Swamsa",
+           lambda: draw_jaimini_page(pdf, chart_data, name or "", lang))
+    _track("Friendship Tables",
+           lambda: draw_friendship_page(pdf, chart_data, name or "", lang))
+    _track("Kalsarpa Yoga",
+           lambda: draw_kalsarpa_page(pdf, chart_data, name or "", lang))
 
     # Mangal Dosha + Sade Sati
     moon = next((p for p in chart_data["planets_data"] if p["name"] == "Moon"), None)
     if moon is not None:
-        sade_segments = sade_sati.compute_sade_sati(
-            birth_jd_ut=chart_data["birth"]["julian_day"],
-            moon_sign_id=moon["sign_id"],
-            horizon_years=120,
-            step_days=2.0,
-        )
-        draw_sade_sati_page(
-            pdf,
-            name=name or "",
-            segments=sade_segments,
-            moon_sign=moon["sign"],
-            lang=lang,
-        )
+        def _sade():
+            sade_segments = sade_sati.compute_sade_sati(
+                birth_jd_ut=chart_data["birth"]["julian_day"],
+                moon_sign_id=moon["sign_id"],
+                horizon_years=120,
+                step_days=2.0,
+            )
+            draw_sade_sati_page(
+                pdf,
+                name=name or "",
+                segments=sade_segments,
+                moon_sign=moon["sign"],
+                lang=lang,
+            )
+        _track("Sade Sati Report", _sade)
     mangal_result = mangal.analyse(
         ascendant=chart_data["ascendant"],
         planets=chart_data["planets_data"],
     )
-    draw_mangal_page(pdf, name=name or "", analysis=mangal_result)
+    _track("Mangal Dosha", lambda: draw_mangal_page(pdf, name=name or "", analysis=mangal_result))
+
+    # Add the table-of-contents at the end so we know the actual page numbers.
+    draw_toc_page(pdf, name or "", sections)
 
     return bytes(pdf.output())
