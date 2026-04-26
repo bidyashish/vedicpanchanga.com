@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
@@ -147,7 +147,12 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MuhurtaResponse | null>(null);
 
+  // Guard against React 18 StrictMode's double-mount in dev so the purposes
+  // list is fetched once.
+  const purposesFetchedRef = useRef(false);
   useEffect(() => {
+    if (purposesFetchedRef.current) return;
+    purposesFetchedRef.current = true;
     fetchMuhurtaPurposes()
       .then(setPurposes)
       .catch(() =>

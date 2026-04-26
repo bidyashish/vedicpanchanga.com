@@ -53,18 +53,30 @@ Browser → `http://localhost:3121` (Vite dev server / Nginx-served static build
 
 ### Backend module boundaries
 - `server.py` — FastAPI app, request/response models, CORS. Thin layer that delegates math to the modules below.
-- `calculator.py` — full kundali (`compute_chart`): planetary positions, houses, dashas, ashtakavarga.
-- `panchang.py` / `advanced_panchang.py` — basic and detailed panchang (tithi, nakshatra, yoga, karana, muhūrta timings, rahu kala, etc.).
+- `calculator.py` — full kundali (`compute_chart`): planetary positions, houses, dashas, ashtakavarga, plus the new sub-period / Jaimini / friendship / Kalsarpa fields described below.
+- `advanced_panchang.py` — detailed panchang (tithi, nakshatra, yoga, karana with full daily *_sequence lists, sunrise/sunset, samvats, ritu, ayana, muhūrta windows, udaya lagna, chandrabalam, tarabalam, calendars).
+- `panchang_extras.py` — verified extra-yoga detectors layered on top of `advanced_panchang`: Ganda Mūla window + Ravi Yoga window. (Other classical sections like Mantri Mandala / Agnivāsa / Śivavāsa are intentionally omitted — see file docstring.)
 - `vargas.py` — 16 divisional charts (D1–D60). D30 uses special uneven-segment rules; touch with care.
 - `ayanamsa.py` — ayanamsa selection (`AYANAMSA_OPTIONS`). Default `lahiri`.
 - `muhurta.py` — auspicious-window scanner with purpose-based scoring (0–100 with explainable reasons).
+- `dasha_extras.py` — Vimshottari Antardaśā (level 2) and Pratyantar (level 3) sub-period computations. `chart_data["dasha_antar"]` is each Mahadasha with its 9 nested antardashas.
+- `jaimini.py` — Chara karakas (Atma..Dara) and Karakamsa / Swamsa chart construction. Returns `chart_data["karakas"]`, `["karakamsa"]`, `["swamsa"]`.
+- `relationships.py` — natural / temporal / 5-fold composite friendship matrices for the 7 visible planets. Returns `chart_data["friendships"]`.
+- `kalsarpa.py` — Kalsarpa Yoga detection (verdict + variant + direction). Returns `chart_data["kalsarpa"]`.
+- `mangal.py`, `sade_sati.py` — Mangal Dosha analysis and 120-year Saturn-from-Moon transit table; consumed by the PDF report only.
 - `constants.py`, `panchang_constants.py` — all magic numbers live here.
 
 All astronomical math must go through `swisseph` (PySwissEph bindings). Never hardcode planetary positions.
 
+### PDF report module (`backend/pdf/`)
+- `pdf/report.py` — orchestrator. Builds page 1 (Traditional summary), then dispatches each detail page through a `_track()` helper that records the section's start page; finally appends the Index of Sections page (page numbers known by then). `_ReportPDF` subclass overrides fpdf2's `footer()` hook so every page gets `vedicpanchanga.com` + `Page N` while its font subset is still mutable.
+- `pdf/core/` — rendering primitives: `text.py` (font registration, draw_text), `layout.py` (page header / footer / section title bar + palette), `formatters.py` (date/dms/lat/lon helpers), `i18n.py` (English + Hindi label maps), `chart.py` (North-Indian square chart), `sections.py` (page-1 components: basic-details box, dasha block, planets table, ashtakavarga). Re-exported from `pdf/core/__init__.py` so pages can use a single `from ..core import …` line.
+- `pdf/pages/` — one module per detail page: `detail_pages.py` (planet long table, mahadasha long table, planet × varga matrix), `dasha_detail_pages.py` (Antardaśā grid + paginated Pratyantar), `varga_pages.py` (D1–D60 charts), `jaimini_page.py` (Karakamsa/Swamsa + Karakas table), `relations_page.py` (friendship matrices + Kalsarpa), `sade_sati_page.py` (Sade Sati transits + Mangal Dosha), `toc_page.py` (Index of Sections).
+- `pdf/fonts/` — bundled Noto Sans + Noto Sans Devanagari TTFs.
+
 ### Frontend structure
 - `src/main.tsx` — app bootstrap (Strict Mode + `I18nProvider`).
-- `src/App.tsx` — shell: `TopBar`, view switcher (hash-routed: `#kundali` | `#panchang` | `#muhurta`), shared location state, `Footer`. Three-column layout on `xl:` (sidebar · main · ad rail).
+- `src/App.tsx` — shell: `TopBar`, **path-routed view switcher** (`/`, `/panchang`, `/muhurta`, `/privacy`, `/terms`), shared location state, `Footer`. Old hash URLs (`/#panchang`) are migrated to clean paths on first load. Per-route SEO (title / description / canonical / og:tags) is applied by `lib/seo.applySeo` whenever the view changes. Three-column layout on `xl:` (sidebar · main · ad rail).
 - `src/pages/` — `KundaliPage.tsx`, `PanchangPage.tsx`, `MuhurtaPage.tsx`. Each page owns its own form state and API calls.
 - `src/components/common/` — `CitySearch`, `LanguageSwitcher`, `MandalaLoader`, `MandalaMark`.
 - `src/components/shell/` — `TopBar`, `Footer`, `AdSlot` (Google AdSense placeholder + loader).
@@ -83,5 +95,6 @@ Cloudflare → Nginx (TLS, CSP, returns 444 for direct-IP) → static Vite build
 - **Env var prefix is `VITE_`**, not `REACT_APP_`. Still baked in at build time — changing `VITE_BACKEND_URL` requires a rebuild, not just a restart.
 - **Port 8000 is firewalled** (`infra/setup-vps.sh:157`) as a legacy block. If something tries to use it, switch to 8001.
 - **AdSense env vars are optional**. If `VITE_ADSENSE_CLIENT` or the per-slot ID is missing, `AdSlot` renders a visible placeholder labelled "Advertisement". Useful for dev; don't ship to prod without setting the real slot IDs.
-- **Hash routing**, not real routes. `#panchang` / `#muhurta` switch views; the server only ever serves `/index.html`. If you add real routes later, Nginx already `try_files $uri /index.html;` so SPA fallback works — but SSR does not (this is not Next.js).
+- **Clean path routing** (no `#`). Routes: `/`, `/panchang`, `/muhurta`, `/privacy`, `/terms`. SPA fallback is in nginx (`try_files $uri $uri/ /index.html;`) and Vite dev server does it by default. SSR is not implemented — initial HTML is the same for every URL until React hydrates and `applySeo()` rewrites `<title>` / `<meta>` / canonical link. Sitemap at `/sitemap.xml` lists all five clean URLs.
+- **Panchang Lagna chart anchors to "now"**, not sunrise. Anchoring to sunrise made the chart appear stuck on the sun's sign (lagna co-rises with the sun); the page calls `nowTimeInTz(data.location.timezone)` and re-fetches `calculateChart` for that wall-clock minute.
 - **Vite build output is `dist/`**, not `build/`. The Nginx root was updated; if you see stale content after `npm run build`, confirm Nginx is pointing at `frontend/dist` and not the old `frontend/build`.

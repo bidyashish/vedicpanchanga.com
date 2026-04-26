@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
@@ -36,7 +36,12 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
   const { t } = useI18n();
   const [ayanamsas, setAyanamsas] = useState<AyanamsaOption[]>(FALLBACK_AYANAMSAS);
 
+  // Guard against React 18 StrictMode's double-mount in dev so the options
+  // list isn't fetched twice on every page load.
+  const ayanFetchedRef = useRef(false);
   useEffect(() => {
+    if (ayanFetchedRef.current) return;
+    ayanFetchedRef.current = true;
     fetchAyanamsaOptions()
       .then((opts) => {
         if (opts.length) setAyanamsas(opts);

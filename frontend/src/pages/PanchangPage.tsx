@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
@@ -150,7 +150,12 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
     }
   };
 
+  // StrictMode in dev fires effects twice; guard so the initial fetch only
+  // hits the backend once. Production builds run effects once and ignore this.
+  const didAutoRunRef = useRef(false);
   useEffect(() => {
+    if (didAutoRunRef.current) return;
+    didAutoRunRef.current = true;
     run();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
