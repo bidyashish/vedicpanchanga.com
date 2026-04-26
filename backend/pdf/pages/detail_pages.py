@@ -72,7 +72,7 @@ def draw_planet_varga_matrix(
     cur_y = margin + 22
 
     family = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
-    title = "Planet × Varga Sign Matrix" if lang == "en" else "ग्रह × वर्ग राशि सारणी"
+    title = t(lang, "planet_varga_matrix_title")
     draw_text(pdf, page_w / 2, cur_y + 10, title, family, BOLD, 12, anchor="center")
     cur_y += 18
 

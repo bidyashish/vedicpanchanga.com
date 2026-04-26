@@ -11,9 +11,13 @@ import { AdSlot } from "@/components/shell/AdSlot";
 import { calculateChart, printPdf } from "@/lib/api";
 import type { ChartData, LocationChoice } from "@/types/api";
 
-// PDF currently ships en + hi label sets; everything else falls back to English.
-type PdfLang = "en" | "hi";
-const pdfLangFor = (uiLang: string): PdfLang => (uiLang === "hi" ? "hi" : "en");
+// PDF ships full label sets + bundled fonts for all 9 UI languages.
+type PdfLang = "en" | "hi" | "ta" | "zh" | "ja" | "es" | "de" | "pt" | "fr";
+const PDF_LANGS = new Set<PdfLang>([
+  "en", "hi", "ta", "zh", "ja", "es", "de", "pt", "fr",
+]);
+const pdfLangFor = (uiLang: string): PdfLang =>
+  PDF_LANGS.has(uiLang as PdfLang) ? (uiLang as PdfLang) : "en";
 
 const DEFAULT_FORM: BirthFormState = {
   birth_date: "1990-01-01",

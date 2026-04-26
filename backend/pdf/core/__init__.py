@@ -44,8 +44,11 @@ from .sections import (
 from .text import (
     BOLD,
     DEV_REGULAR,
+    JP_REGULAR,
     LATIN_REGULAR,
     REGULAR,
+    SC_REGULAR,
+    TAMIL_REGULAR,
     draw_text,
     is_devanagari,
     register_fonts,
@@ -67,6 +70,7 @@ __all__ = [
     "draw_ashtakavarga", "draw_basic_details", "draw_dasha_block",
     "draw_header", "draw_planets_table", "draw_title_bar",
     # text
-    "BOLD", "DEV_REGULAR", "LATIN_REGULAR", "REGULAR",
+    "BOLD", "DEV_REGULAR", "JP_REGULAR", "LATIN_REGULAR", "REGULAR",
+    "SC_REGULAR", "TAMIL_REGULAR",
     "draw_text", "is_devanagari", "register_fonts",
 ]

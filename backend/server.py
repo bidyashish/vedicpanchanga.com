@@ -152,7 +152,7 @@ class PrintPdfRequest(BaseModel):
     timezone: Optional[str] = None
     place_name: Optional[str] = ""
     ayanamsa: Optional[str] = "lahiri"
-    lang: Literal["en", "hi"] = "en"
+    lang: Literal["en", "hi", "ta", "zh", "ja", "es", "de", "pt", "fr"] = "en"
 
 
 @api_router.post("/print-pdf")

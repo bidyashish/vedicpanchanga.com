@@ -38,6 +38,7 @@ from .core.formatters import (
 from .pages.sade_sati_page import draw_mangal_page, draw_sade_sati_page
 from .pages.varga_pages import draw_varga_pages
 from .core.i18n import (
+    LOCALES,
     PLANET_KEY_BY_NAME,
     SIGN_KEYS_BY_ID,
     WEEKDAY_KEYS,
@@ -117,21 +118,22 @@ def _build_basic_rows(
     ayan_str = fmt_ayan(birth["ayanamsa"])
     bal_dasa = fmt_dasha_balance(chart_data["dasha"][0])
 
-    asc_lord_disp = (
-        t(lang, PLANET_KEY_BY_NAME.get(asc["sign_lord"], ""))
-        if lang == "hi" else asc["sign_lord"][:3].upper()
-    )
+    # Latin-script locales use the compact 3-letter abbrev (SUN, MOO, MAR);
+    # non-Latin locales use the full localized planet name since their
+    # scripts don't truncate cleanly into 3 characters.
+    use_full_planet = lang in ("hi", "ta", "zh", "ja")
+
+    def _planet_disp(eng_name: str) -> str:
+        if use_full_planet:
+            return t(lang, PLANET_KEY_BY_NAME.get(eng_name, ""))
+        return eng_name[:3].upper()
+
+    asc_lord_disp = _planet_disp(asc["sign_lord"])
     asc_sign_disp = t(lang, SIGN_KEYS_BY_ID.get(asc["sign_id"], "")) or asc["sign"]
 
     if moon:
-        rasi_lord_disp = (
-            t(lang, PLANET_KEY_BY_NAME.get(moon["sign_lord"], ""))
-            if lang == "hi" else moon["sign_lord"][:3].upper()
-        )
-        nak_lord_disp = (
-            t(lang, PLANET_KEY_BY_NAME.get(moon["nakshatra_lord"], ""))
-            if lang == "hi" else moon["nakshatra_lord"][:3].upper()
-        )
+        rasi_lord_disp = _planet_disp(moon["sign_lord"])
+        nak_lord_disp = _planet_disp(moon["nakshatra_lord"])
         moon_sign_disp = t(lang, SIGN_KEYS_BY_ID.get(moon["sign_id"], "")) or moon["sign"]
         nak_pada_str = f"{moon['nakshatra']}-{moon['nakshatra_pada']}"
     else:
@@ -186,7 +188,7 @@ def render_pdf(
     place_name: str,
     lang: str = "en",
 ) -> bytes:
-    if lang not in ("en", "hi"):
+    if lang not in LOCALES:
         lang = "en"
 
     pdf = _ReportPDF(unit="pt", format="A4")

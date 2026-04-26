@@ -79,7 +79,7 @@ def draw_antardasha_page(
 
     page_w = pdf.w
     inner_w = page_w - 2 * MARGIN
-    title = "Vimshottari Dasha — Antardasha" if lang == "en" else "विंशोत्तरी दशा — अन्तर्दशा"
+    title = t(lang, "vimshottari_antardasha_title")
     cur_y = section_title(
         pdf, MARGIN, MARGIN + 22, inner_w, title,
         "Each Mahādaśā block lists its 9 Antardaśā sub-period end dates",
@@ -136,7 +136,7 @@ def draw_pratyantar_pages(
     body_h = line_h * 9
     block_h = head_h + body_h + 4
 
-    title = "Vimshottari Dasha — Pratyantar" if lang == "en" else "विंशोत्तरी दशा — प्रत्यन्तर"
+    title = t(lang, "vimshottari_pratyantar_title")
 
     page_no = 0
     cur_y = 0
