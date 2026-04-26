@@ -78,6 +78,23 @@ export interface Ashtakavarga {
   sav: number[];
 }
 
+export interface Karaka {
+  rank: number;
+  abbr: string;
+  title: string;
+  planet: string;
+  planet_abbr: string;
+  sign: string;
+  sign_id: number;
+  degree_in_sign: number;
+  dms: string;
+}
+
+export interface JaiminiChart {
+  lagna_sign: number;
+  chart: HouseMap;
+}
+
 export interface ChartData {
   birth: BirthSummary;
   ascendant: Planet;
@@ -93,6 +110,9 @@ export interface ChartData {
   dasha: DashaPeriod[];
   dasha_antar?: Mahadasha[];
   ashtakavarga: Ashtakavarga;
+  karakas?: Karaka[];
+  karakamsa?: JaiminiChart;
+  swamsa?: JaiminiChart;
 }
 
 export interface AyanamsaOption {

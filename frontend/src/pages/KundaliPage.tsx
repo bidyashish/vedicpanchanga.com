@@ -6,6 +6,7 @@ import { ChartTabs } from "@/components/kundali/ChartTabs";
 import { PlanetsTable } from "@/components/kundali/PlanetsTable";
 import { DashaTable } from "@/components/kundali/DashaTable";
 import { AshtakavargaTable } from "@/components/kundali/AshtakavargaTable";
+import { JaiminiSection } from "@/components/kundali/JaiminiSection";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { AdSlot } from "@/components/shell/AdSlot";
 import { calculateChart, printPdf } from "@/lib/api";
@@ -192,6 +193,11 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
               <AdSlot slot="inline" minHeight={120} className="my-2" />
               <PlanetsTable planets={data.planets_data} ascendant={data.ascendant} />
               <DashaTable dasha={data.dasha} dashaAntar={data.dasha_antar} />
+              <JaiminiSection
+                karakas={data.karakas}
+                karakamsa={data.karakamsa}
+                swamsa={data.swamsa}
+              />
               <AshtakavargaTable ashtakavarga={data.ashtakavarga} />
             </>
           )}

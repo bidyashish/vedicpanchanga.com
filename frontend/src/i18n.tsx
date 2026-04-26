@@ -96,6 +96,16 @@ const en: Dict = {
   back: "Back",
   clear: "Clear",
 
+  jaimini_title: "Jaimini — Chara Karakas",
+  jaimini_subtitle: "Significators ranked by degree-in-sign · Karakāṁśa & Swāṁśa kuṇḍalīs",
+  karaka_rank: "Rank",
+  karaka_role: "Karaka",
+  karaka_planet: "Planet",
+  karaka_sign: "Sign",
+  karaka_degree: "Degree",
+  karakamsa_title: "Karakāṁśa Kuṇḍalī",
+  swamsa_title: "Swāṁśa Kuṇḍalī",
+
   ashtakavarga_title: "Aṣṭakavarga",
   ashtakavarga_sub: "Bhinnāṣṭakavarga per planet and Sarvāṣṭakavarga totals across the 12 signs",
   th_planet: "Planet",
