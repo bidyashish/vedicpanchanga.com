@@ -171,6 +171,7 @@ export interface MuhurtaResponse {
 export interface TransitItem {
   name?: string;
   rashi?: string;
+  starts_at?: string;
   ends_at?: string;
   end?: string;
   is_bhadra?: boolean;
