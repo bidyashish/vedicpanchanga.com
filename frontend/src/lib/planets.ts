@@ -20,7 +20,7 @@ export const PLANET_COLORS: Record<string, string> = {
   Ma: "var(--danger)",
   Me: "var(--success)",
   Ju: "var(--accent-amber)",
-  Ve: "rgb(168 85 247)",  // violet-500 — readable in both themes
+  Ve: "rgb(168 85 247)", // violet-500 — readable in both themes
   Sa: "var(--ink-soft)",
   Ra: "var(--ink-soft)",
   Ke: "var(--ink-soft)",
@@ -36,17 +36,34 @@ export function planetColor(abbr: string): string {
   return PLANET_COLORS[abbr] ?? "var(--ink)";
 }
 
-export const SIGN_SHORT = [
-  "Ar", "Ta", "Ge", "Cn", "Le", "Vi",
-  "Li", "Sc", "Sg", "Cp", "Aq", "Pi",
-];
+export const SIGN_SHORT = ["Ar", "Ta", "Ge", "Cn", "Le", "Vi", "Li", "Sc", "Sg", "Cp", "Aq", "Pi"];
 
 export const SIGN_NAMES = [
-  "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
-  "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces",
+  "Aries",
+  "Taurus",
+  "Gemini",
+  "Cancer",
+  "Leo",
+  "Virgo",
+  "Libra",
+  "Scorpio",
+  "Sagittarius",
+  "Capricorn",
+  "Aquarius",
+  "Pisces",
 ];
 
 export const SIGN_DEVA = [
-  "मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या",
-  "तुला", "वृश्चिक", "धनु", "मकर", "कुम्भ", "मीन",
+  "मेष",
+  "वृषभ",
+  "मिथुन",
+  "कर्क",
+  "सिंह",
+  "कन्या",
+  "तुला",
+  "वृश्चिक",
+  "धनु",
+  "मकर",
+  "कुम्भ",
+  "मीन",
 ];

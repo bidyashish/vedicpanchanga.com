@@ -15,15 +15,15 @@
   /* System fonts first — instant first paint on iOS/macOS, Windows,
      Android. Inter loads in the background and swaps in via
      font-display: swap (declared on the Google Fonts URL). */
-  --font-sans: -apple-system, BlinkMacSystemFont, "Inter",
-    "Segoe UI Variable", "Segoe UI", system-ui, Roboto,
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI Variable", "Segoe UI", system-ui, Roboto,
     "Helvetica Neue", Arial, sans-serif;
   --font-serif: var(--font-sans);
   --font-deva: "Noto Sans Devanagari", "Hind", var(--font-sans);
   --font-deva-body: "Noto Sans Devanagari", "Hind", var(--font-sans);
 
   /* Brand scale — Pumpkin Spice. Static (does not flip in dark mode). */
-  --color-pumpkin-50:  #fff0e5;
+  --color-pumpkin-50: #fff0e5;
   --color-pumpkin-100: #ffe0cc;
   --color-pumpkin-200: #ffc299;
   --color-pumpkin-300: #ffa366;
@@ -36,33 +36,33 @@
   --color-pumpkin-950: #240e00;
 
   /* Surface tier — names retained for compatibility with existing JSX. */
-  --color-parchment-50:  rgb(var(--surface-rgb));
+  --color-parchment-50: rgb(var(--surface-rgb));
   --color-parchment-100: rgb(var(--surface-soft-rgb));
   --color-parchment-200: rgb(var(--border-rgb));
   --color-parchment-300: rgb(var(--border-strong-rgb));
 
   /* Primary accent */
-  --color-crimson:       rgb(var(--primary-rgb));
-  --color-crimson-dark:  rgb(var(--primary-hover-rgb));
+  --color-crimson: rgb(var(--primary-rgb));
+  --color-crimson-dark: rgb(var(--primary-hover-rgb));
   --color-crimson-light: rgb(var(--primary-soft-rgb));
 
-  --color-saffron:       rgb(var(--primary-rgb));
-  --color-saffron-dark:  rgb(var(--primary-hover-rgb));
+  --color-saffron: rgb(var(--primary-rgb));
+  --color-saffron-dark: rgb(var(--primary-hover-rgb));
   --color-saffron-light: rgb(var(--primary-soft-rgb));
 
-  --color-gold:       rgb(var(--text-muted-rgb));
-  --color-gold-dark:  rgb(var(--text-soft-rgb));
+  --color-gold: rgb(var(--text-muted-rgb));
+  --color-gold-dark: rgb(var(--text-soft-rgb));
   --color-gold-light: rgb(var(--surface-soft-rgb));
 
-  --color-indigo:      rgb(var(--accent-moon-rgb));
+  --color-indigo: rgb(var(--accent-moon-rgb));
   --color-indigo-dark: rgb(var(--accent-moon-rgb));
   --color-indigo-soft: rgb(var(--primary-soft-rgb));
 
-  --color-ink:       rgb(var(--text-rgb));
-  --color-ink-soft:  rgb(var(--text-soft-rgb));
+  --color-ink: rgb(var(--text-rgb));
+  --color-ink-soft: rgb(var(--text-soft-rgb));
   --color-ink-muted: rgb(var(--text-muted-rgb));
 
-  --color-leaf:       rgb(var(--success-rgb));
+  --color-leaf: rgb(var(--success-rgb));
   --color-leaf-light: rgb(var(--success-rgb));
 
   --color-rose: rgb(var(--danger-rgb));
@@ -118,7 +118,7 @@
     color-scheme: light;
 
     /* Pumpkin Spice — the brand scale */
-    --color-pumpkin-spice-50:  #fff0e5;
+    --color-pumpkin-spice-50: #fff0e5;
     --color-pumpkin-spice-100: #ffe0cc;
     --color-pumpkin-spice-200: #ffc299;
     --color-pumpkin-spice-300: #ffa366;
@@ -133,32 +133,32 @@
     /* Base surfaces (light) */
     --bg-rgb: 255 255 255;
     --surface-rgb: 255 255 255;
-    --surface-soft-rgb: 248 250 252;     /* slate-50 */
-    --surface-sunken-rgb: 241 245 249;   /* slate-100 */
+    --surface-soft-rgb: 248 250 252; /* slate-50 */
+    --surface-sunken-rgb: 241 245 249; /* slate-100 */
 
     /* Borders */
-    --border-rgb: 226 232 240;           /* slate-200 */
-    --border-strong-rgb: 203 213 225;    /* slate-300 */
+    --border-rgb: 226 232 240; /* slate-200 */
+    --border-strong-rgb: 203 213 225; /* slate-300 */
 
     /* Text — high contrast neutrals */
-    --text-rgb: 15 23 42;                /* slate-900 */
-    --text-soft-rgb: 71 85 105;          /* slate-600 */
-    --text-muted-rgb: 100 116 139;       /* slate-500 */
+    --text-rgb: 15 23 42; /* slate-900 */
+    --text-soft-rgb: 71 85 105; /* slate-600 */
+    --text-muted-rgb: 100 116 139; /* slate-500 */
 
     /* Functional primary — pumpkin-600 (4.7:1 on white, 4.7:1 white-on-it) */
-    --primary-rgb: 204 82 0;             /* pumpkin-600 */
-    --primary-hover-rgb: 153 61 0;       /* pumpkin-700 */
-    --primary-soft-rgb: 255 240 229;     /* pumpkin-50 */
+    --primary-rgb: 204 82 0; /* pumpkin-600 */
+    --primary-hover-rgb: 153 61 0; /* pumpkin-700 */
+    --primary-soft-rgb: 255 240 229; /* pumpkin-50 */
 
     /* Status */
-    --success-rgb: 22 163 74;            /* green-600 */
-    --warning-rgb: 217 119 6;            /* amber-600 */
-    --danger-rgb: 220 38 38;             /* red-600 */
+    --success-rgb: 22 163 74; /* green-600 */
+    --warning-rgb: 217 119 6; /* amber-600 */
+    --danger-rgb: 220 38 38; /* red-600 */
 
     /* Decorative semantic accents */
-    --accent-sun-rgb: 255 102 0;         /* pumpkin-500 — vivid hero orange */
-    --accent-moon-rgb: 30 64 175;        /* blue-800 */
-    --accent-amber-rgb: 180 83 9;        /* amber-700 */
+    --accent-sun-rgb: 255 102 0; /* pumpkin-500 — vivid hero orange */
+    --accent-moon-rgb: 30 64 175; /* blue-800 */
+    --accent-amber-rgb: 180 83 9; /* amber-700 */
 
     /* Convenient color() helpers */
     --bg: rgb(var(--bg-rgb));
@@ -198,37 +198,36 @@
     --indigo: rgb(var(--accent-moon-rgb));
     --indigo-soft: rgb(219 234 254);
     --rose: var(--danger);
-
   }
 
   /* ──────── Dark theme — comfortable charcoal, not pitch black ──────── */
   .dark {
     color-scheme: dark;
 
-    --bg-rgb: 28 30 36;                  /* #1c1e24 — warm charcoal */
-    --surface-rgb: 36 38 45;             /* #24262d — cards, one step up */
-    --surface-soft-rgb: 46 48 56;        /* #2e3038 */
+    --bg-rgb: 28 30 36; /* #1c1e24 — warm charcoal */
+    --surface-rgb: 36 38 45; /* #24262d — cards, one step up */
+    --surface-soft-rgb: 46 48 56; /* #2e3038 */
     --surface-sunken-rgb: 32 34 40;
 
-    --border-rgb: 56 58 68;              /* #383a44 — visible separators */
-    --border-strong-rgb: 80 82 95;       /* #50525f */
+    --border-rgb: 56 58 68; /* #383a44 — visible separators */
+    --border-strong-rgb: 80 82 95; /* #50525f */
 
-    --text-rgb: 237 238 242;             /* near white, slightly warm */
+    --text-rgb: 237 238 242; /* near white, slightly warm */
     --text-soft-rgb: 174 176 185;
     --text-muted-rgb: 130 132 142;
 
     /* Brighter pumpkin in dark mode for contrast on dark surfaces */
-    --primary-rgb: 255 133 51;           /* pumpkin-400 */
-    --primary-hover-rgb: 255 163 102;    /* pumpkin-300 */
-    --primary-soft-rgb: 102 41 0;        /* pumpkin-800, used at low alpha */
+    --primary-rgb: 255 133 51; /* pumpkin-400 */
+    --primary-hover-rgb: 255 163 102; /* pumpkin-300 */
+    --primary-soft-rgb: 102 41 0; /* pumpkin-800, used at low alpha */
 
-    --success-rgb: 74 222 128;           /* green-400 */
-    --warning-rgb: 251 191 36;           /* amber-400 */
-    --danger-rgb: 248 113 113;           /* red-400 */
+    --success-rgb: 74 222 128; /* green-400 */
+    --warning-rgb: 251 191 36; /* amber-400 */
+    --danger-rgb: 248 113 113; /* red-400 */
 
-    --accent-sun-rgb: 255 133 51;        /* pumpkin-400 */
-    --accent-moon-rgb: 147 197 253;      /* blue-300 */
-    --accent-amber-rgb: 251 191 36;      /* amber-400 */
+    --accent-sun-rgb: 255 133 51; /* pumpkin-400 */
+    --accent-moon-rgb: 147 197 253; /* blue-300 */
+    --accent-amber-rgb: 251 191 36; /* amber-400 */
 
     --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5);
     --shadow-lift: 0 4px 14px rgba(0, 0, 0, 0.55);
@@ -239,11 +238,13 @@
 
   html {
     -webkit-text-size-adjust: 100%;
-    -webkit-tap-highlight-color: transparent;  /* No grey flash on mobile tap */
+    -webkit-tap-highlight-color: transparent; /* No grey flash on mobile tap */
     text-size-adjust: 100%;
   }
 
-  html, body, #root {
+  html,
+  body,
+  #root {
     margin: 0;
     padding: 0;
     background-color: var(--bg);
@@ -251,17 +252,22 @@
     font-family: var(--font-sans);
     font-size: 16px;
     line-height: 1.55;
-    font-feature-settings: "cv11", "ss01", "ss03";  /* Inter alternates */
+    font-feature-settings: "cv11", "ss01", "ss03"; /* Inter alternates */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    min-height: 100dvh;  /* Honors mobile dynamic viewport (no jump on URL bar) */
+    min-height: 100dvh; /* Honors mobile dynamic viewport (no jump on URL bar) */
   }
 
   /* Tap targets need ≥44px box on touch devices (Apple HIG, WCAG 2.5.5). */
-  button, a, [role="button"], input, select, textarea {
+  button,
+  a,
+  [role="button"],
+  input,
+  select,
+  textarea {
     -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;  /* Removes 300ms double-tap delay */
+    touch-action: manipulation; /* Removes 300ms double-tap delay */
   }
 
   /* Devanagari needs slightly more leading for stacked diacritics. */
@@ -271,24 +277,38 @@
     line-height: 1.7;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-sans);
     font-weight: 700;
     letter-spacing: -0.018em;
     line-height: 1.25;
     color: var(--ink);
-    font-feature-settings: "ss01", "cv11";  /* Inter's tabular digits + alt 1/0 */
+    font-feature-settings: "ss01", "cv11"; /* Inter's tabular digits + alt 1/0 */
   }
 
-  html[lang="hi"] :is(h1,h2,h3,h4,h5,h6) {
+  html[lang="hi"] :is(h1, h2, h3, h4, h5, h6) {
     font-family: var(--font-deva);
     line-height: 1.45;
     letter-spacing: 0;
   }
 
-  input, select, textarea, button { font-family: inherit; font-size: inherit; }
+  input,
+  select,
+  textarea,
+  button {
+    font-family: inherit;
+    font-size: inherit;
+  }
 
-  ::selection { background-color: var(--primary-soft); color: var(--ink); }
+  ::selection {
+    background-color: var(--primary-soft);
+    color: var(--ink);
+  }
 
   /* Visible focus ring with halo — keyboard-only (no flash on click). */
   *:focus-visible {
@@ -298,8 +318,14 @@
     border-radius: 4px;
   }
 
-  a { color: var(--primary); text-decoration-thickness: 1px; text-underline-offset: 3px; }
-  a:hover { color: var(--primary-hover); }
+  a {
+    color: var(--primary);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  a:hover {
+    color: var(--primary-hover);
+  }
 }
 
 @layer components {
@@ -310,12 +336,29 @@
     box-shadow: var(--shadow-card);
   }
   /* Default card body padding — generous on mobile, tighter on desktop. */
-  .card-body { padding: 1.25rem; }
-  @media (min-width: 768px) { .card-body { padding: 1.5rem; } }
-  @media (min-width: 1024px) { .card-body { padding: 1.75rem; } }
+  .card-body {
+    padding: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .card-body {
+      padding: 1.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .card-body {
+      padding: 1.75rem;
+    }
+  }
 
-  .card-lift { transition: box-shadow 180ms ease, border-color 180ms ease; }
-  .card-lift:hover { box-shadow: var(--shadow-lift); border-color: var(--border-strong); }
+  .card-lift {
+    transition:
+      box-shadow 180ms ease,
+      border-color 180ms ease;
+  }
+  .card-lift:hover {
+    box-shadow: var(--shadow-lift);
+    border-color: var(--border-strong);
+  }
 
   .field-label {
     display: block;
@@ -331,20 +374,30 @@
     background-color: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    padding: 0.6875rem 0.875rem;  /* 11px 14px — generous, comfortable */
+    padding: 0.6875rem 0.875rem; /* 11px 14px — generous, comfortable */
     /* 16px on mobile prevents iOS Safari from auto-zooming on focus.
        Drops to 15px on >=md to feel proportional to wider layouts. */
     font-size: 16px;
     line-height: 1.5;
     color: var(--ink);
-    min-height: 44px;  /* WCAG 2.5.5 touch target */
-    transition: border-color 140ms ease, box-shadow 140ms ease;
+    min-height: 44px; /* WCAG 2.5.5 touch target */
+    transition:
+      border-color 140ms ease,
+      box-shadow 140ms ease;
   }
   @media (min-width: 768px) {
-    .field { font-size: 15px; min-height: 40px; padding: 0.5625rem 0.8125rem; }
+    .field {
+      font-size: 15px;
+      min-height: 40px;
+      padding: 0.5625rem 0.8125rem;
+    }
   }
-  .field::placeholder { color: var(--ink-muted); }
-  .field:hover { border-color: var(--border-strong); }
+  .field::placeholder {
+    color: var(--ink-muted);
+  }
+  .field:hover {
+    border-color: var(--border-strong);
+  }
   .field:focus {
     outline: none;
     border-color: var(--primary);
@@ -368,7 +421,9 @@
   }
   .rdp-month_caption,
   .rdp-caption_label,
-  .rdp-weekday { color: var(--ink-soft); }
+  .rdp-weekday {
+    color: var(--ink-soft);
+  }
   .rdp-dropdown {
     background: var(--surface);
     color: var(--ink);
@@ -381,7 +436,10 @@
     border-color: var(--primary);
     box-shadow: 0 0 0 2px rgb(var(--primary-rgb) / 0.18);
   }
-  .rdp-button_next, .rdp-button_previous { color: var(--ink-soft); }
+  .rdp-button_next,
+  .rdp-button_previous {
+    color: var(--ink-soft);
+  }
   .rdp-day_button:hover:not([disabled]) {
     background: rgb(var(--primary-rgb) / 0.08);
     color: var(--primary);
@@ -391,8 +449,12 @@
     color: #fff;
     border-color: var(--primary);
   }
-  .dark .rdp-selected .rdp-day_button { color: rgb(15 23 42); }
-  .rdp-today:not(.rdp-selected) .rdp-day_button { font-weight: 700; }
+  .dark .rdp-selected .rdp-day_button {
+    color: rgb(15 23 42);
+  }
+  .rdp-today:not(.rdp-selected) .rdp-day_button {
+    font-weight: 700;
+  }
 
   .btn-primary {
     display: inline-flex;
@@ -404,16 +466,29 @@
     font-weight: 600;
     font-size: 15px;
     padding: 0.6875rem 1.25rem;
-    min-height: 44px;  /* Touch target */
+    min-height: 44px; /* Touch target */
     border-radius: var(--radius-md);
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
-    transition: background-color 140ms ease, box-shadow 140ms ease, transform 80ms ease;
+    transition:
+      background-color 140ms ease,
+      box-shadow 140ms ease,
+      transform 80ms ease;
     user-select: none;
   }
-  .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
-  .btn-primary:active:not(:disabled) { transform: translateY(1px); box-shadow: none; }
-  .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
-  .dark .btn-primary { color: rgb(15 23 42); }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--primary-hover);
+  }
+  .btn-primary:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: none;
+  }
+  .btn-primary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .dark .btn-primary {
+    color: rgb(15 23 42);
+  }
 
   .btn-ghost {
     display: inline-flex;
@@ -428,7 +503,11 @@
     padding: 0.6875rem 1.125rem;
     min-height: 44px;
     border-radius: var(--radius-md);
-    transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 80ms ease;
+    transition:
+      background-color 140ms ease,
+      border-color 140ms ease,
+      color 140ms ease,
+      transform 80ms ease;
     user-select: none;
   }
   .btn-ghost:hover {
@@ -436,11 +515,18 @@
     border-color: var(--border-strong);
     color: var(--primary);
   }
-  .btn-ghost:active { transform: translateY(1px); }
+  .btn-ghost:active {
+    transform: translateY(1px);
+  }
 
   /* On desktop where mouse precision is high, buttons can collapse a bit. */
   @media (min-width: 768px) {
-    .btn-primary, .btn-ghost { min-height: 40px; padding-top: 0.5625rem; padding-bottom: 0.5625rem; }
+    .btn-primary,
+    .btn-ghost {
+      min-height: 40px;
+      padding-top: 0.5625rem;
+      padding-bottom: 0.5625rem;
+    }
   }
 
   .tag {
@@ -463,7 +549,8 @@
     gap: 12px;
     color: var(--ink-muted);
   }
-  .divider-ornate::before, .divider-ornate::after {
+  .divider-ornate::before,
+  .divider-ornate::after {
     content: "";
     flex: 1;
     height: 1px;
@@ -476,11 +563,31 @@
     box-shadow: var(--shadow-card);
   }
 
-  .parchment-bg { background-color: var(--bg); }
+  .parchment-bg {
+    background-color: var(--bg);
+  }
 
-  @keyframes mandala-spin { from {transform:rotate(0)} to {transform:rotate(360deg)} }
-  .mandala-loader { animation: mandala-spin 3.6s linear infinite; color: var(--primary); }
-  @keyframes mandala-pulse { 0%,100% {opacity:.85} 50% {opacity:1} }
+  @keyframes mandala-spin {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .mandala-loader {
+    animation: mandala-spin 3.6s linear infinite;
+    color: var(--primary);
+  }
+  @keyframes mandala-pulse {
+    0%,
+    100% {
+      opacity: 0.85;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
 
   .ad-placeholder {
     display: flex;
@@ -496,10 +603,16 @@
     border-radius: var(--radius-sm);
   }
 
-  .kundali-svg text { user-select: none; }
+  .kundali-svg text {
+    user-select: none;
+  }
 
-  .scrollbar-hide::-webkit-scrollbar { display: none; }
-  .scrollbar-hide { scrollbar-width: none; }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    scrollbar-width: none;
+  }
 
   /* ───────── Typography utilities — semantic, theme-aware ─────────
      Use these instead of arbitrary text-[Npx] / tracking-[…].
@@ -575,54 +688,104 @@
     letter-spacing: -0.024em;
   }
   @media (min-width: 640px) {
-    .heading-section { font-size: 22px; letter-spacing: -0.016em; }
-    .heading-page    { font-size: 38px; letter-spacing: -0.028em; }
+    .heading-section {
+      font-size: 22px;
+      letter-spacing: -0.016em;
+    }
+    .heading-page {
+      font-size: 38px;
+      letter-spacing: -0.028em;
+    }
   }
   @media (min-width: 1024px) {
-    .heading-page    { font-size: 44px; letter-spacing: -0.03em; }
+    .heading-page {
+      font-size: 44px;
+      letter-spacing: -0.03em;
+    }
   }
 
   /* Devanagari script is visually denser per glyph; bump every step
      so Hindi reads as easily as English at the same hierarchy level. */
   html[lang="hi"] {
-    & .heading-page    { font-size: 32px; letter-spacing: -0.012em; }
-    & .heading-section { font-size: 22px; letter-spacing: -0.008em; }
-    & .field-label     { font-size: 15px; }
-    & .field           { font-size: 17px; }
-    & .label, & .label-strong { font-size: 15px; }
-    & .value, & .value-strong { font-size: 16px; }
+    & .heading-page {
+      font-size: 32px;
+      letter-spacing: -0.012em;
+    }
+    & .heading-section {
+      font-size: 22px;
+      letter-spacing: -0.008em;
+    }
+    & .field-label {
+      font-size: 15px;
+    }
+    & .field {
+      font-size: 17px;
+    }
+    & .label,
+    & .label-strong {
+      font-size: 15px;
+    }
+    & .value,
+    & .value-strong {
+      font-size: 16px;
+    }
   }
   @media (min-width: 640px) {
     html[lang="hi"] {
-      & .heading-page    { font-size: 40px; }
-      & .heading-section { font-size: 24px; }
+      & .heading-page {
+        font-size: 40px;
+      }
+      & .heading-section {
+        font-size: 24px;
+      }
     }
   }
   @media (min-width: 1024px) {
     html[lang="hi"] {
-      & .heading-page { font-size: 46px; }
+      & .heading-page {
+        font-size: 46px;
+      }
     }
   }
 }
 
 @layer utilities {
-  .num { font-variant-numeric: tabular-nums; }
-  .glass { background-color: var(--surface); }
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  .glass {
+    background-color: var(--surface);
+  }
 }
 
 @media print {
-  html, body, #root, .parchment-bg, .glass {
+  html,
+  body,
+  #root,
+  .parchment-bg,
+  .glass {
     background-color: #ffffff !important;
     color: #000 !important;
   }
-  .card { box-shadow: none !important; border-color: #ccc !important; }
-  .ad-placeholder, header, footer { display: none !important; }
+  .card {
+    box-shadow: none !important;
+    border-color: #ccc !important;
+  }
+  .ad-placeholder,
+  header,
+  footer {
+    display: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
   }
-  .mandala-loader { animation: mandala-pulse 2s ease-in-out infinite; }
+  .mandala-loader {
+    animation: mandala-pulse 2s ease-in-out infinite;
+  }
 }

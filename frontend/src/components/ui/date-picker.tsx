@@ -3,11 +3,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { useI18n } from "@/i18n";
 import { localeFor } from "@/lib/format";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const pad2 = (n: number) => String(n).padStart(2, "0");
 const pad4 = (n: number) => String(n).padStart(4, "0");
@@ -70,9 +66,7 @@ export function DatePicker({
           onSelect={(d) => d && onChange(toISO(d))}
           startMonth={new Date(minYear, 0)}
           endMonth={new Date(ymax, 11)}
-          defaultMonth={
-            selected ?? new Date(today.getFullYear() - 30, today.getMonth())
-          }
+          defaultMonth={selected ?? new Date(today.getFullYear() - 30, today.getMonth())}
           today={today}
         />
       </PopoverContent>

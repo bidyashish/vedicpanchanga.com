@@ -996,7 +996,8 @@ const fr: Dict = {
   julian_day: "Jour julien",
   unnamed_native: "Natif sans nom",
   graha_positions: "Positions des Grahas",
-  lagna_caption: "Le Lagna (Ascendant) est mis en évidence · Les maisons avancent dans le sens anti-horaire",
+  lagna_caption:
+    "Le Lagna (Ascendant) est mis en évidence · Les maisons avancent dans le sens anti-horaire",
 
   dasha_title: "Vimshottari Mahādaśā",
   dasha_subtitle: "Cycle planétaire complet de 120 ans depuis la naissance",

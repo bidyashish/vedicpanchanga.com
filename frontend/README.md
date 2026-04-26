@@ -4,11 +4,11 @@ Vite + React 19 + TypeScript single-page app served on port **3121** in
 dev. In production it's a static `dist/` build that Nginx serves with
 year-long cache on fingerprinted `/assets/`.
 
-* **Stack**: Vite 5 · React 19 · TypeScript · Tailwind CSS v4
+- **Stack**: Vite 5 · React 19 · TypeScript · Tailwind CSS v4
   (CSS-based theme tokens — no `tailwind.config.js`)
-* **Routing**: clean paths (`/`, `/panchang`, `/muhurta`, `/privacy`,
+- **Routing**: clean paths (`/`, `/panchang`, `/muhurta`, `/privacy`,
   `/terms`) — no hash. Path → view mapping lives in `App.tsx`.
-* **No global state library** — each page owns its own form state and
+- **No global state library** — each page owns its own form state and
   fetch logic. `App.tsx` keeps a shared `LocationChoice` so switching
   tabs preserves the selected city.
 
@@ -22,15 +22,15 @@ cp .env.example .env       # sets VITE_BACKEND_URL=http://localhost:8001
 npm run dev                # http://localhost:3121
 ```
 
-| Command                | What                                                          |
-|------------------------|---------------------------------------------------------------|
-| `npm run dev`          | Vite dev server with HMR (port 3121)                          |
-| `npm run build`        | `tsc --noEmit` then `vite build` → `dist/`                    |
-| `npm run preview`      | Serve the built bundle (sanity-check prod output)             |
-| `npm run lint`         | [oxlint](https://github.com/oxc-project/oxc) — Rust-based linter |
+| Command                | What                                                                 |
+| ---------------------- | -------------------------------------------------------------------- |
+| `npm run dev`          | Vite dev server with HMR (port 3121)                                 |
+| `npm run build`        | `tsc --noEmit` then `vite build` → `dist/`                           |
+| `npm run preview`      | Serve the built bundle (sanity-check prod output)                    |
+| `npm run lint`         | [oxlint](https://github.com/oxc-project/oxc) — Rust-based linter     |
 | `npm run format`       | [oxfmt](https://github.com/oxc-project/oxc) — write formatted output |
-| `npm run format:check` | `oxfmt --check` — exits non-zero on a diff (used by CI)       |
-| `npx tsc --noEmit`     | TypeScript type-check (also runs as part of `npm run build`)  |
+| `npm run format:check` | `oxfmt --check` — exits non-zero on a diff (used by CI)              |
+| `npx tsc --noEmit`     | TypeScript type-check (also runs as part of `npm run build`)         |
 
 `npm run lint` and `npm run format:check` are enforced by
 `.github/workflows/ci.yml` on every push to `main` and every PR. To run
@@ -46,11 +46,11 @@ setup). When you need one, add Vitest.
 Vite bakes `VITE_*` variables in **at build time**, so editing `.env`
 needs a rebuild — restarting the dev server isn't enough.
 
-| Var                       | Required | Purpose                                                                |
-|---------------------------|----------|------------------------------------------------------------------------|
-| `VITE_BACKEND_URL`        | dev      | Backend origin. Empty in prod → same-origin `/api` via Nginx proxy.    |
-| `VITE_ADSENSE_CLIENT`     | optional | AdSense publisher ID. Unset → dashed placeholders in ad slots.         |
-| `VITE_ADSENSE_SLOT_HEADER`| optional | Per-slot IDs: `_HEADER`, `_SIDEBAR`, `_INLINE`, `_FOOTER`.             |
+| Var                        | Required | Purpose                                                             |
+| -------------------------- | -------- | ------------------------------------------------------------------- |
+| `VITE_BACKEND_URL`         | dev      | Backend origin. Empty in prod → same-origin `/api` via Nginx proxy. |
+| `VITE_ADSENSE_CLIENT`      | optional | AdSense publisher ID. Unset → dashed placeholders in ad slots.      |
+| `VITE_ADSENSE_SLOT_HEADER` | optional | Per-slot IDs: `_HEADER`, `_SIDEBAR`, `_INLINE`, `_FOOTER`.          |
 
 ## Routing
 
@@ -111,14 +111,14 @@ Path alias `@/*` → `src/*` is set in both `vite.config.ts` and
 
 ## SEO
 
-* `index.html` ships with full meta (description, keywords, og/twitter,
+- `index.html` ships with full meta (description, keywords, og/twitter,
   Apple touch icon, theme-color, format-detection) and three JSON-LD
   blocks (`WebSite`, `WebApplication`, `Organization`) — these stay
   static for every route.
-* Per-route `<title>`, description and canonical are rewritten by
+- Per-route `<title>`, description and canonical are rewritten by
   `lib/seo.applySeo()` whenever the view changes.
-* Sitemap at `/sitemap.xml` lists all 5 clean URLs.
-* `robots.txt` allows everything.
+- Sitemap at `/sitemap.xml` lists all 5 clean URLs.
+- `robots.txt` allows everything.
 
 ## AdSense
 

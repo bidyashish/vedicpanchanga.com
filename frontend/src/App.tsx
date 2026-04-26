@@ -63,13 +63,20 @@ const DEFAULT_LOCATION: LocationChoice = {
 function viewFromPath(): View {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
   switch (path) {
-    case "/panchang":   return "panchang";
-    case "/muhurta":    return "muhurta";
-    case "/privacy":    return "privacy";
-    case "/terms":      return "terms";
-    case "/kundali":    return "kundali";
-    case "/":           return "kundali";
-    default:            return "kundali";
+    case "/panchang":
+      return "panchang";
+    case "/muhurta":
+      return "muhurta";
+    case "/privacy":
+      return "privacy";
+    case "/terms":
+      return "terms";
+    case "/kundali":
+      return "kundali";
+    case "/":
+      return "kundali";
+    default:
+      return "kundali";
   }
 }
 
@@ -127,10 +134,7 @@ export default function App() {
 
       <main className="flex-1 max-w-screen-3xl w-full mx-auto px-3 sm:px-6 lg:px-8">
         {view === "kundali" && (
-          <KundaliPage
-            sharedLocation={sharedLocation}
-            onLocationChange={handleLocationChange}
-          />
+          <KundaliPage sharedLocation={sharedLocation} onLocationChange={handleLocationChange} />
         )}
         {view === "panchang" && <PanchangPage defaultLocation={sharedLocation} />}
         {view === "muhurta" && <MuhurtaPage defaultLocation={sharedLocation} />}

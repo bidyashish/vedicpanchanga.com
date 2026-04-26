@@ -34,5 +34,8 @@ export function applySeo({ title, description, canonical, noindex }: SeoOptions)
   setMeta("twitter:title", title);
   setMeta("twitter:description", description);
   setLink("canonical", canonical);
-  setMeta("robots", noindex ? "noindex, follow" : "index, follow, max-image-preview:large, max-snippet:-1");
+  setMeta(
+    "robots",
+    noindex ? "noindex, follow" : "index, follow, max-image-preview:large, max-snippet:-1",
+  );
 }

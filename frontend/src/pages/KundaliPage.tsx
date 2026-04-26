@@ -14,9 +14,7 @@ import type { ChartData, LocationChoice } from "@/types/api";
 
 // PDF ships full label sets + bundled fonts for all 9 UI languages.
 type PdfLang = "en" | "hi" | "ta" | "zh" | "ja" | "es" | "de" | "pt" | "fr";
-const PDF_LANGS = new Set<PdfLang>([
-  "en", "hi", "ta", "zh", "ja", "es", "de", "pt", "fr",
-]);
+const PDF_LANGS = new Set<PdfLang>(["en", "hi", "ta", "zh", "ja", "es", "de", "pt", "fr"]);
 const pdfLangFor = (uiLang: string): PdfLang =>
   PDF_LANGS.has(uiLang as PdfLang) ? (uiLang as PdfLang) : "en";
 
@@ -45,9 +43,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
     timezone: sharedLocation.timezone,
   }));
   const [data, setData] = useState<ChartData | null>(null);
-  const [submittedPlaceName, setSubmittedPlaceName] = useState<string>(
-    sharedLocation.place_name,
-  );
+  const [submittedPlaceName, setSubmittedPlaceName] = useState<string>(sharedLocation.place_name);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [nativeName, setNativeName] = useState<string>("");

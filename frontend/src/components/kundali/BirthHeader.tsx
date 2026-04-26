@@ -14,9 +14,7 @@ export function BirthHeader({ data, placeName }: Props) {
   return (
     <div data-testid="birth-header" className="card p-4 sm:p-5">
       <p className="eyebrow">{t("birth_details")}</p>
-      <h2 className="heading-page mt-0.5">
-        {placeName || t("unnamed_native")}
-      </h2>
+      <h2 className="heading-page mt-0.5">{placeName || t("unnamed_native")}</h2>
       <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1 mt-3">
         <Row label={t("local")} value={fmt} />
         <Row label={t("timezone")} value={b.timezone} />
@@ -26,8 +24,7 @@ export function BirthHeader({ data, placeName }: Props) {
           label={t("ayanamsa")}
           value={
             <>
-              {b.ayanamsa.toFixed(4)}°{" "}
-              <span className="text-ink-muted">({b.ayanamsa_label})</span>
+              {b.ayanamsa.toFixed(4)}° <span className="text-ink-muted">({b.ayanamsa_label})</span>
             </>
           }
         />
