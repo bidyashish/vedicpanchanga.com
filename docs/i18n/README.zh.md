@@ -1,6 +1,6 @@
 # 吠陀历法 (Vedic Panchanga)
 
-> [English](../../README.md) · [हिन्दी](../../README.hi.md) · [தமிழ்](../../README.ta.md) ·
+> [English](../../README.md) · [हिन्दी](README.hi.md) · [தமிழ்](README.ta.md) ·
 > **中文** · [日本語](README.ja.md) · [Español](README.es.md) ·
 > [Deutsch](README.de.md) · [Português](README.pt.md) · [Français](README.fr.md)
 

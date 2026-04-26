@@ -1,9 +1,8 @@
 # वैदिक पंचांग
 
-> [English](README.md) · **हिन्दी** · [தமிழ்](README.ta.md) ·
-> [中文](docs/i18n/README.zh.md) · [日本語](docs/i18n/README.ja.md) ·
-> [Español](docs/i18n/README.es.md) · [Deutsch](docs/i18n/README.de.md) ·
-> [Português](docs/i18n/README.pt.md) · [Français](docs/i18n/README.fr.md)
+> [English](../../README.md) · **हिन्दी** · [தமிழ்](README.ta.md) ·
+> [中文](README.zh.md) · [日本語](README.ja.md) · [Español](README.es.md) ·
+> [Deutsch](README.de.md) · [Português](README.pt.md) · [Français](README.fr.md)
 
 आधुनिक वेब इंटरफ़ेस के साथ दृक्-पंचांग कैलकुलेटर। पारंपरिक हिंदू पंचांग, १६ वर्ग चक्र (D1–D60), विंशोत्तरी दशा, अष्टकवर्ग और शुभ मुहूर्त — किसी भी तिथि (५००० ईसा पूर्व – ५००० ईस्वी) और किसी भी स्थान के लिए।
 
@@ -79,9 +78,9 @@ npm run dev
 | POST   | `/api/print-pdf`        | पूर्ण PDF रिपोर्ट (en/hi)                            |
 
 विस्तृत प्रति-फ़ोल्डर दस्तावेज़ अंग्रेज़ी में:
-[`backend/README.md`](backend/README.md) · [`frontend/README.md`](frontend/README.md) ·
-[`infra/README.md`](infra/README.md) · [`backend/tests/README.md`](backend/tests/README.md)।
-तैनाती (deploy) निर्देशों के लिए मुख्य [`README.md`](README.md) देखें।
+[`backend/README.md`](../../backend/README.md) · [`frontend/README.md`](../../frontend/README.md) ·
+[`infra/README.md`](../../infra/README.md) · [`backend/tests/README.md`](../../backend/tests/README.md)।
+तैनाती (deploy) निर्देशों के लिए मुख्य [`README.md`](../../README.md) देखें।
 
 ---
 

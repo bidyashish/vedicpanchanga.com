@@ -1,9 +1,8 @@
 # வேத பஞ்சாங்கம்
 
-> [English](README.md) · [हिन्दी](README.hi.md) · **தமிழ்** ·
-> [中文](docs/i18n/README.zh.md) · [日本語](docs/i18n/README.ja.md) ·
-> [Español](docs/i18n/README.es.md) · [Deutsch](docs/i18n/README.de.md) ·
-> [Português](docs/i18n/README.pt.md) · [Français](docs/i18n/README.fr.md)
+> [English](../../README.md) · [हिन्दी](README.hi.md) · **தமிழ்** ·
+> [中文](README.zh.md) · [日本語](README.ja.md) · [Español](README.es.md) ·
+> [Deutsch](README.de.md) · [Português](README.pt.md) · [Français](README.fr.md)
 
 நவீன வலை இடைமுகத்துடன் கூடிய திருக்-பஞ்சாங்க கணிப்பான். எந்த தேதிக்கும் (கி.மு. 5000 – கி.பி. 5000) எந்த இடத்திற்கும் — பாரம்பரிய இந்து பஞ்சாங்கம், 16 பகுப்பு கட்டங்கள் (D1–D60), விம்சோத்தரி தசை, அஷ்டகவர்கம், மற்றும் சுபமான முகூர்த்தங்கள்.
 
@@ -79,9 +78,9 @@ npm run dev
 | POST   | `/api/print-pdf`       | முழு PDF அறிக்கை (en/hi)                                 |
 
 ஒவ்வொரு கோப்புறைக்கான விரிவான ஆவணம் (ஆங்கிலத்தில்):
-[`backend/README.md`](backend/README.md) · [`frontend/README.md`](frontend/README.md) ·
-[`infra/README.md`](infra/README.md) · [`backend/tests/README.md`](backend/tests/README.md).
-வரிசைப்படுத்துதல் (deploy) வழிமுறைகளுக்கு முதன்மை [`README.md`](README.md)-ஐப் பார்க்கவும்.
+[`backend/README.md`](../../backend/README.md) · [`frontend/README.md`](../../frontend/README.md) ·
+[`infra/README.md`](../../infra/README.md) · [`backend/tests/README.md`](../../backend/tests/README.md).
+வரிசைப்படுத்துதல் (deploy) வழிமுறைகளுக்கு முதன்மை [`README.md`](../../README.md)-ஐப் பார்க்கவும்.
 
 ---
 

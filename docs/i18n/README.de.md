@@ -1,6 +1,6 @@
 # Vedic Panchanga
 
-> [English](../../README.md) · [हिन्दी](../../README.hi.md) · [தமிழ்](../../README.ta.md) ·
+> [English](../../README.md) · [हिन्दी](README.hi.md) · [தமிழ்](README.ta.md) ·
 > [中文](README.zh.md) · [日本語](README.ja.md) · [Español](README.es.md) ·
 > **Deutsch** · [Português](README.pt.md) · [Français](README.fr.md)
 
