@@ -12,11 +12,17 @@ Drik Panchang calculator with a modern web interface. Computes traditional Hindu
 
 | Layer    | Stack |
 | -------- | ----- |
-| Backend  | Python 3 · FastAPI · PySwissEph (Swiss Ephemeris) · `uvicorn` on `127.0.0.1:8001` |
-| Frontend | Vite · React 19 · TypeScript · Tailwind CSS v3 · hash-routed SPA on port 3121 |
+| Backend  | Python 3 · FastAPI · PySwissEph (Swiss Ephemeris) · `fpdf2` for the printable report · `uvicorn` on `127.0.0.1:8001` |
+| Frontend | Vite · React 19 · TypeScript · Tailwind CSS v4 · clean-URL SPA on port 3121 |
 | Infra    | Cloudflare → Nginx (TLS, static-file host) → FastAPI loopback · Prometheus + Grafana optional |
 
 There is **no** database. Calculations are stateless; the backend persists nothing.
+
+Per-folder docs:
+[`backend/README.md`](backend/README.md) ·
+[`frontend/README.md`](frontend/README.md) ·
+[`infra/README.md`](infra/README.md) ·
+[`backend/tests/README.md`](backend/tests/README.md).
 
 ---
 
@@ -58,10 +64,13 @@ npm run lint      # type-check only (tsc --noEmit)
 
 ```bash
 cd backend && source venv/bin/activate
-pytest tests/ -v                                 # run all
-pytest tests/test_muhurta.py -v                  # single suite
-pytest tests/test_iteration4_vargas.py::test_d30 # single test
+pytest tests/ -v                # all (HTTP tests skip if no backend running)
+pytest tests/ -v -m "not http"  # fast unit tests only (~2.5s)
+pytest tests/ -v -m http        # HTTP integration tests only
 ```
+
+See [`backend/tests/README.md`](backend/tests/README.md) for what each
+suite covers and the canonical birth payloads.
 
 ### Environment variables
 
@@ -148,32 +157,39 @@ sudo bash /apps/panchanga/infra/update-deploy.sh
 
 ```
 vedicpanchanga.com/
-├── backend/                 # Python FastAPI server (port 8001)
+├── backend/                 # Python FastAPI server (port 8001) — see backend/README.md
 │   ├── server.py            # entry: uvicorn server:app
-│   ├── calculator.py        # compute_chart (planets, houses, dashas, ashtakavarga)
-│   ├── panchang.py          # basic panchang
+│   ├── calculator.py        # compute_chart (planets, vargas, dasha + dasha_antar,
+│   │                        # ashtakavarga, karakas, karakamsa, friendships, kalsarpa)
 │   ├── advanced_panchang.py # detailed Drik panchang
-│   ├── vargas.py            # 16 divisional charts
-│   ├── ayanamsa.py          # ayanamsa options
+│   ├── panchang_extras.py   # Ganda Mūla + Ravi Yoga detectors
+│   ├── vargas.py            # 16 divisional charts (D1–D60)
+│   ├── ayanamsa.py          # ayanamsa selection
 │   ├── muhurta.py           # muhurta scoring engine
+│   ├── dasha_extras.py      # Vimshottari Antardaśā + Pratyantar
+│   ├── jaimini.py           # Chara karakas + Karakamsa/Swamsa
+│   ├── relationships.py     # natural / temporal / panchadha friendships
+│   ├── kalsarpa.py          # Kalsarpa Yoga detection
+│   ├── pdf/                 # multi-page PDF report (core/ + pages/)
 │   ├── ephe/                # Swiss Ephemeris data files (REQUIRED)
-│   └── tests/               # pytest suites
-├── frontend/                # Vite + React + TypeScript (port 3121)
-│   ├── index.html
+│   └── tests/               # pytest suites — see backend/tests/README.md
+├── frontend/                # Vite + React + TypeScript (port 3121) — see frontend/README.md
+│   ├── index.html           # static SEO + JSON-LD (WebSite/WebApplication/Organization)
+│   ├── public/              # favicon, og-image, sitemap.xml, robots.txt
 │   ├── src/
-│   │   ├── App.tsx          # shell (top bar + hash-routed pages + footer)
-│   │   ├── pages/           # KundaliPage, PanchangPage, MuhurtaPage
+│   │   ├── App.tsx          # shell (top bar + path-routed pages + footer)
+│   │   ├── pages/           # KundaliPage, PanchangPage, MuhurtaPage, Privacy, Terms
 │   │   ├── components/
 │   │   │   ├── shell/       # TopBar, Footer, AdSlot
-│   │   │   ├── common/      # CitySearch, MandalaLoader, LanguageSwitcher
+│   │   │   ├── common/      # CitySearch, LanguageSwitcher, MandalaLoader, ThemeToggle
 │   │   │   ├── kundali/     # BirthForm, ChartTabs, VedicChart, SouthIndianChart, tables
 │   │   │   └── panchang/    # Section, TimeBand
-│   │   ├── lib/             # api.ts (typed fetch), format.ts, planets.ts
+│   │   ├── lib/             # api.ts (typed fetch), format.ts, planets.ts, seo.ts
 │   │   ├── types/api.ts     # TypeScript shapes for all backend responses
 │   │   └── i18n.tsx         # English + Hindi dictionaries
 │   └── vite.config.ts
-├── infra/
-│   ├── setup-vps.sh         # one-shot VPS provisioning
+├── infra/                   # provisioning + deploy scripts — see infra/README.md
+│   ├── setup-vps.sh         # one-shot VPS provisioning (idempotent)
 │   ├── setup-cron.sh        # install auto-update cron
 │   ├── auto-update-cron.sh  # pulls, rebuilds, reloads — run by cron
 │   ├── update-deploy.sh     # manual redeploy helper

@@ -26,45 +26,19 @@ const NAKSHATRA_OPTIONS = [
   "Uttara Bhadrapada", "Revati",
 ];
 
-function scoreColor(s: number): string {
-  if (s >= 70) return "var(--success)";
-  if (s >= 60) return "var(--warning)";
-  return "var(--danger)";
-}
-
-function scoreBg(s: number): string {
-  if (s >= 70) return "rgb(var(--success-rgb) / 0.10)";
-  if (s >= 60) return "rgb(var(--warning-rgb) / 0.10)";
-  return "rgb(var(--danger-rgb) / 0.10)";
-}
-
 function ResultCard({ m, tz }: { m: MuhurtaResult; tz?: string }) {
   const { t } = useI18n();
-  const color = scoreColor(m.score);
-  const bg = scoreBg(m.score);
   return (
     <div
       data-testid={`muhurta-result-${m.date}`}
       className="card card-lift p-6"
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <p className="eyebrow-accent">{m.weekday}</p>
-          <h4 className="heading-page mt-0.5">{formatDayMonthYear(m.date)}</h4>
-          <p className="meta mt-1.5">
-            {m.tithi} · {m.paksha?.replace(" Paksha", "")} · {m.nakshatra} · {m.moon_rashi}
-          </p>
-        </div>
-        <div
-          className="flex flex-col items-center justify-center min-w-[80px] rounded-md px-3 py-2 border shrink-0"
-          style={{ borderColor: color, color, backgroundColor: bg }}
-          data-testid={`muhurta-score-${m.date}`}
-        >
-          <span className="eyebrow opacity-90" style={{ color }}>{t("muhurta_score")}</span>
-          <span className="font-serif text-3xl font-bold num leading-none mt-0.5">
-            {m.score}
-          </span>
-        </div>
+      <div className="min-w-0">
+        <p className="eyebrow-accent">{m.weekday}</p>
+        <h4 className="heading-page mt-0.5">{formatDayMonthYear(m.date)}</h4>
+        <p className="meta mt-1.5">
+          {m.tithi} · {m.paksha?.replace(" Paksha", "")} · {m.nakshatra} · {m.moon_rashi}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
@@ -142,7 +116,6 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
   const [loc, setLoc] = useState<LocationChoice>(defaultLocation);
   const [birthRashiId, setBirthRashiId] = useState<string>("");
   const [birthNakId, setBirthNakId] = useState<string>("");
-  const [minScore, setMinScore] = useState(60);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MuhurtaResponse | null>(null);
@@ -178,7 +151,11 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
         timezone: loc.timezone,
         birth_rashi_id: birthRashiId ? parseInt(birthRashiId, 10) : null,
         birth_nakshatra_id: birthNakId ? parseInt(birthNakId, 10) : null,
-        min_score: minScore,
+        // Backend still ranks days by an internal heuristic, but we no longer
+        // expose that score in the UI — only Tithi/Nakṣatra/Vāra-derived
+        // favourable-vs-cautions reasons drive what users see. The threshold
+        // here just keeps obviously bad days off the list.
+        min_score: 60,
         limit: 30,
       });
       setResult(r);
@@ -291,28 +268,6 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
                   </option>
                 ))}
               </select>
-            </div>
-          </div>
-
-          <div className="mb-5">
-            <label className="field-label">
-              {t("muhurta_min_score")}:{" "}
-              <span className="text-crimson font-bold">{minScore}</span>
-            </label>
-            <input
-              data-testid="muhurta-min-score"
-              type="range"
-              min="40"
-              max="90"
-              step="5"
-              value={minScore}
-              onChange={(e) => setMinScore(parseInt(e.target.value, 10))}
-              className="w-full accent-saffron"
-            />
-            <div className="flex justify-between text-micro text-ink-muted mt-0.5">
-              <span>40</span>
-              <span>60</span>
-              <span>90</span>
             </div>
           </div>
 

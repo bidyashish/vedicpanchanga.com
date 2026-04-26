@@ -1,169 +1,92 @@
 # वैदिक पंचांग
 
+> [English](README.md) · **हिन्दी** · [தமிழ்](README.ta.md) ·
+> [中文](docs/i18n/README.zh.md) · [日本語](docs/i18n/README.ja.md) ·
+> [Español](docs/i18n/README.es.md) · [Deutsch](docs/i18n/README.de.md) ·
+> [Português](docs/i18n/README.pt.md) · [Français](docs/i18n/README.fr.md)
 
-दृक पंचांग कैलकुलेटर आधुनिक वेब इंटरफेस के साथ। किसी भी तिथि (5000 ईसा पूर्व - 5000 ईसवी) और स्थान के लिए पारंपरिक पंचांग की गणना करें।
+आधुनिक वेब इंटरफ़ेस के साथ दृक्-पंचांग कैलकुलेटर। पारंपरिक हिंदू पंचांग, १६ वर्ग चक्र (D1–D60), विंशोत्तरी दशा, अष्टकवर्ग और शुभ मुहूर्त — किसी भी तिथि (५००० ईसा पूर्व – ५००० ईस्वी) और किसी भी स्थान के लिए।
 
-⭐ **यदि आपको यह परियोजना उपयोगी लगती है, तो कृपया GitHub पर इसे स्टार दें!** यह दूसरों को इस उपकरण को खोजने में मदद करता है।
+**वेबसाइट**: <https://vedicpanchanga.com>
 
-## त्वरित शुरुआत
+⭐ यदि यह परियोजना आपके लिए उपयोगी है, तो कृपया रिपॉजिटरी को स्टार दें — इससे दूसरों को इसे खोजने में मदद मिलती है।
 
-```bash
-# रिपॉजिटरी क्लोन करें
-git clone https://github.com/bidyashish/vedicpanchanga.com
-cd vedicpanchanga.com
-
-# या मैन्युअल सेटअप:
-# टर्मिनल 1 - बैकएंड (पोर्ट 8001)
-cd backend
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-python api.py
-
-# टर्मिनल 2 - फ्रंटएंड (पोर्ट 3121)
-cd frontend
-npm install
-# .env.local वैकल्पिक है — डिफ़ॉल्ट http://localhost:8001
-npm run dev
-```
-
-ब्राउज़र में http://localhost:3121 खोलें
-
-## विशेषताएं
-
-**पंचांग तत्व**: तिथि • नक्षत्र • योग • करण • वार
-**समय**: सूर्योदय/सूर्यास्त • चंद्रोदय/चंद्रास्त • राहु काल • यम गंड • गुलिक • अभिजित
-**खगोलीय**: ग्रहों की स्थिति • विम्शोत्तरी दशा • अयनांश (लाहिरी)
-**आधुनिक UI**: डार्क/लाइट मोड • 100,000+ स्थान • रेस्पॉन्सिव डिज़ाइन
+---
 
 ## तकनीकी स्टैक
 
-**बैकएंड**: Python • FastAPI • PySwissEph
-**फ्रंटएंड**: Next.js 15 • React 19 • TypeScript • Tailwind CSS v4 • Shadcn/ui
+| परत    | प्रौद्योगिकी |
+| ------ | ------------ |
+| बैकएंड  | Python 3 · FastAPI · PySwissEph (Swiss Ephemeris) · `fpdf2` (PDF) · `uvicorn` `127.0.0.1:8001` पर |
+| फ़्रंटएंड | Vite · React 19 · TypeScript · Tailwind CSS v4 · पोर्ट 3121 पर क्लीन-URL SPA |
+| इंफ्रा   | Cloudflare → Nginx (TLS, स्टैटिक होस्टिंग) → FastAPI लूपबैक · वैकल्पिक Prometheus + Grafana |
 
-## परियोजना संरचना
+कोई डेटाबेस नहीं है — सभी गणनाएँ स्टेटलेस हैं और बैकएंड कुछ भी संग्रहीत नहीं करता।
 
-```
-vedicpanchanga.com/
-├── backend/          # Python FastAPI सर्वर (पोर्ट 8001)
-├── frontend/         # Next.js 15 एप्लिकेशन (पोर्ट 3121)
-├── infra/            # तैनाती स्क्रिप्ट, systemd यूनिट, nginx, मॉनिटरिंग
-├── tests/            # API, टाइमज़ोन, लोड, और प्रोडक्शन परीक्षण
-├── memory/           # PRD और परियोजना संदर्भ
-├── API.md            # API दस्तावेज़
-├── AGENTS.md         # AI एजेंट निर्देश
-└── README.md         # यह फ़ाइल
-```
+---
 
-## अवसंरचना और तैनाती
+## स्थानीय सेटअप
 
-### आर्किटेक्चर
-
-```
-इंटरनेट → Cloudflare (DDoS) → Nginx (TLS समाप्ति) → Next.js (:3121) → FastAPI (:8001, केवल localhost)
-                                                      ↕
-                                            Prometheus + Grafana (मॉनिटरिंग)
-```
-
-### नए VPS पर तैनाती (Ubuntu 20.04+)
+Python 3.10+ और Node.js 20+ चाहिए।
 
 ```bash
-# 1. क्लोन और सेटअप (एक कमांड)
-sudo mkdir -p /apps && cd /apps
-sudo git clone https://github.com/bidyashish/vedicpanchanga.com panchanga
-cd panchanga && sudo bash infra/setup-vps.sh
+git clone https://github.com/bidyashish/vedicpanchanga.com
+cd vedicpanchanga.com
 
-# 2. SSL प्रमाणपत्र
-sudo apt install certbot python3-certbot-nginx -y
-sudo certbot --nginx -d vedicpanchanga.com -d www.vedicpanchanga.com
+# 1) बैकएंड (टर्मिनल 1)
+cd backend
+python3 -m venv venv
+source venv/bin/activate          # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn server:app --host 127.0.0.1 --port 8001 --reload
 
-# 3. स्वतः अपडेट (वैकल्पिक, हर 6 घंटे)
-bash infra/setup-cron.sh
+# 2) फ़्रंटएंड (टर्मिनल 2)
+cd frontend
+cp .env.example .env              # VITE_BACKEND_URL=http://localhost:8001
+npm install
+npm run dev
 ```
 
-बस इतना ही। सेटअप स्क्रिप्ट Python venv, Node.js, Nginx, systemd सेवाएं, और फ़ायरवॉल सब संभालती है।
+ब्राउज़र में <http://localhost:3121> खोलें। Swagger डॉक्स: <http://localhost:8001/docs>।
 
-### सुरक्षा सख्ती (अंतर्निहित)
+---
 
-| परत | क्या कॉन्फ़िगर है |
-|---|---|
-| **फ़ायरवॉल (UFW)** | केवल पोर्ट 22, 80, 443 खुले; बैकएंड पोर्ट 8001 बाहर से अवरुद्ध |
-| **Nginx** | HTTP→HTTPS रीडायरेक्ट, HSTS, X-Frame-Options, CSP, XSS सुरक्षा |
-| **TLS** | केवल TLSv1.2+, मजबूत सिफर, Certbot द्वारा OCSP स्टेपलिंग |
-| **बैकएंड** | केवल `127.0.0.1` पर बाइंड — कभी इंटरनेट पर एक्सपोज़ नहीं |
-| **IP एक्सेस** | सीधी IP एक्सेस `444` लौटाती है (कनेक्शन ड्रॉप) |
-| **स्वतः अपडेट** | Cron नवीनतम कोड खींचता है, बनाता है, पुनरारंभ करता है |
+## विशेषताएँ
 
-> **प्रोडक्शन से पहले**: Grafana डिफ़ॉल्ट पासवर्ड बदलें, मॉनिटरिंग पोर्ट (9090/3002) अपने IP तक सीमित करें, और OS पैच के लिए `unattended-upgrades` सक्षम करें।
+- **ज्योतिष कुण्डली** — १६ वर्ग चक्र (D1–D60), उत्तर या दक्षिण भारतीय शैली
+- **दृक् पंचांग** — तिथि · नक्षत्र · योग · करण · वार, सूर्य/चंद्र समय, राहु काल, अभिजित और अधिक
+- **मुहूर्त खोजक** — विवाह, गृह प्रवेश, व्यापार, यात्रा आदि के लिए १२० दिनों तक स्कैन
+- **विंशोत्तरी महादशा** — जन्म से १२० वर्षीय पूर्ण चक्र (अंतर्दशा + प्रत्यंतर सहित)
+- **अष्टकवर्ग** — प्रति ग्रह भिन्नाष्टकवर्ग + सर्वाष्टकवर्ग योग
+- **जैमिनी** — चर कारक, कारकांश एवं स्वांश चक्र
+- **PDF रिपोर्ट** — १९-पृष्ठ का बहुभाषीय (अंग्रेज़ी / हिन्दी) मुद्रण-योग्य रिपोर्ट
+- **बहु-अयनांश** — N.C. लाहिरी (डिफ़ॉल्ट), KP नया/पुराना, B.V. रमण, KP खुल्लर, सायन, मनोज
+- **द्विभाषी UI** — English + हिन्दी, देवनागरी वेब फ़ॉन्ट के साथ
 
-### दैनिक संचालन
+---
 
-```bash
-# स्थिति जांचें
-sudo systemctl status panchanga-backend panchanga-frontend
+## API
 
-# लॉग देखें
-sudo journalctl -u panchanga-backend -f
+सभी एंडपॉइंट `/api` के अंतर्गत हैं। प्रोडक्शन में Nginx इन्हें उसी ओरिजिन पर प्रॉक्सी करता है।
 
-# मैन्युअल पुनर्तैनाती
-bash infra/update-deploy.sh
+| Method | Path                    | उद्देश्य                                              |
+|--------|-------------------------|----------------------------------------------------|
+| POST   | `/api/calculate`        | पूर्ण कुण्डली (ग्रह, १६ वर्ग, दशा, अष्टकवर्ग, कारक, कालसर्प) |
+| GET    | `/api/get-panchang`     | किसी दिनांक + स्थान का दृक् पंचांग                |
+| GET    | `/api/ayanamsa-options` | उपलब्ध अयनांश सूची                                |
+| GET    | `/api/muhurta-purposes` | मुहूर्त उद्देश्य श्रेणियाँ                          |
+| POST   | `/api/find-muhurta`     | किसी अवधि में शुभ मुहूर्त खोज                     |
+| POST   | `/api/print-pdf`        | पूर्ण PDF रिपोर्ट (en/hi)                            |
 
-# पुनरारंभ
-sudo systemctl restart panchanga-backend panchanga-frontend
-```
+विस्तृत प्रति-फ़ोल्डर दस्तावेज़ अंग्रेज़ी में:
+[`backend/README.md`](backend/README.md) · [`frontend/README.md`](frontend/README.md) ·
+[`infra/README.md`](infra/README.md) · [`backend/tests/README.md`](backend/tests/README.md)।
+तैनाती (deploy) निर्देशों के लिए मुख्य [`README.md`](README.md) देखें।
 
-
-
-## परीक्षण
-
-```bash
-python tests/test_api.py                 # API परीक्षण
-python tests/test_timezones.py            # टाइमज़ोन गणना
-python tests/stress_test_panchanga.py     # लोड परीक्षण
-./tests/test_production_api.sh            # प्रोडक्शन स्मोक टेस्ट
-```
-
-## API दस्तावेज़
-
-मुख्य एंडपॉइंट: `http://localhost:3121/api/v1/panchanga`
-पूर्ण दस्तावेज़: [API.md](./API.md) देखें • इंटरैक्टिव दस्तावेज़: `http://localhost:8001/docs`
+---
 
 ## लाइसेंस
 
-**बैकएंड**: AGPL-3.0 • **फ्रंटएंड**: MIT
+**बैकएंड**: AGPL-3.0 · **फ़्रंटएंड**: MIT
 
-## योगदान
-
-हम योगदान का स्वागत करते हैं! यहाँ बताया गया है कि आप कैसे मदद कर सकते हैं:
-
-### 🐛 बग मिला? / ### 💡 फ़ीचर अनुरोध?
-[एक इश्यू खोलें](https://github.com/bidyashish/vedicpanchanga.com/issues/new) समस्या के विवरण और पुनरुत्पादन चरणों के साथ।
-
-### ⭐ परियोजना का समर्थन करें
-- इस रिपॉजिटरी को **स्टार करें** ताकि दूसरे इसे खोज सकें
-- इसे दूसरों के साथ साझा करें
-- समस्याओं की रिपोर्ट करें और सुधार सुझाएं
-
-## स्टार इतिहास
-
-[![Star History Chart](https://api.star-history.com/svg?repos=bidyashish/vedicpanchanga.com&type=Date)](https://star-history.com/#bidyashish/vedicpanchanga.com&Date)
-
-## योगदानकर्ता
-
-इस परियोजना को बेहतर बनाने में मदद करने वाले सभी योगदानकर्ताओं को धन्यवाद!
-
-[![Contributors](https://contrib.rocks/image?repo=bidyashish/vedicpanchanga.com)](https://github.com/bidyashish/vedicpanchanga.com/graphs/contributors)
-
-## ट्रेंडिंग
-
-<a href="https://github.com/trending/python?since=daily" target="_blank">
-  <img src="https://img.shields.io/badge/Trending-Python-blue?style=for-the-badge&logo=github" alt="Trending Python">
-</a>
-<a href="https://github.com/trending/javascript?since=daily" target="_blank">
-  <img src="https://img.shields.io/badge/Trending-JavaScript-yellow?style=for-the-badge&logo=github" alt="Trending JavaScript">
-</a>
-
-## श्रेय
-
-सतीश बी डी द्वारा [दृक पंचांग](https://github.com/bdsatish/drik-panchanga) पर आधारित।
-खगोलीय गणना के लिए Swiss Ephemeris का उपयोग करता है।
+[Drik Panchanga](https://github.com/bdsatish/drik-panchanga) (Satish BD) पर आधारित। खगोलीय गणनाएँ [Swiss Ephemeris](https://www.astro.com/swisseph/) से।
