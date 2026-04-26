@@ -38,7 +38,7 @@ const VARGA_SUBTITLE_DEVA: Record<number, string> = {
   60: "पूर्व-जन्म कर्म",
 };
 
-const DEVA_LANGS = new Set(["hi", "sa", "mr"]);
+const DEVA_LANGS = new Set(["hi"]);
 
 export function vargaName(division: number, fallback: string, lang: LangId | string): string {
   if (DEVA_LANGS.has(lang) && VARGA_NAMES_DEVA[division]) {

@@ -265,7 +265,7 @@
   }
 
   /* Devanagari needs slightly more leading for stacked diacritics. */
-  html[lang="hi"], html[lang="sa"], html[lang="mr"], html[lang="bn"] {
+  html[lang="hi"] {
     font-family: var(--font-deva-body);
     font-size: 17px;
     line-height: 1.7;
@@ -280,10 +280,7 @@
     font-feature-settings: "ss01", "cv11";  /* Inter's tabular digits + alt 1/0 */
   }
 
-  html[lang="hi"] :is(h1,h2,h3,h4,h5,h6),
-  html[lang="sa"] :is(h1,h2,h3,h4,h5,h6),
-  html[lang="mr"] :is(h1,h2,h3,h4,h5,h6),
-  html[lang="bn"] :is(h1,h2,h3,h4,h5,h6) {
+  html[lang="hi"] :is(h1,h2,h3,h4,h5,h6) {
     font-family: var(--font-deva);
     line-height: 1.45;
     letter-spacing: 0;
@@ -548,7 +545,7 @@
 
   /* Devanagari script is visually denser per glyph; bump every step
      so Hindi reads as easily as English at the same hierarchy level. */
-  :is(html[lang="hi"], html[lang="sa"], html[lang="mr"], html[lang="bn"]) {
+  html[lang="hi"] {
     & .heading-page    { font-size: 32px; letter-spacing: -0.012em; }
     & .heading-section { font-size: 22px; letter-spacing: -0.008em; }
     & .field-label     { font-size: 15px; }
@@ -557,13 +554,13 @@
     & .value, & .value-strong { font-size: 16px; }
   }
   @media (min-width: 640px) {
-    :is(html[lang="hi"], html[lang="sa"], html[lang="mr"], html[lang="bn"]) {
+    html[lang="hi"] {
       & .heading-page    { font-size: 40px; }
       & .heading-section { font-size: 24px; }
     }
   }
   @media (min-width: 1024px) {
-    :is(html[lang="hi"], html[lang="sa"], html[lang="mr"], html[lang="bn"]) {
+    html[lang="hi"] {
       & .heading-page { font-size: 46px; }
     }
   }

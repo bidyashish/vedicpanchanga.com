@@ -3,12 +3,13 @@ import type { LangId } from "@/i18n";
 const LANG_TO_LOCALE: Record<string, string> = {
   en: "en-IN",
   hi: "hi-IN",
-  sa: "sa-IN",
   ta: "ta-IN",
-  bn: "bn-IN",
-  mr: "mr-IN",
-  gu: "gu-IN",
-  te: "te-IN",
+  zh: "zh-CN",
+  ja: "ja-JP",
+  es: "es-ES",
+  de: "de-DE",
+  pt: "pt-PT",
+  fr: "fr-FR",
 };
 
 export function localeFor(lang: LangId | string | undefined): string {
