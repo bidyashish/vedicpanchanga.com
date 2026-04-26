@@ -16,13 +16,19 @@ def _planets(longitudes: dict) -> list:
 
 def test_no_kalsarpa_when_planets_straddle_axis():
     # Rahu at 0°, Ketu at 180°. Put one planet on each side of the axis.
-    planets = _planets({
-        "Rahu": 0.0, "Ketu": 180.0,
-        "Sun": 90.0,    # forward arc (Rahu→Ketu, via Cancer)
-        "Saturn": 270.0,  # other arc
-        "Moon": 60.0, "Mars": 120.0, "Mercury": 150.0,
-        "Jupiter": 30.0, "Venus": 45.0,
-    })
+    planets = _planets(
+        {
+            "Rahu": 0.0,
+            "Ketu": 180.0,
+            "Sun": 90.0,  # forward arc (Rahu→Ketu, via Cancer)
+            "Saturn": 270.0,  # other arc
+            "Moon": 60.0,
+            "Mars": 120.0,
+            "Mercury": 150.0,
+            "Jupiter": 30.0,
+            "Venus": 45.0,
+        }
+    )
     result = analyse_kalsarpa(planets, asc_sign=1)
     assert result["present"] is False
     assert "NOT" in result["verdict"]
@@ -31,16 +37,19 @@ def test_no_kalsarpa_when_planets_straddle_axis():
 def test_full_kalsarpa_when_all_planets_on_one_arc():
     # Rahu at 0°, Ketu at 180°, all 7 planets between 0° and 180° (forward
     # arc). Should detect a Kalsarpa Yoga; type comes from Rahu's house.
-    planets = _planets({
-        "Rahu": 0.0, "Ketu": 180.0,
-        "Sun":     30.0,
-        "Moon":    60.0,
-        "Mars":    90.0,
-        "Mercury": 100.0,
-        "Jupiter": 120.0,
-        "Venus":   150.0,
-        "Saturn":  170.0,
-    })
+    planets = _planets(
+        {
+            "Rahu": 0.0,
+            "Ketu": 180.0,
+            "Sun": 30.0,
+            "Moon": 60.0,
+            "Mars": 90.0,
+            "Mercury": 100.0,
+            "Jupiter": 120.0,
+            "Venus": 150.0,
+            "Saturn": 170.0,
+        }
+    )
     # Lagna in Aries (sign 1). Rahu also in Aries → Rahu in house 1 → Anant.
     result = analyse_kalsarpa(planets, asc_sign=1)
     assert result["present"] is True
@@ -53,11 +62,19 @@ def test_full_kalsarpa_when_all_planets_on_one_arc():
 def test_kalsarpa_type_keyed_by_rahu_house():
     # Same arc-confined planets, but lagna placed so Rahu is in house 8
     # (asc_sign=6 → Rahu in Aries is the 8th from Virgo). Expected: Karkotak.
-    planets = _planets({
-        "Rahu": 0.0, "Ketu": 180.0,
-        "Sun": 30.0, "Moon": 60.0, "Mars": 90.0,
-        "Mercury": 100.0, "Jupiter": 120.0, "Venus": 150.0, "Saturn": 170.0,
-    })
+    planets = _planets(
+        {
+            "Rahu": 0.0,
+            "Ketu": 180.0,
+            "Sun": 30.0,
+            "Moon": 60.0,
+            "Mars": 90.0,
+            "Mercury": 100.0,
+            "Jupiter": 120.0,
+            "Venus": 150.0,
+            "Saturn": 170.0,
+        }
+    )
     result = analyse_kalsarpa(planets, asc_sign=6)
     assert result["present"] is True
     assert result["rahu_house"] == 8
@@ -66,11 +83,19 @@ def test_kalsarpa_type_keyed_by_rahu_house():
 
 def test_reverse_kalsarpa_detected():
     # Planets behind Rahu (on Ketu→Rahu arc).
-    planets = _planets({
-        "Rahu": 180.0, "Ketu": 0.0,
-        "Sun": 30.0, "Moon": 60.0, "Mars": 90.0,
-        "Mercury": 100.0, "Jupiter": 120.0, "Venus": 150.0, "Saturn": 170.0,
-    })
+    planets = _planets(
+        {
+            "Rahu": 180.0,
+            "Ketu": 0.0,
+            "Sun": 30.0,
+            "Moon": 60.0,
+            "Mars": 90.0,
+            "Mercury": 100.0,
+            "Jupiter": 120.0,
+            "Venus": 150.0,
+            "Saturn": 170.0,
+        }
+    )
     result = analyse_kalsarpa(planets, asc_sign=1)
     assert result["present"] is True
     assert result["direction"].startswith("Reverse")

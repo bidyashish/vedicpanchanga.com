@@ -134,7 +134,9 @@ def _build_basic_rows(
     if moon:
         rasi_lord_disp = _planet_disp(moon["sign_lord"])
         nak_lord_disp = _planet_disp(moon["nakshatra_lord"])
-        moon_sign_disp = t(lang, SIGN_KEYS_BY_ID.get(moon["sign_id"], "")) or moon["sign"]
+        moon_sign_disp = (
+            t(lang, SIGN_KEYS_BY_ID.get(moon["sign_id"], "")) or moon["sign"]
+        )
         nak_pada_str = f"{moon['nakshatra']}-{moon['nakshatra_pada']}"
     else:
         rasi_lord_disp = nak_lord_disp = moon_sign_disp = nak_pada_str = ""
@@ -233,11 +235,9 @@ def render_pdf(
 
     # ---- charts row ----
     label_family = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
-    draw_text(pdf, x, cur_y + 8, t(lang, "lagna_chart"),
-              label_family, BOLD, 10)
+    draw_text(pdf, x, cur_y + 8, t(lang, "lagna_chart"), label_family, BOLD, 10)
     nav_x = x + w - 230
-    draw_text(pdf, nav_x, cur_y + 8, t(lang, "navamasa_chart"),
-              label_family, BOLD, 10)
+    draw_text(pdf, nav_x, cur_y + 8, t(lang, "navamasa_chart"), label_family, BOLD, 10)
     cur_y += 12
     chart_side = 230
     draw_north_indian_chart(pdf, x, cur_y, chart_side, d1, asc["sign_id"], lang)
@@ -251,23 +251,34 @@ def render_pdf(
         bottom_h = 180
 
     vim_w = (w - 8) * 0.50
-    draw_dasha_block(pdf, x, cur_y, vim_w, bottom_h,
-                     chart_data["dasha"], lang)
+    draw_dasha_block(pdf, x, cur_y, vim_w, bottom_h, chart_data["dasha"], lang)
 
     right_x = x + vim_w + 8
     right_w = w - vim_w - 8
     planets_h = bottom_h * 0.55
     av_h = bottom_h - planets_h - 4
-    draw_planets_table(pdf, right_x, cur_y, right_w, planets_h,
-                       planets, asc, lang)
-    draw_ashtakavarga(pdf, right_x, cur_y + planets_h + 4, right_w, av_h,
-                      chart_data["ashtakavarga"], lang)
+    draw_planets_table(pdf, right_x, cur_y, right_w, planets_h, planets, asc, lang)
+    draw_ashtakavarga(
+        pdf,
+        right_x,
+        cur_y + planets_h + 4,
+        right_w,
+        av_h,
+        chart_data["ashtakavarga"],
+        lang,
+    )
 
     # ---- footer ----
-    draw_text(pdf, PAGE_W_PT / 2, PAGE_H_PT - 8,
-              t(lang, "footer"),
-              (DEV_REGULAR if lang == "hi" else LATIN_REGULAR),
-              REGULAR, 7, anchor="center")
+    draw_text(
+        pdf,
+        PAGE_W_PT / 2,
+        PAGE_H_PT - 8,
+        t(lang, "footer"),
+        (DEV_REGULAR if lang == "hi" else LATIN_REGULAR),
+        REGULAR,
+        7,
+        anchor="center",
+    )
 
     # Track each section's start page so the TOC at the end can list them.
     sections: List[Tuple[str, int]] = [("Traditional Birth Summary", 1)]
@@ -278,28 +289,46 @@ def render_pdf(
         if pdf.pages_count > before:
             sections.append((label, before + 1))
 
-    _track("Planetary Positions",
-           lambda: draw_planet_long_table(pdf, chart_data, name or "", lang))
-    _track("Vimshottari Mahadasha",
-           lambda: draw_dasha_long(pdf, chart_data, name or "", lang))
-    _track("Vimshottari Antardasha",
-           lambda: draw_antardasha_page(pdf, chart_data, name or "", lang))
-    _track("Vimshottari Pratyantar",
-           lambda: draw_pratyantar_pages(pdf, chart_data, name or "", lang))
-    _track("Shodashvarga (D1–D60)",
-           lambda: draw_varga_pages(pdf, chart_data, name or "", lang))
-    _track("Planet × Varga Matrix",
-           lambda: draw_planet_varga_matrix(pdf, chart_data, name or "", lang))
-    _track("Jaimini — Karakamsa & Swamsa",
-           lambda: draw_jaimini_page(pdf, chart_data, name or "", lang))
-    _track("Friendship Tables",
-           lambda: draw_friendship_page(pdf, chart_data, name or "", lang))
-    _track("Kalsarpa Yoga",
-           lambda: draw_kalsarpa_page(pdf, chart_data, name or "", lang))
+    _track(
+        "Planetary Positions",
+        lambda: draw_planet_long_table(pdf, chart_data, name or "", lang),
+    )
+    _track(
+        "Vimshottari Mahadasha",
+        lambda: draw_dasha_long(pdf, chart_data, name or "", lang),
+    )
+    _track(
+        "Vimshottari Antardasha",
+        lambda: draw_antardasha_page(pdf, chart_data, name or "", lang),
+    )
+    _track(
+        "Vimshottari Pratyantar",
+        lambda: draw_pratyantar_pages(pdf, chart_data, name or "", lang),
+    )
+    _track(
+        "Shodashvarga (D1–D60)",
+        lambda: draw_varga_pages(pdf, chart_data, name or "", lang),
+    )
+    _track(
+        "Planet × Varga Matrix",
+        lambda: draw_planet_varga_matrix(pdf, chart_data, name or "", lang),
+    )
+    _track(
+        "Jaimini — Karakamsa & Swamsa",
+        lambda: draw_jaimini_page(pdf, chart_data, name or "", lang),
+    )
+    _track(
+        "Friendship Tables",
+        lambda: draw_friendship_page(pdf, chart_data, name or "", lang),
+    )
+    _track(
+        "Kalsarpa Yoga", lambda: draw_kalsarpa_page(pdf, chart_data, name or "", lang)
+    )
 
     # Mangal Dosha + Sade Sati
     moon = next((p for p in chart_data["planets_data"] if p["name"] == "Moon"), None)
     if moon is not None:
+
         def _sade():
             sade_segments = sade_sati.compute_sade_sati(
                 birth_jd_ut=chart_data["birth"]["julian_day"],
@@ -314,12 +343,16 @@ def render_pdf(
                 moon_sign=moon["sign"],
                 lang=lang,
             )
+
         _track("Sade Sati Report", _sade)
     mangal_result = mangal.analyse(
         ascendant=chart_data["ascendant"],
         planets=chart_data["planets_data"],
     )
-    _track("Mangal Dosha", lambda: draw_mangal_page(pdf, name=name or "", analysis=mangal_result))
+    _track(
+        "Mangal Dosha",
+        lambda: draw_mangal_page(pdf, name=name or "", analysis=mangal_result),
+    )
 
     # Add the table-of-contents at the end so we know the actual page numbers.
     draw_toc_page(pdf, name or "", sections)

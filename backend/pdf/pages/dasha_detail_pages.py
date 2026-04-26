@@ -12,7 +12,7 @@ from dasha_extras import compute_pratyantars
 
 from ..core.i18n import DASHA_LORD_ABBR, t
 from ..core.layout import MARGIN, page_header, section_title
-from ..core.text import BOLD, DEV_REGULAR, LATIN_REGULAR, REGULAR, draw_text
+from ..core.text import BOLD, LATIN_REGULAR, REGULAR, draw_text
 
 
 PAGE_LABEL_ANTAR = "Vimshottari Dasha — Antardasha"
@@ -34,8 +34,11 @@ def _abbr(lord: str) -> str:
 
 def _draw_block(
     pdf: FPDF,
-    x: float, y: float, w: float,
-    title: str, subtitle: str,
+    x: float,
+    y: float,
+    w: float,
+    title: str,
+    subtitle: str,
     rows: List[tuple],
 ) -> float:
     """Draw one Mahadasha-or-Antardasha block. Returns the block height used."""
@@ -51,14 +54,18 @@ def _draw_block(
     pdf.set_fill_color(235, 235, 235)
     pdf.rect(x, y, w, head_h, "F")
     draw_text(pdf, x + w / 2, y + 9, title, LATIN_REGULAR, BOLD, 9, anchor="center")
-    draw_text(pdf, x + w / 2, y + 18, subtitle, LATIN_REGULAR, REGULAR, 7, anchor="center")
+    draw_text(
+        pdf, x + w / 2, y + 18, subtitle, LATIN_REGULAR, REGULAR, 7, anchor="center"
+    )
 
     pdf.line(x, y + head_h, x + w, y + head_h)
 
     for i, (lord_abbr, end_date) in enumerate(rows):
         ry = y + head_h + 2 + i * line_h + line_h - 3
         draw_text(pdf, x + 8, ry, lord_abbr, LATIN_REGULAR, BOLD, 8)
-        draw_text(pdf, x + w - 8, ry, end_date, LATIN_REGULAR, REGULAR, 8, anchor="right")
+        draw_text(
+            pdf, x + w - 8, ry, end_date, LATIN_REGULAR, REGULAR, 8, anchor="right"
+        )
 
     return block_h
 
@@ -81,7 +88,11 @@ def draw_antardasha_page(
     inner_w = page_w - 2 * MARGIN
     title = t(lang, "vimshottari_antardasha_title")
     cur_y = section_title(
-        pdf, MARGIN, MARGIN + 22, inner_w, title,
+        pdf,
+        MARGIN,
+        MARGIN + 22,
+        inner_w,
+        title,
         "Each Mahādaśā block lists its 9 Antardaśā sub-period end dates",
     )
 
@@ -90,7 +101,9 @@ def draw_antardasha_page(
     gap = 6
     block_w = (inner_w - gap * (cols - 1)) / cols
 
-    birth_dt = datetime.fromisoformat(chart_data["birth"]["utc_time"]).replace(tzinfo=None)
+    birth_dt = datetime.fromisoformat(chart_data["birth"]["utc_time"]).replace(
+        tzinfo=None
+    )
 
     row_block_h = 0
     for idx, md in enumerate(mahadashas):
@@ -99,7 +112,9 @@ def draw_antardasha_page(
             cur_y += row_block_h + gap
             row_block_h = 0
         bx = MARGIN + col * (block_w + gap)
-        years = (datetime.fromisoformat(md["end"]) - datetime.fromisoformat(md["start"])).days / 365.25
+        years = (
+            datetime.fromisoformat(md["end"]) - datetime.fromisoformat(md["start"])
+        ).days / 365.25
         title_str = f"{_abbr(md['lord'])} — {round(years, 1)} yr"
         subtitle = f"{_fmt_date_short(md['start'])} to {_fmt_date_short(md['end'])}"
         rows = []
@@ -149,14 +164,20 @@ def draw_pratyantar_pages(
         pdf.add_page()
         page_header(pdf, name, f"{PAGE_LABEL_PRATY} — page {page_no}")
         cur_y = section_title(
-            pdf, MARGIN, MARGIN + 22, inner_w, title,
+            pdf,
+            MARGIN,
+            MARGIN + 22,
+            inner_w,
+            title,
             "Each Antardaśā block lists its 9 Pratyantar sub-period end dates",
         )
         row_block_h = 0
         cur_col = 0
 
     _new_page()
-    birth_dt = datetime.fromisoformat(chart_data["birth"]["utc_time"]).replace(tzinfo=None)
+    birth_dt = datetime.fromisoformat(chart_data["birth"]["utc_time"]).replace(
+        tzinfo=None
+    )
 
     for md in mahadashas:
         for ad in md["antardashas"]:

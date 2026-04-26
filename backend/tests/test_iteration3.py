@@ -25,7 +25,13 @@ DELHI_BIRTH = {
 }
 
 EXPECTED_AYANAMSA_IDS = {
-    "lahiri", "kp_new", "kp_old", "raman", "kp_khullar", "sayan", "manoj",
+    "lahiri",
+    "kp_new",
+    "kp_old",
+    "raman",
+    "kp_khullar",
+    "sayan",
+    "manoj",
 }
 
 
@@ -95,7 +101,14 @@ class TestAyanamsaCalculate:
 class TestLegacyFieldsPreserved:
     def test_dasha_ashtakavarga_charts_intact(self, api, base_url):
         c = _calc(api, base_url, "lahiri")
-        for f in ["d1_chart", "d2_chart", "d9_chart", "dasha", "ashtakavarga", "planets_data"]:
+        for f in [
+            "d1_chart",
+            "d2_chart",
+            "d9_chart",
+            "dasha",
+            "ashtakavarga",
+            "planets_data",
+        ]:
             assert f in c, f"Missing field {f}"
         # SAV totals (8 contributors × 12 signs minus self) sum to 337 with Lahiri.
         assert sum(c["ashtakavarga"]["sav"]) == 337

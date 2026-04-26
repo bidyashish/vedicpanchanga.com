@@ -104,6 +104,9 @@ The frontend proxies these through Next.js API routes at `/api/v1/*`.
   Never hardcode planetary positions — always compute from ephemeris.
 - **Constants**: Put magic numbers in `constants.py` or `panchang_constants.py`.
 - **Ayanamsa**: Default is Lahiri (NC). Support switching via `ayanamsa.py`.
+- **Lint / format**: [ruff](https://docs.astral.sh/ruff/) (`ruff check .` and
+  `ruff format .`, both run in CI). Auto-fix safe issues with
+  `ruff check . --fix`.
 
 ### TypeScript / React (Frontend)
 - **Framework**: Next.js 15 with App Router.
@@ -112,6 +115,11 @@ The frontend proxies these through Next.js API routes at `/api/v1/*`.
   Use the toggle pattern (EN / हिं, no flags).
 - **State**: Keep state as local as possible; lift only when needed.
 - **API calls**: Use the `/api/v1/*` routes (Next.js proxy), never call `:8001` directly from the browser.
+- **Lint / format**: [oxlint](https://github.com/oxc-project/oxc) and
+  [oxfmt](https://github.com/oxc-project/oxc) — `npm run lint`,
+  `npm run format`, `npm run format:check`. TypeScript type-checking runs
+  via `npx tsc --noEmit` (also part of `npm run build`). All of the above
+  are enforced by `.github/workflows/ci.yml`.
 
 ### General
 - Preserve all existing comments and docstrings unrelated to your change.

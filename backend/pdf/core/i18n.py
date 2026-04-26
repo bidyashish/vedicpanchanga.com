@@ -808,36 +808,76 @@ def t(lang: str, key: str) -> str:
 
 
 WEEKDAY_KEYS = [
-    "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
 ]
 
 SIGN_KEYS_BY_ID: Dict[int, str] = {
-    1: "sign_aries", 2: "sign_taurus", 3: "sign_gemini", 4: "sign_cancer",
-    5: "sign_leo", 6: "sign_virgo", 7: "sign_libra", 8: "sign_scorpio",
-    9: "sign_sagittarius", 10: "sign_capricorn", 11: "sign_aquarius", 12: "sign_pisces",
+    1: "sign_aries",
+    2: "sign_taurus",
+    3: "sign_gemini",
+    4: "sign_cancer",
+    5: "sign_leo",
+    6: "sign_virgo",
+    7: "sign_libra",
+    8: "sign_scorpio",
+    9: "sign_sagittarius",
+    10: "sign_capricorn",
+    11: "sign_aquarius",
+    12: "sign_pisces",
 }
 
 PLANET_KEY_BY_NAME: Dict[str, str] = {
-    "Sun": "planet_sun", "Moon": "planet_moon", "Mars": "planet_mars",
-    "Mercury": "planet_mercury", "Jupiter": "planet_jupiter",
-    "Venus": "planet_venus", "Saturn": "planet_saturn",
-    "Rahu": "planet_rahu", "Ketu": "planet_ketu",
+    "Sun": "planet_sun",
+    "Moon": "planet_moon",
+    "Mars": "planet_mars",
+    "Mercury": "planet_mercury",
+    "Jupiter": "planet_jupiter",
+    "Venus": "planet_venus",
+    "Saturn": "planet_saturn",
+    "Rahu": "planet_rahu",
+    "Ketu": "planet_ketu",
     "Ascendant": "planet_ascendant",
 }
 
 ABBR_KEY_BY_ABBR: Dict[str, str] = {
-    "Su": "abbr_su", "Mo": "abbr_mo", "Ma": "abbr_ma", "Me": "abbr_me",
-    "Ju": "abbr_ju", "Ve": "abbr_ve", "Sa": "abbr_sa", "Ra": "abbr_ra",
-    "Ke": "abbr_ke", "As": "abbr_as",
+    "Su": "abbr_su",
+    "Mo": "abbr_mo",
+    "Ma": "abbr_ma",
+    "Me": "abbr_me",
+    "Ju": "abbr_ju",
+    "Ve": "abbr_ve",
+    "Sa": "abbr_sa",
+    "Ra": "abbr_ra",
+    "Ke": "abbr_ke",
+    "As": "abbr_as",
 }
 
 DASHA_LORD_ABBR: Dict[str, str] = {
-    "Sun": "SUN", "Moon": "MON", "Mars": "MAR", "Mercury": "MER",
-    "Jupiter": "JUP", "Venus": "VEN", "Saturn": "SAT", "Rahu": "RAH",
+    "Sun": "SUN",
+    "Moon": "MON",
+    "Mars": "MAR",
+    "Mercury": "MER",
+    "Jupiter": "JUP",
+    "Venus": "VEN",
+    "Saturn": "SAT",
+    "Rahu": "RAH",
     "Ketu": "KET",
 }
 
 DASHA_TOTAL_YEARS: Dict[str, int] = {
-    "Sun": 6, "Moon": 10, "Mars": 7, "Mercury": 17,
-    "Jupiter": 16, "Venus": 20, "Saturn": 19, "Rahu": 18, "Ketu": 7,
+    "Sun": 6,
+    "Moon": 10,
+    "Mars": 7,
+    "Mercury": 17,
+    "Jupiter": 16,
+    "Venus": 20,
+    "Saturn": 19,
+    "Rahu": 18,
+    "Ketu": 7,
 }

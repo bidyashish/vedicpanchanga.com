@@ -25,7 +25,9 @@ def _house_from(sign_a: int, sign_b: int) -> int:
     return ((sign_a - sign_b) % 12) + 1
 
 
-def analyse(*, ascendant: Dict[str, Any], planets: List[Dict[str, Any]]) -> Dict[str, Any]:
+def analyse(
+    *, ascendant: Dict[str, Any], planets: List[Dict[str, Any]]
+) -> Dict[str, Any]:
     moon = next((p for p in planets if p["name"] == "Moon"), None)
     mars = next((p for p in planets if p["name"] == "Mars"), None)
     if mars is None:

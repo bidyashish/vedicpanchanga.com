@@ -1008,6 +1008,7 @@ def compute_detailed_panchang(
     # Agnivāsa / Śivavāsa / Kumbha Cakra each need authoritative tables we
     # don't have and the speculative formulas disagreed with the reference.
     from panchang_extras import detect_ganda_mula, detect_ravi_yoga
+
     moon_nak_1 = int(current_nak["index"]) if current_nak else 1
     sun_nak_1 = sun_nak_idx + 1
     extras = {
@@ -1016,7 +1017,8 @@ def compute_detailed_panchang(
             current_nak.get("ends_at") if current_nak else None,
         ),
         "ravi_yoga": detect_ravi_yoga(
-            moon_nak_1, sun_nak_1,
+            moon_nak_1,
+            sun_nak_1,
             _iso(sunrise_jd, tz) or "",
             current_nak.get("ends_at") if current_nak else None,
         ),

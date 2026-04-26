@@ -32,7 +32,7 @@ TAMIL_REGULAR = "NotoTamil"
 SC_REGULAR = "NotoSC"
 JP_REGULAR = "NotoJP"
 
-REGULAR = ""        # fpdf2 style codes
+REGULAR = ""  # fpdf2 style codes
 BOLD = "B"
 
 
@@ -139,9 +139,12 @@ def _split_runs(text: str, lang: str):
 
 def draw_text(
     pdf: FPDF,
-    x: float, y: float,
+    x: float,
+    y: float,
     text: str,
-    family: str, style: str, size: float,
+    family: str,
+    style: str,
+    size: float,
     anchor: str = "left",
     lang: str = "en",
 ) -> float:

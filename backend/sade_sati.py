@@ -17,14 +17,24 @@ detected sign-change with a small binary search to get day-precision.
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any, Dict, List
 
 import swisseph as swe
 
 SIGN_NAMES = [
-    "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
-    "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces",
+    "Aries",
+    "Taurus",
+    "Gemini",
+    "Cancer",
+    "Leo",
+    "Virgo",
+    "Libra",
+    "Scorpio",
+    "Sagittarius",
+    "Capricorn",
+    "Aquarius",
+    "Pisces",
 ]
 
 
@@ -77,16 +87,16 @@ def compute_sade_sati(
         next_sign = _sign_at(next_jd)
         if next_sign != cur_sign:
             boundary = _refine_boundary(jd, next_jd, cur_sign)
-            segments.append({"sign_id": cur_sign,
-                             "start_jd": seg_start, "end_jd": boundary})
+            segments.append(
+                {"sign_id": cur_sign, "start_jd": seg_start, "end_jd": boundary}
+            )
             seg_start = boundary
             cur_sign = next_sign
         jd = next_jd
         if jd >= end_jd:
             break
 
-    segments.append({"sign_id": cur_sign,
-                     "start_jd": seg_start, "end_jd": end_jd})
+    segments.append({"sign_id": cur_sign, "start_jd": seg_start, "end_jd": end_jd})
 
     # Classify
     out: List[Dict[str, Any]] = []
@@ -107,16 +117,22 @@ def compute_sade_sati(
 
         start_dt = swe.revjul(seg["start_jd"])
         end_dt = swe.revjul(seg["end_jd"])
-        start_iso = datetime(int(start_dt[0]), int(start_dt[1]), int(start_dt[2])).strftime("%Y-%m-%d")
-        end_iso = datetime(int(end_dt[0]), int(end_dt[1]), int(end_dt[2])).strftime("%Y-%m-%d")
+        start_iso = datetime(
+            int(start_dt[0]), int(start_dt[1]), int(start_dt[2])
+        ).strftime("%Y-%m-%d")
+        end_iso = datetime(int(end_dt[0]), int(end_dt[1]), int(end_dt[2])).strftime(
+            "%Y-%m-%d"
+        )
 
-        out.append({
-            "kind": kind,
-            "phase": phase,
-            "sign_id": seg["sign_id"],
-            "sign": SIGN_NAMES[seg["sign_id"] - 1],
-            "house_from_moon": house,
-            "start": start_iso,
-            "end": end_iso,
-        })
+        out.append(
+            {
+                "kind": kind,
+                "phase": phase,
+                "sign_id": seg["sign_id"],
+                "sign": SIGN_NAMES[seg["sign_id"] - 1],
+                "house_from_moon": house,
+                "start": start_iso,
+                "end": end_iso,
+            }
+        )
     return out

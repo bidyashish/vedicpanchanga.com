@@ -16,6 +16,10 @@ cd backend
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 uvicorn server:app --host 127.0.0.1 --port 8001   # dev run
+ruff check .                                      # lint
+ruff check . --fix                                # lint + auto-fix
+ruff format .                                     # format — write
+ruff format --check .                             # format check (CI)
 ```
 - Reads `CORS_ORIGINS` from `backend/.env` (optional, defaults to `*`). No MongoDB required.
 - Swiss Ephemeris data files live in `backend/ephe/` (`*.se1`). Calculations silently fail without them; never delete or move this directory.
@@ -29,7 +33,10 @@ npm install          # no --legacy-peer-deps needed any more
 npm run dev          # Vite dev server, port 3121 (see vite.config.ts)
 npm run build        # tsc --noEmit && vite build → dist/
 npm run preview      # preview the built bundle
-npm run lint         # tsc --noEmit (type-check only)
+npm run lint         # oxlint (Rust-based linter from oxc-project)
+npm run format       # oxfmt — write
+npm run format:check # oxfmt --check (CI-friendly, exits non-zero on diff)
+npx tsc --noEmit     # type-check only (was previously aliased as `npm run lint`)
 ```
 - Backend URL comes from `VITE_BACKEND_URL` in `frontend/.env` (defaults empty → same-origin `/api` in prod). Vite requires the `VITE_` prefix — the old `REACT_APP_*` names are gone.
 - AdSense is wired through `<AdSlot slot="header|sidebar|inline|footer" />`. Set `VITE_ADSENSE_CLIENT` + `VITE_ADSENSE_SLOT_*` to activate; otherwise dashed placeholders render in their slots (good for layout work without ads).

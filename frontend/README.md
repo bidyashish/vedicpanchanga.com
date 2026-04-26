@@ -22,12 +22,21 @@ cp .env.example .env       # sets VITE_BACKEND_URL=http://localhost:8001
 npm run dev                # http://localhost:3121
 ```
 
-| Command           | What                                               |
-|-------------------|----------------------------------------------------|
-| `npm run dev`     | Vite dev server with HMR (port 3121)               |
-| `npm run build`   | `tsc --noEmit` then `vite build` → `dist/`         |
-| `npm run preview` | Serve the built bundle (sanity-check prod output)  |
-| `npm run lint`    | Type-check only (`tsc --noEmit`)                    |
+| Command                | What                                                          |
+|------------------------|---------------------------------------------------------------|
+| `npm run dev`          | Vite dev server with HMR (port 3121)                          |
+| `npm run build`        | `tsc --noEmit` then `vite build` → `dist/`                    |
+| `npm run preview`      | Serve the built bundle (sanity-check prod output)             |
+| `npm run lint`         | [oxlint](https://github.com/oxc-project/oxc) — Rust-based linter |
+| `npm run format`       | [oxfmt](https://github.com/oxc-project/oxc) — write formatted output |
+| `npm run format:check` | `oxfmt --check` — exits non-zero on a diff (used by CI)       |
+| `npx tsc --noEmit`     | TypeScript type-check (also runs as part of `npm run build`)  |
+
+`npm run lint` and `npm run format:check` are enforced by
+`.github/workflows/ci.yml` on every push to `main` and every PR. To run
+them automatically before each commit, install
+[pre-commit](https://pre-commit.com) at the repo root and run
+`pre-commit install` once — see the root `.pre-commit-config.yaml`.
 
 There's no test runner wired up yet (Jest was part of the removed CRA
 setup). When you need one, add Vitest.

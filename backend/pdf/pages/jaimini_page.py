@@ -30,7 +30,10 @@ def draw_jaimini_page(
     page_w = pdf.w
     inner_w = page_w - 2 * MARGIN
     cur_y = section_title(
-        pdf, MARGIN, MARGIN + 22, inner_w,
+        pdf,
+        MARGIN,
+        MARGIN + 22,
+        inner_w,
         "Jaimini System — Karakamsa & Swamsa",
         "Karakamsa = D9 chart drawn from the Atmakaraka's navāmśa sign · Swamsa = D9 from natal D9 ascendant",
     )
@@ -40,30 +43,69 @@ def draw_jaimini_page(
     left_x = MARGIN + (inner_w / 2 - chart_side) / 2
     right_x = MARGIN + inner_w / 2 + (inner_w / 2 - chart_side) / 2
 
-    draw_text(pdf, left_x + chart_side / 2, cur_y + 8, "Karakamsa Chart",
-              LATIN_REGULAR, BOLD, 10, anchor="center")
-    draw_text(pdf, right_x + chart_side / 2, cur_y + 8, "Swamsa Chart",
-              LATIN_REGULAR, BOLD, 10, anchor="center")
+    draw_text(
+        pdf,
+        left_x + chart_side / 2,
+        cur_y + 8,
+        "Karakamsa Chart",
+        LATIN_REGULAR,
+        BOLD,
+        10,
+        anchor="center",
+    )
+    draw_text(
+        pdf,
+        right_x + chart_side / 2,
+        cur_y + 8,
+        "Swamsa Chart",
+        LATIN_REGULAR,
+        BOLD,
+        10,
+        anchor="center",
+    )
     cur_y += 12
 
     draw_north_indian_chart(
-        pdf, left_x, cur_y, chart_side,
-        karakamsa["chart"], int(karakamsa["lagna_sign"]), lang,
+        pdf,
+        left_x,
+        cur_y,
+        chart_side,
+        karakamsa["chart"],
+        int(karakamsa["lagna_sign"]),
+        lang,
     )
     draw_north_indian_chart(
-        pdf, right_x, cur_y, chart_side,
-        swamsa["chart"], int(swamsa["lagna_sign"]), lang,
+        pdf,
+        right_x,
+        cur_y,
+        chart_side,
+        swamsa["chart"],
+        int(swamsa["lagna_sign"]),
+        lang,
     )
     cur_y += chart_side + 16
 
     # Karakas table.
-    draw_text(pdf, MARGIN, cur_y, "Chara Karakas (by degree-in-sign, descending)",
-              LATIN_REGULAR, BOLD, 11)
+    draw_text(
+        pdf,
+        MARGIN,
+        cur_y,
+        "Chara Karakas (by degree-in-sign, descending)",
+        LATIN_REGULAR,
+        BOLD,
+        11,
+    )
     cur_y += 6
 
     headers = ["#", "Karaka", "Title", "Planet", "Sign", "Degree"]
-    col_w = [inner_w * 0.06, inner_w * 0.10, inner_w * 0.24,
-             inner_w * 0.16, inner_w * 0.20, inner_w * 0.24]
+    col_w = [
+        inner_w * 0.06,
+        inner_w * 0.10,
+        inner_w * 0.24,
+        inner_w * 0.16,
+        inner_w * 0.20,
+        inner_w * 0.24,
+    ]
     row_h = 18
     n_rows = len(karakas) + 1
 
@@ -95,8 +137,7 @@ def draw_jaimini_page(
         ]
         cx = MARGIN
         for cell, w in zip(cells, col_w):
-            draw_text(pdf, cx + 6, y + row_h - 6, cell,
-                      LATIN_REGULAR, REGULAR, 9)
+            draw_text(pdf, cx + 6, y + row_h - 6, cell, LATIN_REGULAR, REGULAR, 9)
             cx += w
 
     cx = MARGIN

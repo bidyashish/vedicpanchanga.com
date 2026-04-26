@@ -167,15 +167,20 @@ def print_pdf(req: PrintPdfRequest):
 
     try:
         chart_data = compute_chart(
-            year=year, month=month, day=day,
-            hour=hour, minute=minute,
-            latitude=req.latitude, longitude=req.longitude,
+            year=year,
+            month=month,
+            day=day,
+            hour=hour,
+            minute=minute,
+            latitude=req.latitude,
+            longitude=req.longitude,
             timezone_name=req.timezone,
             ayanamsa=req.ayanamsa or "lahiri",
         )
         panchang_data = compute_detailed_panchang(
             target_date=req.birth_date,
-            latitude=req.latitude, longitude=req.longitude,
+            latitude=req.latitude,
+            longitude=req.longitude,
             timezone_name=req.timezone,
         )
         pdf_bytes = render_pdf(
@@ -192,7 +197,10 @@ def print_pdf(req: PrintPdfRequest):
         logging.exception("PDF render failed")
         raise HTTPException(status_code=500, detail=f"PDF render error: {e}")
 
-    safe_name = "".join(ch for ch in (req.name or "kundali") if ch.isalnum() or ch in "_-")[:40] or "kundali"
+    safe_name = (
+        "".join(ch for ch in (req.name or "kundali") if ch.isalnum() or ch in "_-")[:40]
+        or "kundali"
+    )
     filename = f"{safe_name}-{req.birth_date}-{req.lang}.pdf"
     return Response(
         content=pdf_bytes,

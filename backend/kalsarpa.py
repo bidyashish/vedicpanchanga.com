@@ -9,8 +9,18 @@ from typing import Any, Dict, List
 VISIBLE = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
 
 KALSARPA_TYPES = [
-    "Anant", "Kulik", "Vasuki", "Shankhpal", "Padma", "Mahapadma",
-    "Takshak", "Karkotak", "Shankhachood", "Ghatak", "Vishaktak", "Sheshnag",
+    "Anant",
+    "Kulik",
+    "Vasuki",
+    "Shankhpal",
+    "Padma",
+    "Mahapadma",
+    "Takshak",
+    "Karkotak",
+    "Shankhachood",
+    "Ghatak",
+    "Vishaktak",
+    "Sheshnag",
 ]
 
 

@@ -14,7 +14,7 @@ const API = `${BASE}/api`;
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, {
-    headers: { "content-type": "application/json", ...(init?.headers ?? {}) },
+    headers: { "content-type": "application/json", ...init?.headers },
     ...init,
   });
   if (!res.ok) {

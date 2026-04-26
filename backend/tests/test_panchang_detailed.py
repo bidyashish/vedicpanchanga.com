@@ -45,7 +45,6 @@ def delhi_default(api, base_url):
 
 # ---------- Kelowna 2026-04-20 reference values ----------
 class TestKelownaReference:
-
     def test_top_level_sections(self, kelowna):
         for k in [
             "sun_moon",

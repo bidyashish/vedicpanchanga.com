@@ -59,10 +59,32 @@ Open <http://localhost:3121>.
 ### Frontend commands
 
 ```bash
-npm run dev       # Vite dev server with HMR
-npm run build     # tsc --noEmit && vite build → dist/
-npm run preview   # serve the built bundle
-npm run lint      # type-check only (tsc --noEmit)
+npm run dev          # Vite dev server with HMR
+npm run build        # tsc --noEmit && vite build → dist/
+npm run preview      # serve the built bundle
+npm run lint         # oxlint (oxc-project)
+npm run format       # oxfmt — write
+npm run format:check # oxfmt --check (CI)
+npx tsc --noEmit     # TypeScript type-check
+```
+
+### Backend lint & format
+
+```bash
+cd backend && source venv/bin/activate
+ruff check .          # lint
+ruff check . --fix    # lint + auto-fix
+ruff format .         # format — write
+ruff format --check . # format check (CI)
+```
+
+GitHub Actions (`.github/workflows/ci.yml`) runs all of the above on every
+push to `main` and every PR. To run them automatically before each commit
+locally, install [pre-commit](https://pre-commit.com) and enable the
+hooks shipped in `.pre-commit-config.yaml`:
+
+```bash
+pip install pre-commit && pre-commit install
 ```
 
 ### Backend tests

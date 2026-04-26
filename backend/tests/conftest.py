@@ -140,16 +140,20 @@ def chart_module():
     """Import the in-process calculator. Allows unit tests to run without
     the FastAPI server."""
     import sys
+
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
     import calculator  # noqa: WPS433
+
     return calculator
 
 
 @pytest.fixture(scope="session")
 def panchang_module():
     import sys
+
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
     import advanced_panchang  # noqa: WPS433
+
     return advanced_panchang
 
 
@@ -157,7 +161,11 @@ def _build_chart(chart_module, payload: dict) -> dict:
     y, m, d = (int(p) for p in payload["birth_date"].split("-"))
     h, mi = (int(p) for p in payload["birth_time"].split(":"))
     return chart_module.compute_chart(
-        year=y, month=m, day=d, hour=h, minute=mi,
+        year=y,
+        month=m,
+        day=d,
+        hour=h,
+        minute=mi,
         latitude=payload["latitude"],
         longitude=payload["longitude"],
         timezone_name=payload["timezone"],
@@ -181,7 +189,8 @@ def knk_chart(chart_module):
 # ---- Marker registration ------------------------------------------------
 def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line(
-        "markers", "http: test requires the FastAPI server to be running",
+        "markers",
+        "http: test requires the FastAPI server to be running",
     )
 
 

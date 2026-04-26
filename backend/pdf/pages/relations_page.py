@@ -14,17 +14,19 @@ from ..core.text import BOLD, LATIN_REGULAR, REGULAR, draw_text
 # E=light-pink, GE=red. Same colours work for the simpler F/N/E codes too.
 CELL_FILL = {
     "GF": (200, 230, 200),
-    "F":  (224, 240, 224),
-    "N":  (245, 245, 235),
-    "E":  (250, 220, 220),
+    "F": (224, 240, 224),
+    "N": (245, 245, 235),
+    "E": (250, 220, 220),
     "GE": (240, 180, 180),
-    "":   (255, 255, 255),
+    "": (255, 255, 255),
 }
 
 
 def _draw_matrix(
     pdf: FPDF,
-    x: float, y: float, w: float,
+    x: float,
+    y: float,
+    w: float,
     title: str,
     planets: List[str],
     matrix: Dict[str, Dict[str, str]],
@@ -45,11 +47,13 @@ def _draw_matrix(
 
     for j, p in enumerate(planets):
         cx = x + cell_w * (j + 1) + cell_w / 2
-        draw_text(pdf, cx, y + cell_h - 5, p[:3],
-                  LATIN_REGULAR, BOLD, 8, anchor="center")
+        draw_text(
+            pdf, cx, y + cell_h - 5, p[:3], LATIN_REGULAR, BOLD, 8, anchor="center"
+        )
         cy = y + cell_h * (j + 1) + cell_h - 5
-        draw_text(pdf, x + cell_w / 2, cy, p[:3],
-                  LATIN_REGULAR, BOLD, 8, anchor="center")
+        draw_text(
+            pdf, x + cell_w / 2, cy, p[:3], LATIN_REGULAR, BOLD, 8, anchor="center"
+        )
 
     for i, row_planet in enumerate(planets):
         for j, col_planet in enumerate(planets):
@@ -59,8 +63,16 @@ def _draw_matrix(
             r, g, b = CELL_FILL.get(code, (255, 255, 255))
             pdf.set_fill_color(r, g, b)
             pdf.rect(cell_x, cell_y, cell_w, cell_h, "F")
-            draw_text(pdf, cell_x + cell_w / 2, cell_y + cell_h - 5,
-                      code or "—", LATIN_REGULAR, REGULAR, 8, anchor="center")
+            draw_text(
+                pdf,
+                cell_x + cell_w / 2,
+                cell_y + cell_h - 5,
+                code or "—",
+                LATIN_REGULAR,
+                REGULAR,
+                8,
+                anchor="center",
+            )
 
     for k in range(1, n):
         pdf.line(x + cell_w * k, y, x + cell_w * k, y + cell_h * n)
@@ -69,8 +81,7 @@ def _draw_matrix(
     return y + cell_h * n + 6
 
 
-def _draw_legend(pdf: FPDF, x: float, y: float,
-                 labels: Dict[str, str]) -> float:
+def _draw_legend(pdf: FPDF, x: float, y: float, labels: Dict[str, str]) -> float:
     draw_text(pdf, x, y, "Legend:", LATIN_REGULAR, BOLD, 9)
     cx = x + 50
     for code, name in labels.items():
@@ -78,8 +89,7 @@ def _draw_legend(pdf: FPDF, x: float, y: float,
         pdf.set_fill_color(r, g, b)
         pdf.set_draw_color(120, 120, 120)
         pdf.rect(cx, y - 8, 14, 10, "DF")
-        draw_text(pdf, cx + 18, y, f"{code} — {name}",
-                  LATIN_REGULAR, REGULAR, 8)
+        draw_text(pdf, cx + 18, y, f"{code} — {name}", LATIN_REGULAR, REGULAR, 8)
         cx += 18 + pdf.get_string_width(f"{code} — {name}") + 14
     return y + 12
 
@@ -100,23 +110,44 @@ def draw_friendship_page(
     page_w = pdf.w
     inner_w = page_w - 2 * MARGIN
     cur_y = section_title(
-        pdf, MARGIN, MARGIN + 22, inner_w,
+        pdf,
+        MARGIN,
+        MARGIN + 22,
+        inner_w,
         "Planetary Friendship Tables",
         "Natural · Temporal (sign-position derived) · Composite (5-fold) — read row planet's view of column planet",
     )
 
     planets = fr["planets"]
-    cur_y = _draw_matrix(pdf, MARGIN, cur_y, inner_w,
-                         "Natural Friendship (Naisargika)",
-                         planets, fr["natural"])
+    cur_y = _draw_matrix(
+        pdf,
+        MARGIN,
+        cur_y,
+        inner_w,
+        "Natural Friendship (Naisargika)",
+        planets,
+        fr["natural"],
+    )
     cur_y += 8
-    cur_y = _draw_matrix(pdf, MARGIN, cur_y, inner_w,
-                         "Temporal Friendship (Tatkalika) — from current sign positions",
-                         planets, fr["temporal"])
+    cur_y = _draw_matrix(
+        pdf,
+        MARGIN,
+        cur_y,
+        inner_w,
+        "Temporal Friendship (Tatkalika) — from current sign positions",
+        planets,
+        fr["temporal"],
+    )
     cur_y += 8
-    cur_y = _draw_matrix(pdf, MARGIN, cur_y, inner_w,
-                         "Composite Friendship (Panchadha) — natural × temporal",
-                         planets, fr["composite"])
+    cur_y = _draw_matrix(
+        pdf,
+        MARGIN,
+        cur_y,
+        inner_w,
+        "Composite Friendship (Panchadha) — natural × temporal",
+        planets,
+        fr["composite"],
+    )
     cur_y += 6
     _draw_legend(pdf, MARGIN, cur_y, fr["labels"])
 
@@ -137,7 +168,10 @@ def draw_kalsarpa_page(
     page_w = pdf.w
     inner_w = page_w - 2 * MARGIN
     cur_y = section_title(
-        pdf, MARGIN, MARGIN + 22, inner_w,
+        pdf,
+        MARGIN,
+        MARGIN + 22,
+        inner_w,
         "Kalsarpa Yoga Analysis",
         "All seven visible planets confined to one arc between Rahu and Ketu",
     )
@@ -149,18 +183,22 @@ def draw_kalsarpa_page(
     pdf.set_line_width(0.5)
     pdf.set_draw_color(180, 180, 180)
     pdf.rect(MARGIN, cur_y, inner_w, 28, "DF")
-    draw_text(pdf, MARGIN + 10, cur_y + 17,
-              ks.get("verdict", "—"),
-              LATIN_REGULAR, BOLD, 12)
+    draw_text(
+        pdf, MARGIN + 10, cur_y + 17, ks.get("verdict", "—"), LATIN_REGULAR, BOLD, 12
+    )
     cur_y += 40
 
     rows = [
         ("Type", ks.get("kind") or "—"),
         ("Direction", ks.get("direction") or "—"),
-        ("Rahu in house (from Lagna)",
-         str(ks.get("rahu_house")) if ks.get("rahu_house") is not None else "—"),
-        ("Ketu in house (from Lagna)",
-         str(ks.get("ketu_house")) if ks.get("ketu_house") is not None else "—"),
+        (
+            "Rahu in house (from Lagna)",
+            str(ks.get("rahu_house")) if ks.get("rahu_house") is not None else "—",
+        ),
+        (
+            "Ketu in house (from Lagna)",
+            str(ks.get("ketu_house")) if ks.get("ketu_house") is not None else "—",
+        ),
     ]
     label_w = inner_w * 0.55
     row_h = 18
@@ -177,5 +215,6 @@ def draw_kalsarpa_page(
         if i > 0:
             pdf.line(MARGIN, y, MARGIN + inner_w, y)
         draw_text(pdf, MARGIN + 8, y + row_h - 6, k, LATIN_REGULAR, BOLD, 10)
-        draw_text(pdf, MARGIN + label_w + 8, y + row_h - 6, v,
-                  LATIN_REGULAR, REGULAR, 10)
+        draw_text(
+            pdf, MARGIN + label_w + 8, y + row_h - 6, v, LATIN_REGULAR, REGULAR, 10
+        )

@@ -13,13 +13,13 @@ from typing import Any, Dict, List, Tuple
 from calculator import d9_sign_index
 
 KARAKA_TITLES = [
-    ("AK",  "Atmakaraka"),
+    ("AK", "Atmakaraka"),
     ("AmK", "Amatyakaraka"),
-    ("BK",  "Bhratrukaraka"),
-    ("MK",  "Matrukaraka"),
-    ("PK",  "Putrakaraka"),
-    ("GK",  "Gnatikaraka"),
-    ("DK",  "Darakaraka"),
+    ("BK", "Bhratrukaraka"),
+    ("MK", "Matrukaraka"),
+    ("PK", "Putrakaraka"),
+    ("GK", "Gnatikaraka"),
+    ("DK", "Darakaraka"),
 ]
 
 KARAKA_PLANETS = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
@@ -85,9 +85,7 @@ def compute_karakamsa_swamsa(
         karakamsa_lagna = 1
     else:
         ak_planet = next((p for p in planets if p["name"] == ak["planet"]), None)
-        karakamsa_lagna = (
-            d9_sign_index(ak_planet["longitude"]) if ak_planet else 1
-        )
+        karakamsa_lagna = d9_sign_index(ak_planet["longitude"]) if ak_planet else 1
 
     swamsa_lagna = d9_sign_index(asc_longitude)
 

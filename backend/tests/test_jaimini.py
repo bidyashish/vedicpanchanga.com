@@ -8,13 +8,13 @@ Gnati=Sun, Dara=Venus. Karakamsa lagna = D9 sign of AK = Aquarius (11).
 from __future__ import annotations
 
 EXPECTED_KNK_KARAKAS = [
-    ("AK",  "Moon"),
+    ("AK", "Moon"),
     ("AmK", "Jupiter"),
-    ("BK",  "Mercury"),
-    ("MK",  "Mars"),
-    ("PK",  "Saturn"),
-    ("GK",  "Sun"),
-    ("DK",  "Venus"),
+    ("BK", "Mercury"),
+    ("MK", "Mars"),
+    ("PK", "Saturn"),
+    ("GK", "Sun"),
+    ("DK", "Venus"),
 ]
 
 

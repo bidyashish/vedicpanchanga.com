@@ -50,13 +50,13 @@ def test_natural_friend_plus_temporal_friend_yields_great_friend():
     planets = [
         # Sun in sign 1 (Aries); Moon in sign 2 (Taurus) — Moon is in 2nd
         # from Sun → temporal Friend; Sun-Moon naturally Friend → composite GF.
-        {"name": "Sun",     "sign_id": 1},
-        {"name": "Moon",    "sign_id": 2},
-        {"name": "Mars",    "sign_id": 5},
+        {"name": "Sun", "sign_id": 1},
+        {"name": "Moon", "sign_id": 2},
+        {"name": "Mars", "sign_id": 5},
         {"name": "Mercury", "sign_id": 8},
         {"name": "Jupiter", "sign_id": 11},
-        {"name": "Venus",   "sign_id": 3},
-        {"name": "Saturn",  "sign_id": 7},
+        {"name": "Venus", "sign_id": 3},
+        {"name": "Saturn", "sign_id": 7},
     ]
     out = compute_friendship_tables(planets)
     assert out["natural"]["Sun"]["Moon"] == "F"
@@ -68,13 +68,13 @@ def test_natural_enemy_plus_temporal_enemy_yields_great_enemy():
     # Sun and Saturn are natural enemies. Place them 6 signs apart so neither
     # is in {2,3,4,10,11,12} from the other → temporal enemy → composite GE.
     planets = [
-        {"name": "Sun",     "sign_id": 1},
-        {"name": "Saturn",  "sign_id": 7},   # 7th from Sun → temporal enemy
-        {"name": "Moon",    "sign_id": 4},
-        {"name": "Mars",    "sign_id": 5},
+        {"name": "Sun", "sign_id": 1},
+        {"name": "Saturn", "sign_id": 7},  # 7th from Sun → temporal enemy
+        {"name": "Moon", "sign_id": 4},
+        {"name": "Mars", "sign_id": 5},
         {"name": "Mercury", "sign_id": 6},
         {"name": "Jupiter", "sign_id": 9},
-        {"name": "Venus",   "sign_id": 11},
+        {"name": "Venus", "sign_id": 11},
     ]
     out = compute_friendship_tables(planets)
     assert out["natural"]["Sun"]["Saturn"] == "E"

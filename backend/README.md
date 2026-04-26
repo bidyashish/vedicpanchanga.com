@@ -36,6 +36,25 @@ BACKEND_URL=https://staging.example.com pytest tests/ -v -m http
 See [`tests/README.md`](tests/README.md) for the canonical birth payloads
 and what each suite covers.
 
+## Lint & format
+
+Backend Python is linted and formatted by [ruff](https://docs.astral.sh/ruff/)
+(installed from `requirements.txt`):
+
+```bash
+source venv/bin/activate
+ruff check .          # lint
+ruff check . --fix    # lint + auto-fix what's safe
+ruff format .         # format — write
+ruff format --check . # format check (used by CI)
+```
+
+`ruff check` and `ruff format --check` run in `.github/workflows/ci.yml`
+on every push to `main` and every PR. To enforce them locally before each
+commit, install [pre-commit](https://pre-commit.com) at the repo root and
+run `pre-commit install` once — the `.pre-commit-config.yaml` ships with
+ruff hooks already wired up.
+
 ## API
 
 All endpoints are under `/api`. Field shapes live in

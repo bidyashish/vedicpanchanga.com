@@ -13,9 +13,12 @@ EXPECTED_VARGA_KEYS = {f"d{n}" for n in EXPECTED_VARGA_ORDER}
 @pytest.fixture(scope="module")
 def chart(api, base_url):
     payload = {
-        "birth_date": "1990-01-01", "birth_time": "12:00",
-        "latitude": 28.6139, "longitude": 77.2090,
-        "timezone": "Asia/Kolkata", "ayanamsa": "lahiri",
+        "birth_date": "1990-01-01",
+        "birth_time": "12:00",
+        "latitude": 28.6139,
+        "longitude": 77.2090,
+        "timezone": "Asia/Kolkata",
+        "ayanamsa": "lahiri",
     }
     r = api.post(f"{base_url}/api/calculate", json=payload, timeout=30)
     assert r.status_code == 200, f"calculate failed: {r.status_code} {r.text[:300]}"
@@ -85,7 +88,9 @@ class TestNavamsaFormula:
         for p in chart["planets_data"]:
             expected_sign = int(((p["longitude"] * 9) % 360) // 30) + 1
             expected_house = ((expected_sign - d9_asc) % 12) + 1
-            cell = d9["chart"].get(str(expected_house), d9["chart"].get(expected_house, []))
+            cell = d9["chart"].get(
+                str(expected_house), d9["chart"].get(expected_house, [])
+            )
             assert p["abbr"] in cell, (
                 f"{p['name']} expected in D9 house {expected_house}, got {cell}"
             )
@@ -96,13 +101,14 @@ class TestD30Trimshamsha:
     @pytest.fixture
     def varga_sign(self):
         from vargas import varga_sign as vs  # noqa: WPS433
+
         return vs
 
     def test_odd_sign_aries_segments(self, varga_sign):
         # Aries (odd): Ma 0-5° → Aries(1) · Sa 5-10° → Aquarius(11)
         # · Ju 10-18° → Sagittarius(9) · Me 18-25° → Gemini(3) · Ve 25-30° → Libra(7)
-        assert varga_sign(2,  30) == 1
-        assert varga_sign(7,  30) == 11
+        assert varga_sign(2, 30) == 1
+        assert varga_sign(7, 30) == 11
         assert varga_sign(14, 30) == 9
         assert varga_sign(22, 30) == 3
         assert varga_sign(28, 30) == 7
@@ -110,8 +116,8 @@ class TestD30Trimshamsha:
     def test_even_sign_taurus_segments(self, varga_sign):
         # Taurus (even, starts at 30°): Ve 0-5° → Ta(2) · Me 5-12° → Vi(6)
         # · Ju 12-20° → Pi(12) · Sa 20-25° → Cp(10) · Ma 25-30° → Sc(8)
-        assert varga_sign(30 + 2,  30) == 2
-        assert varga_sign(30 + 8,  30) == 6
+        assert varga_sign(30 + 2, 30) == 2
+        assert varga_sign(30 + 8, 30) == 6
         assert varga_sign(30 + 15, 30) == 12
         assert varga_sign(30 + 22, 30) == 10
         assert varga_sign(30 + 27, 30) == 8

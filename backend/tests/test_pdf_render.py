@@ -9,7 +9,7 @@ import re
 import pytest
 
 EXPECTED_SECTION_TITLES = [
-    "Traditional",                # page 1
+    "Traditional",  # page 1
     "Planetary Positions",
     "Vimshottari Dasha",
     "Vimshottari Dasha — Antardasha",
@@ -31,7 +31,8 @@ def rendered(delhi_chart, panchang_module):
 
     panch = panchang_module.compute_detailed_panchang(
         target_date="1990-01-01",
-        latitude=28.6139, longitude=77.2090,
+        latitude=28.6139,
+        longitude=77.2090,
         timezone_name="Asia/Kolkata",
     )
     return render_pdf(
@@ -77,8 +78,13 @@ def test_index_lists_every_section_with_a_page_number(rendered):
     last = pdf[len(pdf) - 1].get_textpage().get_text_range()
     assert "Index of Sections" in last
     # Each section row is a label + integer page number on the right.
-    for label in ("Planetary Positions", "Vimshottari Mahadasha",
-                  "Friendship Tables", "Kalsarpa Yoga", "Mangal Dosha"):
+    for label in (
+        "Planetary Positions",
+        "Vimshottari Mahadasha",
+        "Friendship Tables",
+        "Kalsarpa Yoga",
+        "Mangal Dosha",
+    ):
         # Pattern "<label>\n…\n<int>" — page numbers are bold-rendered ints.
         assert re.search(rf"{re.escape(label)}.{{0,20}}\d+", last, re.DOTALL), label
 
@@ -91,13 +97,17 @@ def test_render_pdf_handles_hindi_lang(delhi_chart, panchang_module):
 
     panch = panchang_module.compute_detailed_panchang(
         target_date="1990-01-01",
-        latitude=28.6139, longitude=77.2090,
+        latitude=28.6139,
+        longitude=77.2090,
         timezone_name="Asia/Kolkata",
     )
     out = render_pdf(
         name="Aśiṣ",  # IAST diacritics — must use Latin font
-        sex="Male", chart_data=delhi_chart, panchang_data=panch,
-        place_name="New Delhi", lang="hi",
+        sex="Male",
+        chart_data=delhi_chart,
+        panchang_data=panch,
+        place_name="New Delhi",
+        lang="hi",
     )
     assert out[:4] == b"%PDF"
     assert len(out) > 50_000  # sanity: real content, not empty stub

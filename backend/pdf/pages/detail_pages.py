@@ -38,8 +38,16 @@ def _draw_page_header(pdf: FPDF, name: str, lang: str, label: str) -> None:
     pdf.rect(margin, margin, page_w - 2 * margin, 16)
     family = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
     draw_text(pdf, margin + 6, margin + 11, name or "—", family, BOLD, 11)
-    draw_text(pdf, page_w - margin - 6, margin + 11, label,
-              LATIN_REGULAR, REGULAR, 9, anchor="right")
+    draw_text(
+        pdf,
+        page_w - margin - 6,
+        margin + 11,
+        label,
+        LATIN_REGULAR,
+        REGULAR,
+        9,
+        anchor="right",
+    )
 
 
 PLANET_ROWS = [
@@ -80,7 +88,6 @@ def draw_planet_varga_matrix(
     planets = chart_data["planets_data"]
 
     # Headers: planet | D1 | D2 | ... | D60 (16 columns + 1 label = 17 cols)
-    n_cols = 1 + len(varga_order)
     inner_w = page_w - 2 * margin
     label_w = inner_w * 0.10
     cell_w = (inner_w - label_w) / len(varga_order)
@@ -96,12 +103,21 @@ def draw_planet_varga_matrix(
     pdf.rect(margin, cur_y, inner_w, row_h, "F")
     f_h = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
     label_h = "Planet" if lang == "en" else t(lang, "planets")
-    draw_text(pdf, margin + label_w / 2, cur_y + row_h - 4, label_h,
-              f_h, BOLD, 8, anchor="center")
+    draw_text(
+        pdf,
+        margin + label_w / 2,
+        cur_y + row_h - 4,
+        label_h,
+        f_h,
+        BOLD,
+        8,
+        anchor="center",
+    )
     for i, n in enumerate(varga_order):
         cx = margin + label_w + i * cell_w + cell_w / 2
-        draw_text(pdf, cx, cur_y + row_h - 4, f"D{n}",
-                  LATIN_REGULAR, BOLD, 8, anchor="center")
+        draw_text(
+            pdf, cx, cur_y + row_h - 4, f"D{n}", LATIN_REGULAR, BOLD, 8, anchor="center"
+        )
 
     pdf.line(margin, cur_y + row_h, margin + inner_w, cur_y + row_h)
 
@@ -113,13 +129,29 @@ def draw_planet_varga_matrix(
             continue
         label = abbr if lang == "en" else t(lang, PLANET_KEY_BY_NAME[planet_name])
         f_p = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
-        draw_text(pdf, margin + label_w / 2, y + row_h - 4, label,
-                  f_p, BOLD, 8, anchor="center")
+        draw_text(
+            pdf,
+            margin + label_w / 2,
+            y + row_h - 4,
+            label,
+            f_p,
+            BOLD,
+            8,
+            anchor="center",
+        )
         for i, n in enumerate(varga_order):
             sign = pdat.get(f"d{n}_sign")
             cx = margin + label_w + i * cell_w + cell_w / 2
-            draw_text(pdf, cx, y + row_h - 4, str(sign) if sign else "",
-                      LATIN_REGULAR, REGULAR, 8, anchor="center")
+            draw_text(
+                pdf,
+                cx,
+                y + row_h - 4,
+                str(sign) if sign else "",
+                LATIN_REGULAR,
+                REGULAR,
+                8,
+                anchor="center",
+            )
 
     # Vertical column separators
     pdf.line(margin + label_w, cur_y, margin + label_w, cur_y + row_h * n_rows)
@@ -167,29 +199,35 @@ def draw_planet_long_table(
     planets = chart_data["planets_data"]
 
     rows: List[List[str]] = []
-    rows.append([
-        "ASC" if lang == "en" else t(lang, "abbr_as"),
-        t(lang, SIGN_KEYS_BY_ID.get(asc["sign_id"], "")) or asc["sign"],
-        fmt_dms(asc["degree_in_sign"]),
-        asc["nakshatra"],
-        str(asc.get("nakshatra_pada", "")),
-        asc["sign_lord"],
-        asc["nakshatra_lord"],
-        "",
-        "1",
-    ])
+    rows.append(
+        [
+            "ASC" if lang == "en" else t(lang, "abbr_as"),
+            t(lang, SIGN_KEYS_BY_ID.get(asc["sign_id"], "")) or asc["sign"],
+            fmt_dms(asc["degree_in_sign"]),
+            asc["nakshatra"],
+            str(asc.get("nakshatra_pada", "")),
+            asc["sign_lord"],
+            asc["nakshatra_lord"],
+            "",
+            "1",
+        ]
+    )
     for p in planets:
-        rows.append([
-            p["name"][:4] if lang == "en" else t(lang, PLANET_KEY_BY_NAME[p["name"]]),
-            t(lang, SIGN_KEYS_BY_ID.get(p["sign_id"], "")) or p["sign"],
-            fmt_dms(p["degree_in_sign"]),
-            p["nakshatra"],
-            str(p.get("nakshatra_pada", "")),
-            p["sign_lord"],
-            p["nakshatra_lord"],
-            "R" if p.get("retrograde") else "",
-            str(p.get("house", "")),
-        ])
+        rows.append(
+            [
+                p["name"][:4]
+                if lang == "en"
+                else t(lang, PLANET_KEY_BY_NAME[p["name"]]),
+                t(lang, SIGN_KEYS_BY_ID.get(p["sign_id"], "")) or p["sign"],
+                fmt_dms(p["degree_in_sign"]),
+                p["nakshatra"],
+                str(p.get("nakshatra_pada", "")),
+                p["sign_lord"],
+                p["nakshatra_lord"],
+                "R" if p.get("retrograde") else "",
+                str(p.get("house", "")),
+            ]
+        )
 
     row_h = 14
     n_rows = len(rows) + 1
@@ -201,8 +239,7 @@ def draw_planet_long_table(
 
     cx = margin
     for (label, _), w in zip(headers, col_widths):
-        draw_text(pdf, cx + 4, cur_y + row_h - 4, label,
-                  LATIN_REGULAR, BOLD, 8)
+        draw_text(pdf, cx + 4, cur_y + row_h - 4, label, LATIN_REGULAR, BOLD, 8)
         cx += w
     pdf.line(margin, cur_y + row_h, margin + inner_w, cur_y + row_h)
 
@@ -256,12 +293,14 @@ def draw_dasha_long(
         start = _dt.fromisoformat(period["start"])
         end = _dt.fromisoformat(period["end"])
         label = abbr if lang == "en" else t(lang, PLANET_KEY_BY_NAME.get(lord, ""))
-        rows.append([
-            f"{label} ({abbr})",
-            str(years),
-            start.strftime("%d %b %Y  %H:%M"),
-            end.strftime("%d %b %Y  %H:%M"),
-        ])
+        rows.append(
+            [
+                f"{label} ({abbr})",
+                str(years),
+                start.strftime("%d %b %Y  %H:%M"),
+                end.strftime("%d %b %Y  %H:%M"),
+            ]
+        )
 
     row_h = 16
     n_rows = len(rows) + 1

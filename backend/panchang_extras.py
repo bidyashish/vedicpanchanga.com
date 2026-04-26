@@ -11,7 +11,9 @@ from typing import Dict, Optional
 GANDA_MULA_NAKSHATRAS = {"Ashwini", "Ashlesha", "Magha", "Jyeshtha", "Mula", "Revati"}
 
 
-def detect_ganda_mula(current_nak_name: str, ends_at: Optional[str]) -> Optional[Dict[str, str]]:
+def detect_ganda_mula(
+    current_nak_name: str, ends_at: Optional[str]
+) -> Optional[Dict[str, str]]:
     if current_nak_name in GANDA_MULA_NAKSHATRAS:
         return {"nakshatra": current_nak_name, "ends_at": ends_at or ""}
     return None

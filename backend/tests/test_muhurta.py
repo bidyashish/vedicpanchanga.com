@@ -77,9 +77,9 @@ def test_marriage_avoids_rikta_tithis():
             continue
         if any(t in d["tithi"] for t in ("Chaturthi", "Navami", "Chaturdashi")):
             # penalty applied => should be below 75
-            assert (
-                d["score"] < 75
-            ), f"{d['date']} tithi {d['tithi']} scored {d['score']}"
+            assert d["score"] < 75, (
+                f"{d['date']} tithi {d['tithi']} scored {d['score']}"
+            )
 
 
 def test_tarabalam_filter_changes_score():

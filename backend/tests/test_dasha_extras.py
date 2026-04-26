@@ -11,8 +11,6 @@ from __future__ import annotations
 
 from datetime import datetime
 
-import pytest
-
 
 def test_antardashas_full_120_year_total(delhi_chart):
     """Mahadashas 2..9 are full periods that sum to 120-balance years."""
@@ -42,7 +40,9 @@ def test_first_mahadasha_pre_birth_antardashas(delhi_chart, delhi_birth):
     that ended before birth are kept (caller can flag them) but the
     *active* one must straddle birth."""
     md0 = delhi_chart["dasha_antar"][0]
-    birth_dt = datetime.fromisoformat(delhi_chart["birth"]["utc_time"]).replace(tzinfo=None)
+    birth_dt = datetime.fromisoformat(delhi_chart["birth"]["utc_time"]).replace(
+        tzinfo=None
+    )
     ads = md0["antardashas"]
 
     pre_birth = [ad for ad in ads if datetime.fromisoformat(ad["end"]) <= birth_dt]

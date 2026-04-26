@@ -20,20 +20,69 @@ from typing import Any, Dict, List
 VISIBLE_PLANETS = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
 
 NATURAL_FRIENDSHIP: Dict[str, Dict[str, str]] = {
-    "Sun":     {"Moon": "F", "Mars": "F", "Mercury": "N", "Jupiter": "F", "Venus": "E", "Saturn": "E"},
-    "Moon":    {"Sun": "F", "Mars": "N", "Mercury": "F", "Jupiter": "N", "Venus": "N", "Saturn": "N"},
-    "Mars":    {"Sun": "F", "Moon": "F", "Mercury": "E", "Jupiter": "F", "Venus": "N", "Saturn": "N"},
-    "Mercury": {"Sun": "F", "Moon": "E", "Mars": "N", "Jupiter": "N", "Venus": "F", "Saturn": "N"},
-    "Jupiter": {"Sun": "F", "Moon": "F", "Mars": "F", "Mercury": "E", "Venus": "E", "Saturn": "N"},
-    "Venus":   {"Sun": "E", "Moon": "E", "Mars": "N", "Mercury": "F", "Jupiter": "N", "Saturn": "F"},
-    "Saturn":  {"Sun": "E", "Moon": "E", "Mars": "E", "Mercury": "F", "Jupiter": "N", "Venus": "F"},
+    "Sun": {
+        "Moon": "F",
+        "Mars": "F",
+        "Mercury": "N",
+        "Jupiter": "F",
+        "Venus": "E",
+        "Saturn": "E",
+    },
+    "Moon": {
+        "Sun": "F",
+        "Mars": "N",
+        "Mercury": "F",
+        "Jupiter": "N",
+        "Venus": "N",
+        "Saturn": "N",
+    },
+    "Mars": {
+        "Sun": "F",
+        "Moon": "F",
+        "Mercury": "E",
+        "Jupiter": "F",
+        "Venus": "N",
+        "Saturn": "N",
+    },
+    "Mercury": {
+        "Sun": "F",
+        "Moon": "E",
+        "Mars": "N",
+        "Jupiter": "N",
+        "Venus": "F",
+        "Saturn": "N",
+    },
+    "Jupiter": {
+        "Sun": "F",
+        "Moon": "F",
+        "Mars": "F",
+        "Mercury": "E",
+        "Venus": "E",
+        "Saturn": "N",
+    },
+    "Venus": {
+        "Sun": "E",
+        "Moon": "E",
+        "Mars": "N",
+        "Mercury": "F",
+        "Jupiter": "N",
+        "Saturn": "F",
+    },
+    "Saturn": {
+        "Sun": "E",
+        "Moon": "E",
+        "Mars": "E",
+        "Mercury": "F",
+        "Jupiter": "N",
+        "Venus": "F",
+    },
 }
 
 LABELS = {
     "GF": "Great Friend",
-    "F":  "Friend",
-    "N":  "Neutral",
-    "E":  "Enemy",
+    "F": "Friend",
+    "N": "Neutral",
+    "E": "Enemy",
     "GE": "Great Enemy",
 }
 

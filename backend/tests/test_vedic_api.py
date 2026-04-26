@@ -15,9 +15,12 @@ pytestmark = pytest.mark.http
 @pytest.fixture(scope="module")
 def chart(api, base_url):
     payload = {
-        "birth_date": "1990-01-01", "birth_time": "12:00",
-        "latitude": 28.6139, "longitude": 77.2090,
-        "timezone": "Asia/Kolkata", "place_name": "New Delhi",
+        "birth_date": "1990-01-01",
+        "birth_time": "12:00",
+        "latitude": 28.6139,
+        "longitude": 77.2090,
+        "timezone": "Asia/Kolkata",
+        "place_name": "New Delhi",
         "ayanamsa": "lahiri",
     }
     r = api.post(f"{base_url}/api/calculate", json=payload, timeout=30)
@@ -80,7 +83,6 @@ class TestCalculateContract:
 
 
 class TestCalculateAccuracy:
-
     def test_rahu_ketu_180_apart(self, chart):
         planets = {p["name"]: p for p in chart["planets_data"]}
         diff = abs(planets["Rahu"]["longitude"] - planets["Ketu"]["longitude"])
@@ -102,9 +104,9 @@ class TestCalculateAccuracy:
                     break
             assert placed_house is not None, f"{p['name']} not in d9_chart"
             placed_sign = ((placed_house - 1) + (d9_asc - 1)) % 12 + 1
-            assert (
-                placed_sign == expected
-            ), f"{p['name']} D9 sign mismatch: got {placed_sign}, expected {expected}"
+            assert placed_sign == expected, (
+                f"{p['name']} D9 sign mismatch: got {placed_sign}, expected {expected}"
+            )
 
     def test_d2_hora_correctness(self, chart):
         for p in chart["planets_data"]:
@@ -125,9 +127,9 @@ class TestCalculateAccuracy:
                     break
             assert placed_house is not None, f"{p['name']} not in d2_chart"
             placed_sign = ((placed_house - 1) + (d2_asc - 1)) % 12 + 1
-            assert (
-                placed_sign == expected
-            ), f"{p['name']} D2 sign mismatch: got {placed_sign}, expected {expected}"
+            assert placed_sign == expected, (
+                f"{p['name']} D2 sign mismatch: got {placed_sign}, expected {expected}"
+            )
 
     def test_sun_sign_sagittarius(self, chart):
         sun = next(p for p in chart["planets_data"] if p["name"] == "Sun")
@@ -141,9 +143,9 @@ class TestVimshottariDasha:
 
     def test_total_years_120(self, chart):
         total = sum(d["years"] for d in chart["dasha"])
-        assert (
-            abs(total - 120.0) < 20.0
-        ), f"Total years {total} (first dasha is balance)"
+        assert abs(total - 120.0) < 20.0, (
+            f"Total years {total} (first dasha is balance)"
+        )
         # All 9 lords should appear exactly once
         lords = [d["lord"] for d in chart["dasha"]]
         assert sorted(lords) == sorted(
@@ -190,8 +192,12 @@ class TestCalculateValidation:
     def test_invalid_date_returns_400(self, api, base_url):
         r = api.post(
             f"{base_url}/api/calculate",
-            json={"birth_date": "not-a-date", "birth_time": "12:00",
-                  "latitude": 28.6, "longitude": 77.2},
+            json={
+                "birth_date": "not-a-date",
+                "birth_time": "12:00",
+                "latitude": 28.6,
+                "longitude": 77.2,
+            },
             timeout=15,
         )
         assert r.status_code == 400, f"Got {r.status_code}: {r.text}"
@@ -199,8 +205,12 @@ class TestCalculateValidation:
     def test_invalid_time_returns_400(self, api, base_url):
         r = api.post(
             f"{base_url}/api/calculate",
-            json={"birth_date": "1990-01-01", "birth_time": "garbage",
-                  "latitude": 28.6, "longitude": 77.2},
+            json={
+                "birth_date": "1990-01-01",
+                "birth_time": "garbage",
+                "latitude": 28.6,
+                "longitude": 77.2,
+            },
             timeout=15,
         )
         assert r.status_code == 400
@@ -213,8 +223,12 @@ class TestCalculateValidation:
 def panchang_today(api, base_url):
     r = api.get(
         f"{base_url}/api/get-panchang",
-        params={"latitude": 28.6139, "longitude": 77.2090,
-                "timezone": "Asia/Kolkata", "detailed": "false"},
+        params={
+            "latitude": 28.6139,
+            "longitude": 77.2090,
+            "timezone": "Asia/Kolkata",
+            "detailed": "false",
+        },
         timeout=30,
     )
     assert r.status_code == 200, f"Status {r.status_code}: {r.text}"
@@ -226,9 +240,13 @@ def panchang_thursday(api, base_url):
     # 2024-01-04 was a Thursday.
     r = api.get(
         f"{base_url}/api/get-panchang",
-        params={"latitude": 28.6139, "longitude": 77.2090,
-                "timezone": "Asia/Kolkata", "date": "2024-01-04",
-                "detailed": "false"},
+        params={
+            "latitude": 28.6139,
+            "longitude": 77.2090,
+            "timezone": "Asia/Kolkata",
+            "date": "2024-01-04",
+            "detailed": "false",
+        },
         timeout=30,
     )
     assert r.status_code == 200, f"Status {r.status_code}: {r.text}"
@@ -296,8 +314,11 @@ class TestPanchang:
 
         r = api.get(
             f"{base_url}/api/get-panchang",
-            params={"latitude": 28.6139, "longitude": 77.2090,
-                    "timezone": "Asia/Kolkata"},
+            params={
+                "latitude": 28.6139,
+                "longitude": 77.2090,
+                "timezone": "Asia/Kolkata",
+            },
             timeout=30,
         )
         assert r.status_code == 200

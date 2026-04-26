@@ -53,7 +53,8 @@ def test_ravi_yoga_at_each_qualifying_offset(offset):
 def test_ravi_yoga_inactive_at_non_qualifying_offset():
     # Offset of 2 (3rd nakshatra) is not in {4,6,9,10,13,20}.
     out = detect_ravi_yoga(
-        moon_nak_index_1based=3, sun_nak_index_1based=1,
+        moon_nak_index_1based=3,
+        sun_nak_index_1based=1,
         sunrise_iso="2026-04-26T05:44:54+05:30",
         nak_ends_at="2026-04-26T20:27:21+05:30",
     )

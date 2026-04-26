@@ -9,8 +9,14 @@ import pytest
 pytestmark = pytest.mark.http
 
 EXPECTED_PURPOSE_IDS = {
-    "marriage", "griha_pravesh", "business", "travel",
-    "education", "vehicle", "namakarana", "medical",
+    "marriage",
+    "griha_pravesh",
+    "business",
+    "travel",
+    "education",
+    "vehicle",
+    "namakarana",
+    "medical",
 }
 
 
@@ -57,8 +63,15 @@ def test_find_muhurta_happy_path(api, base_url):
         if "error" in day:
             continue
         assert 0 <= day["score"] <= 100
-        for f in ("tithi", "nakshatra", "vara", "sunrise", "sunset",
-                  "abhijit", "rahu_kalam"):
+        for f in (
+            "tithi",
+            "nakshatra",
+            "vara",
+            "sunrise",
+            "sunset",
+            "abhijit",
+            "rahu_kalam",
+        ):
             assert f in day
 
 
@@ -99,9 +112,13 @@ def test_find_muhurta_with_native_filters(api, base_url):
 def test_find_muhurta_unknown_purpose(api, base_url):
     r = api.post(
         f"{base_url}/api/find-muhurta",
-        json={"purpose": "not_a_real_purpose",
-              "start_date": "2026-04-20", "end_date": "2026-04-22",
-              "latitude": 28.6, "longitude": 77.2},
+        json={
+            "purpose": "not_a_real_purpose",
+            "start_date": "2026-04-20",
+            "end_date": "2026-04-22",
+            "latitude": 28.6,
+            "longitude": 77.2,
+        },
         timeout=30,
     )
     assert r.status_code == 400
@@ -110,9 +127,13 @@ def test_find_muhurta_unknown_purpose(api, base_url):
 def test_find_muhurta_end_before_start(api, base_url):
     r = api.post(
         f"{base_url}/api/find-muhurta",
-        json={"purpose": "marriage",
-              "start_date": "2026-04-26", "end_date": "2026-04-20",
-              "latitude": 28.6, "longitude": 77.2},
+        json={
+            "purpose": "marriage",
+            "start_date": "2026-04-26",
+            "end_date": "2026-04-20",
+            "latitude": 28.6,
+            "longitude": 77.2,
+        },
         timeout=30,
     )
     assert r.status_code == 400
@@ -121,9 +142,13 @@ def test_find_muhurta_end_before_start(api, base_url):
 def test_find_muhurta_range_too_large(api, base_url):
     r = api.post(
         f"{base_url}/api/find-muhurta",
-        json={"purpose": "marriage",
-              "start_date": "2026-01-01", "end_date": "2026-12-31",
-              "latitude": 28.6, "longitude": 77.2},
+        json={
+            "purpose": "marriage",
+            "start_date": "2026-01-01",
+            "end_date": "2026-12-31",
+            "latitude": 28.6,
+            "longitude": 77.2,
+        },
         timeout=30,
     )
     assert r.status_code == 400
@@ -144,8 +169,12 @@ def test_calculate_regression(api, base_url, delhi_birth):
 def test_get_panchang_regression(api, base_url):
     r = api.get(
         f"{base_url}/api/get-panchang",
-        params={"latitude": 28.6139, "longitude": 77.2090,
-                "date": "2026-04-20", "timezone": "Asia/Kolkata"},
+        params={
+            "latitude": 28.6139,
+            "longitude": 77.2090,
+            "date": "2026-04-20",
+            "timezone": "Asia/Kolkata",
+        },
         timeout=60,
     )
     assert r.status_code == 200
