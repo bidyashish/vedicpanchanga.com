@@ -199,7 +199,14 @@ All endpoints are mounted under `/api` on the backend (not `/api/v1`). In produc
 
 Interactive Swagger UI in dev: <http://localhost:8001/docs>.
 
----
+## Star History
+[![Star History Chart](https://api.star-history.com/svg?repos=bidyashish/vedicpanchanga.com&type=Date)](https://star-history.com/#bidyashish/vedicpanchanga.com&Date)
+
+## Contributors
+Thanks to all the contributors who have helped make this project better!
+
+[![Contributors](https://contrib.rocks/image?repo=bidyashish/vedicpanchanga.com)](https://github.com/bidyashish/vedicpanchanga.com/graphs/contributors)
+
 
 ## License
 
