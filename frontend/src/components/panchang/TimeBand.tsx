@@ -30,11 +30,10 @@ export function TimeBand({
       }}
     >
       <div className="flex items-center justify-between gap-2">
-        <p className="eyebrow-lg" style={{ color }}>{title}</p>
-        <span
-          className="w-1.5 h-1.5 rounded-full shrink-0"
-          style={{ backgroundColor: color }}
-        />
+        <p className="eyebrow-lg" style={{ color }}>
+          {title}
+        </p>
+        <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
       </div>
       <p className="value-strong num mt-0.5">
         {window

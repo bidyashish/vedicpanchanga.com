@@ -6,34 +6,57 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { AdSlot } from "@/components/shell/AdSlot";
 import { fetchMuhurtaPurposes, findMuhurtas } from "@/lib/api";
 import { formatDayMonthYear, formatTimeRange, todayISO, daysFromNow } from "@/lib/format";
-import type {
-  LocationChoice,
-  MuhurtaPurpose,
-  MuhurtaResponse,
-  MuhurtaResult,
-} from "@/types/api";
+import type { LocationChoice, MuhurtaPurpose, MuhurtaResponse, MuhurtaResult } from "@/types/api";
 
 const RASHI_OPTIONS = [
-  "Mesha (Aries)", "Vrishabha (Taurus)", "Mithuna (Gemini)", "Karka (Cancer)",
-  "Simha (Leo)", "Kanya (Virgo)", "Tula (Libra)", "Vrischika (Scorpio)",
-  "Dhanu (Sagittarius)", "Makara (Capricorn)", "Kumbha (Aquarius)", "Meena (Pisces)",
+  "Mesha (Aries)",
+  "Vrishabha (Taurus)",
+  "Mithuna (Gemini)",
+  "Karka (Cancer)",
+  "Simha (Leo)",
+  "Kanya (Virgo)",
+  "Tula (Libra)",
+  "Vrischika (Scorpio)",
+  "Dhanu (Sagittarius)",
+  "Makara (Capricorn)",
+  "Kumbha (Aquarius)",
+  "Meena (Pisces)",
 ];
 
 const NAKSHATRA_OPTIONS = [
-  "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", "Ardra", "Punarvasu",
-  "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta",
-  "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha",
-  "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada",
-  "Uttara Bhadrapada", "Revati",
+  "Ashwini",
+  "Bharani",
+  "Krittika",
+  "Rohini",
+  "Mrigashira",
+  "Ardra",
+  "Punarvasu",
+  "Pushya",
+  "Ashlesha",
+  "Magha",
+  "Purva Phalguni",
+  "Uttara Phalguni",
+  "Hasta",
+  "Chitra",
+  "Swati",
+  "Vishakha",
+  "Anuradha",
+  "Jyeshtha",
+  "Mula",
+  "Purva Ashadha",
+  "Uttara Ashadha",
+  "Shravana",
+  "Dhanishta",
+  "Shatabhisha",
+  "Purva Bhadrapada",
+  "Uttara Bhadrapada",
+  "Revati",
 ];
 
 function ResultCard({ m, tz }: { m: MuhurtaResult; tz?: string }) {
   const { t } = useI18n();
   return (
-    <div
-      data-testid={`muhurta-result-${m.date}`}
-      className="card card-lift p-6"
-    >
+    <div data-testid={`muhurta-result-${m.date}`} className="card card-lift p-6">
       <div className="min-w-0">
         <p className="eyebrow-accent">{m.weekday}</p>
         <h4 className="heading-page mt-0.5">{formatDayMonthYear(m.date)}</h4>
@@ -173,10 +196,7 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
       className="pt-4 pb-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8"
     >
       <aside className="lg:col-span-4 xl:col-span-3">
-        <div
-          data-testid="muhurta-form"
-          className="card card-lift p-5 lg:p-6 lg:sticky lg:top-20"
-        >
+        <div data-testid="muhurta-form" className="card card-lift p-5 lg:p-6 lg:sticky lg:top-20">
           <h2 className="heading-page">{t("muhurta_title")}</h2>
           <p className="meta mb-5">{t("muhurta_subtitle")}</p>
 
@@ -230,9 +250,7 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
             <p className="meta mb-3">{t("muhurta_native_sub")}</p>
 
             <div className="mb-3">
-              <label className="label-strong block mb-1">
-                {t("muhurta_birth_rashi")}
-              </label>
+              <label className="label-strong block mb-1">{t("muhurta_birth_rashi")}</label>
               <select
                 data-testid="muhurta-rashi-select"
                 value={birthRashiId}
@@ -249,9 +267,7 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
             </div>
 
             <div className="mb-3">
-              <label className="label-strong block mb-1">
-                {t("muhurta_birth_nak")}
-              </label>
+              <label className="label-strong block mb-1">{t("muhurta_birth_nak")}</label>
               <select
                 data-testid="muhurta-nak-select"
                 value={birthNakId}
@@ -312,9 +328,7 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
           <div className="card p-8 text-center">
             <p className="eyebrow">Muhurta</p>
             <p className="heading-section mt-1">{t("muhurta_title")}</p>
-            <p className="meta mt-1.5 max-w-md mx-auto">
-              {t("muhurta_subtitle")}
-            </p>
+            <p className="meta mt-1.5 max-w-md mx-auto">{t("muhurta_subtitle")}</p>
           </div>
         )}
 

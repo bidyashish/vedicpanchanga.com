@@ -5,20 +5,14 @@ import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { useI18n } from "@/i18n";
 import type { View } from "@/App";
 
-export function TopBar({
-  view,
-  setView,
-}: {
-  view: View;
-  setView: (v: View) => void;
-}) {
+export function TopBar({ view, setView }: { view: View; setView: (v: View) => void }) {
   const { t } = useI18n();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const tabs: { id: View; label: string; href: string }[] = [
-    { id: "kundali",  label: t("nav_kundali"),  href: "/" },
+    { id: "kundali", label: t("nav_kundali"), href: "/" },
     { id: "panchang", label: t("nav_panchang"), href: "/panchang" },
-    { id: "muhurta",  label: t("nav_muhurta"),  href: "/muhurta" },
+    { id: "muhurta", label: t("nav_muhurta"), href: "/muhurta" },
   ];
 
   // Close mobile drawer on Esc or when viewport grows past mobile.
@@ -54,10 +48,7 @@ export function TopBar({
   };
 
   return (
-    <header
-      data-testid="top-bar"
-      className="sticky top-0 z-30 glass border-b border-parchment-200"
-    >
+    <header data-testid="top-bar" className="sticky top-0 z-30 glass border-b border-parchment-200">
       <div className="max-w-screen-3xl mx-auto px-3 sm:px-5 lg:px-7 h-12 sm:h-14 flex items-center gap-2 sm:gap-6">
         {/* Brand */}
         <a
@@ -96,9 +87,7 @@ export function TopBar({
                 aria-current={active ? "page" : undefined}
                 onClick={(e) => onNavClick(e, tb.id)}
                 className={`relative whitespace-nowrap px-3 py-1.5 text-meta font-medium rounded-sm no-underline transition-colors ${
-                  active
-                    ? "text-saffron"
-                    : "text-ink-soft hover:text-ink hover:bg-parchment-100"
+                  active ? "text-saffron" : "text-ink-soft hover:text-ink hover:bg-parchment-100"
                 }`}
               >
                 {tb.label}
@@ -128,12 +117,29 @@ export function TopBar({
             className="md:hidden inline-flex items-center justify-center w-8 h-8 rounded-sm border border-parchment-200 bg-white text-ink hover:border-saffron hover:text-saffron focus:outline-hidden focus:ring-2 focus:ring-saffron/30 transition-colors"
           >
             {drawerOpen ? (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <line x1="6" y1="6" x2="18" y2="18" />
                 <line x1="6" y1="18" x2="18" y2="6" />
               </svg>
             ) : (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+              >
                 <line x1="4" y1="7" x2="20" y2="7" />
                 <line x1="4" y1="12" x2="20" y2="12" />
                 <line x1="4" y1="17" x2="20" y2="17" />
@@ -168,9 +174,7 @@ export function TopBar({
                       onClick={(e) => onNavClick(e, tb.id)}
                       aria-current={active ? "page" : undefined}
                       className={`w-full flex items-center justify-between text-left px-4 py-3 rounded-md text-meta font-semibold no-underline transition-colors ${
-                        active
-                          ? "bg-saffron/10 text-saffron"
-                          : "text-ink hover:bg-parchment-100"
+                        active ? "bg-saffron/10 text-saffron" : "text-ink hover:bg-parchment-100"
                       }`}
                     >
                       <span>{tb.label}</span>

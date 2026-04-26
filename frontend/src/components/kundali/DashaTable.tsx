@@ -64,9 +64,7 @@ function addYears(iso: string, years: number): string {
 }
 
 function computeSubPeriods(parent: SubPeriod): SubPeriod[] {
-  const seqStart = DASHA_SEQUENCE.indexOf(
-    parent.lord as (typeof DASHA_SEQUENCE)[number],
-  );
+  const seqStart = DASHA_SEQUENCE.indexOf(parent.lord as (typeof DASHA_SEQUENCE)[number]);
   if (seqStart < 0) return [];
   const out: SubPeriod[] = [];
   let cur = parent.start;
@@ -118,9 +116,7 @@ export function DashaTable({ dasha, dashaAntar }: Props) {
   const hasDrillData = !!dashaAntar?.length;
   const current = path[path.length - 1];
   const currentLevel: Level | null = current ? current.level : null;
-  const rows: (DashaPeriod | AntardashaPeriod | SubPeriod)[] = current
-    ? current.rows
-    : mahadashas;
+  const rows: (DashaPeriod | AntardashaPeriod | SubPeriod)[] = current ? current.rows : mahadashas;
 
   // Breadcrumb: each path entry's `parent` lord plus the parent's *own* level
   // (the level that sits one step shallower than the rows being shown).

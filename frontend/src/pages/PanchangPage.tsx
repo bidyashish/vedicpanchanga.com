@@ -3,6 +3,8 @@ import { useI18n } from "@/i18n";
 import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { DatePicker } from "@/components/ui/date-picker";
+import { GowriPanchangam } from "@/components/panchang/GowriPanchangam";
+import { HoraPanchangam } from "@/components/panchang/HoraPanchangam";
 import { Section } from "@/components/panchang/Section";
 import { TimeBand } from "@/components/panchang/TimeBand";
 import { AdSlot } from "@/components/shell/AdSlot";
@@ -10,19 +12,8 @@ import { VedicChart } from "@/components/kundali/VedicChart";
 import { SouthIndianChart } from "@/components/kundali/SouthIndianChart";
 import { PlanetsTable } from "@/components/kundali/PlanetsTable";
 import { calculateChart, fetchPanchang, reverseGeocode } from "@/lib/api";
-import {
-  formatTime,
-  formatTimeWithDate,
-  formatLongDate,
-  hoursToHMS,
-  todayISO,
-} from "@/lib/format";
-import type {
-  ChartData,
-  LocationChoice,
-  PanchangData,
-  TransitItem,
-} from "@/types/api";
+import { formatTime, formatTimeWithDate, formatLongDate, hoursToHMS, todayISO } from "@/lib/format";
+import type { ChartData, LocationChoice, PanchangData, TransitItem } from "@/types/api";
 
 // Current wall-clock HH:MM in the given IANA timezone. Used to anchor the
 // Lagna Kundali to "now in that location" — anchoring to sunrise made the
@@ -57,10 +48,7 @@ function TransitList({
   return (
     <ul className="divide-y divide-parchment-200">
       {items.map((it, i) => (
-        <li
-          key={i}
-          className="flex items-baseline justify-between gap-3 py-1.5"
-        >
+        <li key={i} className="flex items-baseline justify-between gap-3 py-1.5">
           <span className="text-meta font-medium" style={{ color: accent }}>
             {labelFn(it)}
           </span>
@@ -347,16 +335,12 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                       )}
                     </div>
                     <p className="text-mini text-ink-soft text-center italic">
-                      Lagna at {chart.ascendant.sign} {chart.ascendant.dms} ·
-                      Nakṣatra {chart.ascendant.nakshatra} (Pāda{" "}
-                      {chart.ascendant.nakshatra_pada})
+                      Lagna at {chart.ascendant.sign} {chart.ascendant.dms} · Nakṣatra{" "}
+                      {chart.ascendant.nakshatra} (Pāda {chart.ascendant.nakshatra_pada})
                     </p>
                   </div>
                   <div className="lg:col-span-2">
-                    <PlanetsTable
-                      planets={chart.planets_data}
-                      ascendant={chart.ascendant}
-                    />
+                    <PlanetsTable planets={chart.planets_data} ascendant={chart.ascendant} />
                   </div>
                 </div>
               ) : (
@@ -461,7 +445,10 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     value: `${data.lunar_month.shaka_samvat} · ${data.lunar_month.samvatsara_shaka}`,
                   },
                   { label: "Gujarati Samvat", value: data.lunar_month.gujarati_samvat },
-                  { label: "Chandramāsa (Pūrṇimānta)", value: data.lunar_month.chandramasa_purnimanta },
+                  {
+                    label: "Chandramāsa (Pūrṇimānta)",
+                    value: data.lunar_month.chandramasa_purnimanta,
+                  },
                   { label: "Chandramāsa (Amānta)", value: data.lunar_month.chandramasa_amanta },
                   { label: "Nirayaṇa Solar Month", value: data.lunar_month.nirayana_solar_month },
                   { label: "Pravishte / Gate", value: data.lunar_month.pravishte_day },
@@ -473,9 +460,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
             <Section title="Rāśi &amp; Nakṣatra" testId="section-rashi-nak">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <p className="eyebrow text-saffron mb-3">
-                    Moonsign (Chandra Rāśi)
-                  </p>
+                  <p className="eyebrow text-saffron mb-3">Moonsign (Chandra Rāśi)</p>
                   <TransitList
                     items={data.rashi_nakshatra.moonsign_sequence}
                     tz={tz}
@@ -483,9 +468,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     labelFn={(s) => s.rashi ?? s.name ?? ""}
                     accent="var(--accent-sun)"
                   />
-                  <p className="eyebrow text-indigo mt-6 mb-3">
-                    Nakṣatra Pāda
-                  </p>
+                  <p className="eyebrow text-indigo mt-6 mb-3">Nakṣatra Pāda</p>
                   <TransitList
                     items={data.rashi_nakshatra.moon_nakshatra_padas}
                     tz={tz}
@@ -495,25 +478,34 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   />
                 </div>
                 <div>
-                  <p className="eyebrow text-saffron mb-3">
-                    Sunsign (Sūrya Rāśi)
-                  </p>
-                  <p className="font-serif text-2xl font-medium" style={{ color: "var(--accent-sun)" }}>
+                  <p className="eyebrow text-saffron mb-3">Sunsign (Sūrya Rāśi)</p>
+                  <p
+                    className="font-serif text-2xl font-medium"
+                    style={{ color: "var(--accent-sun)" }}
+                  >
                     {data.rashi_nakshatra.sunsign.rashi}
                   </p>
-                  <p className="eyebrow text-gold mt-6 mb-3">
-                    Sūrya Nakṣatra
-                  </p>
+                  <p className="eyebrow text-gold mt-6 mb-3">Sūrya Nakṣatra</p>
                   <p className="font-serif text-xl text-ink font-medium leading-snug">
                     {data.rashi_nakshatra.surya_nakshatra.name}
-                    <span className="text-ink-soft"> · Pāda {data.rashi_nakshatra.surya_nakshatra.pada}</span>
+                    <span className="text-ink-soft">
+                      {" "}
+                      · Pāda {data.rashi_nakshatra.surya_nakshatra.pada}
+                    </span>
                   </p>
                   <p className="text-sm text-ink-soft num mt-1">
-                    upto {formatTimeWithDate(data.rashi_nakshatra.surya_nakshatra.ends_at, tz, refDate)}
+                    upto{" "}
+                    {formatTimeWithDate(data.rashi_nakshatra.surya_nakshatra.ends_at, tz, refDate)}
                   </p>
                 </div>
               </div>
             </Section>
+
+            {data.hora && (
+              <Section title={t("hora_title")} subtitle={t("hora_sub")} testId="section-hora">
+                <HoraPanchangam day={data.hora.day} night={data.hora.night} tz={tz} />
+              </Section>
+            )}
 
             <Section title="Ritu &amp; Ayana" testId="section-ritu-ayana">
               <KV2
@@ -800,9 +792,15 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     value: `${data.calendars.kali_ahargana_days.toLocaleString()} days`,
                   },
                   { label: "Julian Day", value: data.calendars.julian_day.toFixed(2) },
-                  { label: "Modified Julian Day", value: data.calendars.modified_julian_day.toLocaleString() },
+                  {
+                    label: "Modified Julian Day",
+                    value: data.calendars.modified_julian_day.toLocaleString(),
+                  },
                   { label: "Rata Die", value: data.calendars.rata_die.toLocaleString() },
-                  { label: "Lahiri Ayanāṁśa", value: `${data.calendars.ayanamsha_lahiri.toFixed(6)}°` },
+                  {
+                    label: "Lahiri Ayanāṁśa",
+                    value: `${data.calendars.ayanamsha_lahiri.toFixed(6)}°`,
+                  },
                   {
                     label: "National Civil Date (Śaka)",
                     value: `${data.calendars.national_civil_date.month} ${data.calendars.national_civil_date.day}, ${data.calendars.national_civil_date.shaka_year} Śaka`,
@@ -814,6 +812,20 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 ]}
               />
             </Section>
+
+            {data.gowri_panchang && (
+              <Section
+                title={t("gowri_panchang_title")}
+                subtitle={t("gowri_panchang_sub")}
+                testId="section-gowri"
+              >
+                <GowriPanchangam
+                  day={data.gowri_panchang.day}
+                  night={data.gowri_panchang.night}
+                  tz={tz}
+                />
+              </Section>
+            )}
           </>
         )}
       </div>

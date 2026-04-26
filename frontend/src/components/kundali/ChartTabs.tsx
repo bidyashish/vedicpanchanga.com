@@ -94,7 +94,8 @@ export function ChartTabs({ data }: Props) {
             const label = v ? vargaName(n, v.name, lang) : "";
             return (
               <option key={key} value={key}>
-                D{n}{label ? ` — ${label}` : ""}
+                D{n}
+                {label ? ` — ${label}` : ""}
               </option>
             );
           })}

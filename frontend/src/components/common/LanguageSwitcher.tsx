@@ -5,8 +5,7 @@ const SELECT_BASE =
 
 export function LanguageSwitcher({ testId = "lang-switcher" }: { testId?: string }) {
   const { lang, setLang } = useI18n();
-  const onChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
-    setLang(e.target.value as LangId);
+  const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => setLang(e.target.value as LangId);
 
   return (
     <>

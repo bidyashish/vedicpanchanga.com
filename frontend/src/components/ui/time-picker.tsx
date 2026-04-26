@@ -1,15 +1,10 @@
 import { Clock } from "lucide-react";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 const pad2 = (n: number) => String(n).padStart(2, "0");
-const range = (a: number, b: number) =>
-  Array.from({ length: b - a + 1 }, (_, i) => a + i);
+const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 
 function parseHHMM(hhmm: string | undefined | null): { h24: number; m: number } {
   const m = /^(\d{1,2}):(\d{2})/.exec(hhmm ?? "");
@@ -44,9 +39,7 @@ export function TimePicker({
     onChange(`${pad2(out24)}:${pad2(mm)}`);
   };
 
-  const display = hasValue
-    ? `${hh12}:${pad2(parsed.m)} ${period}`
-    : placeholder;
+  const display = hasValue ? `${hh12}:${pad2(parsed.m)} ${period}` : placeholder;
 
   return (
     <Popover>
@@ -88,9 +81,7 @@ export function TimePicker({
                 data-testid={`${testIdPrefix}-period-${p.toLowerCase()}`}
                 className={cn(
                   "px-3 py-1.5 rounded text-meta font-semibold transition-colors",
-                  period === p
-                    ? "bg-saffron text-white"
-                    : "text-ink hover:bg-saffron/10",
+                  period === p ? "bg-saffron text-white" : "text-ink hover:bg-saffron/10",
                 )}
               >
                 {p}
@@ -134,9 +125,7 @@ function ScrollColumn({
               onClick={() => onPick(v)}
               className={cn(
                 "w-full py-1.5 transition-colors",
-                active
-                  ? "bg-saffron text-white font-semibold"
-                  : "text-ink hover:bg-saffron/10",
+                active ? "bg-saffron text-white font-semibold" : "text-ink hover:bg-saffron/10",
               )}
             >
               {format(v)}

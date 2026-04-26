@@ -23,6 +23,8 @@ from constants import (
     karana_name,
     tithi_name,
 )
+from gowri_panchang import compute_gowri_panchang
+from hora import compute_hora
 from panchang_constants import (
     CHANDRA_MASA,
     CHANDRA_VASA,
@@ -1024,6 +1026,24 @@ def compute_detailed_panchang(
         ),
     }
 
+    # Gowri Panchangam (Tamil/Telugu) — 8 day-segments + 8 night-segments.
+    gowri = compute_gowri_panchang(
+        sunrise_iso=_iso(sunrise_jd, tz),
+        sunset_iso=_iso(sunset_jd, tz),
+        next_sunrise_iso=_iso(next_sunrise_jd, tz),
+        weekday_iso=vara_iso,
+        timezone_name=timezone_name,
+    )
+
+    # Hora — 12 day-horas + 12 night-horas, planetary cycle.
+    hora = compute_hora(
+        sunrise_iso=_iso(sunrise_jd, tz),
+        sunset_iso=_iso(sunset_jd, tz),
+        next_sunrise_iso=_iso(next_sunrise_jd, tz),
+        weekday_iso=vara_iso,
+        timezone_name=timezone_name,
+    )
+
     return {
         "date": target_date,
         "location": {
@@ -1127,6 +1147,8 @@ def compute_detailed_panchang(
             "ganda_mula": extras["ganda_mula"],
             "ravi_yoga": extras["ravi_yoga"],
         },
+        "gowri_panchang": gowri,
+        "hora": hora,
         "calendars": {
             "kali_year": kali_year,
             "kali_ahargana_days": kali_ahargana,

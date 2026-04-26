@@ -114,6 +114,13 @@ const en: Dict = {
 
   panchang_title: "Daily Drik Panchānga",
   panchang_stamp: "॥ पञ्चाङ्ग ॥",
+  panchang_style: "Panchang Style",
+  telugu_panchang: "Telugu",
+  gowri_panchang_title: "Gowri Panchangam",
+  gowri_panchang_sub: "Nalla Neram — auspicious & inauspicious windows by 1/8th of day & night",
+  hora_title: "Hora",
+  hora_sub:
+    "Planetary hour rulers — day in 12 horas, night in 12 horas; cycle Sun → Venus → Mercury → Moon → Saturn → Jupiter → Mars",
   place: "Place",
   date: "Date",
   show_panchang: "Show Panchang",
@@ -227,6 +234,12 @@ const hi: Dict = {
 
   panchang_title: "दैनिक दृक् पञ्चाङ्ग",
   panchang_stamp: "॥ पञ्चाङ्ग ॥",
+  panchang_style: "पञ्चाङ्ग शैली",
+  telugu_panchang: "तेलुगु",
+  gowri_panchang_title: "गौरी पञ्चाङ्गम्",
+  gowri_panchang_sub: "नल्ल नेरम — दिन व रात के 1/8 भाग पर शुभ-अशुभ काल",
+  hora_title: "होरा",
+  hora_sub: "ग्रह-होरा — दिन व रात्रि प्रत्येक 12 होरा, चक्र सूर्य → शुक्र → बुध → चन्द्र → शनि → गुरु → मङ्गल",
   place: "स्थान",
   date: "दिनांक",
   show_panchang: "पञ्चाङ्ग दिखाएँ",
@@ -996,7 +1009,8 @@ const fr: Dict = {
   julian_day: "Jour julien",
   unnamed_native: "Natif sans nom",
   graha_positions: "Positions des Grahas",
-  lagna_caption: "Le Lagna (Ascendant) est mis en évidence · Les maisons avancent dans le sens anti-horaire",
+  lagna_caption:
+    "Le Lagna (Ascendant) est mis en évidence · Les maisons avancent dans le sens anti-horaire",
 
   dasha_title: "Vimshottari Mahādaśā",
   dasha_subtitle: "Cycle planétaire complet de 120 ans depuis la naissance",

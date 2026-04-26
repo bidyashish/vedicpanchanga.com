@@ -11,10 +11,7 @@ export function PlanetsTable({ planets, ascendant }: Props) {
   const { t } = useI18n();
   const rows = [ascendant, ...planets];
   return (
-    <div
-      data-testid="planets-table"
-      className="card p-4 sm:p-5 overflow-x-auto"
-    >
+    <div data-testid="planets-table" className="card p-4 sm:p-5 overflow-x-auto">
       <h3 className="heading-section mb-3">{t("graha_positions")}</h3>
       <table className="w-full text-left border-collapse">
         <thead>
