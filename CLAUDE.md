@@ -63,6 +63,7 @@ Browser → `http://localhost:3121` (Vite dev server / Nginx-served static build
 - `calculator.py` — full kundali (`compute_chart`): planetary positions, houses, dashas, ashtakavarga, plus the new sub-period / Jaimini / friendship / Kalsarpa fields described below.
 - `advanced_panchang.py` — detailed panchang (tithi, nakshatra, yoga, karana with full daily *_sequence lists, sunrise/sunset, samvats, ritu, ayana, muhūrta windows, udaya lagna, chandrabalam, tarabalam, calendars).
 - `panchang_extras.py` — verified extra-yoga detectors layered on top of `advanced_panchang`: Ganda Mūla window + Ravi Yoga window. (Other classical sections like Mantri Mandala / Agnivāsa / Śivavāsa are intentionally omitted — see file docstring.)
+- `gowri_panchang.py` — Tamil/Telugu Gowri Panchangam (Nalla Neram). Splits sunrise→sunset and sunset→next-sunrise into 8 segments each, labels them via the 8-name cycle (Soram, Uthi, Visham, Amridha, Rogam, Labam, Dhanam, Sugam) plus an auspicious tag. Per-weekday starting Gowri lives in `GOWRI_DAY_START` / `GOWRI_NIGHT_START` — change those tables if your regional source disagrees. Exposed via `panchang["gowri_panchang"] = {day, night}` and rendered behind the **Telugu** tab on `/panchang`.
 - `vargas.py` — 16 divisional charts (D1–D60). D30 uses special uneven-segment rules; touch with care.
 - `ayanamsa.py` — ayanamsa selection (`AYANAMSA_OPTIONS`). Default `lahiri`.
 - `muhurta.py` — auspicious-window scanner with purpose-based scoring (0–100 with explainable reasons).

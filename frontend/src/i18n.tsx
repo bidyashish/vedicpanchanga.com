@@ -114,6 +114,10 @@ const en: Dict = {
 
   panchang_title: "Daily Drik Panchānga",
   panchang_stamp: "॥ पञ्चाङ्ग ॥",
+  panchang_style: "Panchang Style",
+  telugu_panchang: "Telugu",
+  gowri_panchang_title: "Gowri Panchangam",
+  gowri_panchang_sub: "Nalla Neram — auspicious & inauspicious windows by 1/8th of day & night",
   place: "Place",
   date: "Date",
   show_panchang: "Show Panchang",
@@ -227,6 +231,10 @@ const hi: Dict = {
 
   panchang_title: "दैनिक दृक् पञ्चाङ्ग",
   panchang_stamp: "॥ पञ्चाङ्ग ॥",
+  panchang_style: "पञ्चाङ्ग शैली",
+  telugu_panchang: "तेलुगु",
+  gowri_panchang_title: "गौरी पञ्चाङ्गम्",
+  gowri_panchang_sub: "नल्ल नेरम — दिन व रात के 1/8 भाग पर शुभ-अशुभ काल",
   place: "स्थान",
   date: "दिनांक",
   show_panchang: "पञ्चाङ्ग दिखाएँ",

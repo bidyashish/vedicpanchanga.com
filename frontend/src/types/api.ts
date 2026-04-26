@@ -182,6 +182,13 @@ export interface AuspiciousWindow extends MuhurtaWindow {
   nakshatra?: string;
 }
 
+export interface GowriSegment {
+  name: string;
+  start: string;
+  end: string;
+  auspicious: boolean;
+}
+
 export interface PanchangData {
   date: string;
   location: { timezone: string };
@@ -253,6 +260,10 @@ export interface PanchangData {
   yogas_extra?: {
     ganda_mula?: { nakshatra: string; ends_at: string } | null;
     ravi_yoga?: { start: string; end: string } | null;
+  };
+  gowri_panchang?: {
+    day: GowriSegment[];
+    night: GowriSegment[];
   };
   calendars: {
     kali_year: number;
