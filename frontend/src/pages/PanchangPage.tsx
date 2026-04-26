@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Section } from "@/components/panchang/Section";
 import { TimeBand } from "@/components/panchang/TimeBand";
 import { AdSlot } from "@/components/shell/AdSlot";
@@ -205,12 +206,10 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
           <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-end">
             <div className="md:col-span-3">
               <label className="field-label">{t("date")}</label>
-              <input
-                data-testid="panchang-date-input"
-                type="date"
+              <DatePicker
                 value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="field"
+                onChange={(iso) => setDate(iso)}
+                testIdPrefix="panchang-date"
               />
             </div>
             <div className="md:col-span-5">

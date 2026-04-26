@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
+import { DatePicker } from "@/components/ui/date-picker";
+import { TimePicker } from "@/components/ui/time-picker";
 import { fetchAyanamsaOptions } from "@/lib/api";
 import type { AyanamsaOption } from "@/types/api";
 
@@ -65,28 +67,18 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
     >
       <div>
         <label className="field-label">{t("date_of_birth")}</label>
-        <input
-          data-testid="birth-date-input"
-          type="date"
+        <DatePicker
           value={form.birth_date}
-          onChange={(e) => update("birth_date", e.target.value)}
-          className="field"
-          required
+          onChange={(iso) => update("birth_date", iso)}
+          testIdPrefix="birth-date"
         />
       </div>
       <div>
         <label className="field-label">{t("time_of_birth")}</label>
-        <input
-          data-testid="birth-time-input"
-          type="time"
+        <TimePicker
           value={form.birth_time}
-          onChange={(e) => {
-            update("birth_time", e.target.value);
-            // Dismiss the native time picker once a value is chosen.
-            e.currentTarget.blur();
-          }}
-          className="field"
-          required
+          onChange={(hhmm) => update("birth_time", hhmm)}
+          testIdPrefix="birth-time"
         />
       </div>
       <CitySearch

@@ -2,6 +2,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
+import { DatePicker } from "@/components/ui/date-picker";
 import { AdSlot } from "@/components/shell/AdSlot";
 import { fetchMuhurtaPurposes, findMuhurtas } from "@/lib/api";
 import { formatDayMonthYear, formatTimeRange, todayISO, daysFromNow } from "@/lib/format";
@@ -198,22 +199,18 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div>
               <label className="field-label">{t("muhurta_start_date")}</label>
-              <input
-                data-testid="muhurta-start-date"
-                type="date"
+              <DatePicker
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="field"
+                onChange={(iso) => setStartDate(iso)}
+                testIdPrefix="muhurta-start-date"
               />
             </div>
             <div>
               <label className="field-label">{t("muhurta_end_date")}</label>
-              <input
-                data-testid="muhurta-end-date"
-                type="date"
+              <DatePicker
                 value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="field"
+                onChange={(iso) => setEndDate(iso)}
+                testIdPrefix="muhurta-end-date"
               />
             </div>
           </div>

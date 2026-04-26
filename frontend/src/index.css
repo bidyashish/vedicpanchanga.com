@@ -350,10 +350,49 @@
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgb(var(--primary-rgb) / 0.18);
   }
-  input[type="date"].field, input[type="time"].field {
-    accent-color: var(--primary);
-    color-scheme: light dark;
+  /* react-day-picker — brand-aware overrides applied via the shadcn
+     Calendar component's root. Tokens live in :root so dark mode works. */
+  .rdp-root {
+    --rdp-accent-color: var(--primary);
+    --rdp-accent-background-color: rgb(var(--primary-rgb) / 0.12);
+    --rdp-today-color: var(--primary);
+    --rdp-day-height: 36px;
+    --rdp-day-width: 36px;
+    --rdp-day_button-height: 34px;
+    --rdp-day_button-width: 34px;
+    --rdp-nav_button-height: 1.75rem;
+    --rdp-nav_button-width: 1.75rem;
+    --rdp-nav-height: 2rem;
+    color: var(--ink);
+    font-size: 14px;
   }
+  .rdp-month_caption,
+  .rdp-caption_label,
+  .rdp-weekday { color: var(--ink-soft); }
+  .rdp-dropdown {
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 6px;
+  }
+  .rdp-dropdown:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgb(var(--primary-rgb) / 0.18);
+  }
+  .rdp-button_next, .rdp-button_previous { color: var(--ink-soft); }
+  .rdp-day_button:hover:not([disabled]) {
+    background: rgb(var(--primary-rgb) / 0.08);
+    color: var(--primary);
+  }
+  .rdp-selected .rdp-day_button {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+  .dark .rdp-selected .rdp-day_button { color: rgb(15 23 42); }
+  .rdp-today:not(.rdp-selected) .rdp-day_button { font-weight: 700; }
 
   .btn-primary {
     display: inline-flex;

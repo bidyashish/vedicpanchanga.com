@@ -10,8 +10,13 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@radix-ui/react-popover": "^1.1.15",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.11.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-day-picker": "^9.14.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.4",
