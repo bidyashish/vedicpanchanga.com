@@ -127,6 +127,10 @@ const en: Dict = {
   reading_heavens: "Reading the celestial clock…",
   consulting_heavens: "Consulting the heavens…",
   advertisement: "Advertisement",
+
+  native_name: "Native Name (optional)",
+  print_pdf: "Print PDF",
+  preparing_pdf: "Preparing PDF…",
 };
 
 const hi: Dict = {
@@ -233,6 +237,12 @@ const hi: Dict = {
   reading_heavens: "आकाशीय घड़ी पढ़ी जा रही है…",
   consulting_heavens: "ग्रहों से परामर्श…",
   advertisement: "विज्ञापन",
+
+  native_name: "जातक का नाम (वैकल्पिक)",
+  print_pdf: "पीडीएफ़ प्रिंट",
+  print_pdf_en: "English",
+  print_pdf_hi: "हिन्दी",
+  preparing_pdf: "पीडीएफ़ तैयार हो रही है…",
 };
 
 export const translations: Record<string, Dict> = { en, hi };

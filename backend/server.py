@@ -1,10 +1,11 @@
 import logging
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Literal, Optional
 
 from dotenv import load_dotenv
 from fastapi import APIRouter, FastAPI, HTTPException
+from fastapi.responses import Response
 from pydantic import BaseModel, Field
 from starlette.middleware.cors import CORSMiddleware
 
@@ -12,6 +13,7 @@ from advanced_panchang import compute_detailed_panchang
 from ayanamsa import AYANAMSA_OPTIONS
 from calculator import compute_chart
 from muhurta import find_muhurtas, list_purposes
+from pdf import render_pdf
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
@@ -138,6 +140,65 @@ def find_muhurta(req: MuhurtaRequest):
     except Exception as e:
         logging.exception("Muhurta search failed")
         raise HTTPException(status_code=500, detail=f"Muhurta error: {e}")
+
+
+class PrintPdfRequest(BaseModel):
+    name: Optional[str] = ""
+    sex: Optional[str] = "Male"
+    birth_date: str = Field(..., description="YYYY-MM-DD")
+    birth_time: str = Field(..., description="HH:MM (24h)")
+    latitude: float
+    longitude: float
+    timezone: Optional[str] = None
+    place_name: Optional[str] = ""
+    ayanamsa: Optional[str] = "lahiri"
+    lang: Literal["en", "hi"] = "en"
+
+
+@api_router.post("/print-pdf")
+def print_pdf(req: PrintPdfRequest):
+    """Render the Traditional one-page PDF for the given birth details and
+    return it as `application/pdf`."""
+    try:
+        year, month, day = map(int, req.birth_date.split("-"))
+        hour, minute = map(int, req.birth_time.split(":"))
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid date or time format")
+
+    try:
+        chart_data = compute_chart(
+            year=year, month=month, day=day,
+            hour=hour, minute=minute,
+            latitude=req.latitude, longitude=req.longitude,
+            timezone_name=req.timezone,
+            ayanamsa=req.ayanamsa or "lahiri",
+        )
+        panchang_data = compute_detailed_panchang(
+            target_date=req.birth_date,
+            latitude=req.latitude, longitude=req.longitude,
+            timezone_name=req.timezone,
+        )
+        pdf_bytes = render_pdf(
+            name=req.name or "",
+            sex=req.sex or "Male",
+            chart_data=chart_data,
+            panchang_data=panchang_data,
+            place_name=req.place_name or "",
+            lang=req.lang,
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.exception("PDF render failed")
+        raise HTTPException(status_code=500, detail=f"PDF render error: {e}")
+
+    safe_name = "".join(ch for ch in (req.name or "kundali") if ch.isalnum() or ch in "_-")[:40] or "kundali"
+    filename = f"{safe_name}-{req.birth_date}-{req.lang}.pdf"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'inline; filename="{filename}"'},
+    )
 
 
 app.include_router(api_router)

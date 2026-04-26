@@ -68,6 +68,38 @@ export function findMuhurtas(req: MuhurtaRequest): Promise<MuhurtaResponse> {
   });
 }
 
+export interface PrintPdfRequest {
+  name?: string;
+  sex?: string;
+  birth_date: string;
+  birth_time: string;
+  latitude: number;
+  longitude: number;
+  timezone?: string | null;
+  place_name?: string;
+  ayanamsa?: string;
+  lang: "en" | "hi";
+}
+
+export async function printPdf(req: PrintPdfRequest): Promise<Blob> {
+  const res = await fetch(`${API}/print-pdf`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(req),
+  });
+  if (!res.ok) {
+    let detail = `${res.status} ${res.statusText}`;
+    try {
+      const body = await res.json();
+      if (body?.detail) detail = body.detail;
+    } catch {
+      /* ignore */
+    }
+    throw new Error(detail);
+  }
+  return await res.blob();
+}
+
 function activeAcceptLanguage(): string {
   if (typeof document === "undefined") return "en";
   const lang = document.documentElement.lang || "en";

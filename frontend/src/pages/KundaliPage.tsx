@@ -8,8 +8,12 @@ import { DashaTable } from "@/components/kundali/DashaTable";
 import { AshtakavargaTable } from "@/components/kundali/AshtakavargaTable";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { AdSlot } from "@/components/shell/AdSlot";
-import { calculateChart } from "@/lib/api";
+import { calculateChart, printPdf } from "@/lib/api";
 import type { ChartData, LocationChoice } from "@/types/api";
+
+// PDF currently ships en + hi label sets; everything else falls back to English.
+type PdfLang = "en" | "hi";
+const pdfLangFor = (uiLang: string): PdfLang => (uiLang === "hi" ? "hi" : "en");
 
 const DEFAULT_FORM: BirthFormState = {
   birth_date: "1990-01-01",
@@ -27,7 +31,7 @@ interface Props {
 }
 
 export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [form, setForm] = useState<BirthFormState>(() => ({
     ...DEFAULT_FORM,
     place_name: sharedLocation.place_name,
@@ -41,6 +45,8 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [nativeName, setNativeName] = useState<string>("");
+  const [printing, setPrinting] = useState(false);
   const didAutoRunRef = useRef(false);
 
   const calculate = async (body: BirthFormState) => {
@@ -87,6 +93,37 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
     calculate(form);
   };
 
+  const onPrint = async () => {
+    if (!Number.isFinite(form.latitude) || !Number.isFinite(form.longitude)) {
+      setError("Please enter valid latitude and longitude, or pick a city.");
+      return;
+    }
+    setPrinting(true);
+    setError(null);
+    try {
+      const blob = await printPdf({
+        name: nativeName,
+        sex: "Male",
+        birth_date: form.birth_date,
+        birth_time: form.birth_time,
+        latitude: form.latitude,
+        longitude: form.longitude,
+        timezone: form.timezone,
+        place_name: form.place_name,
+        ayanamsa: form.ayanamsa,
+        lang: pdfLangFor(lang),
+      });
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank", "noopener,noreferrer");
+      // Revoke after a delay so the new tab has time to load.
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    } catch (e) {
+      setError((e as Error).message || "PDF generation failed");
+    } finally {
+      setPrinting(false);
+    }
+  };
+
   return (
     <section className="pt-3 sm:pt-4 pb-8" data-testid="kundali-page">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
@@ -95,7 +132,33 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
           <div className="card p-4 sm:p-5 lg:sticky lg:top-16">
             <h2 className="heading-section">{t("birth_details")}</h2>
             <p className="meta mb-4">{t("enter_native_time_place")}</p>
+            <div className="mb-3">
+              <label className="field-label" htmlFor="native-name-input">
+                {t("native_name")}
+              </label>
+              <input
+                id="native-name-input"
+                data-testid="native-name-input"
+                type="text"
+                value={nativeName}
+                onChange={(e) => setNativeName(e.target.value)}
+                className="field"
+                maxLength={40}
+                autoComplete="name"
+              />
+            </div>
             <BirthForm form={form} setForm={setForm} onSubmit={onSubmit} loading={loading} />
+            <div className="mt-3">
+              <button
+                type="button"
+                data-testid="print-pdf"
+                onClick={onPrint}
+                disabled={printing || loading}
+                className="btn-ghost w-full"
+              >
+                {printing ? t("preparing_pdf") : t("print_pdf")}
+              </button>
+            </div>
             {error && (
               <div
                 data-testid="error-banner"
