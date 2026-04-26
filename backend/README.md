@@ -44,7 +44,7 @@ Backend Python is linted and formatted by [ruff](https://docs.astral.sh/ruff/)
 ```bash
 source venv/bin/activate
 ruff check .          # lint
-ruff check . --fix    # lint + auto-fix what's safe
+ruff check . --fix    # lint and auto-fix what's safe
 ruff format .         # format — write
 ruff format --check . # format check (used by CI)
 ```
