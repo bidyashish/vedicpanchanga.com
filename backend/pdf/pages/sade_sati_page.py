@@ -11,7 +11,7 @@ from typing import Any, Dict, List
 
 from fpdf import FPDF
 
-from .text import BOLD, DEV_REGULAR, LATIN_REGULAR, REGULAR, draw_text
+from ..core.text import BOLD, DEV_REGULAR, LATIN_REGULAR, REGULAR, draw_text
 
 
 def _draw_header(pdf: FPDF, name: str, page_label: str) -> None:

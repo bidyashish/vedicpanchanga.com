@@ -1,6 +1,4 @@
-"""Index / Table of contents page placed at the very end so it can list real
-page numbers for every section drawn earlier in the document.
-"""
+"""Index page — placed last so each section's actual page number is known."""
 
 from __future__ import annotations
 
@@ -8,8 +6,8 @@ from typing import List, Tuple
 
 from fpdf import FPDF
 
-from .layout import MARGIN, page_header, section_title
-from .text import BOLD, LATIN_REGULAR, REGULAR, draw_text
+from ..core.layout import MARGIN, page_header, section_title
+from ..core.text import BOLD, LATIN_REGULAR, REGULAR, draw_text
 
 
 def draw_toc_page(pdf: FPDF, name: str, sections: List[Tuple[str, int]]) -> None:
@@ -31,11 +29,8 @@ def draw_toc_page(pdf: FPDF, name: str, sections: List[Tuple[str, int]]) -> None
         if i % 2 == 1:
             pdf.set_fill_color(248, 248, 244)
             pdf.rect(MARGIN, cur_y, inner_w, row_h, "F")
-        # Section title
         draw_text(pdf, MARGIN + 8, cur_y + row_h - 5, label,
                   LATIN_REGULAR, REGULAR, 10)
-        # Dotted leader (visual rhythm — not strictly required)
-        # Page number on the right
         draw_text(pdf, MARGIN + inner_w - 8, cur_y + row_h - 5, str(page_no),
                   LATIN_REGULAR, BOLD, 10, anchor="right")
         cur_y += row_h

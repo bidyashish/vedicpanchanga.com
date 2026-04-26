@@ -15,10 +15,10 @@ export function TopBar({
   const { t } = useI18n();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const tabs: { id: View; label: string }[] = [
-    { id: "kundali", label: t("nav_kundali") },
-    { id: "panchang", label: t("nav_panchang") },
-    { id: "muhurta", label: t("nav_muhurta") },
+  const tabs: { id: View; label: string; href: string }[] = [
+    { id: "kundali",  label: t("nav_kundali"),  href: "/" },
+    { id: "panchang", label: t("nav_panchang"), href: "/panchang" },
+    { id: "muhurta",  label: t("nav_muhurta"),  href: "/muhurta" },
   ];
 
   // Close mobile drawer on Esc or when viewport grows past mobile.
@@ -41,6 +41,16 @@ export function TopBar({
   const pickTab = (id: View) => {
     setView(id);
     setDrawerOpen(false);
+  };
+
+  // Real anchor click → keep SPA navigation but only if it's a plain left-click
+  // without modifier keys. Cmd/Ctrl/middle-click still open in a new tab because
+  // we let the browser handle them.
+  const onNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: View) => {
+    if (e.defaultPrevented) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    pickTab(id);
   };
 
   return (
@@ -77,13 +87,15 @@ export function TopBar({
           {tabs.map((tb) => {
             const active = view === tb.id;
             return (
-              <button
+              <a
                 key={tb.id}
+                href={tb.href}
                 data-testid={`nav-${tb.id}`}
                 role="tab"
                 aria-selected={active}
-                onClick={() => pickTab(tb.id)}
-                className={`relative whitespace-nowrap px-3 py-1.5 text-meta font-medium rounded-sm transition-colors ${
+                aria-current={active ? "page" : undefined}
+                onClick={(e) => onNavClick(e, tb.id)}
+                className={`relative whitespace-nowrap px-3 py-1.5 text-meta font-medium rounded-sm no-underline transition-colors ${
                   active
                     ? "text-saffron"
                     : "text-ink-soft hover:text-ink hover:bg-parchment-100"
@@ -93,7 +105,7 @@ export function TopBar({
                 {active && (
                   <span className="absolute left-1/2 -translate-x-1/2 -bottom-[10px] h-0.5 w-full rounded-full bg-saffron" />
                 )}
-              </button>
+              </a>
             );
           })}
         </nav>
@@ -150,11 +162,12 @@ export function TopBar({
                 const active = view === tb.id;
                 return (
                   <li key={tb.id}>
-                    <button
+                    <a
+                      href={tb.href}
                       data-testid={`mnav-${tb.id}`}
-                      onClick={() => pickTab(tb.id)}
+                      onClick={(e) => onNavClick(e, tb.id)}
                       aria-current={active ? "page" : undefined}
-                      className={`w-full flex items-center justify-between text-left px-4 py-3 rounded-md text-meta font-semibold transition-colors ${
+                      className={`w-full flex items-center justify-between text-left px-4 py-3 rounded-md text-meta font-semibold no-underline transition-colors ${
                         active
                           ? "bg-saffron/10 text-saffron"
                           : "text-ink hover:bg-parchment-100"
@@ -164,7 +177,7 @@ export function TopBar({
                       {active && (
                         <span className="w-2 h-2 rounded-full bg-saffron" aria-hidden="true" />
                       )}
-                    </button>
+                    </a>
                   </li>
                 );
               })}

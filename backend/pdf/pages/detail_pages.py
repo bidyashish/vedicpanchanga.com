@@ -8,15 +8,15 @@ from typing import Any, Dict, List
 
 from fpdf import FPDF
 
-from .formatters import fmt_dms
-from .i18n import (
+from ..core.formatters import fmt_dms
+from ..core.i18n import (
     DASHA_LORD_ABBR,
     DASHA_TOTAL_YEARS,
     PLANET_KEY_BY_NAME,
     SIGN_KEYS_BY_ID,
     t,
 )
-from .text import (
+from ..core.text import (
     BOLD,
     DEV_REGULAR,
     LATIN_REGULAR,

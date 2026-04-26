@@ -7,9 +7,9 @@ from typing import Any, Dict
 
 from fpdf import FPDF
 
-from .chart import draw_north_indian_chart
-from .layout import MARGIN, ZEBRA_RGB, page_header, section_title
-from .text import BOLD, LATIN_REGULAR, REGULAR, draw_text
+from ..core.chart import draw_north_indian_chart
+from ..core.layout import MARGIN, ZEBRA_RGB, page_header, section_title
+from ..core.text import BOLD, LATIN_REGULAR, REGULAR, draw_text
 
 
 def draw_jaimini_page(

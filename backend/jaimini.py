@@ -1,18 +1,9 @@
-"""Jaimini-system computations: Chara karakas + Karakamsa & Swamsa charts.
+"""Jaimini Chara karakas + Karakamsa & Swamsa chart construction.
 
-Chara karakas (7-karaka system used here): rank the 7 visible planets by
-their degrees-within-sign in descending order. The planet with the highest
-degree-in-sign is Atmakaraka, next Amatyakaraka, and so on through
-Bhratrukaraka, Matrukaraka, Putrakaraka, Gnatikaraka, Darakaraka.
-
-Karakamsa lagna = the navamsa (D9) sign occupied by the Atmakaraka. The
-Karakamsa kundli is the natal D9 redrawn so that this sign sits in the
-first house — i.e. house numbers count from the Karakamsa lagna instead of
-the natal D9 lagna.
-
-Swamsa lagna = the navamsa sign occupied by the lagna degree itself, i.e.
-the natal D9 ascendant. The Swamsa kundli is the natal D9 redrawn from
-that sign.
+Karakamsa lagna = D9 sign of the Atmakaraka (rotation reference for the
+Karakamsa kundli). Swamsa lagna = D9 sign of the natal ascendant degree.
+Both charts use the same planet → D9-sign mapping, only the house numbering
+rotates.
 """
 
 from __future__ import annotations

@@ -6,8 +6,8 @@ from typing import Any, Dict, List
 
 from fpdf import FPDF
 
-from .layout import MARGIN, page_header, section_title
-from .text import BOLD, LATIN_REGULAR, REGULAR, draw_text
+from ..core.layout import MARGIN, page_header, section_title
+from ..core.text import BOLD, LATIN_REGULAR, REGULAR, draw_text
 
 
 # Cell tints to make the matrix scannable. GF=green, F=light-green, N=parchment,

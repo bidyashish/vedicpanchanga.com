@@ -218,6 +218,10 @@ export interface PanchangData {
   chandrabalam: { good_rashis: { rashi: string }[] };
   tarabalam: { good_nakshatras: { nakshatra: string }[] };
   shool_vasa: { disha_shool: string; rahu_vasa: string; chandra_vasa: string };
+  yogas_extra?: {
+    ganda_mula?: { nakshatra: string; ends_at: string } | null;
+    ravi_yoga?: { start: string; end: string } | null;
+  };
   calendars: {
     kali_year: number;
     kali_ahargana_days: number;

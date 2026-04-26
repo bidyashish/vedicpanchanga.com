@@ -1,21 +1,9 @@
-"""Vimshottari sub-period computations (Antardasha and Pratyantar).
+"""Vimshottari Antardasha and Pratyantar sub-period computations.
 
-The 9-lord Vimshottari sequence and per-lord period years live in
-`calculator.py`; this module just nests them.
-
-Within a Mahadasha of lord X with total Vimshottari period M years, the
-Antardasha of lord Y lasts (M * Y_years / 120). The 9 Antardashas inside a
-Mahadasha begin with the Mahadasha lord itself and proceed in canonical
-Vimshottari order.
-
-For the *first* Mahadasha — the one active at birth — the conceptual start
-predates birth (the lord was already running). We rebuild that conceptual
-start from the known balance years so antardashas can be tabulated for the
-full Mahadasha; consumers can mark sub-periods that ended before birth as
-already-elapsed when rendering.
-
-Pratyantar (third level) is computed identically, one level deeper: within
-an Antardasha of duration A, a Pratyantar of lord Z lasts (A * Z_years / 120).
+For the first Mahadasha we reconstruct its conceptual start from the
+balance years (the lord was already running before birth) so the full
+9-antardasha table can be emitted; pre-birth sub-periods get their elapsed
+flag from the caller via end-date comparison.
 """
 
 from __future__ import annotations

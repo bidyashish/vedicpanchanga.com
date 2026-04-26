@@ -1,10 +1,5 @@
-"""Detailed Vimshottari pages: Antardasha (level 2) and Pratyantar (level 3).
-
-Antardasha view mirrors the classic mini-grid layout: a row of small blocks,
-each block headed by a Mahadasha title and listing its 9 sub-period end
-dates. Pratyantar view is a paginated catalogue: every Antardasha gets one
-small block listing its 9 pratyantar end dates.
-"""
+"""Detailed Vimshottari pages: Antardasha grid (one page) and Pratyantar
+catalogue (paginated)."""
 
 from __future__ import annotations
 
@@ -15,9 +10,9 @@ from fpdf import FPDF
 
 from dasha_extras import compute_pratyantars
 
-from .i18n import DASHA_LORD_ABBR, t
-from .layout import MARGIN, page_header, section_title
-from .text import BOLD, DEV_REGULAR, LATIN_REGULAR, REGULAR, draw_text
+from ..core.i18n import DASHA_LORD_ABBR, t
+from ..core.layout import MARGIN, page_header, section_title
+from ..core.text import BOLD, DEV_REGULAR, LATIN_REGULAR, REGULAR, draw_text
 
 
 PAGE_LABEL_ANTAR = "Vimshottari Dasha — Antardasha"
@@ -31,13 +26,6 @@ def _fmt_date_short(iso: str) -> str:
     except Exception:
         return iso
     return f"{d.day:>2}/{d.month:>2}/{d.year % 100:02d}"
-
-
-def _fmt_date_long(iso: str) -> str:
-    try:
-        return datetime.fromisoformat(iso).strftime("%d %b %Y")
-    except Exception:
-        return iso
 
 
 def _abbr(lord: str) -> str:

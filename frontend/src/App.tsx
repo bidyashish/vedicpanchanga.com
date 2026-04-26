@@ -10,28 +10,48 @@ import { TermsPage } from "@/pages/TermsPage";
 import { applySeo } from "@/lib/seo";
 import type { LocationChoice } from "@/types/api";
 
-const HOME_SEO_BY_VIEW: Record<"kundali" | "panchang" | "muhurta", { title: string; description: string; canonical: string }> = {
+export type View = "kundali" | "panchang" | "muhurta" | "privacy" | "terms";
+
+const SITE = "https://vedicpanchanga.com";
+
+const VIEW_PATH: Record<View, string> = {
+  kundali: "/",
+  panchang: "/panchang",
+  muhurta: "/muhurta",
+  privacy: "/privacy",
+  terms: "/terms",
+};
+
+const SEO_BY_VIEW: Record<View, { title: string; description: string; canonical: string }> = {
   kundali: {
     title: "Vedic Panchanga — Free Drik Panchang, Kundali & Muhūrta Calculator",
     description:
       "Free Vedic Panchanga calculator: daily Drik Panchang, North & South Indian Kundali (birth chart), Vimśottarī Daśā, divisional charts, and Muhūrta finder. Sidereal Lahiri, Swiss Ephemeris precision.",
-    canonical: "https://vedicpanchanga.com/",
+    canonical: `${SITE}/`,
   },
   panchang: {
     title: "Daily Drik Panchang — Tithi, Nakshatra, Yoga, Karana · Vedic Panchanga",
     description:
       "Daily Drik Panchang for any date and location: tithi, nakshatra, yoga, karana, sunrise/sunset, Rāhu kāla, Abhijit muhūrta, Chandrabalam and Tārabalam.",
-    canonical: "https://vedicpanchanga.com/#panchang",
+    canonical: `${SITE}/panchang`,
   },
   muhurta: {
     title: "Muhūrta Finder — Auspicious Timings for Any Undertaking · Vedic Panchanga",
     description:
       "Find auspicious muhūrta windows by purpose, date range and location. Purpose-based scoring with explainable reasons; native filters for Chandrabalam and Tārabalam.",
-    canonical: "https://vedicpanchanga.com/#muhurta",
+    canonical: `${SITE}/muhurta`,
+  },
+  privacy: {
+    title: "Privacy Policy · Vedic Panchanga",
+    description: "How vedicpanchanga.com handles your data.",
+    canonical: `${SITE}/privacy`,
+  },
+  terms: {
+    title: "Terms of Use · Vedic Panchanga",
+    description: "Terms governing the use of vedicpanchanga.com.",
+    canonical: `${SITE}/terms`,
   },
 };
-
-export type View = "kundali" | "panchang" | "muhurta" | "privacy" | "terms";
 
 const DEFAULT_LOCATION: LocationChoice = {
   place_name: "New Delhi, India",
@@ -40,56 +60,47 @@ const DEFAULT_LOCATION: LocationChoice = {
   timezone: "Asia/Kolkata",
 };
 
-function viewFromUrl(): View {
-  const path = window.location.pathname;
-  if (path === "/privacy") return "privacy";
-  if (path === "/terms") return "terms";
+function viewFromPath(): View {
+  const path = window.location.pathname.replace(/\/+$/, "") || "/";
+  switch (path) {
+    case "/panchang":   return "panchang";
+    case "/muhurta":    return "muhurta";
+    case "/privacy":    return "privacy";
+    case "/terms":      return "terms";
+    case "/kundali":    return "kundali";
+    case "/":           return "kundali";
+    default:            return "kundali";
+  }
+}
+
+// Migrate any old hash-style URL (`/#panchang`) to the new clean path on
+// first load so external links and indexed search results don't break.
+function migrateHashOnce(): View | null {
   const hash = window.location.hash.replace("#", "");
-  if (hash === "panchang" || hash === "muhurta") return hash;
-  return "kundali";
+  if (!hash) return null;
+  const allowed: View[] = ["kundali", "panchang", "muhurta"];
+  const v = allowed.includes(hash as View) ? (hash as View) : null;
+  if (!v) return null;
+  window.history.replaceState(null, "", VIEW_PATH[v] + window.location.search);
+  return v;
 }
 
 export default function App() {
-  const [view, setView] = useState<View>(viewFromUrl);
+  const [view, setView] = useState<View>(() => migrateHashOnce() ?? viewFromPath());
   const [sharedLocation, setSharedLocation] = useState<LocationChoice>(DEFAULT_LOCATION);
 
-  // Sync URL when view changes. Privacy/Terms are real paths; calculator
-  // tabs share the root path with a hash.
+  // Push the new path whenever the view changes from in-app navigation.
   useEffect(() => {
-    let desiredPath: string;
-    let desiredHash: string;
-    if (view === "privacy" || view === "terms") {
-      desiredPath = `/${view}`;
-      desiredHash = "";
-    } else {
-      desiredPath = "/";
-      desiredHash = view === "kundali" ? "" : `#${view}`;
-    }
-    if (
-      window.location.pathname === desiredPath &&
-      window.location.hash === desiredHash
-    ) {
-      return;
-    }
-    const url = desiredPath + window.location.search + desiredHash;
-    if (window.location.pathname !== desiredPath) {
-      // Crossing path boundary (calculator <-> legal) — push so back works.
-      window.history.pushState(null, "", url);
-    } else {
-      // Same path, just toggling calculator tabs — replace.
-      window.history.replaceState(null, "", url);
-    }
+    const desiredPath = VIEW_PATH[view];
+    if (window.location.pathname === desiredPath) return;
+    window.history.pushState(null, "", desiredPath + window.location.search);
   }, [view]);
 
-  // React to back/forward navigation and external hash changes.
+  // Browser back/forward → re-derive the view from the URL.
   useEffect(() => {
-    const sync = () => setView(viewFromUrl());
+    const sync = () => setView(viewFromPath());
     window.addEventListener("popstate", sync);
-    window.addEventListener("hashchange", sync);
-    return () => {
-      window.removeEventListener("popstate", sync);
-      window.removeEventListener("hashchange", sync);
-    };
+    return () => window.removeEventListener("popstate", sync);
   }, []);
 
   const handleLocationChange = useCallback((loc: LocationChoice) => {
@@ -98,11 +109,9 @@ export default function App() {
 
   const isLegal = view === "privacy" || view === "terms";
 
-  // Keep homepage SEO synced when toggling calculator tabs.
-  // Privacy/Terms pages set their own SEO inside their own useEffect.
+  // Keep <title>, <meta>, canonical link in sync with the current route.
   useEffect(() => {
-    if (view === "privacy" || view === "terms") return;
-    applySeo(HOME_SEO_BY_VIEW[view]);
+    applySeo(SEO_BY_VIEW[view]);
   }, [view]);
 
   return (

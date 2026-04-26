@@ -12,21 +12,21 @@ from fpdf import FPDF
 import mangal
 import sade_sati
 
-from .chart import draw_north_indian_chart
-from .dasha_detail_pages import (
+from .core.chart import draw_north_indian_chart
+from .pages.dasha_detail_pages import (
     draw_antardasha_page,
     draw_pratyantar_pages,
 )
-from .detail_pages import (
+from .pages.detail_pages import (
     draw_dasha_long,
     draw_planet_long_table,
     draw_planet_varga_matrix,
 )
-from .jaimini_page import draw_jaimini_page
-from .layout import page_footer
-from .relations_page import draw_friendship_page, draw_kalsarpa_page
-from .toc_page import draw_toc_page
-from .formatters import (
+from .pages.jaimini_page import draw_jaimini_page
+from .core.layout import page_footer
+from .pages.relations_page import draw_friendship_page, draw_kalsarpa_page
+from .pages.toc_page import draw_toc_page
+from .core.formatters import (
     fmt_ayan,
     fmt_dasha_balance,
     fmt_date_dmy,
@@ -35,15 +35,15 @@ from .formatters import (
     fmt_lon,
     local_sidereal_time,
 )
-from .sade_sati_page import draw_mangal_page, draw_sade_sati_page
-from .varga_pages import draw_varga_pages
-from .i18n import (
+from .pages.sade_sati_page import draw_mangal_page, draw_sade_sati_page
+from .pages.varga_pages import draw_varga_pages
+from .core.i18n import (
     PLANET_KEY_BY_NAME,
     SIGN_KEYS_BY_ID,
     WEEKDAY_KEYS,
     t,
 )
-from .sections import (
+from .core.sections import (
     draw_ashtakavarga,
     draw_basic_details,
     draw_dasha_block,
@@ -51,7 +51,7 @@ from .sections import (
     draw_planets_table,
     draw_title_bar,
 )
-from .text import (
+from .core.text import (
     BOLD,
     DEV_REGULAR,
     LATIN_REGULAR,
@@ -64,12 +64,11 @@ PAGE_W_PT, PAGE_H_PT = 595.28, 841.89  # A4 in pt
 
 
 class _ReportPDF(FPDF):
-    """FPDF subclass that auto-stamps the standard footer on every page.
-    fpdf2 invokes `footer()` right before a new page is added and again at
-    finalisation, so each page gets its number drawn while its font subset
-    is still mutable."""
+    """FPDF subclass — uses the built-in `footer()` hook so the stamp runs
+    while each page's font subset is still mutable. (Stamping post-finalise
+    via `pdf.page = n` corrupts the subset.)"""
 
-    def footer(self) -> None:  # noqa: D401 — fpdf2 hook
+    def footer(self) -> None:
         page_footer(self)
 
 
@@ -92,9 +91,8 @@ def _build_basic_rows(
 
     birth_local = datetime.fromisoformat(birth["local_time"])
 
-    # The top-level `panchang.karana` reflects sunrise; for a birth chart we
-    # want the karana (and tithi/yoga) active at the moment of birth itself.
-    # Walk each sequence and pick the first entry whose end is after birth.
+    # `panchang.karana` (and tithi/yoga) report the value at sunrise; for
+    # a birth chart we need the value at the actual birth moment instead.
     def _at_birth(seq, fallback):
         if not seq:
             return fallback or {}
@@ -269,7 +267,7 @@ def render_pdf(
               (DEV_REGULAR if lang == "hi" else LATIN_REGULAR),
               REGULAR, 7, anchor="center")
 
-    # ---- additional pages, tracking each section's start page for the TOC ----
+    # Track each section's start page so the TOC at the end can list them.
     sections: List[Tuple[str, int]] = [("Traditional Birth Summary", 1)]
 
     def _track(label: str, fn) -> None:

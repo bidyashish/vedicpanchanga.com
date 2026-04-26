@@ -1,13 +1,7 @@
-"""Shared page-chrome helpers used by every detail page.
-
-Centralising these means the page header strip, footer with page number, and
-section title bar all look identical across the PDF — no per-page font or
-colour drift.
-"""
+"""Shared page-chrome (header strip, footer, section title bar) and the
+palette every PDF page should pull from."""
 
 from __future__ import annotations
-
-from typing import Optional
 
 from fpdf import FPDF
 
@@ -19,12 +13,11 @@ FOOTER_H = 14
 
 ZEBRA_RGB = (248, 248, 244)
 HEADER_RGB = (228, 226, 218)
-ACCENT_RGB = (179, 89, 0)  # Saffron stamp colour
+ACCENT_RGB = (179, 89, 0)
 RULE_RGB = (120, 120, 120)
 
 
 def page_header(pdf: FPDF, name: str, label: str) -> None:
-    """Top strip with native name (left) and section label (right)."""
     pdf.set_line_width(0.5)
     pdf.set_draw_color(*RULE_RGB)
     pdf.rect(MARGIN, MARGIN, pdf.w - 2 * MARGIN, HEADER_H)
@@ -35,11 +28,9 @@ def page_header(pdf: FPDF, name: str, label: str) -> None:
 
 
 def page_footer(pdf: FPDF) -> None:
-    """Footer rule + brand on the left, current page number on the right.
-    Call once near the end of every page's draw — fpdf2's per-page font
-    subset is still mutable here. Doing it post-finalisation (e.g. by
-    revisiting pages with `pdf.page = n`) corrupts the font dict and
-    yields garbled glyphs."""
+    # Must be called during the page's draw — revisiting a finalised page
+    # via `pdf.page = n` corrupts fpdf2's per-page font subset and produces
+    # garbled glyphs.
     y = pdf.h - FOOTER_H
     pdf.set_draw_color(220, 220, 220)
     pdf.set_line_width(0.4)
@@ -52,7 +43,7 @@ def page_footer(pdf: FPDF) -> None:
 
 def section_title(pdf: FPDF, x: float, y: float, w: float, title: str,
                   subtitle: str = "") -> float:
-    """Title bar with optional subtitle. Returns the new y after the bar."""
+    """Saffron accent bar + title (and optional subtitle). Returns next y."""
     bar_h = 22 if not subtitle else 30
     pdf.set_fill_color(*ACCENT_RGB)
     pdf.set_draw_color(*ACCENT_RGB)

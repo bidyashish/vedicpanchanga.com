@@ -1,15 +1,6 @@
-"""Kalsarpa Yoga detection.
-
-A horoscope has Kalsarpa Yoga when all seven visible planets (Sun, Moon,
-Mars, Mercury, Jupiter, Venus, Saturn) lie within the half of the zodiac
-spanning from Rahu to Ketu. The named variant (Anant, Kulik, Vasuki, …)
-is read from the house Rahu occupies relative to the lagna.
-
-If every planet is on the *forward* arc from Rahu to Ketu (Rahu leading)
-it is straight Kalsarpa; if every planet is on the arc from Ketu to Rahu
-(planets behind Rahu) it is reverse / partial Kalsarpa. We report a clear
-verdict either way.
-"""
+"""Kalsarpa Yoga detection: all 7 visible planets confined to one
+Rahu↔Ketu arc. Variant name (Anant..Sheshnag) keyed by Rahu's house from
+the lagna; direction (forward/reverse) by which arc holds the planets."""
 
 from __future__ import annotations
 

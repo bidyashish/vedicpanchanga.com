@@ -1003,6 +1003,25 @@ def compute_detailed_panchang(
     rahu_vasa = RAHU_VASA[vara_iso]
     chandra_vasa = CHANDRA_VASA[moon_sign_id]
 
+    # Lookup-style yoga extras — only keeping the two whose canonical formula
+    # we've verified against drikpanchang. Mantri Mandala / Homahuti /
+    # Agnivāsa / Śivavāsa / Kumbha Cakra each need authoritative tables we
+    # don't have and the speculative formulas disagreed with the reference.
+    from panchang_extras import detect_ganda_mula, detect_ravi_yoga
+    moon_nak_1 = int(current_nak["index"]) if current_nak else 1
+    sun_nak_1 = sun_nak_idx + 1
+    extras = {
+        "ganda_mula": detect_ganda_mula(
+            current_nak.get("name", "") if current_nak else "",
+            current_nak.get("ends_at") if current_nak else None,
+        ),
+        "ravi_yoga": detect_ravi_yoga(
+            moon_nak_1, sun_nak_1,
+            _iso(sunrise_jd, tz) or "",
+            current_nak.get("ends_at") if current_nak else None,
+        ),
+    }
+
     return {
         "date": target_date,
         "location": {
@@ -1101,6 +1120,10 @@ def compute_detailed_panchang(
             "disha_shool": disha_shool,
             "rahu_vasa": rahu_vasa,
             "chandra_vasa": chandra_vasa,
+        },
+        "yogas_extra": {
+            "ganda_mula": extras["ganda_mula"],
+            "ravi_yoga": extras["ravi_yoga"],
         },
         "calendars": {
             "kali_year": kali_year,

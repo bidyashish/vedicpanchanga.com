@@ -23,18 +23,19 @@ import type {
   TransitItem,
 } from "@/types/api";
 
-// Pull HH:MM (24h, in the given timezone) out of an ISO datetime.
-// Used to anchor the Lagna Kundali to local sunrise.
-function localTimeFromIso(iso: string, tz?: string): string {
+// Current wall-clock HH:MM in the given IANA timezone. Used to anchor the
+// Lagna Kundali to "now in that location" — anchoring to sunrise made the
+// chart look frozen on the sun's sign because the lagna co-rises with the sun.
+function nowTimeInTz(tz?: string): string {
   try {
-    return new Date(iso).toLocaleTimeString("en-GB", {
+    return new Date().toLocaleTimeString("en-GB", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: false,
       timeZone: tz,
     });
   } catch {
-    return "06:00";
+    return "12:00";
   }
 }
 
@@ -93,6 +94,10 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
   const [loc, setLoc] = useState<LocationChoice>(defaultLocation);
   const [data, setData] = useState<PanchangData | null>(null);
   const [chart, setChart] = useState<ChartData | null>(null);
+  // The HH:MM the lagna kuṇḍalī is cast for. We use *current* wall-clock time
+  // in the chart's location so the chart reflects the live sky — at sunrise
+  // the lagna co-rises with the sun and the chart looked frozen on Aries when
+  // the sun was in Aries.
   const [chartTime, setChartTime] = useState<string>("");
   const [chartStyle, setChartStyle] = useState<"north" | "south">("north");
   const [loading, setLoading] = useState(false);
@@ -117,29 +122,25 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
       });
       setData(d);
 
-      // Fetch the Lagna Kundali at local sunrise (the standard convention).
-      // Failures here are non-fatal — panchang is the primary content.
-      const sunriseIso = d.sun_moon?.sunrise;
-      if (sunriseIso) {
-        const time = localTimeFromIso(sunriseIso, d.location.timezone);
-        setChartTime(time);
-        setChartLoading(true);
-        try {
-          const c = await calculateChart({
-            birth_date: d.date,
-            birth_time: time,
-            latitude: lat,
-            longitude: lon,
-            timezone: d.location.timezone,
-            place_name: placeName,
-            ayanamsa: "lahiri",
-          });
-          setChart(c);
-        } catch {
-          /* keep previous chart silently */
-        } finally {
-          setChartLoading(false);
-        }
+      // Anchor the lagna chart to "now" in the chart's location.
+      const time = nowTimeInTz(d.location.timezone);
+      setChartTime(time);
+      setChartLoading(true);
+      try {
+        const c = await calculateChart({
+          birth_date: d.date,
+          birth_time: time,
+          latitude: lat,
+          longitude: lon,
+          timezone: d.location.timezone,
+          place_name: placeName,
+          ayanamsa: "lahiri",
+        });
+        setChart(c);
+      } catch {
+        /* keep previous chart silently */
+      } finally {
+        setChartLoading(false);
       }
     } catch (e) {
       setError((e as Error).message || "Failed to fetch Panchang");
@@ -288,8 +289,8 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
               title="Lagna Kuṇḍalī"
               subtitle={
                 chartTime
-                  ? `Sunrise · ${formatLongDate(data.date)} at ${chartTime}`
-                  : "Sunrise chart"
+                  ? `${formatLongDate(data.date)} at ${chartTime} · ${data.location.timezone}`
+                  : "Live chart"
               }
               testId="section-lagna-kundali"
             >
@@ -625,6 +626,17 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     refDate={refDate}
                   />
                 ))}
+                {data.yogas_extra?.ravi_yoga && (
+                  <TimeBand
+                    testId="band-ravi-yoga"
+                    title="Ravi Yoga"
+                    window={data.yogas_extra.ravi_yoga}
+                    color="var(--success)"
+                    desc="Sun-Moon nakṣatra alignment · cancels nakṣatra doṣa"
+                    tz={tz}
+                    refDate={refDate}
+                  />
+                )}
               </div>
             </Section>
 
@@ -693,6 +705,20 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     refDate={refDate}
                   />
                 ))}
+                {data.yogas_extra?.ganda_mula && (
+                  <TimeBand
+                    testId="band-ganda-mula"
+                    title="Ganda Mūla"
+                    window={{
+                      start: data.sun_moon.sunrise,
+                      end: data.yogas_extra.ganda_mula.ends_at,
+                    }}
+                    color="var(--danger)"
+                    desc={`Moon in ${data.yogas_extra.ganda_mula.nakshatra} · avoid new starts`}
+                    tz={tz}
+                    refDate={refDate}
+                  />
+                )}
               </div>
             </Section>
 

@@ -13,7 +13,7 @@ from typing import Tuple
 
 from fpdf import FPDF
 
-FONT_DIR = Path(__file__).parent / "fonts"
+FONT_DIR = Path(__file__).resolve().parent.parent / "fonts"
 
 DEV_REGULAR = "NotoDev"
 LATIN_REGULAR = "NotoSans"

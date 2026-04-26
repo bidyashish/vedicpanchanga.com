@@ -11,9 +11,9 @@ from typing import Any, Dict, List
 
 from fpdf import FPDF
 
-from .chart import draw_north_indian_chart
-from .i18n import t
-from .text import (
+from ..core.chart import draw_north_indian_chart
+from ..core.i18n import t
+from ..core.text import (
     BOLD,
     DEV_REGULAR,
     LATIN_REGULAR,
