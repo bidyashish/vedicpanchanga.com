@@ -421,13 +421,21 @@ def compute_chart(
     d2_chart = varga_charts["d2"]["chart"]
     d9_chart = varga_charts["d9"]["chart"]
 
-    # Vimshottari Dasha
+    # Vimshottari Dasha (Mahadasha + Antardasha sub-periods)
+    from dasha_extras import compute_antardashas
+
     dasha = compute_vimshottari_dasha(
         planets["Moon"]["longitude"], utc_dt.replace(tzinfo=None)
     )
+    dasha_antar = compute_antardashas(dasha, utc_dt.replace(tzinfo=None))
 
     # Ashtakavarga
     ashtakavarga = compute_ashtakavarga(planets, asc_sign)
+
+    # Jaimini karakas + Karakamsa / Swamsa
+    from jaimini import compute_chara_karakas, compute_karakamsa_swamsa
+    from kalsarpa import analyse_kalsarpa
+    from relationships import compute_friendship_tables
 
     # Build planets table (ordered)
     planets_list = []
@@ -443,6 +451,11 @@ def compute_chart(
         "Ketu",
     ]:
         planets_list.append(planets[name])
+
+    karakas = compute_chara_karakas(planets_list)
+    karakamsa_swamsa = compute_karakamsa_swamsa(planets_list, karakas, asc_lon)
+    friendships = compute_friendship_tables(planets_list)
+    kalsarpa = analyse_kalsarpa(planets_list, asc_sign)
 
     return {
         "birth": {
@@ -467,6 +480,12 @@ def compute_chart(
         "vargas": varga_charts,
         "varga_order": VARGA_ORDER,
         "dasha": dasha,
+        "dasha_antar": dasha_antar,
+        "karakas": karakas,
+        "karakamsa": karakamsa_swamsa["karakamsa"],
+        "swamsa": karakamsa_swamsa["swamsa"],
+        "friendships": friendships,
+        "kalsarpa": kalsarpa,
         "ashtakavarga": ashtakavarga,
     }
 

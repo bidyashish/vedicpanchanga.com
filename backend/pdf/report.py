@@ -13,11 +13,17 @@ import mangal
 import sade_sati
 
 from .chart import draw_north_indian_chart
+from .dasha_detail_pages import (
+    draw_antardasha_page,
+    draw_pratyantar_pages,
+)
 from .detail_pages import (
     draw_dasha_long,
     draw_planet_long_table,
     draw_planet_varga_matrix,
 )
+from .jaimini_page import draw_jaimini_page
+from .relations_page import draw_friendship_page, draw_kalsarpa_page
 from .formatters import (
     fmt_ayan,
     fmt_dasha_balance,
@@ -233,8 +239,13 @@ def render_pdf(
     # ---- additional pages ----
     draw_planet_long_table(pdf, chart_data, name or "", lang)
     draw_dasha_long(pdf, chart_data, name or "", lang)
+    draw_antardasha_page(pdf, chart_data, name or "", lang)
+    draw_pratyantar_pages(pdf, chart_data, name or "", lang)
     draw_varga_pages(pdf, chart_data, name or "", lang)
     draw_planet_varga_matrix(pdf, chart_data, name or "", lang)
+    draw_jaimini_page(pdf, chart_data, name or "", lang)
+    draw_friendship_page(pdf, chart_data, name or "", lang)
+    draw_kalsarpa_page(pdf, chart_data, name or "", lang)
 
     # Mangal Dosha + Sade Sati
     moon = next((p for p in chart_data["planets_data"] if p["name"] == "Moon"), None)
