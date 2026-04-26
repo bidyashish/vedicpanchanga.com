@@ -118,6 +118,9 @@ const en: Dict = {
   telugu_panchang: "Telugu",
   gowri_panchang_title: "Gowri Panchangam",
   gowri_panchang_sub: "Nalla Neram — auspicious & inauspicious windows by 1/8th of day & night",
+  hora_title: "Hora",
+  hora_sub:
+    "Planetary hour rulers — day in 12 horas, night in 12 horas; cycle Sun → Venus → Mercury → Moon → Saturn → Jupiter → Mars",
   place: "Place",
   date: "Date",
   show_panchang: "Show Panchang",
@@ -235,6 +238,8 @@ const hi: Dict = {
   telugu_panchang: "तेलुगु",
   gowri_panchang_title: "गौरी पञ्चाङ्गम्",
   gowri_panchang_sub: "नल्ल नेरम — दिन व रात के 1/8 भाग पर शुभ-अशुभ काल",
+  hora_title: "होरा",
+  hora_sub: "ग्रह-होरा — दिन व रात्रि प्रत्येक 12 होरा, चक्र सूर्य → शुक्र → बुध → चन्द्र → शनि → गुरु → मङ्गल",
   place: "स्थान",
   date: "दिनांक",
   show_panchang: "पञ्चाङ्ग दिखाएँ",

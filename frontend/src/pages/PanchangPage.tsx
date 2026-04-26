@@ -4,6 +4,7 @@ import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { DatePicker } from "@/components/ui/date-picker";
 import { GowriPanchangam } from "@/components/panchang/GowriPanchangam";
+import { HoraPanchangam } from "@/components/panchang/HoraPanchangam";
 import { Section } from "@/components/panchang/Section";
 import { TimeBand } from "@/components/panchang/TimeBand";
 import { AdSlot } from "@/components/shell/AdSlot";
@@ -88,7 +89,6 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
   // the sun was in Aries.
   const [chartTime, setChartTime] = useState<string>("");
   const [chartStyle, setChartStyle] = useState<"north" | "south">("north");
-  const [styleTab, setStyleTab] = useState<"north_indian" | "telugu">("north_indian");
   const [loading, setLoading] = useState(false);
   const [chartLoading, setChartLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -275,48 +275,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   {data.location.timezone}
                 </p>
               </div>
-              <div
-                role="tablist"
-                aria-label={t("panchang_style")}
-                data-testid="panchang-style-tabs"
-                className="mt-3 inline-flex rounded-sm border border-parchment-200 overflow-hidden p-0.5 gap-0.5 bg-parchment-100"
-              >
-                {[
-                  { id: "north_indian" as const, label: t("north_indian") },
-                  { id: "telugu" as const, label: t("telugu_panchang") },
-                ].map((o) => (
-                  <button
-                    key={o.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={styleTab === o.id}
-                    data-testid={`panchang-style-${o.id}`}
-                    onClick={() => setStyleTab(o.id)}
-                    className={`px-3 py-1.5 text-mini font-medium rounded-2xs transition-colors whitespace-nowrap ${
-                      styleTab === o.id
-                        ? "bg-white text-saffron shadow-card"
-                        : "text-ink-soft hover:text-ink"
-                    }`}
-                  >
-                    {o.label}
-                  </button>
-                ))}
-              </div>
             </div>
-
-            {styleTab === "telugu" && data.gowri_panchang && (
-              <Section
-                title={t("gowri_panchang_title")}
-                subtitle={t("gowri_panchang_sub")}
-                testId="section-gowri"
-              >
-                <GowriPanchangam
-                  day={data.gowri_panchang.day}
-                  night={data.gowri_panchang.night}
-                  tz={tz}
-                />
-              </Section>
-            )}
 
             <Section
               title="Lagna Kuṇḍalī"
@@ -541,6 +500,12 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 </div>
               </div>
             </Section>
+
+            {data.hora && (
+              <Section title={t("hora_title")} subtitle={t("hora_sub")} testId="section-hora">
+                <HoraPanchangam day={data.hora.day} night={data.hora.night} tz={tz} />
+              </Section>
+            )}
 
             <Section title="Ritu &amp; Ayana" testId="section-ritu-ayana">
               <KV2
@@ -847,6 +812,20 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 ]}
               />
             </Section>
+
+            {data.gowri_panchang && (
+              <Section
+                title={t("gowri_panchang_title")}
+                subtitle={t("gowri_panchang_sub")}
+                testId="section-gowri"
+              >
+                <GowriPanchangam
+                  day={data.gowri_panchang.day}
+                  night={data.gowri_panchang.night}
+                  tz={tz}
+                />
+              </Section>
+            )}
           </>
         )}
       </div>
