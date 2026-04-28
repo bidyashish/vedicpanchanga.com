@@ -3,7 +3,6 @@ import { useI18n } from "@/i18n";
 import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { DatePicker } from "@/components/ui/date-picker";
-import { AdSlot } from "@/components/shell/AdSlot";
 import { fetchMuhurtaPurposes, findMuhurtas } from "@/lib/api";
 import { formatDayMonthYear, formatTimeRange, todayISO, daysFromNow } from "@/lib/format";
 import type { LocationChoice, MuhurtaPurpose, MuhurtaResponse, MuhurtaResult } from "@/types/api";
@@ -309,14 +308,10 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
               {error}
             </div>
           )}
-
-          <div className="mt-5 hidden lg:block">
-            <AdSlot slot="sidebar" minHeight={240} />
-          </div>
         </div>
       </aside>
 
-      <main className="lg:col-span-8 xl:col-span-6 space-y-6">
+      <main className="lg:col-span-8 xl:col-span-9 space-y-6">
         {loading && (
           <div className="flex flex-col items-center justify-center py-24 gap-4 text-crimson">
             <MandalaLoader size={64} />
@@ -371,24 +366,15 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
             )}
 
             <div className="space-y-4" data-testid="muhurta-results-list">
-              {result.muhurtas.map((m, i) => (
+              {result.muhurtas.map((m) => (
                 <Fragment key={m.date}>
                   <ResultCard m={m} tz={result.location?.timezone} />
-                  {i === 4 && result.muhurtas.length > 6 && (
-                    <AdSlot slot="inline" minHeight={120} />
-                  )}
                 </Fragment>
               ))}
             </div>
           </>
         )}
       </main>
-
-      <aside className="hidden xl:block xl:col-span-3">
-        <div className="xl:sticky xl:top-20 space-y-4">
-          <AdSlot slot="sidebar" minHeight={600} />
-        </div>
-      </aside>
     </section>
   );
 }

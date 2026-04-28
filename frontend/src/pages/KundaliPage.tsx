@@ -8,7 +8,6 @@ import { DashaTable } from "@/components/kundali/DashaTable";
 import { AshtakavargaTable } from "@/components/kundali/AshtakavargaTable";
 import { JaiminiSection } from "@/components/kundali/JaiminiSection";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
-import { AdSlot } from "@/components/shell/AdSlot";
 import { calculateChart, printPdf } from "@/lib/api";
 import type { ChartData, LocationChoice } from "@/types/api";
 
@@ -168,14 +167,11 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
                 {error}
               </div>
             )}
-            <div className="mt-4 hidden lg:block">
-              <AdSlot slot="sidebar" minHeight={240} />
-            </div>
           </div>
         </aside>
 
         {/* Middle — chart + data */}
-        <div className="lg:col-span-8 xl:col-span-6 space-y-4">
+        <div className="lg:col-span-8 xl:col-span-9 space-y-4">
           {loading && !data && (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
               <MandalaLoader size={48} />
@@ -186,7 +182,6 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
             <>
               <BirthHeader data={data} placeName={submittedPlaceName} />
               <ChartTabs data={data} />
-              <AdSlot slot="inline" minHeight={120} className="my-2" />
               <PlanetsTable planets={data.planets_data} ascendant={data.ascendant} />
               <DashaTable dasha={data.dasha} dashaAntar={data.dasha_antar} />
               <JaiminiSection
@@ -198,13 +193,6 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
             </>
           )}
         </div>
-
-        {/* Right rail — large tower ad, only on xl+ */}
-        <aside className="hidden xl:block xl:col-span-3">
-          <div className="lg:sticky lg:top-16 space-y-3">
-            <AdSlot slot="sidebar" minHeight={600} />
-          </div>
-        </aside>
       </div>
     </section>
   );

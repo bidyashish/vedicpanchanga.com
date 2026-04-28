@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { TopBar } from "@/components/shell/TopBar";
 import { Footer } from "@/components/shell/Footer";
-import { AdSlot } from "@/components/shell/AdSlot";
 import { KundaliPage } from "@/pages/KundaliPage";
 import { PanchangPage } from "@/pages/PanchangPage";
 import { MuhurtaPage } from "@/pages/MuhurtaPage";
@@ -114,8 +113,6 @@ export default function App() {
     setSharedLocation(loc);
   }, []);
 
-  const isLegal = view === "privacy" || view === "terms";
-
   // Keep <title>, <meta>, canonical link in sync with the current route.
   useEffect(() => {
     applySeo(SEO_BY_VIEW[view]);
@@ -124,13 +121,6 @@ export default function App() {
   return (
     <div className="parchment-bg min-h-screen flex flex-col">
       <TopBar view={view} setView={setView} />
-
-      {/* Slim leaderboard ad — only on desktop, never displaces mobile/tablet content */}
-      {!isLegal && (
-        <div className="hidden xl:block max-w-screen-3xl w-full mx-auto px-3 sm:px-6 lg:px-8 pt-3">
-          <AdSlot slot="header" minHeight={60} className="mb-3" />
-        </div>
-      )}
 
       <main className="flex-1 max-w-screen-3xl w-full mx-auto px-3 sm:px-6 lg:px-8">
         {view === "kundali" && (

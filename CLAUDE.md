@@ -39,7 +39,7 @@ npm run format:check # oxfmt --check (CI-friendly, exits non-zero on diff)
 npx tsc --noEmit     # type-check only (was previously aliased as `npm run lint`)
 ```
 - Backend URL comes from `VITE_BACKEND_URL` in `frontend/.env` (defaults empty → same-origin `/api` in prod). Vite requires the `VITE_` prefix — the old `REACT_APP_*` names are gone.
-- AdSense is wired through `<AdSlot slot="header|sidebar|inline|footer" />`. Set `VITE_ADSENSE_CLIENT` + `VITE_ADSENSE_SLOT_*` to activate; otherwise dashed placeholders render in their slots (good for layout work without ads).
+- AdSense uses **Auto Ads only** — the loader script lives in `index.html` and Google places ads automatically. The old `<AdSlot>` component and `VITE_ADSENSE_*` env vars have been removed; do not reintroduce manual `<ins>` slots.
 - Path alias `@/*` → `src/*` is set in both `vite.config.ts` and `tsconfig.json`. Keep them in sync.
 
 ### Tests
@@ -88,7 +88,7 @@ All astronomical math must go through `swisseph` (PySwissEph bindings). Never ha
 - `src/App.tsx` — shell: `TopBar`, **path-routed view switcher** (`/`, `/panchang`, `/muhurta`, `/privacy`, `/terms`), shared location state, `Footer`. Old hash URLs (`/#panchang`) are migrated to clean paths on first load. Per-route SEO (title / description / canonical / og:tags) is applied by `lib/seo.applySeo` whenever the view changes. Three-column layout on `xl:` (sidebar · main · ad rail).
 - `src/pages/` — `KundaliPage.tsx`, `PanchangPage.tsx`, `MuhurtaPage.tsx`. Each page owns its own form state and API calls.
 - `src/components/common/` — `CitySearch`, `LanguageSwitcher`, `MandalaLoader`, `MandalaMark`.
-- `src/components/shell/` — `TopBar`, `Footer`, `AdSlot` (Google AdSense placeholder + loader).
+- `src/components/shell/` — `TopBar`, `Footer`. AdSense Auto Ads loader is in `index.html`; there is no in-app ad component.
 - `src/components/kundali/` — `BirthForm`, `BirthHeader`, `ChartTabs`, `VedicChart` (North Indian), `SouthIndianChart`, `PlanetsTable`, `DashaTable`, `AshtakavargaTable`.
 - `src/components/panchang/` — `Section`, `TimeBand` (reused by the Panchang page).
 - `src/lib/api.ts` — typed `fetch` wrapper for every backend endpoint plus Nominatim geocode/reverse-geocode.
@@ -103,7 +103,6 @@ Cloudflare → Nginx (TLS, CSP, returns 444 for direct-IP) → static Vite build
 
 - **Env var prefix is `VITE_`**, not `REACT_APP_`. Still baked in at build time — changing `VITE_BACKEND_URL` requires a rebuild, not just a restart.
 - **Port 8000 is firewalled** (`infra/setup-vps.sh:157`) as a legacy block. If something tries to use it, switch to 8001.
-- **AdSense env vars are optional**. If `VITE_ADSENSE_CLIENT` or the per-slot ID is missing, `AdSlot` renders a visible placeholder labelled "Advertisement". Useful for dev; don't ship to prod without setting the real slot IDs.
 - **Clean path routing** (no `#`). Routes: `/`, `/panchang`, `/muhurta`, `/privacy`, `/terms`. SPA fallback is in nginx (`try_files $uri $uri/ /index.html;`) and Vite dev server does it by default. SSR is not implemented — initial HTML is the same for every URL until React hydrates and `applySeo()` rewrites `<title>` / `<meta>` / canonical link. Sitemap at `/sitemap.xml` lists all five clean URLs.
 - **Panchang Lagna chart anchors to "now"**, not sunrise. Anchoring to sunrise made the chart appear stuck on the sun's sign (lagna co-rises with the sun); the page calls `nowTimeInTz(data.location.timezone)` and re-fetches `calculateChart` for that wall-clock minute.
 - **Vite build output is `dist/`**, not `build/`. The Nginx root was updated; if you see stale content after `npm run build`, confirm Nginx is pointing at `frontend/dist` and not the old `frontend/build`.

@@ -7,7 +7,6 @@ import { GowriPanchangam } from "@/components/panchang/GowriPanchangam";
 import { HoraPanchangam } from "@/components/panchang/HoraPanchangam";
 import { Section } from "@/components/panchang/Section";
 import { TimeBand } from "@/components/panchang/TimeBand";
-import { AdSlot } from "@/components/shell/AdSlot";
 import { VedicChart } from "@/components/kundali/VedicChart";
 import { SouthIndianChart } from "@/components/kundali/SouthIndianChart";
 import { PlanetsTable } from "@/components/kundali/PlanetsTable";
@@ -195,7 +194,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
       data-testid="panchang-view"
       className="pt-3 sm:pt-4 pb-8 grid grid-cols-1 xl:grid-cols-12 gap-4 xl:gap-5"
     >
-      <div className="xl:col-span-9 space-y-3">
+      <div className="xl:col-span-12 space-y-3">
         {/* Controls */}
         <div className="card p-3 sm:p-4">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-end">
@@ -387,8 +386,6 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 />
               </div>
             </Section>
-
-            <AdSlot slot="inline" minHeight={120} />
 
             <Section title="Panchānga" subtitle="Five Limbs" testId="section-panchang-limbs">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
@@ -836,12 +833,6 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
           </>
         )}
       </div>
-
-      <aside className="hidden xl:block xl:col-span-3">
-        <div className="xl:sticky xl:top-20 space-y-4">
-          <AdSlot slot="sidebar" minHeight={600} />
-        </div>
-      </aside>
     </section>
   );
 }

@@ -105,7 +105,6 @@ suite covers and the canonical birth payloads.
 | ------------------ | -------------------- | ----------------------------------------------------------------------- |
 | `backend/.env`     | `CORS_ORIGINS`       | Comma-separated allowlist. Dev default: `http://localhost:3121`. Prod: `setup-vps.sh` writes `https://vedicpanchanga.com,https://www.vedicpanchanga.com`. |
 | `frontend/.env`    | `VITE_BACKEND_URL`   | Backend origin. Leave empty in prod → same-origin `/api` via Nginx.     |
-| `frontend/.env`    | `VITE_ADSENSE_CLIENT`, `VITE_ADSENSE_SLOT_*` | Optional. Unset → dashed placeholders in ad slots. |
 
 Vite bakes `VITE_*` vars in at **build time**, so edit `.env` and rebuild — restarting isn't enough.
 
@@ -207,7 +206,7 @@ vedicpanchanga.com/
 │   │   ├── App.tsx          # shell (top bar + path-routed pages + footer)
 │   │   ├── pages/           # KundaliPage, PanchangPage, MuhurtaPage, Privacy, Terms
 │   │   ├── components/
-│   │   │   ├── shell/       # TopBar, Footer, AdSlot
+│   │   │   ├── shell/       # TopBar, Footer
 │   │   │   ├── common/      # CitySearch, LanguageSwitcher, MandalaLoader, ThemeToggle
 │   │   │   ├── kundali/     # BirthForm, ChartTabs, VedicChart, SouthIndianChart, tables
 │   │   │   └── panchang/    # Section, TimeBand
