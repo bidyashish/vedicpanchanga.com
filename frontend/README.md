@@ -49,8 +49,6 @@ needs a rebuild — restarting the dev server isn't enough.
 | Var                        | Required | Purpose                                                             |
 | -------------------------- | -------- | ------------------------------------------------------------------- |
 | `VITE_BACKEND_URL`         | dev      | Backend origin. Empty in prod → same-origin `/api` via Nginx proxy. |
-| `VITE_ADSENSE_CLIENT`      | optional | AdSense publisher ID. Unset → dashed placeholders in ad slots.      |
-| `VITE_ADSENSE_SLOT_HEADER` | optional | Per-slot IDs: `_HEADER`, `_SIDEBAR`, `_INLINE`, `_FOOTER`.          |
 
 ## Routing
 
@@ -82,7 +80,7 @@ src/
 │   ├── PrivacyPage.tsx
 │   └── TermsPage.tsx
 ├── components/
-│   ├── shell/              TopBar, Footer, AdSlot
+│   ├── shell/              TopBar, Footer
 │   ├── common/             CitySearch, LanguageSwitcher, MandalaLoader,
 │   │                       MandalaMark, ThemeToggle
 │   ├── kundali/            BirthForm, BirthHeader, ChartTabs, VedicChart
@@ -122,10 +120,10 @@ Path alias `@/*` → `src/*` is set in both `vite.config.ts` and
 
 ## AdSense
 
-`<AdSlot slot="header|sidebar|inline|footer" minHeight={…} />`.
-Without `VITE_ADSENSE_CLIENT` and the matching `VITE_ADSENSE_SLOT_*`
-env var, it renders a dashed placeholder labelled "Advertisement" — useful
-for layout work without ads.
+Auto Ads only — the loader script
+(`pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-…`)
+is hard-coded in `index.html` and Google places ads automatically. There
+is no in-app `<AdSlot>` component and no per-slot env vars.
 
 ## React-18 StrictMode dev quirk
 
