@@ -2,6 +2,7 @@ import { useI18n } from "@/i18n";
 import { CONTACT_EMAIL } from "@/lib/contact";
 
 const GITHUB_URL = "https://github.com/bidyashish/vedicpanchanga.com";
+const INSTAGRAM_URL = "https://www.instagram.com/vedicpanchanga/";
 
 export function Footer() {
   const { t } = useI18n();
@@ -25,6 +26,31 @@ export function Footer() {
           <span aria-hidden="true">·</span>
           <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-saffron-dark hover:underline">
             {CONTACT_EMAIL}
+          </a>
+          <span aria-hidden="true">·</span>
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+            className="hover:text-saffron-dark hover:underline inline-flex items-center gap-1"
+          >
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+              <path d="M16 11.37a4 4 0 1 1-7.914 1.173A4 4 0 0 1 16 11.37z" />
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+            </svg>
+            Instagram
           </a>
           <span aria-hidden="true">·</span>
           <a
