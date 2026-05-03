@@ -46,9 +46,9 @@ setup). When you need one, add Vitest.
 Vite bakes `VITE_*` variables in **at build time**, so editing `.env`
 needs a rebuild — restarting the dev server isn't enough.
 
-| Var                        | Required | Purpose                                                             |
-| -------------------------- | -------- | ------------------------------------------------------------------- |
-| `VITE_BACKEND_URL`         | dev      | Backend origin. Empty in prod → same-origin `/api` via Nginx proxy. |
+| Var                | Required | Purpose                                                             |
+| ------------------ | -------- | ------------------------------------------------------------------- |
+| `VITE_BACKEND_URL` | dev      | Backend origin. Empty in prod → same-origin `/api` via Nginx proxy. |
 
 ## Routing
 
