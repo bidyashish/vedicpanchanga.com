@@ -25,6 +25,7 @@ from constants import (
 )
 from gowri_panchang import compute_gowri_panchang
 from hora import compute_hora
+from tamil_calendar import compute_tamil_calendar
 from panchang_constants import (
     CHANDRA_MASA,
     CHANDRA_VASA,
@@ -1089,6 +1090,9 @@ def compute_detailed_panchang(
         timezone_name=timezone_name,
     )
 
+    # Tamil solar calendar (Nirayana) — month/date/year-cycle from sidereal Sun.
+    tamil_cal = compute_tamil_calendar(target_date, timezone_name)
+
     return {
         "date": target_date,
         "location": {
@@ -1194,6 +1198,7 @@ def compute_detailed_panchang(
         },
         "gowri_panchang": gowri,
         "hora": hora,
+        "tamil_calendar": tamil_cal,
         "calendars": {
             "kali_year": kali_year,
             "kali_ahargana_days": kali_ahargana,

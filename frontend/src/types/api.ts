@@ -270,6 +270,13 @@ export interface PanchangData {
     day: LabelledSegment[];
     night: LabelledSegment[];
   };
+  tamil_calendar?: {
+    week_day: { en: string; ta: string };
+    tamil_date: number;
+    tamil_month: { id: number; en: string; ta: string; rashi: string };
+    tamil_year: { id: number; name_en: string; name_ta: string; gregorian_start_year: number };
+    month_start_iso: string;
+  };
   calendars: {
     kali_year: number;
     kali_ahargana_days: number;

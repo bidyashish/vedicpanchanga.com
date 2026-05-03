@@ -817,6 +817,42 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
               />
             </Section>
 
+            {data.tamil_calendar && (
+              <Section
+                title={t("tamil_calendar_title")}
+                subtitle={t("tamil_calendar_sub")}
+                testId="section-tamil-calendar"
+              >
+                <p className="text-meta mb-3" data-testid="tamil-summary">
+                  <span className="num font-medium" style={{ color: "var(--accent-sun)" }}>
+                    {data.tamil_calendar.tamil_month.ta} {data.tamil_calendar.tamil_date}
+                  </span>
+                  <span className="text-ink-soft">, </span>
+                  <span className="font-medium">{data.tamil_calendar.tamil_year.name_ta} ஆண்டு</span>
+                </p>
+                <KV2
+                  rows={[
+                    {
+                      label: t("tamil_weekday"),
+                      value: `${data.tamil_calendar.week_day.ta} (${data.tamil_calendar.week_day.en})`,
+                    },
+                    {
+                      label: t("tamil_month_label"),
+                      value: `${data.tamil_calendar.tamil_month.ta} · ${data.tamil_calendar.tamil_month.en}`,
+                    },
+                    {
+                      label: t("tamil_date_label"),
+                      value: `${data.tamil_calendar.tamil_date}`,
+                    },
+                    {
+                      label: t("tamil_year_label"),
+                      value: `${data.tamil_calendar.tamil_year.name_ta} · ${data.tamil_calendar.tamil_year.name_en} (${data.tamil_calendar.tamil_year.id}/60)`,
+                    },
+                  ]}
+                />
+              </Section>
+            )}
+
             {data.gowri_panchang && (
               <Section
                 title={t("gowri_panchang_title")}
