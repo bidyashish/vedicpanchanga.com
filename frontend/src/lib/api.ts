@@ -57,6 +57,15 @@ export function fetchAyanamsaOptions(): Promise<AyanamsaOption[]> {
   return request<AyanamsaOption[]>(`${API}/ayanamsa-options`);
 }
 
+export interface SuggestLangResponse {
+  country: string;
+  lang: string;
+}
+
+export function suggestLang(): Promise<SuggestLangResponse> {
+  return request<SuggestLangResponse>(`${API}/suggest-lang`);
+}
+
 export function fetchMuhurtaPurposes(): Promise<MuhurtaPurpose[]> {
   return request<MuhurtaPurpose[]>(`${API}/muhurta-purposes`);
 }

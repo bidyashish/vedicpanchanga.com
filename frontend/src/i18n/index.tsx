@@ -8,6 +8,8 @@ import {
   type ReactNode,
 } from "react";
 
+import { suggestLang } from "@/lib/api";
+
 import en from "./locales/en";
 import hi from "./locales/hi";
 import ta from "./locales/ta";
@@ -99,17 +101,36 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     return initial;
   });
 
+  // localStorage write lives inside setLang (not a separate useEffect) so the
+  // geo-suggestion below can reliably tell "user has never picked" from "user
+  // is on default en" - the persistence effect would otherwise stamp "en"
+  // on first mount and shadow the signal.
   const setLang = useCallback((next: LangId) => {
     if (typeof document !== "undefined") {
       document.documentElement.lang = next;
     }
     applyDir(next);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("jk_lang", next);
+    }
     setLangState(next);
   }, []);
 
+  // First-load geo suggestion: if the user has never picked a language, ask
+  // the backend (which reads Cloudflare's CF-IPCountry header) for a sensible
+  // default. Fails silently - English stays the fallback.
   useEffect(() => {
-    localStorage.setItem("jk_lang", lang);
-  }, [lang]);
+    if (typeof window === "undefined") return;
+    if (localStorage.getItem("jk_lang")) return;
+    const known = new Set(LANGUAGES.map((l) => l.id));
+    suggestLang()
+      .then((d) => {
+        if (d?.lang && d.lang !== "en" && known.has(d.lang as LangId)) {
+          setLang(d.lang as LangId);
+        }
+      })
+      .catch(() => {});
+  }, [setLang]);
 
   const value = useMemo<I18nContextValue>(
     () => ({
