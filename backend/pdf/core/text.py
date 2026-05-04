@@ -1,16 +1,19 @@
 """Font registration helpers for the PDF (fpdf2 backend).
 
 fpdf2 has built-in HarfBuzz shaping when `set_text_shaping(True)` is enabled,
-so Devanagari conjuncts and matra reordering work out of the box. We keep a
-thin wrapper here so the rest of the package never deals with fpdf2 details
-beyond the high-level font names.
+so Devanagari conjuncts, Arabic ligature joining and matra reordering work
+out of the box. We keep a thin wrapper here so the rest of the package
+never deals with fpdf2 details beyond the high-level font names.
 
-Five font families are registered to cover the nine languages we ship:
-  NotoSans   — Latin + IAST (en, es, de, pt, fr)
-  NotoDev    — Devanagari (hi)
-  NotoTamil  — Tamil block (ta)
-  NotoSC     — Han for Simplified Chinese (zh)
-  NotoJP     — Hiragana / Katakana + Han for Japanese (ja)
+Eight font families are registered to cover the fifteen languages we ship:
+  NotoSans    — Latin + IAST + Cyrillic (en, es, de, pt, fr, ru)
+  NotoDev     — Devanagari (hi, ne)
+  NotoTamil   — Tamil block (ta)
+  NotoBengali — Bengali block (bn)
+  NotoArabic  — Arabic block (ar, fa)
+  NotoHebrew  — Hebrew block (he)
+  NotoSC      — Han for Simplified Chinese (zh)
+  NotoJP      — Hiragana / Katakana + Han for Japanese (ja)
 
 draw_text() auto-detects the dominant script per text run and overrides the
 caller's `family` hint when the string actually contains glyphs from a
@@ -29,6 +32,9 @@ FONT_DIR = Path(__file__).resolve().parent.parent / "fonts"
 LATIN_REGULAR = "NotoSans"
 DEV_REGULAR = "NotoDev"
 TAMIL_REGULAR = "NotoTamil"
+BENGALI_REGULAR = "NotoBengali"
+ARABIC_REGULAR = "NotoArabic"
+HEBREW_REGULAR = "NotoHebrew"
 SC_REGULAR = "NotoSC"
 JP_REGULAR = "NotoJP"
 
@@ -45,15 +51,24 @@ def register_fonts(pdf: FPDF) -> None:
     """
     if "noto-registered" in getattr(pdf, "_panchanga_flags", set()):
         return
-    # Latin + IAST diacritics
+    # Latin + IAST diacritics + Cyrillic (covers ru without an extra font)
     pdf.add_font(LATIN_REGULAR, REGULAR, str(FONT_DIR / "NotoSans-Regular.ttf"))
     pdf.add_font(LATIN_REGULAR, BOLD, str(FONT_DIR / "NotoSans-Bold.ttf"))
-    # Devanagari (Hindi)
+    # Devanagari (Hindi, Nepali)
     pdf.add_font(DEV_REGULAR, REGULAR, str(FONT_DIR / "NotoSansDevanagari-Regular.ttf"))
     pdf.add_font(DEV_REGULAR, BOLD, str(FONT_DIR / "NotoSansDevanagari-Bold.ttf"))
     # Tamil
     pdf.add_font(TAMIL_REGULAR, REGULAR, str(FONT_DIR / "NotoSansTamil-Regular.ttf"))
     pdf.add_font(TAMIL_REGULAR, BOLD, str(FONT_DIR / "NotoSansTamil-Bold.ttf"))
+    # Bengali
+    pdf.add_font(BENGALI_REGULAR, REGULAR, str(FONT_DIR / "NotoSansBengali-Regular.ttf"))
+    pdf.add_font(BENGALI_REGULAR, BOLD, str(FONT_DIR / "NotoSansBengali-Bold.ttf"))
+    # Arabic (covers ar + fa — Persian uses the Arabic script)
+    pdf.add_font(ARABIC_REGULAR, REGULAR, str(FONT_DIR / "NotoSansArabic-Regular.ttf"))
+    pdf.add_font(ARABIC_REGULAR, BOLD, str(FONT_DIR / "NotoSansArabic-Bold.ttf"))
+    # Hebrew
+    pdf.add_font(HEBREW_REGULAR, REGULAR, str(FONT_DIR / "NotoSansHebrew-Regular.ttf"))
+    pdf.add_font(HEBREW_REGULAR, BOLD, str(FONT_DIR / "NotoSansHebrew-Bold.ttf"))
     # Simplified Chinese — alias Regular under both keys (no bold .otf shipped)
     pdf.add_font(SC_REGULAR, REGULAR, str(FONT_DIR / "NotoSansSC-Regular.otf"))
     pdf.add_font(SC_REGULAR, BOLD, str(FONT_DIR / "NotoSansSC-Regular.otf"))
@@ -71,10 +86,13 @@ def is_devanagari(text: str) -> bool:
 def _script_of(text: str) -> str:
     """Return the dominant non-Latin script in `text`.
 
-    Returns one of: 'deva', 'tamil', 'jp', 'cn', 'latin'. Hiragana or
-    Katakana wins outright (→ 'jp'); a string of pure Han characters
-    returns 'cn' and the caller's `lang` decides whether to use the
-    Japanese face instead (since the Han block is shared).
+    Returns one of: 'deva', 'tamil', 'bengali', 'arabic', 'hebrew', 'jp',
+    'cn', 'latin'. Hiragana or Katakana wins outright (→ 'jp'); a string of
+    pure Han characters returns 'cn' and the caller's `lang` decides whether
+    to use the Japanese face instead (since the Han block is shared).
+
+    Cyrillic falls through to 'latin' because NotoSans-Regular ships with
+    full Cyrillic coverage — no separate face is needed for Russian.
     """
     has_han = False
     for ch in text:
@@ -82,6 +100,20 @@ def _script_of(text: str) -> str:
             return "deva"
         if "஀" <= ch <= "௿":
             return "tamil"
+        if "ঀ" <= ch <= "৾":
+            return "bengali"
+        # Arabic main block + Arabic Supplement + Arabic Extended-A.
+        # Persian-specific letters (پ چ ژ گ etc.) fall in the same ranges.
+        if (
+            "؀" <= ch <= "ۿ"
+            or "ݐ" <= ch <= "ݿ"
+            or "ࢠ" <= ch <= "ࣿ"
+            or "ﭐ" <= ch <= "﷿"
+            or "ﹰ" <= ch <= "﻿"
+        ):
+            return "arabic"
+        if "֐" <= ch <= "׿" or "יִ" <= ch <= "ﭏ":
+            return "hebrew"
         if "぀" <= ch <= "ヿ":  # Hiragana + Katakana
             return "jp"
         if "一" <= ch <= "鿿":
@@ -98,6 +130,12 @@ def _family_for(text: str, lang: str = "en") -> str:
         return DEV_REGULAR
     if script == "tamil":
         return TAMIL_REGULAR
+    if script == "bengali":
+        return BENGALI_REGULAR
+    if script == "arabic":
+        return ARABIC_REGULAR
+    if script == "hebrew":
+        return HEBREW_REGULAR
     if script == "jp":
         return JP_REGULAR
     if script == "cn":

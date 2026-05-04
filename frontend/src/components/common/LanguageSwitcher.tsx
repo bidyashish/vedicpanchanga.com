@@ -1,5 +1,9 @@
 import { LANGUAGES, useI18n, type LangId } from "@/i18n";
 
+// Native <select> with dir="ltr" on the widget itself: keeps the chevron and
+// the dropdown caret on a predictable side regardless of page direction, and
+// keeps the option list anchored to the trigger. The OPTION text stays in its
+// own script (Arabic/Hebrew render RTL inside their option rows by default).
 const SELECT_BASE =
   "appearance-none bg-white border border-parchment-200 hover:border-saffron text-ink font-semibold rounded-md cursor-pointer focus:outline-hidden focus:border-saffron focus:ring-2 focus:ring-saffron/30 transition-colors min-h-[40px]";
 
@@ -10,12 +14,13 @@ export function LanguageSwitcher({ testId = "lang-switcher" }: { testId?: string
   return (
     <>
       {/* Mobile: compact — native script only, narrow */}
-      <div className="relative inline-block sm:hidden">
+      <div className="relative inline-block sm:hidden" dir="ltr">
         <select
           data-testid={`${testId}-mobile`}
           value={lang}
           onChange={onChange}
           aria-label="Language"
+          dir="ltr"
           className={`${SELECT_BASE} text-sm pl-2.5 pr-7 py-1.5`}
         >
           {LANGUAGES.map((l) => (
@@ -28,12 +33,13 @@ export function LanguageSwitcher({ testId = "lang-switcher" }: { testId?: string
       </div>
 
       {/* sm and up: full label */}
-      <div className="relative hidden sm:inline-block">
+      <div className="relative hidden sm:inline-block" dir="ltr">
         <select
           data-testid={testId}
           value={lang}
           onChange={onChange}
           aria-label="Language"
+          dir="ltr"
           className={`${SELECT_BASE} text-sm pl-3.5 pr-9 py-2`}
         >
           {LANGUAGES.map((l) => (

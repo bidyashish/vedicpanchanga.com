@@ -173,7 +173,7 @@ export function TopBar({ view, setView }: { view: View; setView: (v: View) => vo
                       data-testid={`mnav-${tb.id}`}
                       onClick={(e) => onNavClick(e, tb.id)}
                       aria-current={active ? "page" : undefined}
-                      className={`w-full flex items-center justify-between text-left px-4 py-3 rounded-md text-meta font-semibold no-underline transition-colors ${
+                      className={`w-full flex items-center justify-between text-start px-4 py-3 rounded-md text-meta font-semibold no-underline transition-colors ${
                         active ? "bg-saffron/10 text-saffron" : "text-ink hover:bg-parchment-100"
                       }`}
                     >

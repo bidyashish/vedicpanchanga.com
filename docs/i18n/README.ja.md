@@ -1,8 +1,10 @@
 # ヴェーダ・パンチャーンガ (Vedic Panchanga)
 
 > [English](../../README.md) · [हिन्दी](README.hi.md) · [தமிழ்](README.ta.md) ·
-> [中文](README.zh.md) · **日本語** · [Español](README.es.md) ·
-> [Deutsch](README.de.md) · [Português](README.pt.md) · [Français](README.fr.md)
+> [বাংলা](README.bn.md) · [नेपाली](README.ne.md) · [中文](README.zh.md) · **日本語** ·
+> [Español](README.es.md) · [Deutsch](README.de.md) · [Português](README.pt.md) ·
+> [Français](README.fr.md) · [Русский](README.ru.md) · [العربية](README.ar.md) ·
+> [فارسی](README.fa.md) · [עברית](README.he.md)
 
 モダンな Web インターフェースを備えた Drik パンチャーンガ計算機。任意の日付 (紀元前 5000 年 〜 紀元後 5000 年) と任意の場所について、伝統的なヒンドゥー暦の要素・16 種類の分割図 (D1〜D60)・ヴィムショッタリー・ダシャー・アシュタカヴァルガ・吉祥なムフールタを計算します。
 

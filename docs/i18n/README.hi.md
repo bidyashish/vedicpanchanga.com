@@ -1,8 +1,10 @@
 # वैदिक पंचांग
 
 > [English](../../README.md) · **हिन्दी** · [தமிழ்](README.ta.md) ·
-> [中文](README.zh.md) · [日本語](README.ja.md) · [Español](README.es.md) ·
-> [Deutsch](README.de.md) · [Português](README.pt.md) · [Français](README.fr.md)
+> [বাংলা](README.bn.md) · [नेपाली](README.ne.md) · [中文](README.zh.md) · [日本語](README.ja.md) ·
+> [Español](README.es.md) · [Deutsch](README.de.md) · [Português](README.pt.md) ·
+> [Français](README.fr.md) · [Русский](README.ru.md) · [العربية](README.ar.md) ·
+> [فارسی](README.fa.md) · [עברית](README.he.md)
 
 आधुनिक वेब इंटरफ़ेस के साथ दृक्-पंचांग कैलकुलेटर। पारंपरिक हिंदू पंचांग, १६ वर्ग चक्र (D1–D60), विंशोत्तरी दशा, अष्टकवर्ग और शुभ मुहूर्त — किसी भी तिथि (५००० ईसा पूर्व – ५००० ईस्वी) और किसी भी स्थान के लिए।
 

@@ -111,8 +111,12 @@ The frontend proxies these through Next.js API routes at `/api/v1/*`.
 ### TypeScript / React (Frontend)
 - **Framework**: Next.js 15 with App Router.
 - **Styling**: Tailwind CSS v4 + Shadcn/ui components. No custom CSS unless necessary.
-- **i18n**: English and Hindi. All user-facing strings go through `i18n.js`.
-  Use the toggle pattern (EN / हिं, no flags).
+- **i18n**: 15 languages - en, hi, ta, bn, ne, zh, ja, es, de, pt, fr, ru, ar, fa, he.
+  All user-facing strings go through `src/i18n/locales/{lang}.ts`. Astronomical
+  names (planet/sign/nakshatra) and native-digit tables live in `src/i18n/astro.ts`.
+  `src/i18n/index.tsx` registers `LANGUAGES` and exposes `useI18n()`. RTL languages
+  (`ar`, `fa`, `he`) get `dir="rtl"` set on `<html>` automatically.
+  All non-English locales must use their native script (no transliteration).
 - **State**: Keep state as local as possible; lift only when needed.
 - **API calls**: Use the `/api/v1/*` routes (Next.js proxy), never call `:8001` directly from the browser.
 - **Lint / format**: [oxlint](https://github.com/oxc-project/oxc) and
@@ -252,7 +256,7 @@ Supported systems (configured in `ayanamsa.py`):
 - **Venv not activated**: Always activate `backend/venv` before running backend or tests.
 - **Node version**: Requires Node.js 20+. The setup script installs 20.x.
 - **Ephemeris path**: If calculations return errors, verify `backend/ephe/` exists and contains `.se1` files.
-- **i18n keys**: If adding new UI text, add both English and Hindi translations in `i18n.js`.
+- **i18n keys**: If adding new UI text, add the key to `src/i18n/locales/en.ts` first, then translate it in every other locale file under `src/i18n/locales/` (15 total). Backend PDF labels live in `backend/pdf/core/i18n/locales/{lang}.py` and follow the same pattern. Missing keys fall back to English at runtime, but please don't ship that as a permanent state.
 
 ---
 

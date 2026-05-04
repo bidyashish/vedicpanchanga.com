@@ -7,12 +7,17 @@
 
 import { useI18n } from "@/i18n";
 
-// Devanagari & Tamil routinely co-render with their native digits. CJK and
-// European locales conventionally keep Latin digits for technical values
-// (degrees, times, years), so we don't substitute there.
+// Devanagari, Tamil, Bengali, Arabic-Indic, and Eastern Arabic numerals
+// routinely co-render with their respective scripts. CJK and European locales
+// conventionally keep Latin digits for technical values, so we don't
+// substitute there. Hebrew also conventionally uses Latin digits.
 const NATIVE_DIGITS: Record<string, string> = {
   hi: "०१२३४५६७८९",
+  ne: "०१२३४५६७८९",
   ta: "௦௧௨௩௪௫௬௭௮௯",
+  bn: "০১২৩৪৫৬৭৮৯",
+  ar: "٠١٢٣٤٥٦٧٨٩",
+  fa: "۰۱۲۳۴۵۶۷۸۹",
 };
 
 type Dict = Record<string, string>;
@@ -274,15 +279,176 @@ const FR: Dict = {
   sign_pisces: "Poissons",
 };
 
+const RU: Dict = {
+  planet_ascendant: "Асцендент",
+  planet_sun: "Солнце",
+  planet_moon: "Луна",
+  planet_mars: "Марс",
+  planet_mercury: "Меркурий",
+  planet_jupiter: "Юпитер",
+  planet_venus: "Венера",
+  planet_saturn: "Сатурн",
+  planet_rahu: "Раху",
+  planet_ketu: "Кету",
+  sign_aries: "Овен",
+  sign_taurus: "Телец",
+  sign_gemini: "Близнецы",
+  sign_cancer: "Рак",
+  sign_leo: "Лев",
+  sign_virgo: "Дева",
+  sign_libra: "Весы",
+  sign_scorpio: "Скорпион",
+  sign_sagittarius: "Стрелец",
+  sign_capricorn: "Козерог",
+  sign_aquarius: "Водолей",
+  sign_pisces: "Рыбы",
+};
+
+const AR: Dict = {
+  planet_ascendant: "الطالع",
+  planet_sun: "الشمس",
+  planet_moon: "القمر",
+  planet_mars: "المريخ",
+  planet_mercury: "عطارد",
+  planet_jupiter: "المشتري",
+  planet_venus: "الزهرة",
+  planet_saturn: "زحل",
+  planet_rahu: "راهو",
+  planet_ketu: "كيتو",
+  sign_aries: "الحمل",
+  sign_taurus: "الثور",
+  sign_gemini: "الجوزاء",
+  sign_cancer: "السرطان",
+  sign_leo: "الأسد",
+  sign_virgo: "العذراء",
+  sign_libra: "الميزان",
+  sign_scorpio: "العقرب",
+  sign_sagittarius: "القوس",
+  sign_capricorn: "الجدي",
+  sign_aquarius: "الدلو",
+  sign_pisces: "الحوت",
+};
+
+const FA: Dict = {
+  planet_ascendant: "طالع",
+  planet_sun: "خورشید",
+  planet_moon: "ماه",
+  planet_mars: "بهرام",
+  planet_mercury: "تیر",
+  planet_jupiter: "مشتری",
+  planet_venus: "ناهید",
+  planet_saturn: "کیوان",
+  planet_rahu: "راهو",
+  planet_ketu: "کیتو",
+  sign_aries: "بره",
+  sign_taurus: "گاو",
+  sign_gemini: "دوپیکر",
+  sign_cancer: "خرچنگ",
+  sign_leo: "شیر",
+  sign_virgo: "خوشه",
+  sign_libra: "ترازو",
+  sign_scorpio: "کژدم",
+  sign_sagittarius: "کمان",
+  sign_capricorn: "بزغاله",
+  sign_aquarius: "دلو",
+  sign_pisces: "ماهی",
+};
+
+const HE: Dict = {
+  planet_ascendant: "אופק עולה",
+  planet_sun: "שמש",
+  planet_moon: "ירח",
+  planet_mars: "מאדים",
+  planet_mercury: "מרקורי",
+  planet_jupiter: "צדק",
+  planet_venus: "ונוס",
+  planet_saturn: "שבתאי",
+  planet_rahu: "ראהו",
+  planet_ketu: "קטו",
+  sign_aries: "טלה",
+  sign_taurus: "שור",
+  sign_gemini: "תאומים",
+  sign_cancer: "סרטן",
+  sign_leo: "אריה",
+  sign_virgo: "בתולה",
+  sign_libra: "מאזניים",
+  sign_scorpio: "עקרב",
+  sign_sagittarius: "קשת",
+  sign_capricorn: "גדי",
+  sign_aquarius: "דלי",
+  sign_pisces: "דגים",
+};
+
+const BN: Dict = {
+  planet_ascendant: "লগ্ন",
+  planet_sun: "সূর্য",
+  planet_moon: "চন্দ্র",
+  planet_mars: "মঙ্গল",
+  planet_mercury: "বুধ",
+  planet_jupiter: "বৃহস্পতি",
+  planet_venus: "শুক্র",
+  planet_saturn: "শনি",
+  planet_rahu: "রাহু",
+  planet_ketu: "কেতু",
+  sign_aries: "মেষ",
+  sign_taurus: "বৃষ",
+  sign_gemini: "মিথুন",
+  sign_cancer: "কর্কট",
+  sign_leo: "সিংহ",
+  sign_virgo: "কন্যা",
+  sign_libra: "তুলা",
+  sign_scorpio: "বৃশ্চিক",
+  sign_sagittarius: "ধনু",
+  sign_capricorn: "মকর",
+  sign_aquarius: "কুম্ভ",
+  sign_pisces: "মীন",
+  nak_ashwini: "অশ্বিনী",
+  nak_bharani: "ভরণী",
+  nak_krittika: "কৃত্তিকা",
+  nak_rohini: "রোহিণী",
+  nak_mrigashira: "মৃগশিরা",
+  nak_ardra: "আর্দ্রা",
+  nak_punarvasu: "পুনর্বসু",
+  nak_pushya: "পুষ্যা",
+  nak_ashlesha: "অশ্লেষা",
+  nak_magha: "মঘা",
+  nak_purva_phalguni: "পূর্ব ফাল্গুনী",
+  nak_uttara_phalguni: "উত্তর ফাল্গুনী",
+  nak_hasta: "হস্তা",
+  nak_chitra: "চিত্রা",
+  nak_swati: "স্বাতী",
+  nak_vishakha: "বিশাখা",
+  nak_anuradha: "অনুরাধা",
+  nak_jyeshtha: "জ্যেষ্ঠা",
+  nak_mula: "মূলা",
+  nak_purva_ashadha: "পূর্বাষাঢ়া",
+  nak_uttara_ashadha: "উত্তরাষাঢ়া",
+  nak_shravana: "শ্রবণা",
+  nak_dhanishta: "ধনিষ্ঠা",
+  nak_shatabhisha: "শতভিষা",
+  nak_purva_bhadrapada: "পূর্ব ভাদ্রপদ",
+  nak_uttara_bhadrapada: "উত্তর ভাদ্রপদ",
+  nak_revati: "রেবতী",
+};
+
+// Nepali uses Devanagari and shares Vedic vocabulary with Hindi - reuse HI.
+const NE: Dict = HI;
+
 const DICTS: Record<string, Dict> = {
   hi: HI,
   ta: TA,
+  bn: BN,
+  ne: NE,
   zh: ZH,
   ja: JA,
   es: ES,
   de: DE,
   pt: PT,
   fr: FR,
+  ru: RU,
+  ar: AR,
+  fa: FA,
+  he: HE,
 };
 
 // Normalize "Purva Phalguni" → "purva_phalguni" so callers can pass the

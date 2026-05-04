@@ -1,8 +1,10 @@
 # வேத பஞ்சாங்கம்
 
 > [English](../../README.md) · [हिन्दी](README.hi.md) · **தமிழ்** ·
-> [中文](README.zh.md) · [日本語](README.ja.md) · [Español](README.es.md) ·
-> [Deutsch](README.de.md) · [Português](README.pt.md) · [Français](README.fr.md)
+> [বাংলা](README.bn.md) · [नेपाली](README.ne.md) · [中文](README.zh.md) · [日本語](README.ja.md) ·
+> [Español](README.es.md) · [Deutsch](README.de.md) · [Português](README.pt.md) ·
+> [Français](README.fr.md) · [Русский](README.ru.md) · [العربية](README.ar.md) ·
+> [فارسی](README.fa.md) · [עברית](README.he.md)
 
 நவீன வலை இடைமுகத்துடன் கூடிய திருக்-பஞ்சாங்க கணிப்பான். எந்த தேதிக்கும் (கி.மு. 5000 – கி.பி. 5000) எந்த இடத்திற்கும் — பாரம்பரிய இந்து பஞ்சாங்கம், 16 பகுப்பு கட்டங்கள் (D1–D60), விம்சோத்தரி தசை, அஷ்டகவர்கம், மற்றும் சுபமான முகூர்த்தங்கள்.
 

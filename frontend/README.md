@@ -96,9 +96,13 @@ src/
 │   │                       <title>, meta tags, og/twitter tags, canonical link
 │   └── contact.ts          contact email constant
 ├── types/api.ts            TypeScript shapes mirroring every backend response
-├── i18n.tsx                English + Hindi dictionaries, useI18n,
-│                           I18nProvider. Sets <html lang> so Devanagari
-│                           web fonts kick in via index.css.
+├── i18n/                   index.tsx (LANGUAGES list, I18nProvider, RTL
+│                           dispatch), astro.ts (planet/sign/nakshatra +
+│                           native-digit tables), locales/*.ts (15 langs:
+│                           en, hi, ta, bn, ne, zh, ja, es, de, pt, fr,
+│                           ru, ar, fa, he). Sets <html lang> + <html dir>
+│                           so script-aware CSS and date formatters pick up
+│                           the locale on the very next render.
 ├── index.css               Tailwind v4 + CSS variables (parchment palette,
 │                           saffron accent, locale-aware Devanagari fonts)
 └── App.css                 anything Tailwind can't express
@@ -134,10 +138,14 @@ The pages that hit the API on first render (`KundaliPage`, `PanchangPage`,
 
 ## i18n
 
-`src/i18n.tsx` defines `en` and `hi` dictionaries. `useI18n()` returns
-`{ lang, t, setLang }`. The `LanguageSwitcher` exposes 8 languages in
-the dropdown but only `en` and `hi` have full translations today; others
-fall back to English. `setLang()` writes `<html lang>` synchronously so
-that Devanagari-language CSS (`:is(html[lang="hi"], …)` rules in
-`index.css`) and locale-aware date formatters see the new locale on the
-very next render.
+`src/i18n/index.tsx` registers all 15 supported locales in `LANGUAGES`
+and exposes `useI18n()` returning `{ lang, t, setLang }`. Per-locale UI
+strings live in `src/i18n/locales/{en,hi,ta,bn,ne,zh,ja,es,de,pt,fr,ru,ar,fa,he}.ts`
+(direct ports of `en.ts`'s key set). Astronomical names (planet, sign,
+nakshatra) and native-digit tables live in `src/i18n/astro.ts` so the UI
+strings dictionaries don't carry the 49 astro names per language.
+
+`setLang()` writes `<html lang>` and `<html dir>` synchronously so
+script-aware CSS (`html[lang="hi"], html[lang="ne"]` Devanagari rule),
+RTL flow for `ar`/`fa`/`he`, and locale-aware date formatters see the
+new locale on the very next render.

@@ -1,9 +1,14 @@
 # Vedic Panchanga
 
 > **English** · [हिन्दी](docs/i18n/README.hi.md) · [தமிழ்](docs/i18n/README.ta.md) ·
+> [বাংলা](docs/i18n/README.bn.md) · [नेपाली](docs/i18n/README.ne.md) ·
 > [中文](docs/i18n/README.zh.md) · [日本語](docs/i18n/README.ja.md) ·
 > [Español](docs/i18n/README.es.md) · [Deutsch](docs/i18n/README.de.md) ·
-> [Português](docs/i18n/README.pt.md) · [Français](docs/i18n/README.fr.md)
+> [Português](docs/i18n/README.pt.md) · [Français](docs/i18n/README.fr.md) ·
+> [Русский](docs/i18n/README.ru.md) · [العربية](docs/i18n/README.ar.md) ·
+> [فارسی](docs/i18n/README.fa.md) · [עברית](docs/i18n/README.he.md)
+>
+> **Note:** Language translations are generated using an AI model. If you notice any discrepancies or errors, please open a PR to help improve them.
 
 Drik Panchang calculator with a modern web interface. Computes traditional Hindu Panchanga elements, divisional charts (D1–D60), Vimshottari Dasha, Ashtakavarga and auspicious Muhurta windows for any date (5000 BCE – 5000 CE) and any location.
 
@@ -118,7 +123,7 @@ Vite bakes `VITE_*` vars in at **build time**, so edit `.env` and rebuild — re
 - **Vimshottari Mahadasha** · full 120-year planetary cycle from birth
 - **Ashtakavarga** · Bhinnashtakavarga per planet + Sarvashtakavarga totals
 - **Multi-ayanamsa** · NC Lahiri (default), KP New/Old, BV Raman, KP Khullar, Sayana, Manoj
-- **Bilingual UI** · English + हिन्दी, with Devanagari web fonts (Tiro Devanagari Hindi, Noto Serif Devanagari)
+- **Multilingual UI** · 15 languages — English, हिन्दी, தமிழ், বাংলা, नेपाली, 中文, 日本語, Español, Deutsch, Português, Français, Русский, العربية, فارسی, עברית. RTL flips automatically for Arabic / Persian / Hebrew.
 
 ---
 
@@ -212,7 +217,8 @@ vedicpanchanga.com/
 │   │   │   └── panchang/    # Section, TimeBand
 │   │   ├── lib/             # api.ts (typed fetch), format.ts, planets.ts, seo.ts
 │   │   ├── types/api.ts     # TypeScript shapes for all backend responses
-│   │   └── i18n.tsx         # English + Hindi dictionaries
+│   │   └── i18n/            # index.tsx (provider, LANGUAGES, RTL dispatch),
+│   │                        # astro.ts (planet/sign/nakshatra dicts), locales/*.ts (15 langs)
 │   └── vite.config.ts
 ├── infra/                   # provisioning + deploy scripts — see infra/README.md
 │   ├── setup-vps.sh         # one-shot VPS provisioning (idempotent)
@@ -238,6 +244,7 @@ All endpoints are mounted under `/api` on the backend (not `/api/v1`). In produc
 | GET    | `/api/ayanamsa-options`  | List available ayanamsa systems                  |
 | GET    | `/api/muhurta-purposes`  | List muhurta purpose categories                  |
 | POST   | `/api/find-muhurta`      | Scan a date range for auspicious windows         |
+| POST   | `/api/print-pdf`         | 19-page printable PDF report (15 locales)        |
 
 Interactive Swagger UI in dev: <http://localhost:8001/docs>.
 

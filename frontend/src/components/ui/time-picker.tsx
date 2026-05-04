@@ -46,7 +46,7 @@ export function TimePicker({
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="field flex items-center justify-between gap-2 text-left"
+          className="field flex items-center justify-between gap-2 text-start"
           data-testid={`${testIdPrefix}-trigger`}
         >
           <span className={hasValue ? "" : "text-ink-muted"}>{display}</span>

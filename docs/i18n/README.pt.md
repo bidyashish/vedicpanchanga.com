@@ -1,8 +1,10 @@
 # Vedic Panchanga
 
 > [English](../../README.md) · [हिन्दी](README.hi.md) · [தமிழ்](README.ta.md) ·
-> [中文](README.zh.md) · [日本語](README.ja.md) · [Español](README.es.md) ·
-> [Deutsch](README.de.md) · **Português** · [Français](README.fr.md)
+> [বাংলা](README.bn.md) · [नेपाली](README.ne.md) · [中文](README.zh.md) · [日本語](README.ja.md) ·
+> [Español](README.es.md) · [Deutsch](README.de.md) · **Português** ·
+> [Français](README.fr.md) · [Русский](README.ru.md) · [العربية](README.ar.md) ·
+> [فارسی](README.fa.md) · [עברית](README.he.md)
 
 Calculadora de Drik Panchang com interface web moderna. Calcula os elementos tradicionais do Panchang hindu, os 16 mapas divisionais (D1–D60), Vimshottari Daśā, Aṣṭakavarga e janelas auspiciosas de Muhūrta para qualquer data (5000 a.C. – 5000 d.C.) e qualquer localização.
 

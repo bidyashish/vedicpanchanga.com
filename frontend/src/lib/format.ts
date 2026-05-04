@@ -4,12 +4,18 @@ const LANG_TO_LOCALE: Record<string, string> = {
   en: "en-IN",
   hi: "hi-IN",
   ta: "ta-IN",
+  bn: "bn-IN",
+  ne: "ne-NP",
   zh: "zh-CN",
   ja: "ja-JP",
   es: "es-ES",
   de: "de-DE",
   pt: "pt-PT",
   fr: "fr-FR",
+  ru: "ru-RU",
+  ar: "ar-SA",
+  fa: "fa-IR",
+  he: "he-IL",
 };
 
 export function localeFor(lang: LangId | string | undefined): string {

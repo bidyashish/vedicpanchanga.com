@@ -24,28 +24,28 @@ export function JaiminiSection({ karakas, karakamsa, swamsa }: Props) {
 
       {karakas && karakas.length > 0 && (
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-start border-collapse">
             <thead>
               <tr className="eyebrow-lg border-b border-parchment-200">
-                <th className="py-2 pr-3 font-bold">{t("karaka_rank")}</th>
-                <th className="py-2 pr-3 font-bold">{t("karaka_role")}</th>
-                <th className="py-2 pr-3 font-bold">{t("karaka_planet")}</th>
-                <th className="py-2 pr-3 font-bold">{t("karaka_sign")}</th>
+                <th className="py-2 pe-3 font-bold">{t("karaka_rank")}</th>
+                <th className="py-2 pe-3 font-bold">{t("karaka_role")}</th>
+                <th className="py-2 pe-3 font-bold">{t("karaka_planet")}</th>
+                <th className="py-2 pe-3 font-bold">{t("karaka_sign")}</th>
                 <th className="py-2 font-bold">{t("karaka_degree")}</th>
               </tr>
             </thead>
             <tbody className="text-meta">
               {karakas.map((k) => (
                 <tr key={k.abbr} className="border-b border-parchment-200 last:border-0">
-                  <td className="py-2 pr-3 num font-semibold text-saffron">{k.abbr}</td>
-                  <td className="py-2 pr-3">{k.title}</td>
+                  <td className="py-2 pe-3 num font-semibold text-saffron">{k.abbr}</td>
+                  <td className="py-2 pe-3">{k.title}</td>
                   <td
-                    className="py-2 pr-3 font-semibold"
+                    className="py-2 pe-3 font-semibold"
                     style={{ color: planetColor(k.planet_abbr) }}
                   >
                     {a.planet(k.planet)}
                   </td>
-                  <td className="py-2 pr-3">{a.sign(k.sign)}</td>
+                  <td className="py-2 pe-3">{a.sign(k.sign)}</td>
                   <td className="py-2 num">{a.num(k.dms)}</td>
                 </tr>
               ))}
