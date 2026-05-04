@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { LANGUAGES, useI18n, type LangId } from "@/i18n";
 
 // Visual approach:
@@ -7,58 +7,75 @@ import { LANGUAGES, useI18n, type LangId } from "@/i18n";
 //   nav, and the dropdown popup. That keeps a11y and the OS-native picker free,
 //   while the visible chrome can run an animation the native widget can't.
 // Height + radius match ThemeToggle (h-8, rounded-sm) so the row aligns cleanly.
+//
+// Animation runs only on a "fresh visit" - when localStorage["jk_lang"] is empty
+// at mount time - and auto-stops after 10 s. Returning visitors (or anyone who
+// has already picked) see the static current selection from the start.
 
 const ROTATE_MS = 2400;
+const ANIMATE_FOR_MS = 10_000;
 
 const SHELL =
   "relative inline-flex items-center bg-white border border-parchment-200 hover:border-saffron text-ink rounded-sm transition-colors h-8 focus-within:border-saffron focus-within:ring-2 focus-within:ring-saffron/30";
 
+function isFreshVisit(): boolean {
+  if (typeof window === "undefined") return false;
+  return !localStorage.getItem("jk_lang");
+}
+
 export function LanguageSwitcher({ testId = "lang-switcher" }: { testId?: string }) {
   const { lang, setLang } = useI18n();
+
+  const [animating, setAnimating] = useState<boolean>(isFreshVisit);
+  const [animIndex, setAnimIndex] = useState(0);
+
+  const stopAnim = () => setAnimating(false);
+
   const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setLang(e.target.value as LangId);
-    setPaused(true);
+    stopAnim();
   };
 
-  const [animIndex, setAnimIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const tickRef = useRef<number | null>(null);
-
+  // Tick the rotating label while animating.
   useEffect(() => {
-    if (paused) return;
-    tickRef.current = window.setInterval(() => {
+    if (!animating) return;
+    const id = window.setInterval(() => {
       setAnimIndex((i) => (i + 1) % LANGUAGES.length);
     }, ROTATE_MS);
-    return () => {
-      if (tickRef.current !== null) window.clearInterval(tickRef.current);
-    };
-  }, [paused]);
+    return () => window.clearInterval(id);
+  }, [animating]);
 
-  // After a manual selection, hold for a beat, then resume rotating.
+  // Hard cap at 10 s from mount, regardless of interaction.
   useEffect(() => {
-    if (!paused) return;
-    const id = window.setTimeout(() => setPaused(false), 5000);
+    if (!animating) return;
+    const id = window.setTimeout(stopAnim, ANIMATE_FOR_MS);
     return () => window.clearTimeout(id);
-  }, [paused, lang]);
+    // Run once - we don't restart the timer if animating flips off then on.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const display = LANGUAGES[animIndex];
   const current = LANGUAGES.find((l) => l.id === lang) ?? LANGUAGES[0];
+  const labelMobile = animating ? display.native : current.native;
+  const labelDesktop = animating
+    ? `${display.native} · ${display.label}`
+    : `${current.native} · ${current.label}`;
 
   return (
     <>
       {/* Mobile: compact - native script only, narrow */}
       <div
-        className={`${SHELL} ${paused ? "" : "lang-ring-pulse"} sm:hidden text-sm pl-2.5 pr-7`}
+        className={`${SHELL} ${animating ? "lang-ring-pulse" : ""} sm:hidden text-sm pl-2.5 pr-7`}
         dir="ltr"
-        onMouseEnter={() => setPaused(true)}
-        onFocus={() => setPaused(true)}
+        onMouseEnter={stopAnim}
+        onFocus={stopAnim}
       >
         <span
-          key={`m-${animIndex}`}
-          className={`font-semibold leading-none ${paused ? "" : "lang-rotate-in"}`}
+          key={`m-${animating ? animIndex : "static"}`}
+          className={`font-semibold leading-none ${animating ? "lang-rotate-in" : ""}`}
           aria-hidden="true"
         >
-          {paused ? current.native : display.native}
+          {labelMobile}
         </span>
         <Chevron />
         <select
@@ -79,17 +96,17 @@ export function LanguageSwitcher({ testId = "lang-switcher" }: { testId?: string
 
       {/* sm and up: native + label, animated */}
       <div
-        className={`${SHELL} ${paused ? "" : "lang-ring-pulse"} hidden sm:inline-flex text-sm pl-3 pr-8 overflow-hidden`}
+        className={`${SHELL} ${animating ? "lang-ring-pulse" : ""} hidden sm:inline-flex text-sm pl-3 pr-8 overflow-hidden`}
         dir="ltr"
-        onMouseEnter={() => setPaused(true)}
-        onFocus={() => setPaused(true)}
+        onMouseEnter={stopAnim}
+        onFocus={stopAnim}
       >
         <span
-          key={`d-${animIndex}-${paused ? "p" : "r"}`}
-          className={`font-semibold whitespace-nowrap leading-none ${paused ? "" : "lang-rotate-in"}`}
+          key={`d-${animating ? animIndex : "static"}`}
+          className={`font-semibold whitespace-nowrap leading-none ${animating ? "lang-rotate-in" : ""}`}
           aria-hidden="true"
         >
-          {paused ? `${current.native} · ${current.label}` : `${display.native} · ${display.label}`}
+          {labelDesktop}
         </span>
         <Chevron />
         <select
