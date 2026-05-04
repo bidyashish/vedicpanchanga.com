@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useI18n } from "@/i18n";
+import { useAstro } from "@/lib/astro-i18n";
 import { formatShortDate } from "@/lib/format";
 import { planetColor } from "@/lib/planets";
 import type { AntardashaPeriod, DashaPeriod, Mahadasha } from "@/types/api";
@@ -103,6 +104,7 @@ interface Props {
 
 export function DashaTable({ dasha, dashaAntar }: Props) {
   const { t } = useI18n();
+  const a = useAstro();
   const [path, setPath] = useState<PathItem[]>([]);
   const now = useMemo(() => Date.now(), []);
 
@@ -214,12 +216,12 @@ export function DashaTable({ dasha, dashaAntar }: Props) {
                   >
                     ▶
                   </span>
-                  {d.lord}
+                  {a.planet(d.lord)}
                   {active && <span className="sr-only"> (current)</span>}
                 </td>
-                <td className="py-2 pr-3 num">{fmtYears(d.years)}</td>
-                <td className="py-2 pr-3 num">{formatShortDate(d.start)}</td>
-                <td className="py-2 num">{formatShortDate(d.end)}</td>
+                <td className="py-2 pr-3 num">{a.num(fmtYears(d.years))}</td>
+                <td className="py-2 pr-3 num">{a.num(formatShortDate(d.start))}</td>
+                <td className="py-2 num">{a.num(formatShortDate(d.end))}</td>
               </tr>
             );
           })}

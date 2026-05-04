@@ -1,4 +1,5 @@
 import { useI18n } from "@/i18n";
+import { useAstro } from "@/lib/astro-i18n";
 import { SIGN_SHORT } from "@/lib/planets";
 import type { Ashtakavarga } from "@/types/api";
 
@@ -6,6 +7,7 @@ const PLANET_ORDER = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Sat
 
 export function AshtakavargaTable({ ashtakavarga }: { ashtakavarga: Ashtakavarga }) {
   const { t } = useI18n();
+  const a = useAstro();
   if (!ashtakavarga) return null;
   const { bav, sav } = ashtakavarga;
   return (
@@ -30,13 +32,13 @@ export function AshtakavargaTable({ ashtakavarga }: { ashtakavarga: Ashtakavarga
             const tot = row.reduce((a, b) => a + b, 0);
             return (
               <tr key={p} className="border-b border-parchment-200">
-                <td className="py-2 px-2 text-left font-semibold text-ink">{p}</td>
+                <td className="py-2 px-2 text-left font-semibold text-ink">{a.planet(p)}</td>
                 {row.map((v, i) => (
                   <td key={i} className="py-2 px-2 num">
-                    {v}
+                    {a.num(v)}
                   </td>
                 ))}
-                <td className="py-2 px-2 num font-bold text-saffron">{tot}</td>
+                <td className="py-2 px-2 num font-bold text-saffron">{a.num(tot)}</td>
               </tr>
             );
           })}
@@ -44,11 +46,11 @@ export function AshtakavargaTable({ ashtakavarga }: { ashtakavarga: Ashtakavarga
             <td className="py-2.5 px-2 text-left font-bold text-saffron">{t("sav")}</td>
             {sav.map((v, i) => (
               <td key={i} className="py-2.5 px-2 num font-bold text-ink">
-                {v}
+                {a.num(v)}
               </td>
             ))}
             <td className="py-2.5 px-2 num font-bold text-saffron">
-              {sav.reduce((a, b) => a + b, 0)}
+              {a.num(sav.reduce((x, y) => x + y, 0))}
             </td>
           </tr>
         </tbody>

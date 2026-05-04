@@ -12,7 +12,7 @@ from typing import Any, Dict, List
 from fpdf import FPDF
 
 from ..core.chart import draw_north_indian_chart
-from ..core.i18n import t
+from ..core.i18n import t, t_num
 from ..core.text import (
     BOLD,
     DEV_REGULAR,
@@ -41,7 +41,7 @@ def _draw_page_header(
         pdf,
         page_w - margin - 6,
         margin + 11,
-        f"Shodashvarga - {page_no}/{total}",
+        f"Shodashvarga - {t_num(lang, page_no)}/{t_num(lang, total)}",
         LATIN_REGULAR,
         REGULAR,
         9,
@@ -102,7 +102,7 @@ def draw_varga_pages(
 
             # Title strip
             family = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
-            title_main = f"D{item['division']} - {item['name']}"
+            title_main = f"D{t_num(lang, item['division'])} - {item['name']}"
             draw_text(
                 pdf,
                 cx + cell_w / 2,

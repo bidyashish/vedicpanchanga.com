@@ -186,6 +186,33 @@ HI: Dict[str, str] = {
     "planet_rahu": "राहु",
     "planet_ketu": "केतु",
     "planet_ascendant": "लग्न",
+    "nak_ashwini": "अश्विनी",
+    "nak_bharani": "भरणी",
+    "nak_krittika": "कृत्तिका",
+    "nak_rohini": "रोहिणी",
+    "nak_mrigashira": "मृगशिरा",
+    "nak_ardra": "आर्द्रा",
+    "nak_punarvasu": "पुनर्वसु",
+    "nak_pushya": "पुष्य",
+    "nak_ashlesha": "अश्लेषा",
+    "nak_magha": "मघा",
+    "nak_purva_phalguni": "पूर्वा फाल्गुनी",
+    "nak_uttara_phalguni": "उत्तरा फाल्गुनी",
+    "nak_hasta": "हस्त",
+    "nak_chitra": "चित्रा",
+    "nak_swati": "स्वाति",
+    "nak_vishakha": "विशाखा",
+    "nak_anuradha": "अनुराधा",
+    "nak_jyeshtha": "ज्येष्ठा",
+    "nak_mula": "मूल",
+    "nak_purva_ashadha": "पूर्वाषाढ़ा",
+    "nak_uttara_ashadha": "उत्तराषाढ़ा",
+    "nak_shravana": "श्रवण",
+    "nak_dhanishta": "धनिष्ठा",
+    "nak_shatabhisha": "शतभिषा",
+    "nak_purva_bhadrapada": "पूर्वा भाद्रपद",
+    "nak_uttara_bhadrapada": "उत्तरा भाद्रपद",
+    "nak_revati": "रेवती",
 }
 
 TA: Dict[str, str] = {
@@ -272,6 +299,33 @@ TA: Dict[str, str] = {
     "planet_rahu": "ராகு",
     "planet_ketu": "கேது",
     "planet_ascendant": "லக்னம்",
+    "nak_ashwini": "அஸ்வினி",
+    "nak_bharani": "பரணி",
+    "nak_krittika": "கிருத்திகை",
+    "nak_rohini": "ரோகிணி",
+    "nak_mrigashira": "மிருகசீரிடம்",
+    "nak_ardra": "திருவாதிரை",
+    "nak_punarvasu": "புனர்பூசம்",
+    "nak_pushya": "பூசம்",
+    "nak_ashlesha": "ஆயில்யம்",
+    "nak_magha": "மகம்",
+    "nak_purva_phalguni": "பூரம்",
+    "nak_uttara_phalguni": "உத்திரம்",
+    "nak_hasta": "அஸ்தம்",
+    "nak_chitra": "சித்திரை",
+    "nak_swati": "சுவாதி",
+    "nak_vishakha": "விசாகம்",
+    "nak_anuradha": "அனுஷம்",
+    "nak_jyeshtha": "கேட்டை",
+    "nak_mula": "மூலம்",
+    "nak_purva_ashadha": "பூராடம்",
+    "nak_uttara_ashadha": "உத்திராடம்",
+    "nak_shravana": "திருவோணம்",
+    "nak_dhanishta": "அவிட்டம்",
+    "nak_shatabhisha": "சதயம்",
+    "nak_purva_bhadrapada": "பூரட்டாதி",
+    "nak_uttara_bhadrapada": "உத்திரட்டாதி",
+    "nak_revati": "ரேவதி",
 }
 
 ZH: Dict[str, str] = {
@@ -808,7 +862,12 @@ def t(lang: str, key: str) -> str:
     return locale.get(key) or EN.get(key) or key
 
 
-WEEKDAY_KEYS = [
+# Convenience translators. Each composes the dict key from the input rather
+# than maintaining a parallel mapping; that's what the old PLANET_KEY_BY_NAME
+# / SIGN_KEYS_BY_ID / ABBR_KEY_BY_ABBR / WEEKDAY_KEYS structures were doing
+# by hand. Returns the input unchanged if the key isn't in the dictionary.
+
+_WEEKDAY_BY_INDEX = (
     "monday",
     "tuesday",
     "wednesday",
@@ -816,69 +875,77 @@ WEEKDAY_KEYS = [
     "friday",
     "saturday",
     "sunday",
-]
+)
 
-SIGN_KEYS_BY_ID: Dict[int, str] = {
-    1: "sign_aries",
-    2: "sign_taurus",
-    3: "sign_gemini",
-    4: "sign_cancer",
-    5: "sign_leo",
-    6: "sign_virgo",
-    7: "sign_libra",
-    8: "sign_scorpio",
-    9: "sign_sagittarius",
-    10: "sign_capricorn",
-    11: "sign_aquarius",
-    12: "sign_pisces",
+_SIGN_BY_ID = (
+    None,  # 1-indexed
+    "aries",
+    "taurus",
+    "gemini",
+    "cancer",
+    "leo",
+    "virgo",
+    "libra",
+    "scorpio",
+    "sagittarius",
+    "capricorn",
+    "aquarius",
+    "pisces",
+)
+
+
+def tr_planet(lang: str, name: str) -> str:
+    """Translate an English planet name (e.g. "Sun") to the target locale."""
+    return t(lang, f"planet_{name.lower()}") if name else ""
+
+
+def tr_sign(lang: str, sign_id: int) -> str:
+    """Translate a 1-12 sign id to the target locale."""
+    if not 1 <= sign_id <= 12:
+        return ""
+    return t(lang, f"sign_{_SIGN_BY_ID[sign_id]}")
+
+
+def tr_abbr(lang: str, abbr: str) -> str:
+    """Translate a 2-letter planet abbreviation (e.g. "Su") to the locale."""
+    return t(lang, f"abbr_{abbr.lower()}") if abbr else ""
+
+
+def tr_weekday(lang: str, weekday_index: int) -> str:
+    """Translate a Python `datetime.weekday()` index (0=Mon..6=Sun)."""
+    return t(lang, _WEEKDAY_BY_INDEX[weekday_index])
+
+
+def tr_nakshatra(lang: str, name: str) -> str:
+    """Translate an English nakshatra name (e.g. "Purva Phalguni") to the locale."""
+    if not name:
+        return ""
+    key = f"nak_{name.lower().replace(' ', '_')}"
+    out = t(lang, key)
+    return name if out == key else out
+
+
+# Devanagari & Tamil routinely co-render with their native digits. Other
+# locales conventionally keep Latin digits for numeric data, so we don't
+# substitute there. Mirrors frontend src/lib/astro-i18n.ts NATIVE_DIGITS.
+_NATIVE_DIGITS: Dict[str, str] = {
+    "hi": "०१२३४५६७८९",
+    "ta": "௦௧௨௩௪௫௬௭௮௯",
 }
 
-PLANET_KEY_BY_NAME: Dict[str, str] = {
-    "Sun": "planet_sun",
-    "Moon": "planet_moon",
-    "Mars": "planet_mars",
-    "Mercury": "planet_mercury",
-    "Jupiter": "planet_jupiter",
-    "Venus": "planet_venus",
-    "Saturn": "planet_saturn",
-    "Rahu": "planet_rahu",
-    "Ketu": "planet_ketu",
-    "Ascendant": "planet_ascendant",
-}
+_LATIN_DIGITS = "0123456789"
 
-ABBR_KEY_BY_ABBR: Dict[str, str] = {
-    "Su": "abbr_su",
-    "Mo": "abbr_mo",
-    "Ma": "abbr_ma",
-    "Me": "abbr_me",
-    "Ju": "abbr_ju",
-    "Ve": "abbr_ve",
-    "Sa": "abbr_sa",
-    "Ra": "abbr_ra",
-    "Ke": "abbr_ke",
-    "As": "abbr_as",
-}
 
-DASHA_LORD_ABBR: Dict[str, str] = {
-    "Sun": "SUN",
-    "Moon": "MON",
-    "Mars": "MAR",
-    "Mercury": "MER",
-    "Jupiter": "JUP",
-    "Venus": "VEN",
-    "Saturn": "SAT",
-    "Rahu": "RAH",
-    "Ketu": "KET",
-}
+def t_num(lang: str, value) -> str:
+    """Replace ASCII digits with the locale's native digit set (hi/ta).
 
-DASHA_TOTAL_YEARS: Dict[str, int] = {
-    "Sun": 6,
-    "Moon": 10,
-    "Mars": 7,
-    "Mercury": 17,
-    "Jupiter": 16,
-    "Venus": 20,
-    "Saturn": 19,
-    "Rahu": 18,
-    "Ketu": 7,
-}
+    Returns the stringified value unchanged for locales without a native
+    digit table, and "" for None.
+    """
+    if value is None:
+        return ""
+    s = str(value)
+    digits = _NATIVE_DIGITS.get(lang)
+    if not digits:
+        return s
+    return s.translate(str.maketrans(_LATIN_DIGITS, digits))
