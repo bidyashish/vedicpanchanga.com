@@ -1,5 +1,6 @@
 import type { HouseMap } from "@/types/api";
 import { planetColor, planetTitle } from "@/lib/planets";
+import { useAstro } from "@/lib/astro-i18n";
 
 const HOUSE_CENTROIDS: Record<number, { x: number; y: number }> = {
   1: { x: 250, y: 125 },
@@ -42,6 +43,7 @@ interface Props {
 }
 
 export function VedicChart({ houseMap, ascSign, title, testId }: Props) {
+  const a = useAstro();
   const signForHouse = (h: number) => ((ascSign - 1 + (h - 1)) % 12) + 1;
 
   // CSS variables resolved at render so colours follow the active theme.
@@ -110,7 +112,7 @@ export function VedicChart({ houseMap, ascSign, title, testId }: Props) {
                   style={{ fill: signCol }}
                   opacity="0.9"
                 >
-                  {sign}
+                  {a.num(sign)}
                 </text>
                 {planets.map((abbr, idx) => {
                   const cols = Math.min(Math.max(planets.length, 1), 3);

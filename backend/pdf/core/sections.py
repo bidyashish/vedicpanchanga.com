@@ -12,14 +12,9 @@ from typing import Any, Dict, List
 
 from fpdf import FPDF
 
+from .dasha import DASHA_YEARS, lord_abbr
 from .formatters import fmt_dms
-from .i18n import (
-    DASHA_LORD_ABBR,
-    DASHA_TOTAL_YEARS,
-    PLANET_KEY_BY_NAME,
-    SIGN_KEYS_BY_ID,
-    t,
-)
+from .i18n import t, tr_planet, tr_sign
 from .text import (
     BOLD,
     DEV_REGULAR,
@@ -155,11 +150,10 @@ def _draw_dasha_cell(pdf, x, y, w, h, period, lang):
     pdf.set_line_width(0.3)
     pdf.rect(x, y, w, h)
     lord = period["lord"]
-    abbr = DASHA_LORD_ABBR.get(lord, lord[:3].upper())
-    years = DASHA_TOTAL_YEARS.get(lord, int(round(period.get("years", 0))))
+    years = DASHA_YEARS.get(lord, int(round(period.get("years", 0))))
     start = datetime.fromisoformat(period["start"])
     end = datetime.fromisoformat(period["end"])
-    title = f"{abbr} -{years} {t(lang, 'years_short')}"
+    title = f"{lord_abbr(lord)} -{years} {t(lang, 'years_short')}"
     dates = f"{start.strftime('%d/%m/%y')} - {end.strftime('%d/%m/%y')}"
     family = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
     draw_text(pdf, x + w / 2, y + 11, title, family, BOLD, 8.0, anchor="center")
@@ -194,10 +188,10 @@ def draw_planets_table(
             p = next((pl for pl in planets if pl["name"] == long_name), None)
             if p is None:
                 continue
-            name_disp = abbr if lang == "en" else t(lang, PLANET_KEY_BY_NAME[long_name])
+            name_disp = abbr if lang == "en" else tr_planet(lang, long_name)
         if p.get("retrograde"):
             name_disp += " [R]"
-        sign_disp = t(lang, SIGN_KEYS_BY_ID.get(p["sign_id"], "")) or p["sign"]
+        sign_disp = tr_sign(lang, p["sign_id"]) or p["sign"]
         rows.append(
             [
                 name_disp,
@@ -296,7 +290,7 @@ def draw_ashtakavarga(
     for ri, name in enumerate(planet_order):
         rowy = body_top + row_h * (ri + 1)
         pdf.line(x, rowy + row_h, x + w, rowy + row_h)
-        label = name[:3] if lang == "en" else t(lang, PLANET_KEY_BY_NAME[name])
+        label = name[:3] if lang == "en" else tr_planet(lang, name)
         f_p = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
         draw_text(
             pdf, x + col_w / 2, rowy + row_h - 3, label, f_p, BOLD, 7, anchor="center"

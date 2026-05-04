@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useI18n } from "@/i18n";
+import { useAstro } from "@/lib/astro-i18n";
 import { VedicChart } from "@/components/kundali/VedicChart";
 import { SouthIndianChart } from "@/components/kundali/SouthIndianChart";
 import { vargaName, vargaSubtitle } from "@/lib/vargas";
@@ -19,6 +20,7 @@ function loadStyle(): "north" | "south" {
 
 export function ChartTabs({ data }: Props) {
   const { t, lang } = useI18n();
+  const a = useAstro();
   const vargaKeys = data.varga_order ?? [1, 2, 9];
   const [tab, setTab] = useState<string>(`d${vargaKeys[0] ?? 1}`);
   const [chartStyle, setChartStyleState] = useState<"north" | "south">(loadStyle);
@@ -94,7 +96,7 @@ export function ChartTabs({ data }: Props) {
             const label = v ? vargaName(n, v.name, lang) : "";
             return (
               <option key={key} value={key}>
-                D{n}
+                D{a.num(n)}
                 {label ? ` - ${label}` : ""}
               </option>
             );
@@ -106,7 +108,7 @@ export function ChartTabs({ data }: Props) {
         <ChartComponent
           houseMap={active.chart}
           ascSign={active.asc_sign}
-          title={`${activeName} · D${active.division}`}
+          title={`${activeName} · D${a.num(active.division)}`}
           testId={`chart-${tab}`}
         />
         {activeSubtitle && (

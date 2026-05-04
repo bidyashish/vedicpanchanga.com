@@ -39,10 +39,10 @@ from .pages.sade_sati_page import draw_mangal_page, draw_sade_sati_page
 from .pages.varga_pages import draw_varga_pages
 from .core.i18n import (
     LOCALES,
-    PLANET_KEY_BY_NAME,
-    SIGN_KEYS_BY_ID,
-    WEEKDAY_KEYS,
     t,
+    tr_planet,
+    tr_sign,
+    tr_weekday,
 )
 from .core.sections import (
     draw_ashtakavarga,
@@ -111,7 +111,7 @@ def _build_basic_rows(
     tithi_at_birth = _at_birth(panchang.get("tithi_sequence"), panchang.get("tithi"))
     yoga_at_birth = _at_birth(panchang.get("yoga_sequence"), panchang.get("yoga"))
     karana_at_birth = _at_birth(panchang.get("karana_sequence"), panchang.get("karana"))
-    weekday_label = t(lang, WEEKDAY_KEYS[birth_local.weekday()])
+    weekday_label = tr_weekday(lang, birth_local.weekday())
     sid_str = local_sidereal_time(birth["julian_day"], birth["longitude"])
     julian_int = int(round(birth["julian_day"]))
     ayan_label = (birth.get("ayanamsa_label") or "Lahiri").split("(")[0].strip()
@@ -125,18 +125,16 @@ def _build_basic_rows(
 
     def _planet_disp(eng_name: str) -> str:
         if use_full_planet:
-            return t(lang, PLANET_KEY_BY_NAME.get(eng_name, ""))
+            return tr_planet(lang, eng_name)
         return eng_name[:3].upper()
 
     asc_lord_disp = _planet_disp(asc["sign_lord"])
-    asc_sign_disp = t(lang, SIGN_KEYS_BY_ID.get(asc["sign_id"], "")) or asc["sign"]
+    asc_sign_disp = tr_sign(lang, asc["sign_id"]) or asc["sign"]
 
     if moon:
         rasi_lord_disp = _planet_disp(moon["sign_lord"])
         nak_lord_disp = _planet_disp(moon["nakshatra_lord"])
-        moon_sign_disp = (
-            t(lang, SIGN_KEYS_BY_ID.get(moon["sign_id"], "")) or moon["sign"]
-        )
+        moon_sign_disp = tr_sign(lang, moon["sign_id"]) or moon["sign"]
         nak_pada_str = f"{moon['nakshatra']}-{moon['nakshatra_pada']}"
     else:
         rasi_lord_disp = nak_lord_disp = moon_sign_disp = nak_pada_str = ""

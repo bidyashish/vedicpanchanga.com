@@ -6,7 +6,7 @@ from typing import Dict, List, Tuple
 
 from fpdf import FPDF
 
-from .i18n import ABBR_KEY_BY_ABBR, t
+from .i18n import tr_abbr
 from .text import BOLD, DEV_REGULAR, LATIN_REGULAR, REGULAR, draw_text
 
 
@@ -92,7 +92,7 @@ def draw_north_indian_chart(
         )
         abbrs: List[str] = chart.get(h) or chart.get(str(h)) or []
         if abbrs:
-            joined = " ".join(t(lang, ABBR_KEY_BY_ABBR.get(a, a)) for a in abbrs)
+            joined = " ".join(tr_abbr(lang, a) or a for a in abbrs)
             family = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
             draw_text(
                 pdf,

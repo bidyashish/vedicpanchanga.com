@@ -7,7 +7,7 @@ from typing import Any, Dict
 
 import swisseph as swe
 
-from .i18n import DASHA_LORD_ABBR
+from .dasha import lord_abbr
 
 
 def fmt_dms(deg_in_sign: float) -> str:
@@ -79,8 +79,7 @@ def fmt_dasha_balance(dasha_first: Dict[str, Any]) -> str:
     if months >= 12:
         months -= 12
         years += 1
-    abbr = DASHA_LORD_ABBR.get(dasha_first["lord"], dasha_first["lord"][:3].upper())
-    return f"{abbr} {years} Y {months} M {rem_days} D"
+    return f"{lord_abbr(dasha_first['lord'])} {years} Y {months} M {rem_days} D"
 
 
 def local_sidereal_time(jd_ut: float, longitude: float) -> str:

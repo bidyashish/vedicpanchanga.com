@@ -4,6 +4,7 @@ section components). Re-exports the most common symbols so detail pages
 can use a single `from ..core import …` line."""
 
 from .chart import draw_north_indian_chart
+from .dasha import DASHA_LORD_ABBR, DASHA_YEARS, lord_abbr
 from .formatters import (
     fmt_ayan,
     fmt_dasha_balance,
@@ -15,13 +16,11 @@ from .formatters import (
     local_sidereal_time,
 )
 from .i18n import (
-    ABBR_KEY_BY_ABBR,
-    DASHA_LORD_ABBR,
-    DASHA_TOTAL_YEARS,
-    PLANET_KEY_BY_NAME,
-    SIGN_KEYS_BY_ID,
-    WEEKDAY_KEYS,
     t,
+    tr_abbr,
+    tr_planet,
+    tr_sign,
+    tr_weekday,
 )
 from .layout import (
     ACCENT_RGB,
@@ -57,6 +56,10 @@ from .text import (
 __all__ = [
     # chart
     "draw_north_indian_chart",
+    # dasha
+    "DASHA_LORD_ABBR",
+    "DASHA_YEARS",
+    "lord_abbr",
     # formatters
     "fmt_ayan",
     "fmt_dasha_balance",
@@ -67,13 +70,11 @@ __all__ = [
     "fmt_lon",
     "local_sidereal_time",
     # i18n
-    "ABBR_KEY_BY_ABBR",
-    "DASHA_LORD_ABBR",
-    "DASHA_TOTAL_YEARS",
-    "PLANET_KEY_BY_NAME",
-    "SIGN_KEYS_BY_ID",
-    "WEEKDAY_KEYS",
     "t",
+    "tr_abbr",
+    "tr_planet",
+    "tr_sign",
+    "tr_weekday",
     # layout
     "ACCENT_RGB",
     "HEADER_RGB",

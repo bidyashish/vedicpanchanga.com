@@ -1,5 +1,6 @@
 import type { HouseMap } from "@/types/api";
 import { planetColor, planetTitle, SIGN_SHORT } from "@/lib/planets";
+import { useAstro } from "@/lib/astro-i18n";
 
 const CELL_POSITIONS: Record<number, { x: number; y: number }> = {
   12: { x: 0, y: 0 },
@@ -24,6 +25,7 @@ interface Props {
 }
 
 export function SouthIndianChart({ houseMap, ascSign, title, testId }: Props) {
+  const a = useAstro();
   const signToPlanets: Record<number, string[]> = {};
   for (let h = 1; h <= 12; h++) {
     const sign = ((ascSign - 1 + (h - 1)) % 12) + 1;
@@ -140,7 +142,7 @@ export function SouthIndianChart({ houseMap, ascSign, title, testId }: Props) {
                   style={{ fill: signCol }}
                   opacity="0.95"
                 >
-                  {sign}
+                  {a.num(sign)}
                 </text>
                 <text
                   x={pos.x + CELL - 10}

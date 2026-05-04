@@ -10,7 +10,8 @@ from fpdf import FPDF
 
 from dasha_extras import compute_pratyantars
 
-from ..core.i18n import DASHA_LORD_ABBR, t
+from ..core.dasha import lord_abbr
+from ..core.i18n import t
 from ..core.layout import MARGIN, page_header, section_title
 from ..core.text import BOLD, LATIN_REGULAR, REGULAR, draw_text
 
@@ -26,10 +27,6 @@ def _fmt_date_short(iso: str) -> str:
     except Exception:
         return iso
     return f"{d.day:>2}/{d.month:>2}/{d.year % 100:02d}"
-
-
-def _abbr(lord: str) -> str:
-    return DASHA_LORD_ABBR.get(lord, lord[:3].upper())
 
 
 def _draw_block(
@@ -60,9 +57,9 @@ def _draw_block(
 
     pdf.line(x, y + head_h, x + w, y + head_h)
 
-    for i, (lord_abbr, end_date) in enumerate(rows):
+    for i, (label, end_date) in enumerate(rows):
         ry = y + head_h + 2 + i * line_h + line_h - 3
-        draw_text(pdf, x + 8, ry, lord_abbr, LATIN_REGULAR, BOLD, 8)
+        draw_text(pdf, x + 8, ry, label, LATIN_REGULAR, BOLD, 8)
         draw_text(
             pdf, x + w - 8, ry, end_date, LATIN_REGULAR, REGULAR, 8, anchor="right"
         )
@@ -115,14 +112,14 @@ def draw_antardasha_page(
         years = (
             datetime.fromisoformat(md["end"]) - datetime.fromisoformat(md["start"])
         ).days / 365.25
-        title_str = f"{_abbr(md['lord'])} - {round(years, 1)} yr"
+        title_str = f"{lord_abbr(md['lord'])} - {round(years, 1)} yr"
         subtitle = f"{_fmt_date_short(md['start'])} to {_fmt_date_short(md['end'])}"
         rows = []
         for ad in md["antardashas"]:
             ad_end = datetime.fromisoformat(ad["end"])
             elapsed_at_birth = ad_end <= birth_dt
             end_str = "00/00/00" if elapsed_at_birth else _fmt_date_short(ad["end"])
-            rows.append((_abbr(ad["lord"]), end_str))
+            rows.append((lord_abbr(ad["lord"]), end_str))
         h = _draw_block(pdf, bx, cur_y, block_w, title_str, subtitle, rows)
         row_block_h = max(row_block_h, h)
 
@@ -195,10 +192,12 @@ def draw_pratyantar_pages(
                     _new_page()
 
             bx = MARGIN + cur_col * (block_w + gap)
-            title_str = f"{_abbr(md['lord'])} - {_abbr(ad['lord'])}"
+            title_str = f"{lord_abbr(md['lord'])} - {lord_abbr(ad['lord'])}"
             subtitle = f"{_fmt_date_short(ad['start'])} to {_fmt_date_short(ad['end'])}"
             pratyantars = compute_pratyantars(ad)
-            rows = [(_abbr(p["lord"]), _fmt_date_short(p["end"])) for p in pratyantars]
+            rows = [
+                (lord_abbr(p["lord"]), _fmt_date_short(p["end"])) for p in pratyantars
+            ]
             h = _draw_block(pdf, bx, cur_y, block_w, title_str, subtitle, rows)
             row_block_h = max(row_block_h, h)
             cur_col += 1

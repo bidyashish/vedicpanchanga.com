@@ -1,5 +1,6 @@
 import { useI18n } from "@/i18n";
 import { VedicChart } from "@/components/kundali/VedicChart";
+import { useAstro } from "@/lib/astro-i18n";
 import { planetColor } from "@/lib/planets";
 import type { JaiminiChart, Karaka } from "@/types/api";
 
@@ -11,6 +12,7 @@ interface Props {
 
 export function JaiminiSection({ karakas, karakamsa, swamsa }: Props) {
   const { t } = useI18n();
+  const a = useAstro();
   if (!karakas?.length && !karakamsa && !swamsa) return null;
 
   return (
@@ -41,10 +43,10 @@ export function JaiminiSection({ karakas, karakamsa, swamsa }: Props) {
                     className="py-2 pr-3 font-semibold"
                     style={{ color: planetColor(k.planet_abbr) }}
                   >
-                    {k.planet}
+                    {a.planet(k.planet)}
                   </td>
-                  <td className="py-2 pr-3">{k.sign}</td>
-                  <td className="py-2 num">{k.dms}</td>
+                  <td className="py-2 pr-3">{a.sign(k.sign)}</td>
+                  <td className="py-2 num">{a.num(k.dms)}</td>
                 </tr>
               ))}
             </tbody>

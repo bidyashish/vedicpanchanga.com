@@ -10,6 +10,7 @@ import { TimeBand } from "@/components/panchang/TimeBand";
 import { VedicChart } from "@/components/kundali/VedicChart";
 import { SouthIndianChart } from "@/components/kundali/SouthIndianChart";
 import { PlanetsTable } from "@/components/kundali/PlanetsTable";
+import { useAstro } from "@/lib/astro-i18n";
 import { calculateChart, fetchPanchang, reverseGeocode } from "@/lib/api";
 import { formatTime, formatTimeWithDate, formatLongDate, hoursToHMS, todayISO } from "@/lib/format";
 import type { ChartData, LocationChoice, PanchangData, TransitItem } from "@/types/api";
@@ -43,6 +44,7 @@ function TransitList({
   labelFn: (it: TransitItem) => string;
   accent?: string;
 }) {
+  const a = useAstro();
   if (!items?.length) return <div className="meta">-</div>;
   return (
     <ul className="divide-y divide-parchment-200">
@@ -59,7 +61,7 @@ function TransitList({
             <span className="text-meta font-medium" style={{ color: accent }}>
               {labelFn(it)}
             </span>
-            <span className="text-mini text-ink-soft num sm:shrink-0">{range}</span>
+            <span className="text-mini text-ink-soft num sm:shrink-0">{a.num(range)}</span>
           </li>
         );
       })}
@@ -85,6 +87,7 @@ function KV2({ rows }: { rows: { label: string; value: React.ReactNode }[] }) {
 
 export function PanchangPage({ defaultLocation }: { defaultLocation: LocationChoice }) {
   const { t } = useI18n();
+  const a = useAstro();
   const [date, setDate] = useState(todayISO());
   const [loc, setLoc] = useState<LocationChoice>(defaultLocation);
   const [data, setData] = useState<PanchangData | null>(null);
@@ -341,8 +344,9 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                       )}
                     </div>
                     <p className="text-mini text-ink-soft text-center italic">
-                      Lagna at {chart.ascendant.sign} {chart.ascendant.dms} · Nakshatra{" "}
-                      {chart.ascendant.nakshatra} (Pada {chart.ascendant.nakshatra_pada})
+                      Lagna at {a.sign(chart.ascendant.sign)} {a.num(chart.ascendant.dms)} ·
+                      Nakshatra {a.nakshatra(chart.ascendant.nakshatra)} (Pada{" "}
+                      {a.num(chart.ascendant.nakshatra_pada)})
                     </p>
                   </div>
                   <div className="lg:col-span-2">
@@ -358,28 +362,28 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
                 <TimeCard
                   label={t("sunrise")}
-                  value={formatTime(data.sun_moon.sunrise, tz)}
+                  value={a.num(formatTime(data.sun_moon.sunrise, tz))}
                   color="var(--accent-sun)"
                   icon="☀"
                   testId="sunrise-block"
                 />
                 <TimeCard
                   label={t("sunset")}
-                  value={formatTime(data.sun_moon.sunset, tz)}
+                  value={a.num(formatTime(data.sun_moon.sunset, tz))}
                   color="var(--accent-sun)"
                   icon="◐"
                   testId="sunset-block"
                 />
                 <TimeCard
                   label={t("moonrise")}
-                  value={formatTimeWithDate(data.sun_moon.moonrise, tz, refDate)}
+                  value={a.num(formatTimeWithDate(data.sun_moon.moonrise, tz, refDate))}
                   color="var(--accent-moon)"
                   icon="☾"
                   testId="moonrise-block"
                 />
                 <TimeCard
                   label={t("moonset")}
-                  value={formatTimeWithDate(data.sun_moon.moonset, tz, refDate)}
+                  value={a.num(formatTimeWithDate(data.sun_moon.moonset, tz, refDate))}
                   color="var(--accent-moon)"
                   icon="○"
                   testId="moonset-block"
@@ -477,7 +481,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     items={data.rashi_nakshatra.moon_nakshatra_padas}
                     tz={tz}
                     refDate={refDate}
-                    labelFn={(p) => `${p.nakshatra ?? ""} Pada ${p.pada ?? ""}`}
+                    labelFn={(p) => `${p.nakshatra ?? ""} ${t("col_pada")} ${a.num(p.pada ?? "")}`}
                     accent="var(--accent-moon)"
                   />
                 </div>
@@ -494,12 +498,14 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     {data.rashi_nakshatra.surya_nakshatra.name}
                     <span className="text-ink-soft">
                       {" "}
-                      · Pada {data.rashi_nakshatra.surya_nakshatra.pada}
+                      · {t("col_pada")} {a.num(data.rashi_nakshatra.surya_nakshatra.pada)}
                     </span>
                   </p>
                   <p className="text-sm text-ink-soft num mt-1">
                     upto{" "}
-                    {formatTimeWithDate(data.rashi_nakshatra.surya_nakshatra.ends_at, tz, refDate)}
+                    {a.num(
+                      formatTimeWithDate(data.rashi_nakshatra.surya_nakshatra.ends_at, tz, refDate),
+                    )}
                   </p>
                 </div>
               </div>
@@ -518,9 +524,9 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   { label: "Vedic Ṛtu", value: data.ritu_ayana.vedic_ritu },
                   { label: "Drik Ayana", value: data.ritu_ayana.drik_ayana },
                   { label: "Vedic Ayana", value: data.ritu_ayana.vedic_ayana },
-                  { label: "Dinamana", value: hoursToHMS(data.sun_moon.dinaman_hours) },
-                  { label: "Ratrimana", value: hoursToHMS(data.sun_moon.ratriman_hours) },
-                  { label: "Madhyahna", value: formatTime(data.sun_moon.madhyahna, tz) },
+                  { label: "Dinamana", value: a.num(hoursToHMS(data.sun_moon.dinaman_hours)) },
+                  { label: "Ratrimana", value: a.num(hoursToHMS(data.sun_moon.ratriman_hours)) },
+                  { label: "Madhyahna", value: a.num(formatTime(data.sun_moon.madhyahna, tz)) },
                 ]}
               />
             </Section>
@@ -736,8 +742,8 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   >
                     <span className="font-serif text-lg text-ink font-medium">{l.rashi}</span>
                     <span className="text-sm text-ink-soft num">
-                      {formatTimeWithDate(l.start, tz, refDate)} -{" "}
-                      {formatTimeWithDate(l.end, tz, refDate)}
+                      {a.num(formatTimeWithDate(l.start, tz, refDate))} -{" "}
+                      {a.num(formatTimeWithDate(l.end, tz, refDate))}
                     </span>
                   </div>
                 ))}
@@ -790,28 +796,32 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
             <Section title={t("calendars_title")} testId="section-calendars">
               <KV2
                 rows={[
-                  { label: "Kaliyuga Year", value: `${data.calendars.kali_year}` },
+                  { label: "Kaliyuga Year", value: a.num(data.calendars.kali_year) },
                   {
                     label: "Kali Ahargana",
-                    value: `${data.calendars.kali_ahargana_days.toLocaleString()} days`,
+                    value: a.num(`${data.calendars.kali_ahargana_days.toLocaleString()} days`),
                   },
-                  { label: "Julian Day", value: data.calendars.julian_day.toFixed(2) },
+                  { label: "Julian Day", value: a.num(data.calendars.julian_day.toFixed(2)) },
                   {
                     label: "Modified Julian Day",
-                    value: data.calendars.modified_julian_day.toLocaleString(),
+                    value: a.num(data.calendars.modified_julian_day.toLocaleString()),
                   },
-                  { label: "Rata Die", value: data.calendars.rata_die.toLocaleString() },
+                  { label: "Rata Die", value: a.num(data.calendars.rata_die.toLocaleString()) },
                   {
                     label: "Lahiri Ayanamsa",
-                    value: `${data.calendars.ayanamsha_lahiri.toFixed(6)}°`,
+                    value: a.num(`${data.calendars.ayanamsha_lahiri.toFixed(6)}°`),
                   },
                   {
-                    label: "National Civil Date (Śaka)",
-                    value: `${data.calendars.national_civil_date.month} ${data.calendars.national_civil_date.day}, ${data.calendars.national_civil_date.shaka_year} Śaka`,
+                    label: "National Civil Date (Saka)",
+                    value: a.num(
+                      `${data.calendars.national_civil_date.month} ${data.calendars.national_civil_date.day}, ${data.calendars.national_civil_date.shaka_year} Saka`,
+                    ),
                   },
                   {
                     label: "National Nirayana Date",
-                    value: `${data.calendars.national_nirayana_date.month} ${data.calendars.national_nirayana_date.day}, ${data.calendars.national_nirayana_date.shaka_year} Śaka`,
+                    value: a.num(
+                      `${data.calendars.national_nirayana_date.month} ${data.calendars.national_nirayana_date.day}, ${data.calendars.national_nirayana_date.shaka_year} Saka`,
+                    ),
                   },
                 ]}
               />
@@ -825,7 +835,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
               >
                 <p className="text-meta mb-3" data-testid="tamil-summary">
                   <span className="num font-medium" style={{ color: "var(--accent-sun)" }}>
-                    {data.tamil_calendar.tamil_month.ta} {data.tamil_calendar.tamil_date}
+                    {data.tamil_calendar.tamil_month.ta} {a.num(data.tamil_calendar.tamil_date)}
                   </span>
                   <span className="text-ink-soft">, </span>
                   <span className="font-medium">{data.tamil_calendar.tamil_year.name_ta} ஆண்டு</span>
@@ -842,11 +852,11 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     },
                     {
                       label: t("tamil_date_label"),
-                      value: `${data.tamil_calendar.tamil_date}`,
+                      value: a.num(data.tamil_calendar.tamil_date),
                     },
                     {
                       label: t("tamil_year_label"),
-                      value: `${data.tamil_calendar.tamil_year.name_ta} · ${data.tamil_calendar.tamil_year.name_en} (${data.tamil_calendar.tamil_year.id}/60)`,
+                      value: `${data.tamil_calendar.tamil_year.name_ta} · ${data.tamil_calendar.tamil_year.name_en} (${a.num(data.tamil_calendar.tamil_year.id)}/${a.num(60)})`,
                     },
                   ]}
                 />

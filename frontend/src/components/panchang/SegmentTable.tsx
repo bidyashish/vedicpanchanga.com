@@ -1,3 +1,5 @@
+import { useI18n } from "@/i18n";
+import { useAstro } from "@/lib/astro-i18n";
 import { formatTime } from "@/lib/format";
 import type { LabelledSegment } from "@/types/api";
 
@@ -9,6 +11,8 @@ interface Props {
 }
 
 export function SegmentTable({ segments, nameHeader, tz, testId }: Props) {
+  const { t } = useI18n();
+  const a = useAstro();
   if (!segments.length) {
     return <p className="meta italic">-</p>;
   }
@@ -17,8 +21,8 @@ export function SegmentTable({ segments, nameHeader, tz, testId }: Props) {
       <thead>
         <tr className="text-left text-ink-soft border-b border-parchment-200">
           <th className="py-1.5 pr-3 font-medium eyebrow">{nameHeader}</th>
-          <th className="py-1.5 pr-3 font-medium eyebrow num">Time</th>
-          <th className="py-1.5 font-medium eyebrow text-right">Result</th>
+          <th className="py-1.5 pr-3 font-medium eyebrow num">{t("col_time")}</th>
+          <th className="py-1.5 font-medium eyebrow text-right">{t("col_result")}</th>
         </tr>
       </thead>
       <tbody>
@@ -30,7 +34,7 @@ export function SegmentTable({ segments, nameHeader, tz, testId }: Props) {
           >
             <td className="py-1.5 pr-3 font-serif text-ink">{s.name}</td>
             <td className="py-1.5 pr-3 num text-ink">
-              {formatTime(s.start, tz)} – {formatTime(s.end, tz)}
+              {a.num(formatTime(s.start, tz))} – {a.num(formatTime(s.end, tz))}
             </td>
             <td className="py-1.5 text-right">
               <span
@@ -42,7 +46,7 @@ export function SegmentTable({ segments, nameHeader, tz, testId }: Props) {
                     : "color-mix(in oklab, var(--danger) 12%, transparent)",
                 }}
               >
-                {s.auspicious ? "Auspicious" : "Inauspicious"}
+                {s.auspicious ? t("label_auspicious") : t("label_inauspicious")}
               </span>
             </td>
           </tr>

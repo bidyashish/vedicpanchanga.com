@@ -8,14 +8,9 @@ from typing import Any, Dict, List
 
 from fpdf import FPDF
 
+from ..core.dasha import DASHA_YEARS, lord_abbr
 from ..core.formatters import fmt_dms
-from ..core.i18n import (
-    DASHA_LORD_ABBR,
-    DASHA_TOTAL_YEARS,
-    PLANET_KEY_BY_NAME,
-    SIGN_KEYS_BY_ID,
-    t,
-)
+from ..core.i18n import t, tr_planet, tr_sign
 from ..core.text import (
     BOLD,
     DEV_REGULAR,
@@ -127,7 +122,7 @@ def draw_planet_varga_matrix(
         pdat = next((p for p in planets if p["name"] == planet_name), None)
         if pdat is None:
             continue
-        label = abbr if lang == "en" else t(lang, PLANET_KEY_BY_NAME[planet_name])
+        label = abbr if lang == "en" else tr_planet(lang, planet_name)
         f_p = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
         draw_text(
             pdf,
@@ -202,7 +197,7 @@ def draw_planet_long_table(
     rows.append(
         [
             "ASC" if lang == "en" else t(lang, "abbr_as"),
-            t(lang, SIGN_KEYS_BY_ID.get(asc["sign_id"], "")) or asc["sign"],
+            tr_sign(lang, asc["sign_id"]) or asc["sign"],
             fmt_dms(asc["degree_in_sign"]),
             asc["nakshatra"],
             str(asc.get("nakshatra_pada", "")),
@@ -215,10 +210,8 @@ def draw_planet_long_table(
     for p in planets:
         rows.append(
             [
-                p["name"][:4]
-                if lang == "en"
-                else t(lang, PLANET_KEY_BY_NAME[p["name"]]),
-                t(lang, SIGN_KEYS_BY_ID.get(p["sign_id"], "")) or p["sign"],
+                p["name"][:4] if lang == "en" else tr_planet(lang, p["name"]),
+                tr_sign(lang, p["sign_id"]) or p["sign"],
                 fmt_dms(p["degree_in_sign"]),
                 p["nakshatra"],
                 str(p.get("nakshatra_pada", "")),
@@ -288,11 +281,11 @@ def draw_dasha_long(
     rows: List[List[str]] = []
     for period in chart_data.get("dasha", []):
         lord = period["lord"]
-        abbr = DASHA_LORD_ABBR.get(lord, lord[:3].upper())
-        years = DASHA_TOTAL_YEARS.get(lord, int(round(period.get("years", 0))))
+        abbr = lord_abbr(lord)
+        years = DASHA_YEARS.get(lord, int(round(period.get("years", 0))))
         start = _dt.fromisoformat(period["start"])
         end = _dt.fromisoformat(period["end"])
-        label = abbr if lang == "en" else t(lang, PLANET_KEY_BY_NAME.get(lord, ""))
+        label = abbr if lang == "en" else tr_planet(lang, lord)
         rows.append(
             [
                 f"{label} ({abbr})",
