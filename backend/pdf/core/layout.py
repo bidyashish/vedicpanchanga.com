@@ -24,7 +24,7 @@ def page_header(pdf: FPDF, name: str, label: str) -> None:
     family = (
         DEV_REGULAR if any("ऀ" <= ch <= "ॿ" for ch in (name or "")) else LATIN_REGULAR
     )
-    draw_text(pdf, MARGIN + 6, MARGIN + 11, name or "—", family, BOLD, 11)
+    draw_text(pdf, MARGIN + 6, MARGIN + 11, name or "-", family, BOLD, 11)
     draw_text(
         pdf,
         pdf.w - MARGIN - 6,

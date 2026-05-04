@@ -37,8 +37,8 @@ export function TimeBand({
       </div>
       <p className="value-strong num mt-0.5">
         {window
-          ? `${formatTimeWithDate(window.start, tz, refDate)} — ${formatTimeWithDate(window.end, tz, refDate)}`
-          : "—"}
+          ? `${formatTimeWithDate(window.start, tz, refDate)} - ${formatTimeWithDate(window.end, tz, refDate)}`
+          : "-"}
       </p>
       {desc && <p className="meta mt-0.5">{desc}</p>}
     </div>

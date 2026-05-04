@@ -43,7 +43,7 @@ function TransitList({
   labelFn: (it: TransitItem) => string;
   accent?: string;
 }) {
-  if (!items?.length) return <div className="meta">—</div>;
+  if (!items?.length) return <div className="meta">-</div>;
   return (
     <ul className="divide-y divide-parchment-200">
       {items.map((it, i) => {
@@ -736,7 +736,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   >
                     <span className="font-serif text-lg text-ink font-medium">{l.rashi}</span>
                     <span className="text-sm text-ink-soft num">
-                      {formatTimeWithDate(l.start, tz, refDate)} —{" "}
+                      {formatTimeWithDate(l.start, tz, refDate)} -{" "}
                       {formatTimeWithDate(l.end, tz, refDate)}
                     </span>
                   </div>

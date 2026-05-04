@@ -12,8 +12,8 @@ EXPECTED_SECTION_TITLES = [
     "Traditional",  # page 1
     "Planetary Positions",
     "Vimshottari Dasha",
-    "Vimshottari Dasha — Antardasha",
-    "Vimshottari Dasha — Pratyantar",
+    "Vimshottari Dasha - Antardasha",
+    "Vimshottari Dasha - Pratyantar",
     "Shodashvarga",
     "Jaimini",
     "Friendship Tables",

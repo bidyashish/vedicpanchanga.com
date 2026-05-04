@@ -37,7 +37,7 @@ export function PlanetsTable({ planets, ascendant }: Props) {
               <td className="py-2 pr-3">{p.sign_lord}</td>
               <td className="py-2 pr-3">{p.nakshatra}</td>
               <td className="py-2 pr-3 num">{p.nakshatra_pada}</td>
-              <td className="py-2 pr-3 num">{p.house ?? "—"}</td>
+              <td className="py-2 pr-3 num">{p.house ?? "-"}</td>
               <td className="py-2 text-saffron font-bold">{p.retrograde ? "℞" : ""}</td>
             </tr>
           ))}

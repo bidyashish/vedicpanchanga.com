@@ -99,6 +99,12 @@ All astronomical math must go through `swisseph` (PySwissEph bindings). Never ha
 ### Production topology
 Cloudflare → Nginx (TLS, CSP, returns 444 for direct-IP) → static Vite build at `/apps/panchanga/frontend/dist/` (served by Nginx) + FastAPI on `127.0.0.1:8001`. Systemd unit `panchanga-backend` runs `uvicorn server:app` (see `infra/setup-vps.sh:72`). No `panchanga-frontend` service — Nginx serves the static build directly, with `/assets/` long-cached (`immutable`, 1y).
 
+## Style rules
+
+- **No em dashes (`—`)** anywhere in the codebase - not in UI text, i18n strings, SEO titles, meta descriptions, or new code. Use a plain hyphen (`-`) instead. Existing code comments are exempt but new ones should also use hyphens.
+- **Hindi text must use native Devanagari script** in the `hi` i18n dictionary. No transliteration.
+- **Tamil text must use native Tamil script** in the `ta` i18n dictionary. No transliteration.
+
 ## Gotchas specific to this repo
 
 - **Env var prefix is `VITE_`**, not `REACT_APP_`. Still baked in at build time — changing `VITE_BACKEND_URL` requires a rebuild, not just a restart.

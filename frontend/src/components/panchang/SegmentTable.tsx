@@ -10,7 +10,7 @@ interface Props {
 
 export function SegmentTable({ segments, nameHeader, tz, testId }: Props) {
   if (!segments.length) {
-    return <p className="meta italic">—</p>;
+    return <p className="meta italic">-</p>;
   }
   return (
     <table className="w-full text-sm" data-testid={testId}>

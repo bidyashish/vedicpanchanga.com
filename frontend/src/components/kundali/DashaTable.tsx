@@ -79,7 +79,7 @@ function computeSubPeriods(parent: SubPeriod): SubPeriod[] {
 }
 
 function fmtYears(y: number): string {
-  if (!Number.isFinite(y)) return "—";
+  if (!Number.isFinite(y)) return "-";
   if (y >= 1) return y.toFixed(3).replace(/\.?0+$/, "");
   if (y >= 0.01) return y.toFixed(3).replace(/\.?0+$/, "");
   if (y >= 0.0001) return y.toFixed(4);
@@ -126,7 +126,7 @@ export function DashaTable({ dasha, dashaAntar }: Props) {
   });
 
   const subtitle = current
-    ? `${breadcrumb.join(" › ")} — ${LEVEL_FULL[current.level]}`
+    ? `${breadcrumb.join(" › ")} - ${LEVEL_FULL[current.level]}`
     : t("dasha_subtitle");
 
   const lordHeader = currentLevel

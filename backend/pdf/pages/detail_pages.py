@@ -37,7 +37,7 @@ def _draw_page_header(pdf: FPDF, name: str, lang: str, label: str) -> None:
     pdf.set_draw_color(0, 0, 0)
     pdf.rect(margin, margin, page_w - 2 * margin, 16)
     family = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
-    draw_text(pdf, margin + 6, margin + 11, name or "—", family, BOLD, 11)
+    draw_text(pdf, margin + 6, margin + 11, name or "-", family, BOLD, 11)
     draw_text(
         pdf,
         page_w - margin - 6,
@@ -73,7 +73,7 @@ def draw_planet_varga_matrix(
     columns, each cell = sign id 1..12 the planet falls in that varga.
     """
     pdf.add_page()
-    _draw_page_header(pdf, name, lang, "Shodashvarga — Planet Matrix")
+    _draw_page_header(pdf, name, lang, "Shodashvarga - Planet Matrix")
 
     margin = 14
     page_w = pdf.w

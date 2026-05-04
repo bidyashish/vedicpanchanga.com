@@ -1,7 +1,7 @@
 """Page-section drawers for the Traditional layout (fpdf2 backend).
 
 Origin convention: y grows downward (fpdf2). Each helper takes a top-left
-corner + width/height and renders in-place. No astrological logic here —
+corner + width/height and renders in-place. No astrological logic here -
 that lives in `pdf.report` and the modules under `backend/`.
 """
 
@@ -60,7 +60,7 @@ def draw_header(pdf: FPDF, x: float, y: float, w: float, name: str, lang: str) -
     _stroke(pdf)
     pdf.rect(x, y, w, 16)
     family = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
-    draw_text(pdf, x + 6, y + 11, name or "—", family, BOLD, 11)
+    draw_text(pdf, x + 6, y + 11, name or "-", family, BOLD, 11)
     draw_text(
         pdf,
         x + w - 6,
