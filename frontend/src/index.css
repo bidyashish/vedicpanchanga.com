@@ -588,6 +588,47 @@
     }
   }
 
+  /* Language-name rotator: each new label slides up + fades in,
+     then exits up + fades out. Ring pulse around the trigger keeps
+     the eye on the switcher without being noisy. */
+  @keyframes lang-rotate-in {
+    0% {
+      opacity: 0;
+      transform: translateY(60%);
+      filter: blur(2px);
+    }
+    18% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+    82% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-60%);
+      filter: blur(2px);
+    }
+  }
+  .lang-rotate-in {
+    animation: lang-rotate-in 2400ms ease-in-out both;
+  }
+  @keyframes lang-ring-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgb(var(--primary-rgb) / 0);
+    }
+    50% {
+      box-shadow: 0 0 0 4px rgb(var(--primary-rgb) / 0.18);
+    }
+  }
+  .lang-ring-pulse {
+    animation: lang-ring-pulse 2400ms ease-in-out infinite;
+  }
+
   .kundali-svg text {
     user-select: none;
   }

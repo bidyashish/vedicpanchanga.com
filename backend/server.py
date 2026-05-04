@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Literal, Optional
 
 from dotenv import load_dotenv
-from fastapi import APIRouter, FastAPI, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
 from starlette.middleware.cors import CORSMiddleware
@@ -66,6 +66,116 @@ def calculate(req: CalculateRequest):
 async def get_ayanamsa_options():
     """List available ayanamsa choices."""
     return [{"id": k, "label": v[1]} for k, v in AYANAMSA_OPTIONS.items()]
+
+
+# Country (ISO-3166-1 alpha-2) -> shipped UI locale. Only includes countries
+# whose dominant language we ship; other countries fall through to "en". Trust
+# is the CF-IPCountry header, which only nginx-fronted Cloudflare requests
+# carry; direct hits to 8001 (firewalled in prod) get blank and degrade to en.
+_COUNTRY_TO_LANG = {
+    # Arabic
+    "SA": "ar",
+    "AE": "ar",
+    "EG": "ar",
+    "JO": "ar",
+    "KW": "ar",
+    "QA": "ar",
+    "BH": "ar",
+    "OM": "ar",
+    "YE": "ar",
+    "SY": "ar",
+    "IQ": "ar",
+    "LB": "ar",
+    "MA": "ar",
+    "TN": "ar",
+    "DZ": "ar",
+    "LY": "ar",
+    "SD": "ar",
+    "MR": "ar",
+    "PS": "ar",
+    # Persian / Hebrew
+    "IR": "fa",
+    "AF": "fa",
+    "IL": "he",
+    # Indic
+    "IN": "hi",
+    "NP": "ne",
+    "BD": "bn",
+    # CJK
+    "CN": "zh",
+    "TW": "zh",
+    "HK": "zh",
+    "MO": "zh",
+    "SG": "zh",
+    "JP": "ja",
+    # Cyrillic
+    "RU": "ru",
+    "BY": "ru",
+    "KZ": "ru",
+    "KG": "ru",
+    # Romance / Germanic
+    "ES": "es",
+    "MX": "es",
+    "AR": "es",
+    "CO": "es",
+    "CL": "es",
+    "PE": "es",
+    "VE": "es",
+    "UY": "es",
+    "GT": "es",
+    "EC": "es",
+    "BO": "es",
+    "PY": "es",
+    "HN": "es",
+    "NI": "es",
+    "CR": "es",
+    "PA": "es",
+    "DO": "es",
+    "CU": "es",
+    "SV": "es",
+    "DE": "de",
+    "AT": "de",
+    "CH": "de",
+    "LI": "de",
+    "BR": "pt",
+    "PT": "pt",
+    "AO": "pt",
+    "MZ": "pt",
+    "FR": "fr",
+    "BE": "fr",
+    "LU": "fr",
+    "MC": "fr",
+}
+
+_SHIPPED_LANGS = {"en"} | set(_COUNTRY_TO_LANG.values())
+
+
+def _accept_language_to_shipped(header: str) -> Optional[str]:
+    """Pick the first 2-letter primary tag from Accept-Language we actually ship."""
+    if not header:
+        return None
+    for tok in header.split(","):
+        code = tok.split(";")[0].strip().split("-")[0].lower()
+        if code in _SHIPPED_LANGS:
+            return code
+    return None
+
+
+@api_router.get("/suggest-lang")
+def suggest_lang(request: Request, response: Response):
+    """Suggest a UI locale from the visitor's country (Cloudflare CF-IPCountry)
+    with Accept-Language as fallback. The frontend calls this once on first
+    load if the user has no saved preference. Always safe to ignore - manual
+    pick in the switcher wins and is persisted in localStorage."""
+    cc_raw = (request.headers.get("cf-ipcountry") or "").upper()
+    # Cloudflare uses XX for unknown, T1 for Tor, EU for generic EU - none map cleanly.
+    cc = cc_raw if cc_raw and cc_raw not in {"XX", "T1", "EU"} else ""
+    by_country = _COUNTRY_TO_LANG.get(cc) if cc else None
+    by_accept = _accept_language_to_shipped(request.headers.get("accept-language", ""))
+    lang = by_country or by_accept or "en"
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Vary"] = "CF-IPCountry, Accept-Language"
+    return {"country": cc, "lang": lang}
 
 
 @api_router.get("/get-panchang")
