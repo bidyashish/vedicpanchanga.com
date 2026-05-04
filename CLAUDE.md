@@ -79,7 +79,7 @@ All astronomical math must go through `swisseph` (PySwissEph bindings). Never ha
 
 ### PDF report module (`backend/pdf/`)
 - `pdf/report.py` — orchestrator. Builds page 1 (Traditional summary), then dispatches each detail page through a `_track()` helper that records the section's start page; finally appends the Index of Sections page (page numbers known by then). `_ReportPDF` subclass overrides fpdf2's `footer()` hook so every page gets `vedicpanchanga.com` + `Page N` while its font subset is still mutable.
-- `pdf/core/` — rendering primitives: `text.py` (font registration, draw_text), `layout.py` (page header / footer / section title bar + palette), `formatters.py` (date/dms/lat/lon helpers), `i18n.py` (English + Hindi label maps), `chart.py` (North-Indian square chart), `sections.py` (page-1 components: basic-details box, dasha block, planets table, ashtakavarga). Re-exported from `pdf/core/__init__.py` so pages can use a single `from ..core import …` line.
+- `pdf/core/` — rendering primitives: `text.py` (font registration for 8 Noto faces - Latin+Cyrillic, Devanagari, Tamil, Bengali, Arabic, Hebrew, SC, JP - plus script-aware draw_text), `layout.py` (page header / footer / section title bar + palette), `formatters.py` (date/dms/lat/lon helpers), `i18n/` (15-locale label dictionaries: en, hi, ta, bn, ne, zh, ja, es, de, pt, fr, ru, ar, fa, he, plus per-locale native-digit tables), `chart.py` (North-Indian square chart), `sections.py` (page-1 components: basic-details box, dasha block, planets table, ashtakavarga). Re-exported from `pdf/core/__init__.py` so pages can use a single `from ..core import …` line.
 - `pdf/pages/` — one module per detail page: `detail_pages.py` (planet long table, mahadasha long table, planet × varga matrix), `dasha_detail_pages.py` (Antardaśā grid + paginated Pratyantar), `varga_pages.py` (D1–D60 charts), `jaimini_page.py` (Karakamsa/Swamsa + Karakas table), `relations_page.py` (friendship matrices + Kalsarpa), `sade_sati_page.py` (Sade Sati transits + Mangal Dosha), `toc_page.py` (Index of Sections).
 - `pdf/fonts/` — bundled Noto Sans + Noto Sans Devanagari TTFs.
 
@@ -94,7 +94,7 @@ All astronomical math must go through `swisseph` (PySwissEph bindings). Never ha
 - `src/lib/api.ts` — typed `fetch` wrapper for every backend endpoint plus Nominatim geocode/reverse-geocode.
 - `src/lib/format.ts`, `src/lib/planets.ts` — date/time formatters and planet→colour/long-name tables.
 - `src/types/api.ts` — TypeScript shapes mirroring the backend response bodies.
-- `src/i18n.tsx` — English + Hindi dictionaries, `useI18n`, `I18nProvider`. Sets `document.documentElement.lang` so Devanagari-language CSS (see `index.css`) kicks in automatically.
+- `src/i18n/` — `index.tsx` (LANGUAGES list, `I18nProvider`, `useI18n`, RTL `dir` dispatch for ar/fa/he), `astro.ts` (planet/sign/nakshatra dictionaries + native-digit tables), `locales/{en,hi,ta,bn,ne,zh,ja,es,de,pt,fr,ru,ar,fa,he}.ts`. Sets `document.documentElement.lang` and `dir` so script-aware CSS (Devanagari for hi/ne, see `index.css`) and RTL flow kick in automatically.
 
 ### Production topology
 Cloudflare → Nginx (TLS, CSP, returns 444 for direct-IP) → static Vite build at `/apps/panchanga/frontend/dist/` (served by Nginx) + FastAPI on `127.0.0.1:8001`. Systemd unit `panchanga-backend` runs `uvicorn server:app` (see `infra/setup-vps.sh:72`). No `panchanga-frontend` service — Nginx serves the static build directly, with `/assets/` long-cached (`immutable`, 1y).
@@ -104,6 +104,7 @@ Cloudflare → Nginx (TLS, CSP, returns 444 for direct-IP) → static Vite build
 - **No em dashes (`—`)** anywhere in the codebase - not in UI text, i18n strings, SEO titles, meta descriptions, or new code. Use a plain hyphen (`-`) instead. Existing code comments are exempt but new ones should also use hyphens.
 - **Hindi text must use native Devanagari script** in the `hi` i18n dictionary. No transliteration.
 - **Tamil text must use native Tamil script** in the `ta` i18n dictionary. No transliteration.
+- **All non-English locales use their native script.** Bengali → Bangla, Nepali → Devanagari, Arabic → Arabic, Persian (`fa`) → Perso-Arabic, Hebrew → Hebrew, Russian → Cyrillic, etc. No transliteration in any locale dictionary.
 
 ## Gotchas specific to this repo
 

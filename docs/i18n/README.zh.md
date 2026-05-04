@@ -1,8 +1,10 @@
 # 吠陀历法 (Vedic Panchanga)
 
 > [English](../../README.md) · [हिन्दी](README.hi.md) · [தமிழ்](README.ta.md) ·
-> **中文** · [日本語](README.ja.md) · [Español](README.es.md) ·
-> [Deutsch](README.de.md) · [Português](README.pt.md) · [Français](README.fr.md)
+> [বাংলা](README.bn.md) · [नेपाली](README.ne.md) · **中文** · [日本語](README.ja.md) ·
+> [Español](README.es.md) · [Deutsch](README.de.md) · [Português](README.pt.md) ·
+> [Français](README.fr.md) · [Русский](README.ru.md) · [العربية](README.ar.md) ·
+> [فارسی](README.fa.md) · [עברית](README.he.md)
 
 带有现代 Web 界面的 Drik 历法 (Panchanga) 计算器。可计算任意日期 (公元前 5000 – 公元 5000) 任意地点的传统印度教 Panchanga 元素、十六分盘 (D1–D60)、Vimshottari Daśā、Aṣṭakavarga,以及吉祥的 Muhūrta 时段。
 

@@ -176,12 +176,12 @@ export function DashaTable({ dasha, dashaAntar }: Props) {
         )}
       </div>
       <p className="meta mb-3">{subtitle}</p>
-      <table className="w-full text-left border-collapse">
+      <table className="w-full text-start border-collapse">
         <thead>
           <tr className="eyebrow-lg border-b border-parchment-200">
-            <th className="py-2 pr-3 font-bold">{lordHeader}</th>
-            <th className="py-2 pr-3 font-bold">{t("dasha_years")}</th>
-            <th className="py-2 pr-3 font-bold">{t("dasha_from")}</th>
+            <th className="py-2 pe-3 font-bold">{lordHeader}</th>
+            <th className="py-2 pe-3 font-bold">{t("dasha_years")}</th>
+            <th className="py-2 pe-3 font-bold">{t("dasha_from")}</th>
             <th className="py-2 font-bold">{t("dasha_to")}</th>
           </tr>
         </thead>
@@ -204,7 +204,7 @@ export function DashaTable({ dasha, dashaAntar }: Props) {
                 ].join(" ")}
               >
                 <td
-                  className="py-2 pr-3 font-semibold whitespace-nowrap"
+                  className="py-2 pe-3 font-semibold whitespace-nowrap"
                   style={{ color: planetColor(d.lord.slice(0, 2)) }}
                 >
                   <span
@@ -219,8 +219,8 @@ export function DashaTable({ dasha, dashaAntar }: Props) {
                   {a.planet(d.lord)}
                   {active && <span className="sr-only"> (current)</span>}
                 </td>
-                <td className="py-2 pr-3 num">{a.num(fmtYears(d.years))}</td>
-                <td className="py-2 pr-3 num">{a.num(formatShortDate(d.start))}</td>
+                <td className="py-2 pe-3 num">{a.num(fmtYears(d.years))}</td>
+                <td className="py-2 pe-3 num">{a.num(formatShortDate(d.start))}</td>
                 <td className="py-2 num">{a.num(formatShortDate(d.end))}</td>
               </tr>
             );

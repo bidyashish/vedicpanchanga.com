@@ -112,12 +112,15 @@ pdf/
 │                              "vedicpanchanga.com" + "Page N" while its font subset
 │                              is still mutable.
 ├── core/                      rendering primitives, re-exported via core/__init__.py
-│   ├── text.py                font registration (NotoSans + NotoSansDevanagari) +
-│   │                          per-glyph script-aware draw_text helper
+│   ├── text.py                font registration (8 Noto faces: Latin/Cyrillic,
+│   │                          Devanagari, Tamil, Bengali, Arabic, Hebrew, SC, JP)
+│   │                          + per-glyph script-aware draw_text helper
 │   ├── layout.py              page header strip, footer, saffron section title bar,
 │   │                          shared MARGIN / palette constants
 │   ├── formatters.py          dms/lat/lon/date/time formatters
-│   ├── i18n.py                English + Hindi label dictionaries used by every page
+│   ├── i18n/                  __init__.py glues 15 per-locale label dictionaries
+│   │                          (en, hi, ta, bn, ne, zh, ja, es, de, pt, fr, ru,
+│   │                          ar, fa, he) + native-digit substitution per locale
 │   ├── chart.py               North-Indian square chart drawer
 │   └── sections.py            page-1 components (basic details, dasha block,
 │                              planets table, ashtakavarga grid)
@@ -130,7 +133,8 @@ pdf/
 │   ├── relations_page.py      Friendship matrices (3) + Kalsarpa Yoga page
 │   ├── sade_sati_page.py      Sade Sati transit listing + Mangal Dosha analysis
 │   └── toc_page.py            Index of Sections (drawn last so page numbers are known)
-└── fonts/                     bundled Noto Sans + Noto Sans Devanagari TTFs
+└── fonts/                     bundled Noto Sans (Latin + Cyrillic), Devanagari,
+                               Tamil, Bengali, Arabic, Hebrew, SC, JP TTF/OTF files
 ```
 
 ## Conventions

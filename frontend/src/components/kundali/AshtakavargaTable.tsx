@@ -17,7 +17,7 @@ export function AshtakavargaTable({ ashtakavarga }: { ashtakavarga: Ashtakavarga
       <table className="w-full text-center border-collapse">
         <thead>
           <tr className="eyebrow-lg border-b border-parchment-200">
-            <th className="py-2 px-2 text-left font-bold">{t("th_planet")}</th>
+            <th className="py-2 px-2 text-start font-bold">{t("th_planet")}</th>
             {SIGN_SHORT.map((s) => (
               <th key={s} className="py-2 px-2 font-bold">
                 {s}
@@ -32,7 +32,7 @@ export function AshtakavargaTable({ ashtakavarga }: { ashtakavarga: Ashtakavarga
             const tot = row.reduce((a, b) => a + b, 0);
             return (
               <tr key={p} className="border-b border-parchment-200">
-                <td className="py-2 px-2 text-left font-semibold text-ink">{a.planet(p)}</td>
+                <td className="py-2 px-2 text-start font-semibold text-ink">{a.planet(p)}</td>
                 {row.map((v, i) => (
                   <td key={i} className="py-2 px-2 num">
                     {a.num(v)}
@@ -43,7 +43,7 @@ export function AshtakavargaTable({ ashtakavarga }: { ashtakavarga: Ashtakavarga
             );
           })}
           <tr className="border-t border-parchment-300 bg-parchment-100">
-            <td className="py-2.5 px-2 text-left font-bold text-saffron">{t("sav")}</td>
+            <td className="py-2.5 px-2 text-start font-bold text-saffron">{t("sav")}</td>
             {sav.map((v, i) => (
               <td key={i} className="py-2.5 px-2 num font-bold text-ink">
                 {a.num(v)}

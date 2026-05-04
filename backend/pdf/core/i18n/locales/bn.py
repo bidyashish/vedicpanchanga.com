@@ -24,7 +24,7 @@ LABELS: Dict[str, str] = {
     "yoga": "যোগ",
     "tithi": "তিথি",
     "karan": "করণ",
-    "star_lord": "নক্ষত্র স্বামী",
+    "star_lord": "নক্ষত্র অধিপতি",
     "star_pada": "নক্ষত্র - পাদ",
     "sunrise": "সূর্যোদয়",
     "sunset": "সূর্যাস্ত",

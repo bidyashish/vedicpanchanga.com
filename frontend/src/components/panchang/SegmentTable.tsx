@@ -19,10 +19,10 @@ export function SegmentTable({ segments, nameHeader, tz, testId }: Props) {
   return (
     <table className="w-full text-sm" data-testid={testId}>
       <thead>
-        <tr className="text-left text-ink-soft border-b border-parchment-200">
-          <th className="py-1.5 pr-3 font-medium eyebrow">{nameHeader}</th>
-          <th className="py-1.5 pr-3 font-medium eyebrow num">{t("col_time")}</th>
-          <th className="py-1.5 font-medium eyebrow text-right">{t("col_result")}</th>
+        <tr className="text-start text-ink-soft border-b border-parchment-200">
+          <th className="py-1.5 pe-3 font-medium eyebrow">{nameHeader}</th>
+          <th className="py-1.5 pe-3 font-medium eyebrow num">{t("col_time")}</th>
+          <th className="py-1.5 font-medium eyebrow text-end">{t("col_result")}</th>
         </tr>
       </thead>
       <tbody>
@@ -32,11 +32,11 @@ export function SegmentTable({ segments, nameHeader, tz, testId }: Props) {
             className="border-b border-parchment-200/60 last:border-0"
             data-testid={testId ? `${testId}-row-${i}` : undefined}
           >
-            <td className="py-1.5 pr-3 font-serif text-ink">{s.name}</td>
-            <td className="py-1.5 pr-3 num text-ink">
+            <td className="py-1.5 pe-3 font-serif text-ink">{s.name}</td>
+            <td className="py-1.5 pe-3 num text-ink">
               {a.num(formatTime(s.start, tz))} – {a.num(formatTime(s.end, tz))}
             </td>
-            <td className="py-1.5 text-right">
+            <td className="py-1.5 text-end">
               <span
                 className="inline-block rounded-2xs px-2 py-0.5 text-mini font-medium"
                 style={{

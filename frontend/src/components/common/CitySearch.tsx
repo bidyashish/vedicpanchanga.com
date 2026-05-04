@@ -75,7 +75,7 @@ export function CitySearch({
           className="field"
         />
         {loading && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-crimson">
+          <div className="absolute end-3 top-1/2 -translate-y-1/2 text-crimson">
             <MandalaLoader size={18} />
           </div>
         )}

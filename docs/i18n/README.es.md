@@ -1,8 +1,10 @@
 # Vedic Panchanga
 
 > [English](../../README.md) · [हिन्दी](README.hi.md) · [தமிழ்](README.ta.md) ·
-> [中文](README.zh.md) · [日本語](README.ja.md) · **Español** ·
-> [Deutsch](README.de.md) · [Português](README.pt.md) · [Français](README.fr.md)
+> [বাংলা](README.bn.md) · [नेपाली](README.ne.md) · [中文](README.zh.md) · [日本語](README.ja.md) ·
+> **Español** · [Deutsch](README.de.md) · [Português](README.pt.md) ·
+> [Français](README.fr.md) · [Русский](README.ru.md) · [العربية](README.ar.md) ·
+> [فارسی](README.fa.md) · [עברית](README.he.md)
 
 Calculador de Drik Panchang con interfaz web moderna. Calcula los elementos tradicionales del Panchang hindú, los 16 cuadros divisionales (D1–D60), Vimshottari Daśā, Aṣṭakavarga y ventanas auspiciosas de Muhūrta para cualquier fecha (5000 a. C. – 5000 d. C.) y ubicación.
 
