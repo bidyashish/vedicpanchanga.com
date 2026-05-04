@@ -11,9 +11,42 @@ import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { calculateChart, printPdf } from "@/lib/api";
 import type { ChartData, LocationChoice } from "@/types/api";
 
-// PDF ships full label sets + bundled fonts for all 9 UI languages.
-type PdfLang = "en" | "hi" | "ta" | "zh" | "ja" | "es" | "de" | "pt" | "fr";
-const PDF_LANGS = new Set<PdfLang>(["en", "hi", "ta", "zh", "ja", "es", "de", "pt", "fr"]);
+// PDF ships full label sets for all 15 UI languages. Bundled fonts cover
+// Latin (incl. Cyrillic), Devanagari, Tamil, SC, JP, Arabic (Persian shares
+// the script), Hebrew, Bengali. Nepali reuses the Devanagari face.
+type PdfLang =
+  | "en"
+  | "hi"
+  | "ta"
+  | "bn"
+  | "ne"
+  | "zh"
+  | "ja"
+  | "es"
+  | "de"
+  | "pt"
+  | "fr"
+  | "ru"
+  | "ar"
+  | "fa"
+  | "he";
+const PDF_LANGS = new Set<PdfLang>([
+  "en",
+  "hi",
+  "ta",
+  "bn",
+  "ne",
+  "zh",
+  "ja",
+  "es",
+  "de",
+  "pt",
+  "fr",
+  "ru",
+  "ar",
+  "fa",
+  "he",
+]);
 const pdfLangFor = (uiLang: string): PdfLang =>
   PDF_LANGS.has(uiLang as PdfLang) ? (uiLang as PdfLang) : "en";
 

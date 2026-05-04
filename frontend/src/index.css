@@ -271,7 +271,7 @@
   }
 
   /* Devanagari needs slightly more leading for stacked diacritics. */
-  html[lang="hi"] {
+  html[lang="hi"], html[lang="ne"] {
     font-family: var(--font-deva-body);
     font-size: 17px;
     line-height: 1.7;
@@ -291,7 +291,7 @@
     font-feature-settings: "ss01", "cv11"; /* Inter's tabular digits + alt 1/0 */
   }
 
-  html[lang="hi"] :is(h1, h2, h3, h4, h5, h6) {
+  html[lang="hi"], html[lang="ne"] :is(h1, h2, h3, h4, h5, h6) {
     font-family: var(--font-deva);
     line-height: 1.45;
     letter-spacing: 0;
@@ -692,7 +692,7 @@
 
   /* Devanagari script is visually denser per glyph; bump every step
      so Hindi reads as easily as English at the same hierarchy level. */
-  html[lang="hi"] {
+  html[lang="hi"], html[lang="ne"] {
     & .heading-page {
       font-size: 32px;
       letter-spacing: -0.012em;
@@ -717,7 +717,7 @@
     }
   }
   @media (min-width: 640px) {
-    html[lang="hi"] {
+    html[lang="hi"], html[lang="ne"] {
       & .heading-page {
         font-size: 40px;
       }
@@ -727,7 +727,7 @@
     }
   }
   @media (min-width: 1024px) {
-    html[lang="hi"] {
+    html[lang="hi"], html[lang="ne"] {
       & .heading-page {
         font-size: 46px;
       }

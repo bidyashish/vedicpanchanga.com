@@ -1,9 +1,10 @@
-"""Label dictionary for the printable PDF (9 languages).
+"""Label dictionary for the printable PDF (15 languages).
 
 Only labels that appear on the printed page live here. The renderer picks
-the script font (Latin / Devanagari / Tamil / SC / JP) per text run, so
-values such as dates or numerals can stay Latin even on a Hindi or Chinese
-page.
+the script font (Latin / Devanagari / Tamil / SC / JP / Arabic / Hebrew /
+Bengali) per text run, so values such as dates or numerals can stay Latin
+even on a Hindi or Chinese page. Cyrillic (Russian) is covered by the Latin
+NotoSans face. Persian uses the Arabic script. Nepali reuses Devanagari.
 
 Sanskrit/Jyotisha technical terms (Tithi, Nakshatra, Yoga, Lagna,
 Ashtakavarga, Vimshottari Dasha, etc.) are written in plain ASCII (no IAST
@@ -11,7 +12,8 @@ diacritics) across all locales that use a Latin script - that's how these
 words appear in everyday English-language Vedic/Hindu publications, and
 matches the rest of the app.
 
-Per-locale dictionaries live in ``locales/{en,hi,ta,zh,ja,es,de,pt,fr}.py``;
+Per-locale dictionaries live in
+``locales/{en,hi,ta,bn,ne,zh,ja,es,de,pt,fr,ru,ar,fa,he}.py``;
 this module just glues them together and exposes the translation helpers.
 """
 
@@ -19,13 +21,19 @@ from __future__ import annotations
 
 from typing import Dict
 
+from .locales.ar import LABELS as AR
+from .locales.bn import LABELS as BN
 from .locales.de import LABELS as DE
 from .locales.en import LABELS as EN
 from .locales.es import LABELS as ES
+from .locales.fa import LABELS as FA
 from .locales.fr import LABELS as FR
+from .locales.he import LABELS as HE
 from .locales.hi import LABELS as HI
 from .locales.ja import LABELS as JA
+from .locales.ne import LABELS as NE
 from .locales.pt import LABELS as PT
+from .locales.ru import LABELS as RU
 from .locales.ta import LABELS as TA
 from .locales.zh import LABELS as ZH
 
@@ -33,12 +41,18 @@ LOCALES: Dict[str, Dict[str, str]] = {
     "en": EN,
     "hi": HI,
     "ta": TA,
+    "bn": BN,
+    "ne": NE,
     "zh": ZH,
     "ja": JA,
     "es": ES,
     "de": DE,
     "pt": PT,
     "fr": FR,
+    "ru": RU,
+    "ar": AR,
+    "fa": FA,
+    "he": HE,
 }
 
 
@@ -115,7 +129,11 @@ def tr_nakshatra(lang: str, name: str) -> str:
 # substitute there. Mirrors frontend src/i18n/astro.ts NATIVE_DIGITS.
 _NATIVE_DIGITS: Dict[str, str] = {
     "hi": "०१२३४५६७८९",
+    "ne": "०१२३४५६७८९",
     "ta": "௦௧௨௩௪௫௬௭௮௯",
+    "bn": "০১২৩৪৫৬৭৮৯",
+    "ar": "٠١٢٣٤٥٦٧٨٩",
+    "fa": "۰۱۲۳۴۵۶۷۸۹",
 }
 
 _LATIN_DIGITS = "0123456789"

@@ -78,7 +78,22 @@ export interface PrintPdfRequest {
   timezone?: string | null;
   place_name?: string;
   ayanamsa?: string;
-  lang: "en" | "hi" | "ta" | "zh" | "ja" | "es" | "de" | "pt" | "fr";
+  lang:
+    | "en"
+    | "hi"
+    | "ta"
+    | "bn"
+    | "ne"
+    | "zh"
+    | "ja"
+    | "es"
+    | "de"
+    | "pt"
+    | "fr"
+    | "ru"
+    | "ar"
+    | "fa"
+    | "he";
 }
 
 export async function printPdf(req: PrintPdfRequest): Promise<Blob> {
