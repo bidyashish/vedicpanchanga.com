@@ -10,7 +10,7 @@ AYANAMSA_OPTIONS = {
     "kp_old": (swe.SIDM_KRISHNAMURTI, "K.P. Old (Krishnamurti)"),
     "raman": (swe.SIDM_RAMAN, "B.V. Raman"),
     "kp_khullar": (swe.SIDM_TRUE_CITRA, "K.P. Khullar (True Chitrapaksha)"),
-    "sayan": (None, "Sāyana (Tropical)"),
+    "sayan": (None, "Sayana (Tropical)"),
     "manoj": (swe.SIDM_LAHIRI_ICRC, "Manoj (Lahiri ICRC)"),
 }
 

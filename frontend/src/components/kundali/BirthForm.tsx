@@ -23,7 +23,7 @@ const FALLBACK_AYANAMSAS: AyanamsaOption[] = [
   { id: "kp_old", label: "K.P. Old" },
   { id: "raman", label: "B.V. Raman" },
   { id: "kp_khullar", label: "K.P. Khullar" },
-  { id: "sayan", label: "Sāyana (Tropical)" },
+  { id: "sayan", label: "Sayana (Tropical)" },
   { id: "manoj", label: "Manoj (Lahiri ICRC)" },
 ];
 

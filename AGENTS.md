@@ -9,7 +9,7 @@
 
 **Vedic Panchanga** is a Drik Panchang calculator with a modern web interface.
 It computes traditional Hindu Panchanga elements, divisional charts (D1–D60),
-Vimshottari Dasha, Ashtakavarga, Muhūrta finding, and much more — for any date
+Vimshottari Dasha, Ashtakavarga, Muhurta finding, and much more — for any date
 (5000 BCE–5000 CE) and any location on Earth.
 
 **Live site**: https://vedicpanchanga.com
@@ -45,7 +45,7 @@ vedicpanchanga.com/
 │   ├── ayanamsa.py         # Multi-ayanamsa support
 │   ├── panchang.py         # Basic panchang calculation
 │   ├── advanced_panchang.py # Extended panchang (muhurta, rahu kala, etc.)
-│   ├── muhurta.py          # Muhūrta finder engine
+│   ├── muhurta.py          # Muhurta finder engine
 │   ├── constants.py        # Astronomical constants
 │   ├── panchang_constants.py # Panchang-specific constants
 │   ├── server.py           # Server configuration
@@ -87,8 +87,8 @@ vedicpanchanga.com/
 | `POST` | `/api/calculate` | Full Kundali calculation (charts, dasha, ashtakavarga) |
 | `GET` | `/api/get-panchang` | Drik Panchang for a date + location |
 | `GET` | `/api/ayanamsa-options` | List available ayanamsa systems |
-| `GET` | `/api/muhurta-purposes` | List muhūrta purpose categories |
-| `POST` | `/api/find-muhurta` | Scan dates for auspicious muhūrta windows |
+| `GET` | `/api/muhurta-purposes` | List muhurta purpose categories |
+| `POST` | `/api/find-muhurta` | Scan dates for auspicious muhurta windows |
 
 The frontend proxies these through Next.js API routes at `/api/v1/*`.
 
@@ -140,8 +140,8 @@ source venv/bin/activate.fish
 pytest ../tests/ -v
 
 # Specific suites
-pytest ../tests/test_muhurta.py -v          # Muhūrta unit tests
-pytest ../tests/test_muhurta_api.py -v      # Muhūrta HTTP tests
+pytest ../tests/test_muhurta.py -v          # Muhurta unit tests
+pytest ../tests/test_muhurta_api.py -v      # Muhurta HTTP tests
 pytest ../tests/test_iteration4_vargas.py   # Varga structure tests
 
 # Production smoke test
@@ -220,14 +220,14 @@ bash infra/update-deploy.sh        # Manual redeploy
 
 ### Ayanamsa
 Supported systems (configured in `ayanamsa.py`):
-- NC Lahiri (default), KP New, KP Old, BV Raman, KP Khullar, Sāyana Tropical, Manoj.
+- NC Lahiri (default), KP New, KP Old, BV Raman, KP Khullar, Sayana Tropical, Manoj.
 
 ### Divisional Charts
 16 vargas implemented: D1, D2, D3, D4, D7, D9, D10, D12, D16, D20, D24, D27, D30, D40, D45, D60.
-- D30 (Triṁśāṁśa) uses special uneven segment rules — test carefully.
+- D30 (Trimshamsa) uses special uneven segment rules — test carefully.
 - Chart styles: North Indian (diamond) + South Indian (4×4 grid).
 
-### Muhūrta Finder
+### Muhurta Finder
 - Scans up to 120 days forward.
 - Purposes: Marriage, Griha Pravesh, Business, Travel, Education, Vehicle, Namakarana, Medical.
 - Scoring: 0–100 per day with explainable reasons from Tithi, Nakshatra, Weekday, Chandrabalam, Tarabalam.

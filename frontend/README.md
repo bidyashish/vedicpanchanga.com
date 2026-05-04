@@ -46,9 +46,9 @@ setup). When you need one, add Vitest.
 Vite bakes `VITE_*` variables in **at build time**, so editing `.env`
 needs a rebuild — restarting the dev server isn't enough.
 
-| Var                        | Required | Purpose                                                             |
-| -------------------------- | -------- | ------------------------------------------------------------------- |
-| `VITE_BACKEND_URL`         | dev      | Backend origin. Empty in prod → same-origin `/api` via Nginx proxy. |
+| Var                | Required | Purpose                                                             |
+| ------------------ | -------- | ------------------------------------------------------------------- |
+| `VITE_BACKEND_URL` | dev      | Backend origin. Empty in prod → same-origin `/api` via Nginx proxy. |
 
 ## Routing
 
@@ -73,7 +73,7 @@ src/
 │                           Per-route SEO (title/description/canonical/og:tags)
 │                           applied via lib/seo.applySeo on view change.
 ├── pages/
-│   ├── KundaliPage.tsx     birth chart + Vimshottari + Aṣṭakavarga + Print PDF
+│   ├── KundaliPage.tsx     birth chart + Vimshottari + Ashtakavarga + Print PDF
 │   ├── PanchangPage.tsx    daily Drik panchang + live lagna kundali (anchored
 │   │                       to current wall-clock time in chart's timezone)
 │   ├── MuhurtaPage.tsx     date-range scanner with native filters

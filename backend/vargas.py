@@ -23,22 +23,22 @@ Standard Parashara rules:
 VARGA_ORDER = [1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60]
 
 VARGA_NAMES = {
-    1: "Rāśi",
-    2: "Horā",
-    3: "Drekkāṇa",
-    4: "Chaturthāṁśa",
-    7: "Saptāṁśa",
-    9: "Navāṁśa",
-    10: "Daśāṁśa",
-    12: "Dvādaśāṁśa",
-    16: "Ṣoḍaśāṁśa",
-    20: "Viṁśāṁśa",
-    24: "Chaturviṁśāṁśa",
-    27: "Bhāṁśa",
-    30: "Triṁśāṁśa",
-    40: "Khavedāṁśa",
-    45: "Akṣavedāṁśa",
-    60: "Ṣaṣṭyāṁśa",
+    1: "Rashi",
+    2: "Hora",
+    3: "Drekkana",
+    4: "Chaturthamsa",
+    7: "Saptamsa",
+    9: "Navamsa",
+    10: "Dashamsa",
+    12: "Dvadashamsa",
+    16: "Shodashamsa",
+    20: "Vimshamsa",
+    24: "Chaturvimshamsa",
+    27: "Bhamsa",
+    30: "Trimshamsa",
+    40: "Khavedamsa",
+    45: "Akshavedamsa",
+    60: "Shashtyamsa",
 }
 
 VARGA_SUBTITLE = {

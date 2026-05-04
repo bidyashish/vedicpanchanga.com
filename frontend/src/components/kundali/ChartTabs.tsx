@@ -36,7 +36,7 @@ export function ChartTabs({ data }: Props) {
   const active = vargas[tab] ?? {
     chart: data.d1_chart,
     asc_sign: data.d1_asc_sign,
-    name: "Rāśi",
+    name: "Rashi",
     division: 1,
   };
 

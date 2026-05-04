@@ -46,8 +46,8 @@ export function PrivacyPage() {
         <div className="space-y-3 text-meta text-ink leading-relaxed">
           <p>
             <strong>vedicpanchanga.com</strong> ("we", "our", "the site") is a commercial,
-            advertising-supported service that provides Vedic astrological calculations (panchānga,
-            kuṇḍalī, muhūrta). The site does not require an account or login. This policy explains
+            advertising-supported service that provides Vedic astrological calculations (panchang,
+            kundali, muhurta). The site does not require an account or login. This policy explains
             what information is processed when you use the site and how it is handled.
           </p>
           <p>

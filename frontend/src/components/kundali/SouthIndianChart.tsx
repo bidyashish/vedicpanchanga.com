@@ -91,7 +91,7 @@ export function SouthIndianChart({ houseMap, ascSign, title, testId }: Props) {
             style={{ fill: innerCol }}
             fontStyle="italic"
           >
-            Rāśi Kuṇḍalī
+            Rashi Kundali
           </text>
 
           {Array.from({ length: 12 }, (_, i) => i + 1).map((sign) => {
