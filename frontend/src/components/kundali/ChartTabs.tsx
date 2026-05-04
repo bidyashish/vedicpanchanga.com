@@ -95,7 +95,7 @@ export function ChartTabs({ data }: Props) {
             return (
               <option key={key} value={key}>
                 D{n}
-                {label ? ` — ${label}` : ""}
+                {label ? ` - ${label}` : ""}
               </option>
             );
           })}

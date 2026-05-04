@@ -20,7 +20,7 @@ def _draw_header(pdf: FPDF, name: str, page_label: str) -> None:
     pdf.set_line_width(0.6)
     pdf.set_draw_color(0, 0, 0)
     pdf.rect(margin, margin, page_w - 2 * margin, 16)
-    draw_text(pdf, margin + 6, margin + 11, name or "—", LATIN_REGULAR, BOLD, 11)
+    draw_text(pdf, margin + 6, margin + 11, name or "-", LATIN_REGULAR, BOLD, 11)
     draw_text(
         pdf,
         page_w - margin - 6,
@@ -73,7 +73,7 @@ def draw_sade_sati_page(
         nonlocal page_no
         page_no += 1
         pdf.add_page()
-        _draw_header(pdf, name, f"{title} — page {page_no}")
+        _draw_header(pdf, name, f"{title} - page {page_no}")
 
         cur_y = margin + 22
         if first:
@@ -192,7 +192,7 @@ def draw_mangal_page(
         ),
         (
             "House from Moon",
-            str(analysis["house_from_moon"]) if analysis["house_from_moon"] else "—",
+            str(analysis["house_from_moon"]) if analysis["house_from_moon"] else "-",
         ),
         (
             "In dosha-bearing house from Moon",
@@ -241,7 +241,7 @@ def draw_mangal_page(
         "own / exaltation sign, retrograde Mars, certain ascendants and aspects. "
         "Always consult a qualified astrologer before drawing conclusions."
     )
-    # Multi-line wrap by simple split — fpdf2's multi_cell would also work here.
+    # Multi-line wrap by simple split - fpdf2's multi_cell would also work here.
     pdf.set_font(LATIN_REGULAR, REGULAR, 9)
     pdf.set_xy(margin, cur_y)
     pdf.multi_cell(inner_w, 12, note, border=0)

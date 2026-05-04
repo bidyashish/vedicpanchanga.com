@@ -26,7 +26,7 @@ function activeLocale(): string {
 }
 
 export function formatTime(iso?: string | null, tz?: string, locale = activeLocale()): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   return new Date(iso).toLocaleTimeString(locale, {
     hour: "2-digit",
     minute: "2-digit",
@@ -41,7 +41,7 @@ export function formatTimeWithDate(
   refDate?: string,
   locale = activeLocale(),
 ): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   const d = new Date(iso);
   const timePart = d.toLocaleTimeString(locale, {
     hour: "2-digit",
@@ -69,16 +69,16 @@ export function formatTimeRange(
   tz?: string,
   locale = activeLocale(),
 ): string {
-  if (!startIso || !endIso) return "—";
+  if (!startIso || !endIso) return "-";
   try {
-    return `${formatTime(startIso, tz, locale)} — ${formatTime(endIso, tz, locale)}`;
+    return `${formatTime(startIso, tz, locale)} - ${formatTime(endIso, tz, locale)}`;
   } catch {
-    return "—";
+    return "-";
   }
 }
 
 export function hoursToHMS(h?: number): string {
-  if (!h && h !== 0) return "—";
+  if (!h && h !== 0) return "-";
   const totalSec = Math.round(h * 3600);
   const hh = Math.floor(totalSec / 3600);
   const mm = Math.floor((totalSec % 3600) / 60);

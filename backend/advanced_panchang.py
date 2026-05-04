@@ -335,8 +335,8 @@ def _ritu_ayana(sun_sid: float, sun_trop: float):
     vedic_ayana = "Uttarayana" if sid_sign in {10, 11, 12, 1, 2, 3} else "Dakshinayana"
 
     return {
-        "drik_ritu": SIGN_TO_DRIK_RITU.get(trop_sign, "—"),
-        "vedic_ritu": SIGN_TO_VEDIC_RITU.get(sid_sign, "—"),
+        "drik_ritu": SIGN_TO_DRIK_RITU.get(trop_sign, "-"),
+        "vedic_ritu": SIGN_TO_VEDIC_RITU.get(sid_sign, "-"),
         "drik_ayana": drik_ayana,
         "vedic_ayana": vedic_ayana,
     }

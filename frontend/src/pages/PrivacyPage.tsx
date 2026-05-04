@@ -10,7 +10,7 @@ export function PrivacyPage() {
     applySeo({
       title: "Privacy Policy · Vedic Panchanga",
       description:
-        "Privacy Policy for vedicpanchanga.com — how we handle data, cookies and Google AdSense advertising. We do not require login and do not store personal data.",
+        "Privacy Policy for vedicpanchanga.com - how we handle data, cookies and Google AdSense advertising. We do not require login and do not store personal data.",
       canonical: "https://vedicpanchanga.com/privacy",
     });
     window.scrollTo({ top: 0, behavior: "auto" });
@@ -97,15 +97,15 @@ export function PrivacyPage() {
         <div className="space-y-3 text-meta text-ink leading-relaxed">
           <ul className="list-disc pl-5 space-y-1">
             <li>
-              <strong>OpenStreetMap Nominatim</strong> — used for city search and reverse geocoding.
+              <strong>OpenStreetMap Nominatim</strong> - used for city search and reverse geocoding.
               Standard request metadata is processed under their policy.
             </li>
             <li>
-              <strong>Cloudflare</strong> — provides TLS, caching, and DDoS protection. May process
+              <strong>Cloudflare</strong> - provides TLS, caching, and DDoS protection. May process
               IP and user-agent transiently.
             </li>
             <li>
-              <strong>Google AdSense</strong> — serves advertisements (see the section below).
+              <strong>Google AdSense</strong> - serves advertisements (see the section below).
             </li>
           </ul>
         </div>

@@ -314,7 +314,7 @@ def render_pdf(
         lambda: draw_planet_varga_matrix(pdf, chart_data, name or "", lang),
     )
     _track(
-        "Jaimini — Karakamsa & Swamsa",
+        "Jaimini - Karakamsa & Swamsa",
         lambda: draw_jaimini_page(pdf, chart_data, name or "", lang),
     )
     _track(

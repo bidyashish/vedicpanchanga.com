@@ -15,8 +15,8 @@ from ..core.layout import MARGIN, page_header, section_title
 from ..core.text import BOLD, LATIN_REGULAR, REGULAR, draw_text
 
 
-PAGE_LABEL_ANTAR = "Vimshottari Dasha — Antardasha"
-PAGE_LABEL_PRATY = "Vimshottari Dasha — Pratyantar"
+PAGE_LABEL_ANTAR = "Vimshottari Dasha - Antardasha"
+PAGE_LABEL_PRATY = "Vimshottari Dasha - Pratyantar"
 
 
 def _fmt_date_short(iso: str) -> str:
@@ -115,7 +115,7 @@ def draw_antardasha_page(
         years = (
             datetime.fromisoformat(md["end"]) - datetime.fromisoformat(md["start"])
         ).days / 365.25
-        title_str = f"{_abbr(md['lord'])} — {round(years, 1)} yr"
+        title_str = f"{_abbr(md['lord'])} - {round(years, 1)} yr"
         subtitle = f"{_fmt_date_short(md['start'])} to {_fmt_date_short(md['end'])}"
         rows = []
         for ad in md["antardashas"]:
@@ -162,7 +162,7 @@ def draw_pratyantar_pages(
         nonlocal page_no, cur_y, row_block_h, cur_col
         page_no += 1
         pdf.add_page()
-        page_header(pdf, name, f"{PAGE_LABEL_PRATY} — page {page_no}")
+        page_header(pdf, name, f"{PAGE_LABEL_PRATY} - page {page_no}")
         cur_y = section_title(
             pdf,
             MARGIN,
@@ -195,7 +195,7 @@ def draw_pratyantar_pages(
                     _new_page()
 
             bx = MARGIN + cur_col * (block_w + gap)
-            title_str = f"{_abbr(md['lord'])} — {_abbr(ad['lord'])}"
+            title_str = f"{_abbr(md['lord'])} - {_abbr(ad['lord'])}"
             subtitle = f"{_fmt_date_short(ad['start'])} to {_fmt_date_short(ad['end'])}"
             pratyantars = compute_pratyantars(ad)
             rows = [(_abbr(p["lord"]), _fmt_date_short(p["end"])) for p in pratyantars]

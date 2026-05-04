@@ -25,7 +25,7 @@ def draw_jaimini_page(
         return
 
     pdf.add_page()
-    page_header(pdf, name, "Jaimini — Karakamsa & Swamsa")
+    page_header(pdf, name, "Jaimini - Karakamsa & Swamsa")
 
     page_w = pdf.w
     inner_w = page_w - 2 * MARGIN
@@ -34,7 +34,7 @@ def draw_jaimini_page(
         MARGIN,
         MARGIN + 22,
         inner_w,
-        "Jaimini System — Karakamsa & Swamsa",
+        "Jaimini System - Karakamsa & Swamsa",
         "Karakamsa = D9 chart drawn from the Atmakaraka's navamsa sign · Swamsa = D9 from natal D9 ascendant",
     )
 

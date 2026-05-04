@@ -36,12 +36,12 @@ def _draw_page_header(
     pdf.set_draw_color(0, 0, 0)
     pdf.rect(margin, margin, page_w - 2 * margin, 16)
     family = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
-    draw_text(pdf, margin + 6, margin + 11, name or "—", family, BOLD, 11)
+    draw_text(pdf, margin + 6, margin + 11, name or "-", family, BOLD, 11)
     draw_text(
         pdf,
         page_w - margin - 6,
         margin + 11,
-        f"Shodashvarga — {page_no}/{total}",
+        f"Shodashvarga - {page_no}/{total}",
         LATIN_REGULAR,
         REGULAR,
         9,
@@ -102,7 +102,7 @@ def draw_varga_pages(
 
             # Title strip
             family = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
-            title_main = f"D{item['division']} — {item['name']}"
+            title_main = f"D{item['division']} - {item['name']}"
             draw_text(
                 pdf,
                 cx + cell_w / 2,

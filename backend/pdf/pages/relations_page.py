@@ -67,7 +67,7 @@ def _draw_matrix(
                 pdf,
                 cell_x + cell_w / 2,
                 cell_y + cell_h - 5,
-                code or "—",
+                code or "-",
                 LATIN_REGULAR,
                 REGULAR,
                 8,
@@ -89,8 +89,8 @@ def _draw_legend(pdf: FPDF, x: float, y: float, labels: Dict[str, str]) -> float
         pdf.set_fill_color(r, g, b)
         pdf.set_draw_color(120, 120, 120)
         pdf.rect(cx, y - 8, 14, 10, "DF")
-        draw_text(pdf, cx + 18, y, f"{code} — {name}", LATIN_REGULAR, REGULAR, 8)
-        cx += 18 + pdf.get_string_width(f"{code} — {name}") + 14
+        draw_text(pdf, cx + 18, y, f"{code} - {name}", LATIN_REGULAR, REGULAR, 8)
+        cx += 18 + pdf.get_string_width(f"{code} - {name}") + 14
     return y + 12
 
 
@@ -115,7 +115,7 @@ def draw_friendship_page(
         MARGIN + 22,
         inner_w,
         "Planetary Friendship Tables",
-        "Natural · Temporal (sign-position derived) · Composite (5-fold) — read row planet's view of column planet",
+        "Natural · Temporal (sign-position derived) · Composite (5-fold) - read row planet's view of column planet",
     )
 
     planets = fr["planets"]
@@ -134,7 +134,7 @@ def draw_friendship_page(
         MARGIN,
         cur_y,
         inner_w,
-        "Temporal Friendship (Tatkalika) — from current sign positions",
+        "Temporal Friendship (Tatkalika) - from current sign positions",
         planets,
         fr["temporal"],
     )
@@ -144,7 +144,7 @@ def draw_friendship_page(
         MARGIN,
         cur_y,
         inner_w,
-        "Composite Friendship (Panchadha) — natural × temporal",
+        "Composite Friendship (Panchadha) - natural × temporal",
         planets,
         fr["composite"],
     )
@@ -184,20 +184,20 @@ def draw_kalsarpa_page(
     pdf.set_draw_color(180, 180, 180)
     pdf.rect(MARGIN, cur_y, inner_w, 28, "DF")
     draw_text(
-        pdf, MARGIN + 10, cur_y + 17, ks.get("verdict", "—"), LATIN_REGULAR, BOLD, 12
+        pdf, MARGIN + 10, cur_y + 17, ks.get("verdict", "-"), LATIN_REGULAR, BOLD, 12
     )
     cur_y += 40
 
     rows = [
-        ("Type", ks.get("kind") or "—"),
-        ("Direction", ks.get("direction") or "—"),
+        ("Type", ks.get("kind") or "-"),
+        ("Direction", ks.get("direction") or "-"),
         (
             "Rahu in house (from Lagna)",
-            str(ks.get("rahu_house")) if ks.get("rahu_house") is not None else "—",
+            str(ks.get("rahu_house")) if ks.get("rahu_house") is not None else "-",
         ),
         (
             "Ketu in house (from Lagna)",
-            str(ks.get("ketu_house")) if ks.get("ketu_house") is not None else "—",
+            str(ks.get("ketu_house")) if ks.get("ketu_house") is not None else "-",
         ),
     ]
     label_w = inner_w * 0.55

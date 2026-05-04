@@ -23,19 +23,19 @@ const VIEW_PATH: Record<View, string> = {
 
 const SEO_BY_VIEW: Record<View, { title: string; description: string; canonical: string }> = {
   kundali: {
-    title: "Vedic Panchanga — Free Drik Panchang, Kundali & Muhurta Calculator",
+    title: "Vedic Panchanga - Free Drik Panchang, Kundali & Muhurta Calculator",
     description:
       "Free Vedic Panchanga calculator: daily Drik Panchang, North & South Indian Kundali (birth chart), Vimshottari Dasha, divisional charts, and Muhurta finder. Sidereal Lahiri, Swiss Ephemeris precision.",
     canonical: `${SITE}/`,
   },
   panchang: {
-    title: "Daily Drik Panchang — Tithi, Nakshatra, Yoga, Karana · Vedic Panchanga",
+    title: "Daily Drik Panchang - Tithi, Nakshatra, Yoga, Karana · Vedic Panchanga",
     description:
       "Daily Drik Panchang for any date and location: tithi, nakshatra, yoga, karana, sunrise/sunset, Rahu kala, Abhijit muhurta, Chandrabalam and Tarabalam.",
     canonical: `${SITE}/panchang`,
   },
   muhurta: {
-    title: "Muhurta Finder — Auspicious Timings for Any Undertaking · Vedic Panchanga",
+    title: "Muhurta Finder - Auspicious Timings for Any Undertaking · Vedic Panchanga",
     description:
       "Find auspicious muhurta windows by purpose, date range and location. Purpose-based scoring with explainable reasons; native filters for Chandrabalam and Tarabalam.",
     canonical: `${SITE}/muhurta`,

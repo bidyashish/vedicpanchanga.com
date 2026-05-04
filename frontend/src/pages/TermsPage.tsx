@@ -10,7 +10,7 @@ export function TermsPage() {
     applySeo({
       title: "Terms of Use · Vedic Panchanga",
       description:
-        "Terms of Use for vedicpanchanga.com — service is provided as-is, with no warranty or guarantee of accuracy. Use at your own risk.",
+        "Terms of Use for vedicpanchanga.com - service is provided as-is, with no warranty or guarantee of accuracy. Use at your own risk.",
       canonical: "https://vedicpanchanga.com/terms",
     });
     window.scrollTo({ top: 0, behavior: "auto" });
