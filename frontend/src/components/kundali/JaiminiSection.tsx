@@ -1,6 +1,6 @@
 import { useI18n } from "@/i18n";
 import { VedicChart } from "@/components/kundali/VedicChart";
-import { useAstro } from "@/lib/astro-i18n";
+import { useAstro } from "@/i18n/astro";
 import { planetColor } from "@/lib/planets";
 import type { JaiminiChart, Karaka } from "@/types/api";
 

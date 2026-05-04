@@ -1,9 +1,9 @@
 // Astronomical-name translations + native digits.
 //
-// Mirrors backend/pdf/core/i18n.py — same key shape (`planet_sun`,
-// `sign_aries`, `nak_ashwini`) so both layers translate the same names with
-// the same keys. Kept separate from i18n.tsx so the UI-string dictionary
-// doesn't get bloated with the 49 astro names per language.
+// Mirrors backend/pdf/core/i18n - same key shape (`planet_sun`, `sign_aries`,
+// `nak_ashwini`) so both layers translate the same names with the same keys.
+// Kept separate from index.tsx so the UI-string dictionaries don't get
+// bloated with the 49 astro names per language.
 
 import { useI18n } from "@/i18n";
 

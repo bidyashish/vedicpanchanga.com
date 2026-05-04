@@ -1,5 +1,5 @@
 import { useI18n } from "@/i18n";
-import { useAstro } from "@/lib/astro-i18n";
+import { useAstro } from "@/i18n/astro";
 import { planetColor } from "@/lib/planets";
 import type { Planet } from "@/types/api";
 

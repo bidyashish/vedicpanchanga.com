@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useI18n } from "@/i18n";
-import { useAstro } from "@/lib/astro-i18n";
+import { useAstro } from "@/i18n/astro";
 import { formatShortDate } from "@/lib/format";
 import { planetColor } from "@/lib/planets";
 import type { AntardashaPeriod, DashaPeriod, Mahadasha } from "@/types/api";

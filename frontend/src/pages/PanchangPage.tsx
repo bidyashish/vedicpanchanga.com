@@ -10,7 +10,7 @@ import { TimeBand } from "@/components/panchang/TimeBand";
 import { VedicChart } from "@/components/kundali/VedicChart";
 import { SouthIndianChart } from "@/components/kundali/SouthIndianChart";
 import { PlanetsTable } from "@/components/kundali/PlanetsTable";
-import { useAstro } from "@/lib/astro-i18n";
+import { useAstro } from "@/i18n/astro";
 import { calculateChart, fetchPanchang, reverseGeocode } from "@/lib/api";
 import { formatTime, formatTimeWithDate, formatLongDate, hoursToHMS, todayISO } from "@/lib/format";
 import type { ChartData, LocationChoice, PanchangData, TransitItem } from "@/types/api";
