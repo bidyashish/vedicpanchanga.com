@@ -1,6 +1,6 @@
 import type { HouseMap } from "@/types/api";
 import { planetColor, planetTitle } from "@/lib/planets";
-import { useAstro } from "@/lib/astro-i18n";
+import { useAstro } from "@/i18n/astro";
 
 const HOUSE_CENTROIDS: Record<number, { x: number; y: number }> = {
   1: { x: 250, y: 125 },

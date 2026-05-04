@@ -1,6 +1,6 @@
 import type { HouseMap } from "@/types/api";
 import { planetColor, planetTitle, SIGN_SHORT } from "@/lib/planets";
-import { useAstro } from "@/lib/astro-i18n";
+import { useAstro } from "@/i18n/astro";
 
 const CELL_POSITIONS: Record<number, { x: number; y: number }> = {
   12: { x: 0, y: 0 },

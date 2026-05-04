@@ -1,5 +1,5 @@
 import { useI18n } from "@/i18n";
-import { useAstro } from "@/lib/astro-i18n";
+import { useAstro } from "@/i18n/astro";
 import { formatBirthDate } from "@/lib/format";
 import type { ChartData } from "@/types/api";
 

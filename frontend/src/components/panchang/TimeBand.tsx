@@ -1,4 +1,4 @@
-import { useAstro } from "@/lib/astro-i18n";
+import { useAstro } from "@/i18n/astro";
 import { formatTimeWithDate } from "@/lib/format";
 import type { MuhurtaWindow } from "@/types/api";
 
