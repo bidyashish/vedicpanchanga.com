@@ -14,7 +14,7 @@ from fpdf import FPDF
 
 from .dasha import DASHA_YEARS, lord_abbr
 from .formatters import fmt_dms
-from .i18n import t, tr_planet, tr_sign
+from .i18n import t, t_num, tr_nakshatra, tr_planet, tr_sign
 from .text import (
     BOLD,
     DEV_REGULAR,
@@ -153,8 +153,8 @@ def _draw_dasha_cell(pdf, x, y, w, h, period, lang):
     years = DASHA_YEARS.get(lord, int(round(period.get("years", 0))))
     start = datetime.fromisoformat(period["start"])
     end = datetime.fromisoformat(period["end"])
-    title = f"{lord_abbr(lord)} -{years} {t(lang, 'years_short')}"
-    dates = f"{start.strftime('%d/%m/%y')} - {end.strftime('%d/%m/%y')}"
+    title = f"{lord_abbr(lord)} -{t_num(lang, years)} {t(lang, 'years_short')}"
+    dates = t_num(lang, f"{start.strftime('%d/%m/%y')} - {end.strftime('%d/%m/%y')}")
     family = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
     draw_text(pdf, x + w / 2, y + 11, title, family, BOLD, 8.0, anchor="center")
     draw_text(
@@ -192,13 +192,14 @@ def draw_planets_table(
         if p.get("retrograde"):
             name_disp += " [R]"
         sign_disp = tr_sign(lang, p["sign_id"]) or p["sign"]
+        nak_disp = tr_nakshatra(lang, p["nakshatra"])
         rows.append(
             [
                 name_disp,
                 sign_disp,
-                fmt_dms(p["degree_in_sign"]),
-                p["nakshatra"],
-                str(p.get("nakshatra_pada", "")),
+                t_num(lang, fmt_dms(p["degree_in_sign"])),
+                nak_disp,
+                t_num(lang, p.get("nakshatra_pada", "")),
             ]
         )
 
@@ -279,7 +280,7 @@ def draw_ashtakavarga(
             pdf,
             x + col_w * (i + 1.5),
             body_top + row_h - 3,
-            str(i + 1),
+            t_num(lang, i + 1),
             f_h,
             BOLD,
             7,
@@ -300,7 +301,7 @@ def draw_ashtakavarga(
                 pdf,
                 x + col_w * (i + 1.5),
                 rowy + row_h - 3,
-                str(v),
+                t_num(lang, v),
                 LATIN_REGULAR,
                 REGULAR,
                 7,
@@ -326,7 +327,7 @@ def draw_ashtakavarga(
             pdf,
             x + col_w * (i + 1.5),
             rowy + row_h - 3,
-            str(v),
+            t_num(lang, v),
             LATIN_REGULAR,
             BOLD,
             7,

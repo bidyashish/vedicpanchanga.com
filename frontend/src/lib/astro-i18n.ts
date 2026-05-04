@@ -297,35 +297,21 @@ function lookup(prefix: string, name: string, lang: string): string {
   return dict[toKey(prefix, name)] ?? name;
 }
 
-// Standalone helpers — useful for non-component code or when language is
-// already in scope. Components should prefer the `useAstro()` hook below.
-export function tNum(value: string | number | null | undefined, lang: string): string {
+function toNativeDigits(value: string | number | null | undefined, lang: string): string {
   const s = String(value ?? "-");
   const digits = NATIVE_DIGITS[lang];
   if (!digits) return s;
   return s.replace(/[0-9]/g, (d) => digits[Number(d)]);
 }
 
-export function tPlanet(name: string, lang: string): string {
-  return lookup("planet", name, lang);
-}
-
-export function tSign(name: string, lang: string): string {
-  return lookup("sign", name, lang);
-}
-
-export function tNakshatra(name: string, lang: string): string {
-  return lookup("nak", name, lang);
-}
-
-// Component-friendly hook: bind once, then call num/planet/sign/nakshatra
-// without passing lang every time. This is the preferred consumer API.
+// Hook bound to the active language. Consumers call num/planet/sign/nakshatra
+// without threading lang through every callsite.
 export function useAstro() {
   const { lang } = useI18n();
   return {
-    num: (v: string | number | null | undefined) => tNum(v, lang),
-    planet: (n: string) => tPlanet(n, lang),
-    sign: (n: string) => tSign(n, lang),
-    nakshatra: (n: string) => tNakshatra(n, lang),
+    num: (v: string | number | null | undefined) => toNativeDigits(v, lang),
+    planet: (n: string) => lookup("planet", n, lang),
+    sign: (n: string) => lookup("sign", n, lang),
+    nakshatra: (n: string) => lookup("nak", n, lang),
   };
 }

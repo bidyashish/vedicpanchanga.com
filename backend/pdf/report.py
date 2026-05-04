@@ -40,6 +40,8 @@ from .pages.varga_pages import draw_varga_pages
 from .core.i18n import (
     LOCALES,
     t,
+    t_num,
+    tr_nakshatra,
     tr_planet,
     tr_sign,
     tr_weekday,
@@ -135,7 +137,8 @@ def _build_basic_rows(
         rasi_lord_disp = _planet_disp(moon["sign_lord"])
         nak_lord_disp = _planet_disp(moon["nakshatra_lord"])
         moon_sign_disp = tr_sign(lang, moon["sign_id"]) or moon["sign"]
-        nak_pada_str = f"{moon['nakshatra']}-{moon['nakshatra_pada']}"
+        nak_disp = tr_nakshatra(lang, moon["nakshatra"])
+        nak_pada_str = f"{nak_disp}-{t_num(lang, moon['nakshatra_pada'])}"
     else:
         rasi_lord_disp = nak_lord_disp = moon_sign_disp = nak_pada_str = ""
 
@@ -151,26 +154,26 @@ def _build_basic_rows(
         # Column 1
         ("name", name or ""),
         ("sex", sex_label),
-        ("date", fmt_date_dmy(birth["local_time"])),
+        ("date", t_num(lang, fmt_date_dmy(birth["local_time"]))),
         ("day", weekday_label),
-        ("time_of_birth", birth_local.strftime("%H.%M.%S")),
-        ("sid", sid_str),
+        ("time_of_birth", t_num(lang, birth_local.strftime("%H.%M.%S"))),
+        ("sid", t_num(lang, sid_str)),
         # Column 2
-        ("julian_day", str(julian_int)),
+        ("julian_day", t_num(lang, julian_int)),
         ("ayan_type", ayan_label),
-        ("ayan", ayan_str),
+        ("ayan", t_num(lang, ayan_str)),
         ("place", place_name or ""),
-        ("longitude", fmt_lon(birth["longitude"])),
-        ("latitude", fmt_lat(birth["latitude"])),
+        ("longitude", t_num(lang, fmt_lon(birth["longitude"]))),
+        ("latitude", t_num(lang, fmt_lat(birth["latitude"]))),
         # Column 3
         ("asc_lord", asc_lord_disp),
         ("asc", asc_sign_disp),
         ("yoga", yoga_disp),
         ("tithi", tithi_disp),
-        ("sunset", sunset_disp),
-        ("sunrise", sunrise_disp),
+        ("sunset", t_num(lang, sunset_disp)),
+        ("sunrise", t_num(lang, sunrise_disp)),
         # Column 4
-        ("bal_dasa", bal_dasa),
+        ("bal_dasa", t_num(lang, bal_dasa)),
         ("karan", karana_disp),
         ("star_lord", nak_lord_disp),
         ("star_pada", nak_pada_str),

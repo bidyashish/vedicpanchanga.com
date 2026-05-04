@@ -11,7 +11,7 @@ from fpdf import FPDF
 from dasha_extras import compute_pratyantars
 
 from ..core.dasha import lord_abbr
-from ..core.i18n import t
+from ..core.i18n import t, t_num
 from ..core.layout import MARGIN, page_header, section_title
 from ..core.text import BOLD, LATIN_REGULAR, REGULAR, draw_text
 
@@ -112,14 +112,16 @@ def draw_antardasha_page(
         years = (
             datetime.fromisoformat(md["end"]) - datetime.fromisoformat(md["start"])
         ).days / 365.25
-        title_str = f"{lord_abbr(md['lord'])} - {round(years, 1)} yr"
-        subtitle = f"{_fmt_date_short(md['start'])} to {_fmt_date_short(md['end'])}"
+        title_str = f"{lord_abbr(md['lord'])} - {t_num(lang, round(years, 1))} yr"
+        subtitle = t_num(
+            lang, f"{_fmt_date_short(md['start'])} to {_fmt_date_short(md['end'])}"
+        )
         rows = []
         for ad in md["antardashas"]:
             ad_end = datetime.fromisoformat(ad["end"])
             elapsed_at_birth = ad_end <= birth_dt
             end_str = "00/00/00" if elapsed_at_birth else _fmt_date_short(ad["end"])
-            rows.append((lord_abbr(ad["lord"]), end_str))
+            rows.append((lord_abbr(ad["lord"]), t_num(lang, end_str)))
         h = _draw_block(pdf, bx, cur_y, block_w, title_str, subtitle, rows)
         row_block_h = max(row_block_h, h)
 
@@ -193,10 +195,13 @@ def draw_pratyantar_pages(
 
             bx = MARGIN + cur_col * (block_w + gap)
             title_str = f"{lord_abbr(md['lord'])} - {lord_abbr(ad['lord'])}"
-            subtitle = f"{_fmt_date_short(ad['start'])} to {_fmt_date_short(ad['end'])}"
+            subtitle = t_num(
+                lang, f"{_fmt_date_short(ad['start'])} to {_fmt_date_short(ad['end'])}"
+            )
             pratyantars = compute_pratyantars(ad)
             rows = [
-                (lord_abbr(p["lord"]), _fmt_date_short(p["end"])) for p in pratyantars
+                (lord_abbr(p["lord"]), t_num(lang, _fmt_date_short(p["end"])))
+                for p in pratyantars
             ]
             h = _draw_block(pdf, bx, cur_y, block_w, title_str, subtitle, rows)
             row_block_h = max(row_block_h, h)

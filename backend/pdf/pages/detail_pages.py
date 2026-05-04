@@ -10,7 +10,7 @@ from fpdf import FPDF
 
 from ..core.dasha import DASHA_YEARS, lord_abbr
 from ..core.formatters import fmt_dms
-from ..core.i18n import t, tr_planet, tr_sign
+from ..core.i18n import t, t_num, tr_nakshatra, tr_planet, tr_sign
 from ..core.text import (
     BOLD,
     DEV_REGULAR,
@@ -111,7 +111,14 @@ def draw_planet_varga_matrix(
     for i, n in enumerate(varga_order):
         cx = margin + label_w + i * cell_w + cell_w / 2
         draw_text(
-            pdf, cx, cur_y + row_h - 4, f"D{n}", LATIN_REGULAR, BOLD, 8, anchor="center"
+            pdf,
+            cx,
+            cur_y + row_h - 4,
+            f"D{t_num(lang, n)}",
+            LATIN_REGULAR,
+            BOLD,
+            8,
+            anchor="center",
         )
 
     pdf.line(margin, cur_y + row_h, margin + inner_w, cur_y + row_h)
@@ -141,7 +148,7 @@ def draw_planet_varga_matrix(
                 pdf,
                 cx,
                 y + row_h - 4,
-                str(sign) if sign else "",
+                t_num(lang, sign) if sign else "",
                 LATIN_REGULAR,
                 REGULAR,
                 8,
@@ -198,13 +205,15 @@ def draw_planet_long_table(
         [
             "ASC" if lang == "en" else t(lang, "abbr_as"),
             tr_sign(lang, asc["sign_id"]) or asc["sign"],
-            fmt_dms(asc["degree_in_sign"]),
-            asc["nakshatra"],
-            str(asc.get("nakshatra_pada", "")),
-            asc["sign_lord"],
-            asc["nakshatra_lord"],
+            t_num(lang, fmt_dms(asc["degree_in_sign"])),
+            tr_nakshatra(lang, asc["nakshatra"]),
+            t_num(lang, asc.get("nakshatra_pada", "")),
+            tr_planet(lang, asc["sign_lord"]) if lang != "en" else asc["sign_lord"],
+            tr_planet(lang, asc["nakshatra_lord"])
+            if lang != "en"
+            else asc["nakshatra_lord"],
             "",
-            "1",
+            t_num(lang, 1),
         ]
     )
     for p in planets:
@@ -212,13 +221,15 @@ def draw_planet_long_table(
             [
                 p["name"][:4] if lang == "en" else tr_planet(lang, p["name"]),
                 tr_sign(lang, p["sign_id"]) or p["sign"],
-                fmt_dms(p["degree_in_sign"]),
-                p["nakshatra"],
-                str(p.get("nakshatra_pada", "")),
-                p["sign_lord"],
-                p["nakshatra_lord"],
+                t_num(lang, fmt_dms(p["degree_in_sign"])),
+                tr_nakshatra(lang, p["nakshatra"]),
+                t_num(lang, p.get("nakshatra_pada", "")),
+                tr_planet(lang, p["sign_lord"]) if lang != "en" else p["sign_lord"],
+                tr_planet(lang, p["nakshatra_lord"])
+                if lang != "en"
+                else p["nakshatra_lord"],
                 "R" if p.get("retrograde") else "",
-                str(p.get("house", "")),
+                t_num(lang, p.get("house", "")),
             ]
         )
 
@@ -289,9 +300,9 @@ def draw_dasha_long(
         rows.append(
             [
                 f"{label} ({abbr})",
-                str(years),
-                start.strftime("%d %b %Y  %H:%M"),
-                end.strftime("%d %b %Y  %H:%M"),
+                t_num(lang, years),
+                t_num(lang, start.strftime("%d %b %Y  %H:%M")),
+                t_num(lang, end.strftime("%d %b %Y  %H:%M")),
             ]
         )
 

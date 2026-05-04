@@ -6,7 +6,7 @@ from typing import Dict, List, Tuple
 
 from fpdf import FPDF
 
-from .i18n import tr_abbr
+from .i18n import t_num, tr_abbr
 from .text import BOLD, DEV_REGULAR, LATIN_REGULAR, REGULAR, draw_text
 
 
@@ -84,7 +84,7 @@ def draw_north_indian_chart(
             pdf,
             cx,
             cy - text_size * 0.3,
-            str(sign_id),
+            t_num(lang, sign_id),
             LATIN_REGULAR,
             REGULAR,
             sign_size,

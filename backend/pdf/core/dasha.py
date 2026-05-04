@@ -13,7 +13,7 @@ from calculator import DASHA_YEARS as _DASHA_YEARS
 
 DASHA_YEARS: Dict[str, int] = _DASHA_YEARS
 
-DASHA_LORD_ABBR: Dict[str, str] = {
+_LORD_ABBR: Dict[str, str] = {
     "Sun": "SUN",
     "Moon": "MON",
     "Mars": "MAR",
@@ -28,4 +28,4 @@ DASHA_LORD_ABBR: Dict[str, str] = {
 
 def lord_abbr(lord: str) -> str:
     """3-letter uppercase display label, fallback to the first 3 chars."""
-    return DASHA_LORD_ABBR.get(lord, lord[:3].upper())
+    return _LORD_ABBR.get(lord, lord[:3].upper())
