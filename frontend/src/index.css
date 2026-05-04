@@ -270,11 +270,10 @@
     touch-action: manipulation; /* Removes 300ms double-tap delay */
   }
 
-  /* Devanagari needs slightly more leading for stacked diacritics. */
+  /* Devanagari just needs the right font; sizes stay aligned with the base
+     so switching languages doesn't reflow/zoom the whole page. */
   html[lang="hi"], html[lang="ne"] {
     font-family: var(--font-deva-body);
-    font-size: 17px;
-    line-height: 1.7;
   }
 
   h1,
@@ -690,49 +689,6 @@
     }
   }
 
-  /* Devanagari script is visually denser per glyph; bump every step
-     so Hindi reads as easily as English at the same hierarchy level. */
-  html[lang="hi"], html[lang="ne"] {
-    & .heading-page {
-      font-size: 32px;
-      letter-spacing: -0.012em;
-    }
-    & .heading-section {
-      font-size: 22px;
-      letter-spacing: -0.008em;
-    }
-    & .field-label {
-      font-size: 15px;
-    }
-    & .field {
-      font-size: 17px;
-    }
-    & .label,
-    & .label-strong {
-      font-size: 15px;
-    }
-    & .value,
-    & .value-strong {
-      font-size: 16px;
-    }
-  }
-  @media (min-width: 640px) {
-    html[lang="hi"], html[lang="ne"] {
-      & .heading-page {
-        font-size: 40px;
-      }
-      & .heading-section {
-        font-size: 24px;
-      }
-    }
-  }
-  @media (min-width: 1024px) {
-    html[lang="hi"], html[lang="ne"] {
-      & .heading-page {
-        font-size: 46px;
-      }
-    }
-  }
 }
 
 @layer utilities {
