@@ -35,7 +35,7 @@ def draw_jaimini_page(
         MARGIN + 22,
         inner_w,
         "Jaimini System — Karakamsa & Swamsa",
-        "Karakamsa = D9 chart drawn from the Atmakaraka's navāmśa sign · Swamsa = D9 from natal D9 ascendant",
+        "Karakamsa = D9 chart drawn from the Atmakaraka's navamsa sign · Swamsa = D9 from natal D9 ascendant",
     )
 
     # Two-up charts.

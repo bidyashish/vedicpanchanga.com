@@ -5,7 +5,7 @@
 > [Español](docs/i18n/README.es.md) · [Deutsch](docs/i18n/README.de.md) ·
 > [Português](docs/i18n/README.pt.md) · [Français](docs/i18n/README.fr.md)
 
-Drik Panchang calculator with a modern web interface. Computes traditional Hindu Panchanga elements, divisional charts (D1–D60), Vimshottari Daśā, Aṣṭakavarga and auspicious Muhūrta windows for any date (5000 BCE – 5000 CE) and any location.
+Drik Panchang calculator with a modern web interface. Computes traditional Hindu Panchanga elements, divisional charts (D1–D60), Vimshottari Dasha, Ashtakavarga and auspicious Muhurta windows for any date (5000 BCE – 5000 CE) and any location.
 
 **Live**: <https://vedicpanchanga.com>
 
@@ -112,12 +112,12 @@ Vite bakes `VITE_*` vars in at **build time**, so edit `.env` and rebuild — re
 
 ## Features
 
-- **Jyotiṣa Kuṇḍalī** · birth chart with 16 divisional charts (D1–D60), North- or South-Indian style
-- **Drik Pañcāṅga** · Tithi · Nakṣatra · Yoga · Karaṇa · Vāra, Sun/Moon timings, Rāhu Kāla, Abhijit & more
-- **Muhūrta Finder** · scan up to 120 days for Marriage, Gṛha Praveś, Business, Travel etc. with 0–100 scoring
-- **Vimshottari Mahādaśā** · full 120-year planetary cycle from birth
-- **Aṣṭakavarga** · Bhinnāṣṭakavarga per planet + Sarvāṣṭakavarga totals
-- **Multi-ayanāṁśa** · NC Lahiri (default), KP New/Old, BV Raman, KP Khullar, Sāyana, Manoj
+- **Jyotisha Kundali** · birth chart with 16 divisional charts (D1–D60), North- or South-Indian style
+- **Drik Panchang** · Tithi · Nakshatra · Yoga · Karana · Vara, Sun/Moon timings, Rahu Kala, Abhijit & more
+- **Muhurta Finder** · scan up to 120 days for Marriage, Griha Pravesha, Business, Travel etc. with 0–100 scoring
+- **Vimshottari Mahadasha** · full 120-year planetary cycle from birth
+- **Ashtakavarga** · Bhinnashtakavarga per planet + Sarvashtakavarga totals
+- **Multi-ayanamsa** · NC Lahiri (default), KP New/Old, BV Raman, KP Khullar, Sayana, Manoj
 - **Bilingual UI** · English + हिन्दी, with Devanagari web fonts (Tiro Devanagari Hindi, Noto Serif Devanagari)
 
 ---
@@ -188,11 +188,11 @@ vedicpanchanga.com/
 │   ├── calculator.py        # compute_chart (planets, vargas, dasha + dasha_antar,
 │   │                        # ashtakavarga, karakas, karakamsa, friendships, kalsarpa)
 │   ├── advanced_panchang.py # detailed Drik panchang
-│   ├── panchang_extras.py   # Ganda Mūla + Ravi Yoga detectors
+│   ├── panchang_extras.py   # Ganda Mula + Ravi Yoga detectors
 │   ├── vargas.py            # 16 divisional charts (D1–D60)
 │   ├── ayanamsa.py          # ayanamsa selection
 │   ├── muhurta.py           # muhurta scoring engine
-│   ├── dasha_extras.py      # Vimshottari Antardaśā + Pratyantar
+│   ├── dasha_extras.py      # Vimshottari Antardasha + Pratyantar
 │   ├── jaimini.py           # Chara karakas + Karakamsa/Swamsa
 │   ├── relationships.py     # natural / temporal / panchadha friendships
 │   ├── kalsarpa.py          # Kalsarpa Yoga detection

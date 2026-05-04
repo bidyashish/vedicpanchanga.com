@@ -40,15 +40,15 @@ const NEXT_LEVEL: Record<Level, Level | null> = {
 const LEVEL_SHORT: Record<Level, string> = {
   antar: "Antar",
   pratyantar: "Praty",
-  sookshma: "Sūkṣ",
-  prana: "Prāṇa",
+  sookshma: "Suksh",
+  prana: "Prana",
 };
 
 const LEVEL_FULL: Record<Level, string> = {
-  antar: "Antardaśā",
+  antar: "Antardasha",
   pratyantar: "Pratyantar",
-  sookshma: "Sūkṣma",
-  prana: "Prāṇa",
+  sookshma: "Sukshma",
+  prana: "Prana",
 };
 
 interface SubPeriod {

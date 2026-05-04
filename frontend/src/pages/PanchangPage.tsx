@@ -89,7 +89,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
   const [loc, setLoc] = useState<LocationChoice>(defaultLocation);
   const [data, setData] = useState<PanchangData | null>(null);
   const [chart, setChart] = useState<ChartData | null>(null);
-  // The HH:MM the lagna kuṇḍalī is cast for. We use *current* wall-clock time
+  // The HH:MM the lagna kundali is cast for. We use *current* wall-clock time
   // in the chart's location so the chart reflects the live sky — at sunrise
   // the lagna co-rises with the sun and the chart looked frozen on Aries when
   // the sun was in Aries.
@@ -284,7 +284,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
             </div>
 
             <Section
-              title="Lagna Kuṇḍalī"
+              title="Lagna Kundali"
               subtitle={
                 chartTime
                   ? `${formatLongDate(data.date)} at ${chartTime} · ${data.location.timezone}`
@@ -328,21 +328,21 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                         <SouthIndianChart
                           houseMap={chart.d1_chart}
                           ascSign={chart.d1_asc_sign}
-                          title="Rāśi · D1"
+                          title="Rashi · D1"
                           testId="lagna-chart-south"
                         />
                       ) : (
                         <VedicChart
                           houseMap={chart.d1_chart}
                           ascSign={chart.d1_asc_sign}
-                          title="Rāśi · D1"
+                          title="Rashi · D1"
                           testId="lagna-chart-north"
                         />
                       )}
                     </div>
                     <p className="text-mini text-ink-soft text-center italic">
-                      Lagna at {chart.ascendant.sign} {chart.ascendant.dms} · Nakṣatra{" "}
-                      {chart.ascendant.nakshatra} (Pāda {chart.ascendant.nakshatra_pada})
+                      Lagna at {chart.ascendant.sign} {chart.ascendant.dms} · Nakshatra{" "}
+                      {chart.ascendant.nakshatra} (Pada {chart.ascendant.nakshatra_pada})
                     </p>
                   </div>
                   <div className="lg:col-span-2">
@@ -387,7 +387,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
               </div>
             </Section>
 
-            <Section title="Panchānga" subtitle="Five Limbs" testId="section-panchang-limbs">
+            <Section title="Panchang" subtitle="Five Limbs" testId="section-panchang-limbs">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
                 <LimbCol label="Tithi" accent="var(--accent-sun)">
                   <TransitList
@@ -398,7 +398,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     accent="var(--accent-sun)"
                   />
                 </LimbCol>
-                <LimbCol label="Nakṣatra" accent="var(--accent-amber)">
+                <LimbCol label="Nakshatra" accent="var(--accent-amber)">
                   <TransitList
                     items={data.panchang.nakshatra_sequence}
                     tz={tz}
@@ -416,7 +416,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     accent="var(--accent-moon)"
                   />
                 </LimbCol>
-                <LimbCol label="Karaṇa" accent="var(--accent-moon)">
+                <LimbCol label="Karana" accent="var(--accent-moon)">
                   <TransitList
                     items={data.panchang.karana_sequence}
                     tz={tz}
@@ -425,19 +425,19 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     accent="var(--accent-moon)"
                   />
                 </LimbCol>
-                <LimbCol label="Vāra" accent="var(--accent-sun)">
+                <LimbCol label="Vara" accent="var(--accent-sun)">
                   <p className="value-strong">
                     <span style={{ color: "var(--accent-sun)" }}>{data.vara.sanskrit}</span>{" "}
                     <span className="text-ink-soft font-normal">({data.vara.english})</span>
                   </p>
                 </LimbCol>
-                <LimbCol label="Pakṣa" accent="var(--accent-moon)">
+                <LimbCol label="Paksha" accent="var(--accent-moon)">
                   <p className="value-strong">{data.panchang.paksha}</p>
                 </LimbCol>
               </div>
             </Section>
 
-            <Section title="Lunar Month, Saṁvat &amp; Saṁvatsara" testId="section-samvat">
+            <Section title="Lunar Month, Samvat &amp; Samvatsara" testId="section-samvat">
               <KV2
                 rows={[
                   {
@@ -450,21 +450,21 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   },
                   { label: "Gujarati Samvat", value: data.lunar_month.gujarati_samvat },
                   {
-                    label: "Chandramāsa (Pūrṇimānta)",
+                    label: "Chandramasa (Purnimanta)",
                     value: data.lunar_month.chandramasa_purnimanta,
                   },
-                  { label: "Chandramāsa (Amānta)", value: data.lunar_month.chandramasa_amanta },
-                  { label: "Nirayaṇa Solar Month", value: data.lunar_month.nirayana_solar_month },
+                  { label: "Chandramasa (Amanta)", value: data.lunar_month.chandramasa_amanta },
+                  { label: "Nirayana Solar Month", value: data.lunar_month.nirayana_solar_month },
                   { label: "Pravishte / Gate", value: data.lunar_month.pravishte_day },
-                  { label: "Pakṣa", value: data.lunar_month.paksha },
+                  { label: "Paksha", value: data.lunar_month.paksha },
                 ]}
               />
             </Section>
 
-            <Section title="Rāśi &amp; Nakṣatra" testId="section-rashi-nak">
+            <Section title="Rashi &amp; Nakshatra" testId="section-rashi-nak">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <p className="eyebrow text-saffron mb-3">Moonsign (Chandra Rāśi)</p>
+                  <p className="eyebrow text-saffron mb-3">Moonsign (Chandra Rashi)</p>
                   <TransitList
                     items={data.rashi_nakshatra.moonsign_sequence}
                     tz={tz}
@@ -472,29 +472,29 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     labelFn={(s) => s.rashi ?? s.name ?? ""}
                     accent="var(--accent-sun)"
                   />
-                  <p className="eyebrow text-indigo mt-6 mb-3">Nakṣatra Pāda</p>
+                  <p className="eyebrow text-indigo mt-6 mb-3">Nakshatra Pada</p>
                   <TransitList
                     items={data.rashi_nakshatra.moon_nakshatra_padas}
                     tz={tz}
                     refDate={refDate}
-                    labelFn={(p) => `${p.nakshatra ?? ""} Pāda ${p.pada ?? ""}`}
+                    labelFn={(p) => `${p.nakshatra ?? ""} Pada ${p.pada ?? ""}`}
                     accent="var(--accent-moon)"
                   />
                 </div>
                 <div>
-                  <p className="eyebrow text-saffron mb-3">Sunsign (Sūrya Rāśi)</p>
+                  <p className="eyebrow text-saffron mb-3">Sunsign (Surya Rashi)</p>
                   <p
                     className="font-serif text-2xl font-medium"
                     style={{ color: "var(--accent-sun)" }}
                   >
                     {data.rashi_nakshatra.sunsign.rashi}
                   </p>
-                  <p className="eyebrow text-gold mt-6 mb-3">Sūrya Nakṣatra</p>
+                  <p className="eyebrow text-gold mt-6 mb-3">Surya Nakshatra</p>
                   <p className="font-serif text-xl text-ink font-medium leading-snug">
                     {data.rashi_nakshatra.surya_nakshatra.name}
                     <span className="text-ink-soft">
                       {" "}
-                      · Pāda {data.rashi_nakshatra.surya_nakshatra.pada}
+                      · Pada {data.rashi_nakshatra.surya_nakshatra.pada}
                     </span>
                   </p>
                   <p className="text-sm text-ink-soft num mt-1">
@@ -518,9 +518,9 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   { label: "Vedic Ṛtu", value: data.ritu_ayana.vedic_ritu },
                   { label: "Drik Ayana", value: data.ritu_ayana.drik_ayana },
                   { label: "Vedic Ayana", value: data.ritu_ayana.vedic_ayana },
-                  { label: "Dinamāna", value: hoursToHMS(data.sun_moon.dinaman_hours) },
-                  { label: "Rātrimāna", value: hoursToHMS(data.sun_moon.ratriman_hours) },
-                  { label: "Madhyāhna", value: formatTime(data.sun_moon.madhyahna, tz) },
+                  { label: "Dinamana", value: hoursToHMS(data.sun_moon.dinaman_hours) },
+                  { label: "Ratrimana", value: hoursToHMS(data.sun_moon.ratriman_hours) },
+                  { label: "Madhyahna", value: formatTime(data.sun_moon.madhyahna, tz) },
                 ]}
               />
             </Section>
@@ -529,7 +529,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 <TimeBand
                   testId="band-brahma"
-                  title="Brahma Muhūrta"
+                  title="Brahma Muhurta"
                   window={data.auspicious_timings.brahma_muhurta}
                   color="var(--success)"
                   desc="Sacred hour before dawn"
@@ -538,7 +538,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 />
                 <TimeBand
                   testId="band-pratah"
-                  title="Pratāḥ Sandhyā"
+                  title="Pratah Sandhya"
                   window={data.auspicious_timings.pratah_sandhya}
                   color="var(--success)"
                   desc="Morning twilight ritual"
@@ -547,7 +547,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 />
                 <TimeBand
                   testId="band-abhijit"
-                  title="Abhijit Muhūrta"
+                  title="Abhijit Muhurta"
                   window={data.auspicious_timings.abhijit}
                   color="var(--success)"
                   desc="Auspicious midday"
@@ -556,7 +556,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 />
                 <TimeBand
                   testId="band-vijay"
-                  title="Vijay Muhūrta"
+                  title="Vijay Muhurta"
                   window={data.auspicious_timings.vijay_muhurta}
                   color="var(--success)"
                   desc="Victory hour"
@@ -565,7 +565,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 />
                 <TimeBand
                   testId="band-godhuli"
-                  title="Godhūli Muhūrta"
+                  title="Godhuli Muhurta"
                   window={data.auspicious_timings.godhuli_muhurta}
                   color="var(--success)"
                   desc="Twilight bridging sunset"
@@ -574,7 +574,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 />
                 <TimeBand
                   testId="band-sayahna"
-                  title="Sāyaṁ Sandhyā"
+                  title="Sayam Sandhya"
                   window={data.auspicious_timings.sayahna_sandhya}
                   color="var(--success)"
                   desc="Evening twilight ritual"
@@ -583,7 +583,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 />
                 <TimeBand
                   testId="band-nishita"
-                  title="Niśīta Muhūrta"
+                  title="Nishita Muhurta"
                   window={data.auspicious_timings.nishita_muhurta}
                   color="var(--success)"
                   desc="Mid-night meditation hour"
@@ -594,7 +594,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   <TimeBand
                     key={`am-${i}`}
                     testId={`band-amrit-${i}`}
-                    title="Amṛit Kāḷam"
+                    title="Amrit Kalam"
                     window={a}
                     color="var(--success)"
                     desc={`Nectar window · ${a.nakshatra ?? ""}`}
@@ -606,7 +606,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   <TimeBand
                     key={`ss-${i}`}
                     testId={`band-sarvartha-${i}`}
-                    title="Sarvārtha Siddhi Yoga"
+                    title="Sarvartha Siddhi Yoga"
                     window={s}
                     color="var(--success)"
                     desc={`All endeavors succeed · ${s.nakshatra ?? ""}`}
@@ -618,7 +618,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   <TimeBand
                     key={`asd-${i}`}
                     testId={`band-amrita-siddhi-${i}`}
-                    title="Amṛita Siddhi Yoga"
+                    title="Amrita Siddhi Yoga"
                     window={s}
                     color="var(--success)"
                     desc={`Supremely auspicious · ${s.nakshatra ?? ""}`}
@@ -632,7 +632,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     title="Ravi Yoga"
                     window={data.yogas_extra.ravi_yoga}
                     color="var(--success)"
-                    desc="Sun-Moon nakṣatra alignment · cancels nakṣatra doṣa"
+                    desc="Sun-Moon nakshatra alignment · cancels nakshatra dosha"
                     tz={tz}
                     refDate={refDate}
                   />
@@ -644,7 +644,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 <TimeBand
                   testId="band-rahu"
-                  title="Rāhu Kālam"
+                  title="Rahu Kalam"
                   window={data.inauspicious_timings.rahu_kalam}
                   color="var(--danger)"
                   desc="Avoid new undertakings"
@@ -653,7 +653,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 />
                 <TimeBand
                   testId="band-yamaganda"
-                  title="Yamagaṇḍa"
+                  title="Yamaganda"
                   window={data.inauspicious_timings.yamaganda}
                   color="var(--accent-sun)"
                   desc="Avoid travel & new ventures"
@@ -662,7 +662,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 />
                 <TimeBand
                   testId="band-gulika"
-                  title="Gulika Kālam"
+                  title="Gulika Kalam"
                   window={data.inauspicious_timings.gulika_kalam}
                   color="var(--ink-soft)"
                   desc="Son of Saturn · neutral-inauspicious"
@@ -673,7 +673,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   <TimeBand
                     key={i}
                     testId={`band-dur-${i}`}
-                    title={`Dur Muhūrtam #${dm.muhurta_number}`}
+                    title={`Dur Muhurtam #${dm.muhurta_number}`}
                     window={dm}
                     color="var(--danger)"
                     desc="Avoid auspicious work"
@@ -685,7 +685,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   <TimeBand
                     key={`b-${i}`}
                     testId={`band-bhadra-${i}`}
-                    title="Bhadra (Viṣṭi)"
+                    title="Bhadra (Vishti)"
                     window={b}
                     color="var(--danger)"
                     desc="Vishti karana · inauspicious"
@@ -708,7 +708,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 {data.yogas_extra?.ganda_mula && (
                   <TimeBand
                     testId="band-ganda-mula"
-                    title="Ganda Mūla"
+                    title="Ganda Mula"
                     window={{
                       start: data.sun_moon.sunrise,
                       end: data.yogas_extra.ganda_mula.ends_at,
@@ -792,7 +792,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 rows={[
                   { label: "Kaliyuga Year", value: `${data.calendars.kali_year}` },
                   {
-                    label: "Kali Ahargaṇa",
+                    label: "Kali Ahargana",
                     value: `${data.calendars.kali_ahargana_days.toLocaleString()} days`,
                   },
                   { label: "Julian Day", value: data.calendars.julian_day.toFixed(2) },
@@ -802,7 +802,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   },
                   { label: "Rata Die", value: data.calendars.rata_die.toLocaleString() },
                   {
-                    label: "Lahiri Ayanāṁśa",
+                    label: "Lahiri Ayanamsa",
                     value: `${data.calendars.ayanamsha_lahiri.toFixed(6)}°`,
                   },
                   {

@@ -175,7 +175,7 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
         birth_rashi_id: birthRashiId ? parseInt(birthRashiId, 10) : null,
         birth_nakshatra_id: birthNakId ? parseInt(birthNakId, 10) : null,
         // Backend still ranks days by an internal heuristic, but we no longer
-        // expose that score in the UI — only Tithi/Nakṣatra/Vāra-derived
+        // expose that score in the UI — only Tithi/Nakshatra/Vara-derived
         // favourable-vs-cautions reasons drive what users see. The threshold
         // here just keeps obviously bad days off the list.
         min_score: 60,

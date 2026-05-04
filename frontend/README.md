@@ -73,7 +73,7 @@ src/
 │                           Per-route SEO (title/description/canonical/og:tags)
 │                           applied via lib/seo.applySeo on view change.
 ├── pages/
-│   ├── KundaliPage.tsx     birth chart + Vimshottari + Aṣṭakavarga + Print PDF
+│   ├── KundaliPage.tsx     birth chart + Vimshottari + Ashtakavarga + Print PDF
 │   ├── PanchangPage.tsx    daily Drik panchang + live lagna kundali (anchored
 │   │                       to current wall-clock time in chart's timezone)
 │   ├── MuhurtaPage.tsx     date-range scanner with native filters

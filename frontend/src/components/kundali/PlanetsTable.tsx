@@ -20,8 +20,8 @@ export function PlanetsTable({ planets, ascendant }: Props) {
             <th className="py-2 pr-3 font-bold">Sign</th>
             <th className="py-2 pr-3 font-bold num">Degree</th>
             <th className="py-2 pr-3 font-bold">Lord</th>
-            <th className="py-2 pr-3 font-bold">Nakṣatra</th>
-            <th className="py-2 pr-3 font-bold">Pāda</th>
+            <th className="py-2 pr-3 font-bold">Nakshatra</th>
+            <th className="py-2 pr-3 font-bold">Pada</th>
             <th className="py-2 pr-3 font-bold">House</th>
             <th className="py-2 font-bold">R</th>
           </tr>

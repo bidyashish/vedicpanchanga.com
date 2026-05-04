@@ -22,7 +22,7 @@ from panchang_constants import GOOD_CHANDRA_OFFSETS, RASHI_NAMES
 
 PURPOSES: Dict[str, Dict[str, Any]] = {
     "marriage": {
-        "label": "Marriage (Vivāha)",
+        "label": "Marriage (Vivaha)",
         "good_tithis": {2, 3, 5, 7, 10, 11, 12, 13, 17, 18, 20, 22, 25, 26, 27, 28},
         "good_nakshatras": {
             4,
@@ -43,7 +43,7 @@ PURPOSES: Dict[str, Dict[str, Any]] = {
         "bad_tithis": {4, 9, 14, 19, 24, 29, 30, 15},  # Rikta, Amavasya, Purnima
     },
     "griha_pravesh": {
-        "label": "Griha Praveśa (Housewarming)",
+        "label": "Griha Pravesha (Housewarming)",
         "good_tithis": {2, 3, 5, 7, 10, 11, 12, 13, 17, 18, 20, 22, 25, 26, 27, 28},
         "good_nakshatras": {
             4,
@@ -61,7 +61,7 @@ PURPOSES: Dict[str, Dict[str, Any]] = {
         "bad_tithis": {4, 9, 14, 30, 15, 19, 24, 29},
     },
     "business": {
-        "label": "Business / Venture (Vyāpāra)",
+        "label": "Business / Venture (Vyapara)",
         "good_tithis": {1, 2, 3, 5, 7, 10, 11, 13, 16, 17, 18, 20, 22, 25, 26, 28},
         "good_nakshatras": {
             1,
@@ -82,7 +82,7 @@ PURPOSES: Dict[str, Dict[str, Any]] = {
         "bad_tithis": {4, 9, 14, 30},
     },
     "travel": {
-        "label": "Travel (Yātrā)",
+        "label": "Travel (Yatra)",
         "good_tithis": {1, 2, 3, 5, 7, 10, 11, 13, 16, 17, 18, 20, 22, 25, 26, 28},
         "good_nakshatras": {1, 8, 13, 17, 19, 21, 22, 23, 27},
         "good_weekdays": {1, 3, 5},  # Mon Wed Fri
@@ -90,7 +90,7 @@ PURPOSES: Dict[str, Dict[str, Any]] = {
         "bad_tithis": {4, 9, 14, 30, 15},
     },
     "education": {
-        "label": "Vidyārambha (Learning)",
+        "label": "Vidyarambha (Learning)",
         "good_tithis": {2, 3, 5, 7, 10, 11, 12, 13, 17, 18, 20, 22, 25, 26, 27, 28},
         "good_nakshatras": {
             1,
@@ -116,7 +116,7 @@ PURPOSES: Dict[str, Dict[str, Any]] = {
         "bad_tithis": {4, 9, 14, 30, 15},
     },
     "namakarana": {
-        "label": "Name Ceremony (Nāmakaraṇa)",
+        "label": "Name Ceremony (Namakarana)",
         "good_tithis": {1, 2, 3, 5, 7, 10, 11, 12, 13},
         # Avoid: Bharani(2), Krittika(3), Ashlesha(9), Magha(10), Jyeshtha(18), Mula(19), P.Ash(20)
         "bad_nakshatras": {2, 3, 9, 10, 18, 19, 20},

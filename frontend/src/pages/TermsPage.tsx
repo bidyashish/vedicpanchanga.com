@@ -59,8 +59,8 @@ export function TermsPage() {
         <div className="space-y-3 text-meta text-ink leading-relaxed">
           <p>
             The site is a commercial, advertising-supported service that offers astronomical and
-            astrological calculations including panchānga, kuṇḍalī, divisional charts, daśā, and
-            muhūrta search. Calculations are produced by software using the Swiss Ephemeris.
+            astrological calculations including panchang, kundali, divisional charts, dasha, and
+            muhurta search. Calculations are produced by software using the Swiss Ephemeris.
           </p>
         </div>
       </Section>

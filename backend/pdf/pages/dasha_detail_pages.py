@@ -93,7 +93,7 @@ def draw_antardasha_page(
         MARGIN + 22,
         inner_w,
         title,
-        "Each Mahādaśā block lists its 9 Antardaśā sub-period end dates",
+        "Each Mahadasha block lists its 9 Antardasha sub-period end dates",
     )
 
     # 3×3 grid of blocks
@@ -169,7 +169,7 @@ def draw_pratyantar_pages(
             MARGIN + 22,
             inner_w,
             title,
-            "Each Antardaśā block lists its 9 Pratyantar sub-period end dates",
+            "Each Antardasha block lists its 9 Pratyantar sub-period end dates",
         )
         row_block_h = 0
         cur_col = 0
