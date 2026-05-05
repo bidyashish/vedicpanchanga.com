@@ -50,6 +50,7 @@ const zh: Record<string, string> = {
   chart_style: "星图样式",
   north_indian: "北印度式",
   south_indian: "南印度式",
+  western: "西方式",
 
   local: "本地",
   timezone: "时区",

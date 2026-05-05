@@ -50,6 +50,7 @@ const ar: Record<string, string> = {
   chart_style: "نمط الخريطة",
   north_indian: "هندي شمالي",
   south_indian: "هندي جنوبي",
+  western: "غربي",
 
   local: "محلي",
   timezone: "المنطقة الزمنية",

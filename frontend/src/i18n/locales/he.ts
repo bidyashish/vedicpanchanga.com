@@ -50,6 +50,7 @@ const he: Record<string, string> = {
   chart_style: "סגנון מפה",
   north_indian: "צפון הודי",
   south_indian: "דרום הודי",
+  western: "מערבי",
 
   local: "מקומי",
   timezone: "אזור זמן",

@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Dict, List, Tuple
 
 from fpdf import FPDF
 
 from .i18n import t_num, tr_abbr
 from .text import BOLD, DEV_REGULAR, LATIN_REGULAR, REGULAR, draw_text
+
+OM_SVG = Path(__file__).resolve().parent.parent / "assets" / "om.svg"
 
 
 def _centroid(*pts: Tuple[float, float]) -> Tuple[float, float]:
@@ -75,6 +78,11 @@ def draw_north_indian_chart(
 
     text_size = max(7.5, W / 22)
     sign_size = max(6.5, W / 30)
+
+    # Same SVG OM as the frontend, centered on the chart, behind any planet text.
+    # Opacity is baked into the SVG (fill-opacity) because fpdf2's set_alpha
+    om_size = max(20.0, W / 5)
+    pdf.image(str(OM_SVG), x=C[0] - om_size / 2, y=C[1] - om_size / 2, w=om_size, h=om_size)
 
     for h in range(1, 13):
         cx, cy = cells[h]

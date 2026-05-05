@@ -50,6 +50,7 @@ const ru: Record<string, string> = {
   chart_style: "Стиль карты",
   north_indian: "Северо-индийский",
   south_indian: "Южно-индийский",
+  western: "Западный",
 
   local: "Местное",
   timezone: "Часовой пояс",

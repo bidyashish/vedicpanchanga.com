@@ -50,6 +50,7 @@ const pt: Record<string, string> = {
   chart_style: "Estilo de mapa",
   north_indian: "Norte da Índia",
   south_indian: "Sul da Índia",
+  western: "Ocidental",
 
   local: "Local",
   timezone: "Fuso horário",
