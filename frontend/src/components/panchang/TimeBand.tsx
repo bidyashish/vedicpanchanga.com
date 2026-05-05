@@ -1,4 +1,3 @@
-import { useAstro } from "@/i18n/astro";
 import { formatTimeWithDate } from "@/lib/format";
 import type { MuhurtaWindow } from "@/types/api";
 
@@ -19,7 +18,6 @@ export function TimeBand({
   refDate?: string;
   testId?: string;
 }) {
-  const a = useAstro();
   return (
     <div
       data-testid={testId}
@@ -39,9 +37,7 @@ export function TimeBand({
       </div>
       <p className="value-strong num mt-0.5">
         {window
-          ? a.num(
-              `${formatTimeWithDate(window.start, tz, refDate)} - ${formatTimeWithDate(window.end, tz, refDate)}`,
-            )
+          ? `${formatTimeWithDate(window.start, tz, refDate)} - ${formatTimeWithDate(window.end, tz, refDate)}`
           : "-"}
       </p>
       {desc && <p className="meta mt-0.5">{desc}</p>}

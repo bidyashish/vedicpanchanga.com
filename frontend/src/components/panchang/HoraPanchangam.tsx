@@ -1,4 +1,5 @@
 import { useI18n } from "@/i18n";
+import { useAstro } from "@/i18n/astro";
 import { SegmentTable } from "@/components/panchang/SegmentTable";
 import type { LabelledSegment } from "@/types/api";
 
@@ -11,15 +12,28 @@ interface Props {
 
 export function HoraPanchangam({ day, night, tz, testId }: Props) {
   const { t } = useI18n();
+  const a = useAstro();
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" data-testid={testId}>
       <div>
         <p className="eyebrow text-saffron mb-2">{t("hora_day")}</p>
-        <SegmentTable segments={day} nameHeader={t("col_planet")} tz={tz} testId="hora-day" />
+        <SegmentTable
+          segments={day}
+          nameHeader={t("col_planet")}
+          tz={tz}
+          testId="hora-day"
+          nameLookup={a.planet}
+        />
       </div>
       <div>
         <p className="eyebrow text-indigo mb-2">{t("hora_night")}</p>
-        <SegmentTable segments={night} nameHeader={t("col_planet")} tz={tz} testId="hora-night" />
+        <SegmentTable
+          segments={night}
+          nameHeader={t("col_planet")}
+          tz={tz}
+          testId="hora-night"
+          nameLookup={a.planet}
+        />
       </div>
     </div>
   );

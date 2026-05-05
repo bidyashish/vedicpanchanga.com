@@ -17,11 +17,11 @@ export function Footer() {
         </p>
         <p className="mt-2 text-center text-mini text-ink-soft flex flex-wrap justify-center items-center gap-x-3 gap-y-1">
           <a href="/privacy" className="hover:text-saffron-dark hover:underline">
-            Privacy
+            {t("footer_privacy")}
           </a>
           <span aria-hidden="true">·</span>
           <a href="/terms" className="hover:text-saffron-dark hover:underline">
-            Terms
+            {t("footer_terms")}
           </a>
           <span aria-hidden="true">·</span>
           <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-saffron-dark hover:underline">

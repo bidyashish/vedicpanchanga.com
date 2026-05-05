@@ -272,7 +272,8 @@
 
   /* Devanagari just needs the right font; sizes stay aligned with the base
      so switching languages doesn't reflow/zoom the whole page. */
-  html[lang="hi"], html[lang="ne"] {
+  html[lang="hi"],
+  html[lang="ne"] {
     font-family: var(--font-deva-body);
   }
 
@@ -290,7 +291,8 @@
     font-feature-settings: "ss01", "cv11"; /* Inter's tabular digits + alt 1/0 */
   }
 
-  html[lang="hi"], html[lang="ne"] :is(h1, h2, h3, h4, h5, h6) {
+  html[lang="hi"],
+  html[lang="ne"] :is(h1, h2, h3, h4, h5, h6) {
     font-family: var(--font-deva);
     line-height: 1.45;
     letter-spacing: 0;
@@ -729,7 +731,6 @@
       letter-spacing: -0.03em;
     }
   }
-
 }
 
 @layer utilities {
