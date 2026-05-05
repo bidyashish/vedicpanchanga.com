@@ -383,6 +383,14 @@ def compute_chart(
     ketu_lon = (rahu_lon + 180) % 360
     planets["Ketu"] = _planet_entry("Ketu", "Ke", ketu_lon, False)
 
+    # Combust (astangata): set after Sun's longitude is known. Sun itself,
+    # Rahu, Ketu are skipped inside _is_combust.
+    sun_lon = planets["Sun"]["longitude"]
+    for pname, pdata in planets.items():
+        pdata["combust"] = _is_combust(
+            pname, pdata["longitude"], sun_lon, pdata["retrograde"]
+        )
+
     # Ascendant
     cusps, ascmc = swe.houses_ex(jd_ut, latitude, longitude, b"P", sidereal_flag)
     asc_lon = ascmc[0] % 360
@@ -507,7 +515,43 @@ def _planet_entry(name: str, abbr: str, lon: float, retro: bool) -> Dict[str, An
         "nakshatra_pada": nak["pada"],
         "nakshatra_lord": nak["lord"],
         "retrograde": retro,
+        "combust": False,  # filled in after Sun is known
     }
+
+
+# Astangata (combust) orbs in degrees - traditional Parashari values. A planet
+# is combust when its longitude is within this many degrees of the Sun.
+# Mercury and Venus have separate retrograde orbs because their geometry
+# changes during retrogression.
+_COMBUST_ORBS = {
+    "Moon": 12.0,
+    "Mars": 17.0,
+    "Mercury": 14.0,
+    "Mercury_retro": 12.0,
+    "Jupiter": 11.0,
+    "Venus": 10.0,
+    "Venus_retro": 8.0,
+    "Saturn": 15.0,
+}
+
+
+def _is_combust(name: str, lon: float, sun_lon: float, retro: bool) -> bool:
+    """Return True when planet is within the traditional combust orb of the Sun.
+    Sun, Rahu and Ketu are never combust."""
+    if name in ("Sun", "Rahu", "Ketu", "Ascendant"):
+        return False
+    if name == "Mercury" and retro:
+        orb = _COMBUST_ORBS["Mercury_retro"]
+    elif name == "Venus" and retro:
+        orb = _COMBUST_ORBS["Venus_retro"]
+    else:
+        orb = _COMBUST_ORBS.get(name, 0.0)
+    if orb == 0.0:
+        return False
+    diff = abs(lon - sun_lon)
+    if diff > 180:
+        diff = 360 - diff
+    return diff < orb
 
 
 def _build_house_map(

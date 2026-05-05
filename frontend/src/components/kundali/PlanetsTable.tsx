@@ -18,29 +18,74 @@ export function PlanetsTable({ planets, ascendant }: Props) {
       <table className="w-full text-start border-collapse">
         <thead>
           <tr className="eyebrow-lg border-b border-parchment-200">
-            <th className="py-2 pe-3 font-bold">{t("col_body")}</th>
-            <th className="py-2 pe-3 font-bold">{t("col_sign")}</th>
-            <th className="py-2 pe-3 font-bold num">{t("col_degree")}</th>
-            <th className="py-2 pe-3 font-bold">{t("col_lord")}</th>
-            <th className="py-2 pe-3 font-bold">{t("col_nakshatra")}</th>
-            <th className="py-2 pe-3 font-bold">{t("col_pada")}</th>
-            <th className="py-2 pe-3 font-bold">{t("col_house")}</th>
-            <th className="py-2 font-bold">R</th>
+            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">{t("col_body")}</th>
+            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">{t("col_sign")}</th>
+            <th className="py-2 pe-3 font-bold num whitespace-nowrap text-start">
+              {t("col_degree")}
+            </th>
+            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">{t("col_lord")}</th>
+            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
+              {t("col_nakshatra")}
+            </th>
+            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start w-16">
+              {t("col_pada")}
+            </th>
+            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start w-16">
+              {t("col_house")}
+            </th>
+            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
+              {t("col_retrograde")}
+            </th>
+            <th className="py-2 font-bold whitespace-nowrap text-start">{t("col_combust")}</th>
           </tr>
         </thead>
         <tbody className="text-meta">
           {rows.map((p) => (
             <tr key={p.name} className="border-b border-parchment-200 last:border-0">
-              <td className="py-2 pe-3 font-semibold" style={{ color: planetColor(p.abbr) }}>
+              <td
+                className="py-2 pe-3 font-semibold whitespace-nowrap text-start"
+                style={{ color: planetColor(p.abbr) }}
+              >
                 {a.planet(p.name)}
               </td>
-              <td className="py-2 pe-3">{a.sign(p.sign)}</td>
-              <td className="py-2 pe-3 num">{a.num(p.dms)}</td>
-              <td className="py-2 pe-3">{a.planet(p.sign_lord)}</td>
-              <td className="py-2 pe-3">{a.nakshatra(p.nakshatra)}</td>
-              <td className="py-2 pe-3 num">{a.num(p.nakshatra_pada)}</td>
-              <td className="py-2 pe-3 num">{a.num(p.house ?? "-")}</td>
-              <td className="py-2 text-saffron font-bold">{p.retrograde ? "℞" : ""}</td>
+              <td className="py-2 pe-3 whitespace-nowrap text-start">{a.sign(p.sign)}</td>
+              <td className="py-2 pe-3 num whitespace-nowrap tabular-nums text-start">
+                {a.num(p.dms)}
+              </td>
+              <td className="py-2 pe-3 whitespace-nowrap text-start">{a.planet(p.sign_lord)}</td>
+              <td className="py-2 pe-3 whitespace-nowrap text-start">{a.nakshatra(p.nakshatra)}</td>
+              <td className="py-2 pe-3 num whitespace-nowrap tabular-nums text-start">
+                {a.num(p.nakshatra_pada)}
+              </td>
+              <td className="py-2 pe-3 num whitespace-nowrap tabular-nums text-start">
+                {a.num(p.house ?? "-")}
+              </td>
+              <td className="py-2 pe-3 whitespace-nowrap text-start">
+                {p.retrograde && (
+                  <span
+                    className="inline-block rounded-2xs px-2 py-0.5 text-mini font-bold"
+                    style={{
+                      color: "var(--accent-amber)",
+                      backgroundColor: "color-mix(in oklab, var(--accent-amber) 16%, transparent)",
+                    }}
+                  >
+                    {t("pill_retrograde")}
+                  </span>
+                )}
+              </td>
+              <td className="py-2 whitespace-nowrap text-start">
+                {p.combust && (
+                  <span
+                    className="inline-block rounded-2xs px-2 py-0.5 text-mini font-bold"
+                    style={{
+                      color: "var(--danger)",
+                      backgroundColor: "color-mix(in oklab, var(--danger) 14%, transparent)",
+                    }}
+                  >
+                    {t("pill_combust")}
+                  </span>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>

@@ -40,7 +40,6 @@ export const LANGUAGES = [
   { id: "fr", label: "Français", native: "FR" },
   { id: "ru", label: "Русский", native: "РУ" },
   { id: "ar", label: "العربية", native: "ع" },
-  { id: "fa", label: "فارسی", native: "فا" },
   { id: "he", label: "עברית", native: "עב" },
 ] as const;
 
@@ -66,7 +65,8 @@ export const translations: Record<string, Dict> = {
   he,
 };
 
-const RTL_LANGS = new Set<LangId>(["ar", "fa", "he"]);
+// "fa" stays listed here so dir flips correctly if Persian is ever re-enabled
+const RTL_LANGS = new Set<string>(["ar", "fa", "he"]);
 
 function applyDir(lang: LangId) {
   if (typeof document !== "undefined") {

@@ -275,6 +275,17 @@ const TA: Dict = {
   gowri_labam: "லாபம்",
   gowri_dhanam: "தனம்",
   gowri_sugam: "சுகம்",
+
+  // Jaimini Chara Karaka roles. Backend ships English titles ("Atmakaraka"
+  // etc.); the Jaimini section renders them via a.karaka().
+  karaka_atmakaraka: "ஆத்மகாரகம்",
+  karaka_amatyakaraka: "அமாத்யகாரகம்",
+  karaka_bhratrukaraka: "ப்ராத்ருகாரகம்",
+  karaka_matrukaraka: "மாத்ருகாரகம்",
+  karaka_putrakaraka: "புத்திரகாரகம்",
+  karaka_gnatikaraka: "ஞாதிகாரகம்",
+  karaka_darakaraka: "தாரகாரகம்",
+  karaka_pitrukaraka: "பித்ருகாரகம்",
 };
 
 const ZH: Dict = {
@@ -675,5 +686,6 @@ export function useAstro() {
     ayana: (n: string) => (n ? lookup("ayana", n, lang) : n),
     samvatsara: (n: string) => n,
     gowri: (n: string) => (n ? lookup("gowri", n, lang) : n),
+    karaka: (n: string) => (n ? lookup("karaka", n, lang) : n),
   };
 }
