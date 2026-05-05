@@ -76,6 +76,12 @@ def draw_north_indian_chart(
     text_size = max(7.5, W / 22)
     sign_size = max(6.5, W / 30)
 
+    # Prominent saffron OM glyph at the center, behind any planet/sign text.
+    om_size = max(24.0, W / 4.5)
+    pdf.set_text_color(179, 89, 0)
+    draw_text(pdf, C[0], C[1] + om_size * 0.32, "ॐ", DEV_REGULAR, REGULAR, om_size, anchor="center")
+    pdf.set_text_color(0, 0, 0)
+
     for h in range(1, 13):
         cx, cy = cells[h]
         sign_id = ((asc_sign_id - 1) + (h - 1)) % 12 + 1

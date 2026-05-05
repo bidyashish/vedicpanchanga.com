@@ -50,6 +50,7 @@ const bn: Record<string, string> = {
   chart_style: "চক্র শৈলী",
   north_indian: "উত্তর ভারতীয়",
   south_indian: "দক্ষিণ ভারতীয়",
+  western: "পাশ্চাত্য",
 
   local: "স্থানীয়",
   timezone: "সময় অঞ্চল",

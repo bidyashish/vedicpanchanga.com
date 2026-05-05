@@ -50,6 +50,7 @@ const fa: Record<string, string> = {
   chart_style: "سبک زایچه",
   north_indian: "شمال هند",
   south_indian: "جنوب هند",
+  western: "غربی",
 
   local: "محلی",
   timezone: "منطقه زمانی",

@@ -50,6 +50,7 @@ const de: Record<string, string> = {
   chart_style: "Horoskop-Stil",
   north_indian: "Nordindisch",
   south_indian: "Südindisch",
+  western: "Westlich",
 
   local: "Ortszeit",
   timezone: "Zeitzone",

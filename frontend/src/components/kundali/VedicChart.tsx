@@ -1,6 +1,7 @@
 import type { HouseMap } from "@/types/api";
 import { planetColor, planetTitle } from "@/lib/planets";
 import { useAstro } from "@/i18n/astro";
+import { OmGlyph } from "@/components/kundali/OmGlyph";
 
 const HOUSE_CENTROIDS: Record<number, { x: number; y: number }> = {
   1: { x: 250, y: 125 },
@@ -93,6 +94,7 @@ export function VedicChart({ houseMap, ascSign, title, testId }: Props) {
             strokeDasharray="4 4"
             opacity="0.4"
           />
+          <OmGlyph cx={250} cy={250} size={70} color="var(--primary)" opacity={1} />
 
           {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => {
             const c = HOUSE_CENTROIDS[h];

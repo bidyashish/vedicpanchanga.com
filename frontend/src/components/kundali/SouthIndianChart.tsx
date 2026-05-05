@@ -1,6 +1,7 @@
 import type { HouseMap } from "@/types/api";
 import { planetColor, planetTitle, SIGN_SHORT } from "@/lib/planets";
 import { useAstro } from "@/i18n/astro";
+import { OmGlyph } from "@/components/kundali/OmGlyph";
 
 const CELL_POSITIONS: Record<number, { x: number; y: number }> = {
   12: { x: 0, y: 0 },
@@ -84,17 +85,7 @@ export function SouthIndianChart({ houseMap, ascSign, title, testId }: Props) {
             strokeDasharray="4 4"
             opacity="0.5"
           />
-          <text
-            x="250"
-            y="258"
-            textAnchor="middle"
-            fontSize="20"
-            className="font-serif"
-            style={{ fill: innerCol }}
-            fontStyle="italic"
-          >
-            Rashi Kundali
-          </text>
+          <OmGlyph cx={250} cy={250} size={70} color="var(--primary)" opacity={1} />
 
           {Array.from({ length: 12 }, (_, i) => i + 1).map((sign) => {
             const pos = CELL_POSITIONS[sign];

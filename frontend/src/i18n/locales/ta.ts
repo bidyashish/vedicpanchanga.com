@@ -50,6 +50,7 @@ const ta: Record<string, string> = {
   chart_style: "ஜாதக பாணி",
   north_indian: "வடக்கு இந்திய",
   south_indian: "தெற்கு இந்திய",
+  western: "மேற்கத்திய",
 
   local: "உள்ளூர்",
   timezone: "நேர மண்டலம்",
