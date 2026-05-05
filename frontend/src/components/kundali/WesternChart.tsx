@@ -6,9 +6,33 @@ import { OmGlyph } from "@/components/kundali/OmGlyph";
 const SIGN_ABBR = ["Ar", "Ta", "Ge", "Cn", "Le", "Vi", "Li", "Sc", "Sg", "Cp", "Aq", "Pi"];
 
 const NAKSHATRA_ABBR = [
-  "Aśw", "Bha", "Krt", "Roh", "Mrg", "Ārd", "Pun", "Puṣ", "Āśl",
-  "Mag", "PPh", "UPh", "Has", "Cit", "Swā", "Viś", "Anu", "Jye",
-  "Mūl", "PĀṣ", "UĀṣ", "Śra", "Dha", "Śat", "PBh", "UBh", "Rev",
+  "Aśw",
+  "Bha",
+  "Krt",
+  "Roh",
+  "Mrg",
+  "Ārd",
+  "Pun",
+  "Puṣ",
+  "Āśl",
+  "Mag",
+  "PPh",
+  "UPh",
+  "Has",
+  "Cit",
+  "Swā",
+  "Viś",
+  "Anu",
+  "Jye",
+  "Mūl",
+  "PĀṣ",
+  "UĀṣ",
+  "Śra",
+  "Dha",
+  "Śat",
+  "PBh",
+  "UBh",
+  "Rev",
 ];
 
 interface Props {
@@ -50,9 +74,7 @@ function tangentRotation(longitude: number): number {
 // cross out of the sign that the planet actually occupies - otherwise the
 // label visually drifts into the next house.
 function spreadOverlaps(longs: number[], minGap = 4): number[] {
-  const indexed = longs
-    .map((v, i) => ({ v, i }))
-    .sort((a, b) => a.v - b.v);
+  const indexed = longs.map((v, i) => ({ v, i })).sort((a, b) => a.v - b.v);
   const adjusted = indexed.map((p) => p.v);
   const signOf = (lng: number) => Math.floor(lng / 30);
   const clampToSign = (orig: number, next: number): number => {
@@ -112,9 +134,23 @@ export function WesternChart({ planets, ascendant, ascSign, title, testId }: Pro
           xmlns="http://www.w3.org/2000/svg"
         >
           <rect x="0" y="0" width="500" height="500" fill={surfaceCol} />
-          <circle cx={CX} cy={CY} r={R_OUTER} fill={innerSurface} stroke={lineCol} strokeWidth="1.5" />
+          <circle
+            cx={CX}
+            cy={CY}
+            r={R_OUTER}
+            fill={innerSurface}
+            stroke={lineCol}
+            strokeWidth="1.5"
+          />
           <circle cx={CX} cy={CY} r={R_SIGN_INNER} fill="none" stroke={lineCol} strokeWidth="1" />
-          <circle cx={CX} cy={CY} r={R_NAK_INNER} fill={surfaceCol} stroke={lineCol} strokeWidth="1.2" />
+          <circle
+            cx={CX}
+            cy={CY}
+            r={R_NAK_INNER}
+            fill={surfaceCol}
+            stroke={lineCol}
+            strokeWidth="1.2"
+          />
 
           {Array.from({ length: 12 }, (_, i) => {
             const long = i * 30;

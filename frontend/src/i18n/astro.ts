@@ -100,6 +100,21 @@ const TA: Dict = {
   sign_capricorn: "மகரம்",
   sign_aquarius: "கும்பம்",
   sign_pisces: "மீனம்",
+  // Sanskrit sign-name aliases - backend's `rashi` field uses these instead of
+  // the English `name` field, and several panchang sections (Udaya Lagna,
+  // Chandrabalam, Sun-/Moon-sign) read from `rashi`.
+  sign_mesha: "மேஷம்",
+  sign_vrishabha: "ரிஷபம்",
+  sign_mithuna: "மிதுனம்",
+  sign_karka: "கடகம்",
+  sign_simha: "சிம்மம்",
+  sign_kanya: "கன்னி",
+  sign_tula: "துலாம்",
+  sign_vrishchika: "விருச்சிகம்",
+  sign_dhanu: "தனுசு",
+  sign_makara: "மகரம்",
+  sign_kumbha: "கும்பம்",
+  sign_meena: "மீனம்",
   nak_ashwini: "அஸ்வினி",
   nak_bharani: "பரணி",
   nak_krittika: "கிருத்திகை",
@@ -127,6 +142,139 @@ const TA: Dict = {
   nak_purva_bhadrapada: "பூரட்டாதி",
   nak_uttara_bhadrapada: "உத்திரட்டாதி",
   nak_revati: "ரேவதி",
+
+  paksha_krishna: "கிருஷ்ண",
+  paksha_shukla: "சுக்ல",
+  paksha_krishna_paksha: "கிருஷ்ண பக்ஷம்",
+  paksha_shukla_paksha: "சுக்ல பக்ஷம்",
+
+  tithi_pratipada: "பிரதமை",
+  tithi_dvitiya: "துவிதியை",
+  tithi_dwitiya: "துவிதியை",
+  tithi_tritiya: "திருதியை",
+  tithi_chaturthi: "சதுர்த்தி",
+  tithi_panchami: "பஞ்சமி",
+  tithi_shashthi: "ஷஷ்டி",
+  tithi_shashti: "ஷஷ்டி",
+  tithi_saptami: "சப்தமி",
+  tithi_ashtami: "அஷ்டமி",
+  tithi_navami: "நவமி",
+  tithi_dashami: "தசமி",
+  tithi_ekadashi: "ஏகாதசி",
+  tithi_dvadashi: "துவாதசி",
+  tithi_dwadashi: "துவாதசி",
+  tithi_trayodashi: "திரயோதசி",
+  tithi_chaturdashi: "சதுர்தசி",
+  tithi_amavasya: "அமாவாசை",
+  tithi_purnima: "பௌர்ணமி",
+
+  yoga_vishkumbha: "விஷ்கும்பம்",
+  yoga_vishkambha: "விஷ்கும்பம்",
+  yoga_priti: "ப்ரீதி",
+  yoga_ayushman: "ஆயுஷ்மான்",
+  yoga_saubhagya: "சௌபாக்யம்",
+  yoga_shobhana: "சோபனம்",
+  yoga_atiganda: "அதிகண்டம்",
+  yoga_sukarma: "சுகர்மம்",
+  yoga_sukarman: "சுகர்மம்",
+  yoga_dhriti: "திருதி",
+  yoga_shula: "சூலம்",
+  yoga_ganda: "கண்டம்",
+  yoga_vriddhi: "விருத்தி",
+  yoga_dhruva: "துருவம்",
+  yoga_vyaghata: "வ்யாகாதம்",
+  yoga_harshana: "ஹர்ஷணம்",
+  yoga_vajra: "வஜ்ரம்",
+  yoga_siddhi: "சித்தி",
+  yoga_vyatipata: "வ்யதீபாதம்",
+  yoga_variyana: "வரியான்",
+  yoga_variyan: "வரியான்",
+  yoga_parigha: "பரிகம்",
+  yoga_shiva: "சிவம்",
+  yoga_siddha: "சித்தம்",
+  yoga_sadhya: "சாத்யம்",
+  yoga_shubha: "சுபம்",
+  yoga_shukla: "சுக்லம்",
+  yoga_brahma: "பிரம்மம்",
+  yoga_indra: "இந்திரம்",
+  yoga_vaidhriti: "வைதிருதி",
+
+  karana_bava: "பவம்",
+  karana_balava: "பாலவம்",
+  karana_kaulava: "கௌலவம்",
+  karana_taitila: "தைதிலம்",
+  karana_gara: "கரம்",
+  karana_garaja: "கரஜம்",
+  karana_garija: "கரஜம்",
+  karana_vanija: "வணிஜம்",
+  karana_vishti: "விஷ்டி",
+  karana_shakuni: "சகுனி",
+  karana_chatushpada: "சதுஷ்பாதம்",
+  karana_naga: "நாகம்",
+  karana_kimstughna: "கிம்ஸ்துக்னம்",
+  karana_kintughna: "கிம்ஸ்துக்னம்",
+
+  vara_ravivara: "ரவிவாரம்",
+  vara_somavara: "சோமவாரம்",
+  vara_mangalavara: "மங்களவாரம்",
+  vara_budhavara: "புதவாரம்",
+  vara_guruvara: "குருவாரம்",
+  vara_brihaspativara: "குருவாரம்",
+  vara_shukravara: "சுக்ரவாரம்",
+  vara_shanivara: "சனிவாரம்",
+
+  month_chaitra: "சைத்திரம்",
+  month_vaishakha: "வைசாகம்",
+  month_jyeshtha: "ஜ்யேஷ்டம்",
+  month_ashadha: "ஆஷாடம்",
+  month_shravana: "சிராவணம்",
+  month_bhadrapada: "பாத்ரபதம்",
+  month_ashvin: "ஆச்வினம்",
+  month_ashwin: "ஆச்வினம்",
+  month_kartika: "கார்த்திகம்",
+  month_margashirsha: "மார்கசீர்ஷம்",
+  month_pausha: "பௌஷம்",
+  month_magha: "மாகம்",
+  month_phalguna: "பால்குனம்",
+
+  direction_north: "வடக்கு",
+  direction_south: "தெற்கு",
+  direction_east: "கிழக்கு",
+  direction_west: "மேற்கு",
+  "direction_north-east": "வடகிழக்கு",
+  "direction_north-west": "வடமேற்கு",
+  "direction_south-east": "தென்கிழக்கு",
+  "direction_south-west": "தென்மேற்கு",
+  direction_northeast: "வடகிழக்கு",
+  direction_northwest: "வடமேற்கு",
+  direction_southeast: "தென்கிழக்கு",
+  direction_southwest: "தென்மேற்கு",
+
+  ritu_vasant: "வசந்தம்",
+  ritu_vasanta: "வசந்தம்",
+  ritu_grishma: "கிரீஷ்மம்",
+  ritu_varsha: "வர்ஷம்",
+  ritu_sharad: "சரத்",
+  ritu_hemant: "ஹேமந்தம்",
+  ritu_hemanta: "ஹேமந்தம்",
+  ritu_shishir: "சிசிரம்",
+  ritu_shishira: "சிசிரம்",
+  ritu_sishira: "சிசிரம்",
+
+  ayana_uttarayana: "உத்தராயணம்",
+  ayana_dakshinayana: "தக்ஷிணாயனம்",
+
+  // Gowri Panchangam segment names. The 8-name Tamil cycle is shown in the
+  // Nalla Neram table - Sanskrit-derived words spelled in transliteration in
+  // backend output, rendered as native Tamil in Tamil mode.
+  gowri_soram: "சோரம்",
+  gowri_uthi: "உதி",
+  gowri_visham: "விஷம்",
+  gowri_amridha: "அமிர்தம்",
+  gowri_rogam: "ரோகம்",
+  gowri_labam: "லாபம்",
+  gowri_dhanam: "தனம்",
+  gowri_sugam: "சுகம்",
 };
 
 const ZH: Dict = {
@@ -470,14 +618,62 @@ function toNativeDigits(value: string | number | null | undefined, lang: string)
   return s.replace(/[0-9]/g, (d) => digits[Number(d)]);
 }
 
+// Tithi names arrive as "Krishna Pratipada" / "Shukla Chaturdashi" / "Amavasya".
+// Resolve paksha + ordinal independently so we don't need 30 entries per
+// locale - just 16 ordinals + 2 paksha words.
+function lookupTithi(name: string, lang: string): string {
+  if (!name) return name;
+  const dict = DICTS[lang];
+  if (!dict) return name;
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) {
+    return dict[toKey("tithi", parts[0])] ?? name;
+  }
+  const paksha = dict[toKey("paksha", parts[0])];
+  const ordinal = dict[toKey("tithi", parts.slice(1).join(" "))];
+  if (paksha && ordinal) return `${paksha} ${ordinal}`;
+  return name;
+}
+
+// Paksha can arrive as either "Krishna Paksha" / "Shukla Paksha" or just
+// "Krishna" / "Shukla". Try the full form first, fall back to the bare word.
+function lookupPaksha(name: string, lang: string): string {
+  if (!name) return name;
+  const dict = DICTS[lang];
+  if (!dict) return name;
+  return dict[toKey("paksha", name)] ?? dict[toKey("paksha", name.split(/\s+/)[0])] ?? name;
+}
+
+// Ritu values arrive as "Grishma (Summer)". The English parenthetical isn't
+// useful in non-English UIs, so look up just the Sanskrit head and drop the
+// suffix when the dictionary has an entry.
+function lookupRitu(name: string, lang: string): string {
+  if (!name) return name;
+  const dict = DICTS[lang];
+  if (!dict) return name;
+  const head = name.split(/\s*\(/)[0].trim();
+  return dict[toKey("ritu", head)] ?? name;
+}
+
 // Hook bound to the active language. Consumers call num/planet/sign/nakshatra
-// without threading lang through every callsite.
+// (etc) without threading lang through every callsite.
 export function useAstro() {
   const { lang } = useI18n();
   return {
     num: (v: string | number | null | undefined) => toNativeDigits(v, lang),
     planet: (n: string) => lookup("planet", n, lang),
-    sign: (n: string) => lookup("sign", n, lang),
-    nakshatra: (n: string) => lookup("nak", n, lang),
+    sign: (n: string) => (n ? lookup("sign", n, lang) : n),
+    nakshatra: (n: string) => (n ? lookup("nak", n, lang) : n),
+    tithi: (n: string) => lookupTithi(n, lang),
+    paksha: (n: string) => lookupPaksha(n, lang),
+    yoga: (n: string) => (n ? lookup("yoga", n, lang) : n),
+    karana: (n: string) => (n ? lookup("karana", n, lang) : n),
+    vara: (n: string) => (n ? lookup("vara", n, lang) : n),
+    lunarMonth: (n: string) => (n ? lookup("month", n, lang) : n),
+    direction: (n: string) => (n ? lookup("direction", n, lang) : n),
+    ritu: (n: string) => lookupRitu(n, lang),
+    ayana: (n: string) => (n ? lookup("ayana", n, lang) : n),
+    samvatsara: (n: string) => n,
+    gowri: (n: string) => (n ? lookup("gowri", n, lang) : n),
   };
 }

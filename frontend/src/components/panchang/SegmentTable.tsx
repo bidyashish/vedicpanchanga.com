@@ -1,5 +1,4 @@
 import { useI18n } from "@/i18n";
-import { useAstro } from "@/i18n/astro";
 import { formatTime } from "@/lib/format";
 import type { LabelledSegment } from "@/types/api";
 
@@ -8,14 +7,18 @@ interface Props {
   nameHeader: string;
   tz?: string;
   testId?: string;
+  // Optional translator for the name column. Hora passes a.planet so "Mars"
+  // → "செவ்வாய்"; Gowri passes a.gowri so "Rogam" → "ரோகம்". When omitted
+  // the name renders raw (callers that already translated upstream).
+  nameLookup?: (name: string) => string;
 }
 
-export function SegmentTable({ segments, nameHeader, tz, testId }: Props) {
+export function SegmentTable({ segments, nameHeader, tz, testId, nameLookup }: Props) {
   const { t } = useI18n();
-  const a = useAstro();
   if (!segments.length) {
     return <p className="meta italic">-</p>;
   }
+  const renderName = nameLookup ?? ((n: string) => n);
   return (
     <table className="w-full text-sm" data-testid={testId}>
       <thead>
@@ -32,9 +35,9 @@ export function SegmentTable({ segments, nameHeader, tz, testId }: Props) {
             className="border-b border-parchment-200/60 last:border-0"
             data-testid={testId ? `${testId}-row-${i}` : undefined}
           >
-            <td className="py-1.5 pe-3 font-serif text-ink">{s.name}</td>
+            <td className="py-1.5 pe-3 font-serif text-ink">{renderName(s.name)}</td>
             <td className="py-1.5 pe-3 num text-ink">
-              {a.num(formatTime(s.start, tz))} – {a.num(formatTime(s.end, tz))}
+              {formatTime(s.start, tz)} – {formatTime(s.end, tz)}
             </td>
             <td className="py-1.5 text-end">
               <span

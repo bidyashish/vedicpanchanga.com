@@ -12,12 +12,22 @@ const OM_PATH =
 const PATH_W = 360;
 const PATH_H = 367;
 
-export function OmGlyph({ cx, cy, size = 48, color = "var(--accent-amber)", opacity = 0.75 }: Props) {
+export function OmGlyph({
+  cx,
+  cy,
+  size = 48,
+  color = "var(--accent-amber)",
+  opacity = 0.75,
+}: Props) {
   const scale = size / PATH_H;
   const w = PATH_W * scale;
   const h = PATH_H * scale;
   return (
-    <g transform={`translate(${cx - w / 2} ${cy - h / 2}) scale(${scale})`} fill={color} opacity={opacity}>
+    <g
+      transform={`translate(${cx - w / 2} ${cy - h / 2}) scale(${scale})`}
+      fill={color}
+      opacity={opacity}
+    >
       <path d={OM_PATH} />
     </g>
   );
