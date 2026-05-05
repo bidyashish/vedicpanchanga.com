@@ -176,57 +176,69 @@ export function DashaTable({ dasha, dashaAntar }: Props) {
         )}
       </div>
       <p className="meta mb-3">{subtitle}</p>
-      <table className="w-full text-start border-collapse">
-        <thead>
-          <tr className="eyebrow-lg border-b border-parchment-200">
-            <th className="py-2 pe-3 font-bold">{lordHeader}</th>
-            <th className="py-2 pe-3 font-bold">{t("dasha_years")}</th>
-            <th className="py-2 pe-3 font-bold">{t("dasha_from")}</th>
-            <th className="py-2 font-bold">{t("dasha_to")}</th>
-          </tr>
-        </thead>
-        <tbody className="text-meta">
-          {rows.map((d, i) => {
-            const active = isActive(d, now);
-            const canDrill =
-              hasDrillData &&
-              (!current
-                ? !!(d as Mahadasha).antardashas?.length
-                : NEXT_LEVEL[current.level] !== null);
-            return (
-              <tr
-                key={`${d.lord}-${i}-${d.start}`}
-                onClick={() => canDrill && onRowClick(d)}
-                className={[
-                  "border-b border-parchment-200 last:border-0",
-                  canDrill ? "cursor-pointer hover:bg-parchment-100/60" : "",
-                  active ? "bg-saffron/10" : "",
-                ].join(" ")}
-              >
-                <td
-                  className="py-2 pe-3 font-semibold whitespace-nowrap"
-                  style={{ color: planetColor(d.lord.slice(0, 2)) }}
+      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+        <table className="w-full text-start border-collapse">
+          <thead>
+            <tr className="eyebrow-lg border-b border-parchment-200">
+              <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">{lordHeader}</th>
+              <th className="py-2 pe-3 font-bold whitespace-nowrap text-start w-20">
+                {t("dasha_years")}
+              </th>
+              <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
+                {t("dasha_from")}
+              </th>
+              <th className="py-2 font-bold whitespace-nowrap text-start">{t("dasha_to")}</th>
+            </tr>
+          </thead>
+          <tbody className="text-meta">
+            {rows.map((d, i) => {
+              const active = isActive(d, now);
+              const canDrill =
+                hasDrillData &&
+                (!current
+                  ? !!(d as Mahadasha).antardashas?.length
+                  : NEXT_LEVEL[current.level] !== null);
+              return (
+                <tr
+                  key={`${d.lord}-${i}-${d.start}`}
+                  onClick={() => canDrill && onRowClick(d)}
+                  className={[
+                    "border-b border-parchment-200 last:border-0",
+                    canDrill ? "cursor-pointer hover:bg-parchment-100/60" : "",
+                    active ? "bg-saffron/10" : "",
+                  ].join(" ")}
                 >
-                  <span
-                    className={[
-                      "inline-block w-4 mr-1 text-saffron font-bold",
-                      active ? "" : "invisible",
-                    ].join(" ")}
-                    aria-hidden="true"
+                  <td
+                    className="py-2 pe-3 font-semibold whitespace-nowrap text-start"
+                    style={{ color: planetColor(d.lord.slice(0, 2)) }}
                   >
-                    ▶
-                  </span>
-                  {a.planet(d.lord)}
-                  {active && <span className="sr-only"> (current)</span>}
-                </td>
-                <td className="py-2 pe-3 num">{a.num(fmtYears(d.years))}</td>
-                <td className="py-2 pe-3 num">{a.num(formatShortDate(d.start))}</td>
-                <td className="py-2 num">{a.num(formatShortDate(d.end))}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+                    <span
+                      className={[
+                        "inline-block w-4 mr-1 text-saffron font-bold",
+                        active ? "" : "invisible",
+                      ].join(" ")}
+                      aria-hidden="true"
+                    >
+                      ▶
+                    </span>
+                    {a.planet(d.lord)}
+                    {active && <span className="sr-only"> (current)</span>}
+                  </td>
+                  <td className="py-2 pe-3 num whitespace-nowrap tabular-nums text-start">
+                    {a.num(fmtYears(d.years))}
+                  </td>
+                  <td className="py-2 pe-3 num whitespace-nowrap tabular-nums text-start">
+                    {a.num(formatShortDate(d.start))}
+                  </td>
+                  <td className="py-2 num whitespace-nowrap tabular-nums text-start">
+                    {a.num(formatShortDate(d.end))}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

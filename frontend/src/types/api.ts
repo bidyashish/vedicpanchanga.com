@@ -21,6 +21,7 @@ export interface Planet {
   name: string;
   abbr: string;
   longitude: number;
+  combust?: boolean;
   sign_id: number;
   sign: string;
   sign_lord: string;
