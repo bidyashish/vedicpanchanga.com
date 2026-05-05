@@ -85,7 +85,7 @@ export function SouthIndianChart({ houseMap, ascSign, title, testId }: Props) {
             strokeDasharray="4 4"
             opacity="0.5"
           />
-          <OmGlyph cx={250} cy={250} size={70} color="var(--primary)" opacity={1} />
+          <OmGlyph cx={250} cy={250} size={70} color="var(--primary)" opacity={0.76} />
 
           {Array.from({ length: 12 }, (_, i) => i + 1).map((sign) => {
             const pos = CELL_POSITIONS[sign];
