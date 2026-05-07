@@ -56,75 +56,40 @@ export function LanguageSwitcher({ testId = "lang-switcher" }: { testId?: string
 
   const display = LANGUAGES[animIndex];
   const current = LANGUAGES.find((l) => l.id === lang) ?? LANGUAGES[0];
-  const labelMobile = animating ? display.native : current.native;
-  const labelDesktop = animating
+  const label = animating
     ? `${display.native} · ${display.label}`
     : `${current.native} · ${current.label}`;
 
   return (
-    <>
-      {/* Mobile: compact - native script only, narrow */}
-      <div
-        className={`${SHELL} ${animating ? "lang-ring-pulse" : ""} sm:hidden text-sm pl-2.5 pr-7`}
-        dir="ltr"
-        onMouseEnter={stopAnim}
-        onFocus={stopAnim}
+    <div
+      className={`${SHELL} ${animating ? "lang-ring-pulse" : ""} inline-flex text-sm pl-2.5 pr-7 sm:pl-3 sm:pr-8 overflow-hidden`}
+      dir="ltr"
+      onMouseEnter={stopAnim}
+      onFocus={stopAnim}
+    >
+      <span
+        key={animating ? animIndex : "static"}
+        className={`font-semibold whitespace-nowrap leading-none ${animating ? "lang-rotate-in" : ""}`}
+        aria-hidden="true"
       >
-        <span
-          key={`m-${animating ? animIndex : "static"}`}
-          className={`font-semibold leading-none ${animating ? "lang-rotate-in" : ""}`}
-          aria-hidden="true"
-        >
-          {labelMobile}
-        </span>
-        <Chevron />
-        <select
-          data-testid={`${testId}-mobile`}
-          value={lang}
-          onChange={onChange}
-          aria-label="Language"
-          dir="ltr"
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-        >
-          {LANGUAGES.map((l) => (
-            <option key={l.id} value={l.id}>
-              {l.native}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* sm and up: native + label, animated */}
-      <div
-        className={`${SHELL} ${animating ? "lang-ring-pulse" : ""} hidden sm:inline-flex text-sm pl-3 pr-8 overflow-hidden`}
+        {label}
+      </span>
+      <Chevron />
+      <select
+        data-testid={testId}
+        value={lang}
+        onChange={onChange}
+        aria-label="Language"
         dir="ltr"
-        onMouseEnter={stopAnim}
-        onFocus={stopAnim}
+        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
       >
-        <span
-          key={`d-${animating ? animIndex : "static"}`}
-          className={`font-semibold whitespace-nowrap leading-none ${animating ? "lang-rotate-in" : ""}`}
-          aria-hidden="true"
-        >
-          {labelDesktop}
-        </span>
-        <Chevron />
-        <select
-          data-testid={testId}
-          value={lang}
-          onChange={onChange}
-          aria-label="Language"
-          dir="ltr"
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-        >
-          {LANGUAGES.map((l) => (
-            <option key={l.id} value={l.id}>
-              {l.native} {"·"} {l.label}
-            </option>
-          ))}
-        </select>
-      </div>
-    </>
+        {LANGUAGES.map((l) => (
+          <option key={l.id} value={l.id}>
+            {l.native} {"·"} {l.label}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }
 
