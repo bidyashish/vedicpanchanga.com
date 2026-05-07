@@ -61,7 +61,9 @@ def register_fonts(pdf: FPDF) -> None:
     pdf.add_font(TAMIL_REGULAR, REGULAR, str(FONT_DIR / "NotoSansTamil-Regular.ttf"))
     pdf.add_font(TAMIL_REGULAR, BOLD, str(FONT_DIR / "NotoSansTamil-Bold.ttf"))
     # Bengali
-    pdf.add_font(BENGALI_REGULAR, REGULAR, str(FONT_DIR / "NotoSansBengali-Regular.ttf"))
+    pdf.add_font(
+        BENGALI_REGULAR, REGULAR, str(FONT_DIR / "NotoSansBengali-Regular.ttf")
+    )
     pdf.add_font(BENGALI_REGULAR, BOLD, str(FONT_DIR / "NotoSansBengali-Bold.ttf"))
     # Arabic (covers ar + fa — Persian uses the Arabic script)
     pdf.add_font(ARABIC_REGULAR, REGULAR, str(FONT_DIR / "NotoSansArabic-Regular.ttf"))

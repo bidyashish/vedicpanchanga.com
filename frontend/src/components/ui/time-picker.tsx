@@ -1,6 +1,8 @@
 import { Clock } from "lucide-react";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useAstro } from "@/i18n/astro";
+import { formatHHMM, meridiemLabels } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 const pad2 = (n: number) => String(n).padStart(2, "0");
@@ -16,7 +18,7 @@ function parseHHMM(hhmm: string | undefined | null): { h24: number; m: number } 
 }
 
 interface Props {
-  value: string; // HH:MM 24h
+  value: string; // HH:MM 24h - stays Latin so the backend can parse it
   onChange: (hhmm: string) => void;
   testIdPrefix?: string;
   placeholder?: string;
@@ -28,6 +30,8 @@ export function TimePicker({
   testIdPrefix = "time",
   placeholder = "Pick a time",
 }: Props) {
+  const a = useAstro();
+  const meridiem = meridiemLabels();
   const parsed = parseHHMM(value);
   const hasValue = !!/^(\d{1,2}):(\d{2})/.exec(value ?? "");
   const period: "AM" | "PM" = parsed.h24 >= 12 ? "PM" : "AM";
@@ -39,7 +43,8 @@ export function TimePicker({
     onChange(`${pad2(out24)}:${pad2(mm)}`);
   };
 
-  const display = hasValue ? `${hh12}:${pad2(parsed.m)} ${period}` : placeholder;
+  const display = hasValue ? formatHHMM(value) : placeholder;
+  const periodLabel = (p: "AM" | "PM") => (p === "AM" ? meridiem.am : meridiem.pm);
 
   return (
     <Popover>
@@ -59,7 +64,7 @@ export function TimePicker({
             label="Hour"
             values={range(1, 12)}
             current={hh12}
-            format={(v) => String(v)}
+            format={(v) => a.num(String(v))}
             onPick={(v) => emit(v, parsed.m, period)}
             testId={`${testIdPrefix}-hour`}
           />
@@ -67,7 +72,7 @@ export function TimePicker({
             label="Min"
             values={range(0, 59)}
             current={parsed.m}
-            format={(v) => pad2(v)}
+            format={(v) => a.num(pad2(v))}
             onPick={(v) => emit(hh12, v, period)}
             testId={`${testIdPrefix}-minute`}
           />
@@ -84,7 +89,7 @@ export function TimePicker({
                   period === p ? "bg-saffron text-white" : "text-ink hover:bg-saffron/10",
                 )}
               >
-                {p}
+                {periodLabel(p)}
               </button>
             ))}
           </div>

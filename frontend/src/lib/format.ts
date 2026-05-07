@@ -127,6 +127,40 @@ export function formatTime(iso?: string | null, tz?: string): string {
   return formatIntl(new Date(iso), { ...TIME_OPTS, timeZone: tz });
 }
 
+// Format a "HH:MM" 24-hour wall-clock string for display in the active
+// language. Used by TimePicker so the trigger button reads "௦௫:௩௫ மு.ப." in
+// Tamil mode while the underlying form value stays Latin "05:35" for the
+// backend.
+export function formatHHMM(hhmm?: string | null): string {
+  if (!hhmm) return "";
+  const m = /^(\d{1,2}):(\d{2})/.exec(hhmm);
+  if (!m) return hhmm;
+  const h = Math.min(Math.max(+m[1], 0), 23);
+  const mm = Math.min(Math.max(+m[2], 0), 59);
+  const d = new Date();
+  d.setHours(h, mm, 0, 0);
+  return formatIntl(d, TIME_OPTS);
+}
+
+// Active-language AM/PM labels. Languages with an explicit MERIDIEM_NATIVE
+// override (ta/hi/bn) return that pair; otherwise we derive from
+// Intl.formatToParts on sample 8 AM and 8 PM dates so locales whose Intl
+// backend already emits native dayPeriod text (ne/ar/fa/zh/ja/es/pt) still
+// produce something correct without hardcoded tables. Falls back to AM/PM if
+// Intl returns nothing.
+export function meridiemLabels(): { am: string; pm: string } {
+  const lang = activeLang();
+  const explicit = MERIDIEM_NATIVE[lang];
+  if (explicit) return explicit;
+  const fmt = new Intl.DateTimeFormat(timeLocale(lang), TIME_OPTS);
+  const am = new Date();
+  am.setHours(8, 0, 0, 0);
+  const pm = new Date();
+  pm.setHours(20, 0, 0, 0);
+  const partOf = (d: Date) => fmt.formatToParts(d).find((p) => p.type === "dayPeriod")?.value;
+  return { am: partOf(am) ?? "AM", pm: partOf(pm) ?? "PM" };
+}
+
 export function formatTimeWithDate(iso?: string | null, tz?: string, refDate?: string): string {
   if (!iso) return "-";
   const d = new Date(iso);
