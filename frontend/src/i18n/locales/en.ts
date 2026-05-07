@@ -192,8 +192,8 @@ const en: Record<string, string> = {
   rashi_nak_pada: "Nakshatra Pada",
   rashi_surya_nak: "Surya Nakshatra",
 
-  ritu_drik_ritu: "Drik Ṛtu",
-  ritu_vedic_ritu: "Vedic Ṛtu",
+  ritu_drik_ritu: "Drik Ritu",
+  ritu_vedic_ritu: "Vedic Ritu",
   ritu_drik_ayana: "Drik Ayana",
   ritu_vedic_ayana: "Vedic Ayana",
   ritu_dinamana: "Dinamana",
