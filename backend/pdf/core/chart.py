@@ -82,7 +82,9 @@ def draw_north_indian_chart(
     # Same SVG OM as the frontend, centered on the chart, behind any planet text.
     # Opacity is baked into the SVG (fill-opacity) because fpdf2's set_alpha
     om_size = max(20.0, W / 5)
-    pdf.image(str(OM_SVG), x=C[0] - om_size / 2, y=C[1] - om_size / 2, w=om_size, h=om_size)
+    pdf.image(
+        str(OM_SVG), x=C[0] - om_size / 2, y=C[1] - om_size / 2, w=om_size, h=om_size
+    )
 
     for h in range(1, 13):
         cx, cy = cells[h]
