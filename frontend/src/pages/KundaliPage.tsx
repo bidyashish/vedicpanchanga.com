@@ -131,7 +131,25 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
       setError("Please enter valid latitude and longitude, or pick a city.");
       return;
     }
-    const newTab = window.open("", "_blank", "noopener");
+    // Open the tab synchronously - iOS Safari requires this inside the
+    // user gesture or it blocks the popup. Crucially, no `noopener`: that
+    // flag makes iOS Safari refuse to let the parent control the tab,
+    // turning `newTab.location.href = url` into a silent no-op.
+    const newTab = window.open("about:blank", "_blank");
+    if (newTab) {
+      // Show a loading hint so the user doesn't stare at an empty tab.
+      try {
+        newTab.document.write(
+          "<!DOCTYPE html><html><head><title>Preparing PDF…</title>" +
+            '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+            '</head><body style="margin:0;font-family:-apple-system,system-ui,sans-serif;' +
+            'display:flex;align-items:center;justify-content:center;height:100vh;color:#555">' +
+            "<p>Preparing PDF…</p></body></html>",
+        );
+      } catch {
+        /* document may not be writable in edge cases */
+      }
+    }
     setPrinting(true);
     setError(null);
     try {
@@ -149,12 +167,29 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
       });
       const url = URL.createObjectURL(blob);
       if (newTab && !newTab.closed) {
-        newTab.location.href = url;
+        // iOS Safari won't navigate a new tab directly to a blob URL via
+        // location.href, but it WILL render a blob URL inside an iframe
+        // hosted in that tab. Replace the loading page with an iframe
+        // wrapping the PDF.
+        newTab.document.open();
+        newTab.document.write(
+          "<!DOCTYPE html><html><head><title>Vedic Kundali</title>" +
+            '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+            '</head><body style="margin:0;height:100vh;background:#222">' +
+            `<iframe src="${url}" title="Vedic Kundali" ` +
+            'style="border:0;width:100%;height:100%;display:block"></iframe>' +
+            "</body></html>",
+        );
+        newTab.document.close();
       } else {
+        // Popup was blocked entirely - fall back to an anchor click and
+        // let the browser/OS pick how to handle the file (download in
+        // most cases).
         const a = document.createElement("a");
         a.href = url;
         a.target = "_blank";
         a.rel = "noopener";
+        a.download = `vedic-kundali-${form.birth_date || "chart"}.pdf`;
         document.body.appendChild(a);
         a.click();
         a.remove();
