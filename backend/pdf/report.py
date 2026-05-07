@@ -41,10 +41,13 @@ from .core.i18n import (
     LOCALES,
     t,
     t_num,
+    tr_karana,
     tr_nakshatra,
     tr_planet,
     tr_sign,
+    tr_tithi,
     tr_weekday,
+    tr_yoga,
 )
 from .core.sections import (
     draw_ashtakavarga,
@@ -142,11 +145,16 @@ def _build_basic_rows(
     else:
         rasi_lord_disp = nak_lord_disp = moon_sign_disp = nak_pada_str = ""
 
+    # Strip the "Krishna "/"Shukla " prefix the backend prepends (the basic
+    # box has no paksha row, only the ordinal). For English the Sanskrit
+    # paksha word isn't meaningful here; for Hindi/Tamil tr_tithi maps the
+    # bare ordinal to native script.
     tithi_full = tithi_at_birth.get("name", "")
     tithi_parts = tithi_full.split(" ", 1)
-    tithi_disp = tithi_parts[1] if len(tithi_parts) == 2 else tithi_full
-    yoga_disp = yoga_at_birth.get("name", "")
-    karana_disp = karana_at_birth.get("name", "")
+    tithi_ordinal = tithi_parts[1] if len(tithi_parts) == 2 else tithi_full
+    tithi_disp = tr_tithi(lang, tithi_ordinal)
+    yoga_disp = tr_yoga(lang, yoga_at_birth.get("name", ""))
+    karana_disp = tr_karana(lang, karana_at_birth.get("name", ""))
     sunrise_disp = fmt_hms_local(sun_moon.get("sunrise", ""))
     sunset_disp = fmt_hms_local(sun_moon.get("sunset", ""))
 

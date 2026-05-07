@@ -124,6 +124,116 @@ def tr_nakshatra(lang: str, name: str) -> str:
     return name if out == key else out
 
 
+def tr_yoga(lang: str, name: str) -> str:
+    """Translate a yoga name (e.g. "Sadhya") to the locale."""
+    if not name:
+        return ""
+    key = f"yoga_{name.lower().replace(' ', '_')}"
+    out = t(lang, key)
+    return name if out == key else out
+
+
+def tr_karana(lang: str, name: str) -> str:
+    """Translate a karana name (e.g. "Vishti") to the locale."""
+    if not name:
+        return ""
+    key = f"karana_{name.lower().replace(' ', '_')}"
+    out = t(lang, key)
+    return name if out == key else out
+
+
+def tr_month(lang: str, name: str) -> str:
+    """Translate a lunar month name (e.g. "Vaishakha") to the locale."""
+    if not name:
+        return ""
+    key = f"month_{name.lower().replace(' ', '_')}"
+    out = t(lang, key)
+    return name if out == key else out
+
+
+def tr_direction(lang: str, name: str) -> str:
+    """Translate a direction name (e.g. "South-East") to the locale."""
+    if not name:
+        return ""
+    key = f"direction_{name.lower().replace(' ', '_')}"
+    out = t(lang, key)
+    return name if out == key else out
+
+
+def tr_ayana(lang: str, name: str) -> str:
+    """Translate an ayana name ("Uttarayana"/"Dakshinayana") to the locale."""
+    if not name:
+        return ""
+    key = f"ayana_{name.lower().replace(' ', '_')}"
+    out = t(lang, key)
+    return name if out == key else out
+
+
+def tr_gowri(lang: str, name: str) -> str:
+    """Translate a Gowri segment name (e.g. "Amridha") to the locale."""
+    if not name:
+        return ""
+    key = f"gowri_{name.lower().replace(' ', '_')}"
+    out = t(lang, key)
+    return name if out == key else out
+
+
+def tr_karaka(lang: str, name: str) -> str:
+    """Translate a Jaimini karaka role (e.g. "Atmakaraka") to the locale."""
+    if not name:
+        return ""
+    key = f"karaka_{name.lower().replace(' ', '_')}"
+    out = t(lang, key)
+    return name if out == key else out
+
+
+def tr_paksha(lang: str, name: str) -> str:
+    """Translate a paksha. Backend ships either "Krishna Paksha"/"Shukla
+    Paksha" or the bare "Krishna"/"Shukla" - try the full key, then the
+    bare word."""
+    if not name:
+        return ""
+    key = f"paksha_{name.lower().replace(' ', '_')}"
+    out = t(lang, key)
+    if out != key:
+        return out
+    bare = name.split()[0].lower()
+    bare_key = f"paksha_{bare}"
+    out = t(lang, bare_key)
+    return name if out == bare_key else out
+
+
+def tr_ritu(lang: str, name: str) -> str:
+    """Translate a ritu name. Backend often appends a parenthetical English
+    gloss like "Grishma (Summer)" - strip it before lookup."""
+    if not name:
+        return ""
+    head = name.split("(", 1)[0].strip()
+    key = f"ritu_{head.lower()}"
+    out = t(lang, key)
+    return name if out == key else out
+
+
+def tr_tithi(lang: str, name: str) -> str:
+    """Translate a tithi name. Comes either bare ("Amavasya", "Purnima") or
+    paksha-prefixed ("Krishna Shashthi") - resolve paksha and ordinal
+    independently so we only need 16 ordinals + 2 paksha words per locale."""
+    if not name:
+        return ""
+    parts = name.strip().split(maxsplit=1)
+    if len(parts) == 1:
+        key = f"tithi_{parts[0].lower()}"
+        out = t(lang, key)
+        return name if out == key else out
+    paksha_key = f"paksha_{parts[0].lower()}"
+    tithi_key = f"tithi_{parts[1].lower().replace(' ', '_')}"
+    paksha_word = t(lang, paksha_key)
+    ordinal = t(lang, tithi_key)
+    if paksha_word == paksha_key or ordinal == tithi_key:
+        return name
+    return f"{paksha_word} {ordinal}"
+
+
 # Devanagari & Tamil routinely co-render with their native digits. Other
 # locales conventionally keep Latin digits for numeric data, so we don't
 # substitute there. Mirrors frontend src/i18n/astro.ts NATIVE_DIGITS.

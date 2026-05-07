@@ -131,6 +131,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
       setError("Please enter valid latitude and longitude, or pick a city.");
       return;
     }
+    const newTab = window.open("", "_blank", "noopener");
     setPrinting(true);
     setError(null);
     try {
@@ -147,10 +148,20 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
         lang: pdfLangFor(lang),
       });
       const url = URL.createObjectURL(blob);
-      window.open(url, "_blank", "noopener,noreferrer");
-      // Revoke after a delay so the new tab has time to load.
+      if (newTab && !newTab.closed) {
+        newTab.location.href = url;
+      } else {
+        const a = document.createElement("a");
+        a.href = url;
+        a.target = "_blank";
+        a.rel = "noopener";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
       setTimeout(() => URL.revokeObjectURL(url), 60_000);
     } catch (e) {
+      if (newTab && !newTab.closed) newTab.close();
       setError((e as Error).message || "PDF generation failed");
     } finally {
       setPrinting(false);
