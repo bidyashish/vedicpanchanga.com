@@ -82,13 +82,12 @@ function ResultCard({ m, tz }: { m: MuhurtaResult; tz?: string }) {
       </div>
 
       {m.reasons?.length > 0 && (
-        <div className="mt-4 pt-3 border-t border-parchment-200">
+        <div className="mt-5 pt-4 border-t border-parchment-200">
           <p className="eyebrow-lg text-leaf">{t("muhurta_reasons")}</p>
-          <ul className="mt-1.5 space-y-1">
+          <ul className="mt-2 space-y-1.5">
             {m.reasons.map((r, i) => (
-              <li key={i} className="text-meta text-ink flex gap-2">
-                <span className="text-leaf font-bold mt-0.5">✓</span>
-                <span>{r}</span>
+              <li key={i} className="text-meta text-ink">
+                {r}
               </li>
             ))}
           </ul>
@@ -96,13 +95,12 @@ function ResultCard({ m, tz }: { m: MuhurtaResult; tz?: string }) {
       )}
 
       {m.cautions?.length > 0 && (
-        <div className="mt-3">
+        <div className="mt-4">
           <p className="eyebrow-lg text-rose">{t("muhurta_cautions")}</p>
-          <ul className="mt-1.5 space-y-1">
+          <ul className="mt-2 space-y-1.5">
             {m.cautions.map((c, i) => (
-              <li key={i} className="text-meta text-ink flex gap-2">
-                <span className="text-rose font-bold mt-0.5">!</span>
-                <span>{c}</span>
+              <li key={i} className="text-meta text-ink">
+                {c}
               </li>
             ))}
           </ul>
@@ -122,9 +120,9 @@ function InfoTile({
   valueColor?: string;
 }) {
   return (
-    <div className="bg-parchment-100 border border-parchment-200 rounded-sm px-3 py-2">
+    <div className="border border-parchment-200 rounded-md px-3 py-2.5">
       <p className="eyebrow">{label}</p>
-      <p className="num mt-0.5 text-meta font-medium" style={{ color: valueColor ?? "var(--ink)" }}>
+      <p className="num mt-1 text-meta font-medium" style={{ color: valueColor ?? "var(--ink)" }}>
         {value}
       </p>
     </div>
@@ -196,7 +194,7 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
       className="pt-4 pb-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8"
     >
       <aside className="lg:col-span-4 xl:col-span-3">
-        <div data-testid="muhurta-form" className="card card-lift p-5 lg:p-6 lg:sticky lg:top-20">
+        <div data-testid="muhurta-form" className="card p-5 lg:p-6 lg:sticky lg:top-20">
           <h2 className="heading-page">{t("muhurta_title")}</h2>
           <p className="meta mb-5">{t("muhurta_subtitle")}</p>
 
@@ -289,7 +287,7 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
             type="button"
             onClick={submit}
             disabled={loading}
-            className="btn-primary w-full px-6 py-3"
+            className="btn-primary w-full"
           >
             {loading ? (
               <>
