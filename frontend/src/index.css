@@ -291,8 +291,8 @@
     font-feature-settings: "ss01", "cv11"; /* Inter's tabular digits + alt 1/0 */
   }
 
-  html[lang="hi"],
-  html[lang="ne"] :is(h1, h2, h3, h4, h5, h6) {
+  html[lang="hi"] :is(h1, h2, h3, h4, h5, h6, .heading-page, .heading-section),
+  html[lang="ne"] :is(h1, h2, h3, h4, h5, h6, .heading-page, .heading-section) {
     font-family: var(--font-deva);
     line-height: 1.45;
     letter-spacing: 0;

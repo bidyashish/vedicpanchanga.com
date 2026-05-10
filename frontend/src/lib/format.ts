@@ -18,43 +18,20 @@ const LANG_TO_LOCALE: Record<string, string> = {
   he: "he-IL",
 };
 
-// Returns the Intl locale tag for the given language, with the native
-// numbering extension applied for ta/hi/bn/ne so date and time formatters
-// emit native digits without callers having to remember which locales need
-// the -u-nu- suffix.
+// All locales pin `-u-nu-latn` so numeric values stay in Latin digits;
+// only labels (weekdays, months, astronomical names) get translated.
+const baseLocale = (lang: string) => LANG_TO_LOCALE[lang] ?? "en-IN";
+
 export function localeFor(lang: LangId | string | undefined): string {
-  if (!lang) return "en-IN";
-  const base = LANG_TO_LOCALE[lang] ?? "en-IN";
-  const ext = NUMBERING_SYSTEM[lang];
-  return ext ? `${base}-u-nu-${ext}` : base;
+  return lang ? `${baseLocale(lang)}-u-nu-latn` : "en-IN";
 }
 
-// Read the active language from <html lang>, kept in sync by I18nProvider.
 function activeLang(): string {
   if (typeof document === "undefined") return "en";
   return document.documentElement.lang || "en";
 }
 
-// Native numbering systems for langs where Intl's default locale would
-// otherwise emit Latin digits. Forcing the numbering system via locale
-// extension (-u-nu-<id>) keeps digits and other parts in the same script.
-const NUMBERING_SYSTEM: Record<string, string> = {
-  hi: "deva",
-  ne: "deva",
-  ta: "tamldec",
-  bn: "beng",
-};
-
-// AM/PM in native script for langs where Intl ships English dayPeriod data
-// (ta, hi, bn). For ne/ar/fa, Intl returns the proper script natively.
-const MERIDIEM_NATIVE: Record<string, { am: string; pm: string }> = {
-  hi: { am: "पू.", pm: "अप." },
-  ta: { am: "மு.ப.", pm: "பி.ப." },
-  bn: { am: "পূ.", pm: "অপ." },
-};
-
-// Compact h/m/s suffix per language. Used by hoursToHMS to keep dinamana /
-// ratrimana readable in native script. Falls back to "h/m/s" when missing.
+// Used by hoursToHMS so dinamana / ratrimana read naturally in script.
 const HMS_SUFFIX: Record<string, { h: string; m: string; s: string }> = {
   hi: { h: "घं", m: "मि", s: "से" },
   ne: { h: "घं", m: "मि", s: "से" },
@@ -66,54 +43,26 @@ const HMS_SUFFIX: Record<string, { h: string; m: string; s: string }> = {
   ja: { h: "時", m: "分", s: "秒" },
 };
 
+// English forces en-US so the meridiem is uppercase "AM"/"PM" (en-IN gives
+// lowercase). All other languages use their LANG_TO_LOCALE entry.
 function timeLocale(lang: string): string {
-  // English forces en-US so the meridiem renders as uppercase "AM"/"PM"
-  // (en-IN would give lowercase "am"/"pm").
-  if (lang === "en") return "en-US";
-  const base = LANG_TO_LOCALE[lang] ?? "en-IN";
-  const ext = NUMBERING_SYSTEM[lang];
-  return ext ? `${base}-u-nu-${ext}` : base;
+  const base = lang === "en" ? "en-US" : baseLocale(lang);
+  return `${base}-u-nu-latn`;
 }
 
-function activeLocale(): string {
-  return timeLocale(activeLang());
-}
-
-// Single render path for all Intl-driven date/time output. Applies the active
-// language's locale, native numbering, and (when hour12 is set) substitutes
-// the dayPeriod for ta/hi/bn since Intl ships English "AM/PM" there.
+// Localized weekdays/months but English AM/PM, so dayPeriod text never
+// disagrees with the Latin digits we're rendering alongside it.
 function formatIntl(d: Date, opts: Intl.DateTimeFormatOptions): string {
-  const lang = activeLang();
-  const locale = timeLocale(lang);
-  const meridiem = MERIDIEM_NATIVE[lang];
-  if (!opts.hour12 || !meridiem) {
-    return new Intl.DateTimeFormat(locale, opts).format(d);
-  }
-  const parts = new Intl.DateTimeFormat(locale, opts).formatToParts(d);
-  return parts
-    .map((p) => {
-      if (p.type === "dayPeriod") {
-        return /^a/i.test(p.value) ? meridiem.am : meridiem.pm;
-      }
-      return p.value;
-    })
+  const locale = timeLocale(activeLang());
+  if (!opts.hour12) return new Intl.DateTimeFormat(locale, opts).format(d);
+  const ampm =
+    new Intl.DateTimeFormat("en-US", { hour: "numeric", hour12: true, timeZone: opts.timeZone })
+      .formatToParts(d)
+      .find((p) => p.type === "dayPeriod")?.value ?? "AM";
+  return new Intl.DateTimeFormat(locale, opts)
+    .formatToParts(d)
+    .map((p) => (p.type === "dayPeriod" ? ampm : p.value))
     .join("");
-}
-
-// Convert ASCII digits to the active language's native script. Used by
-// hoursToHMS where we build the string ourselves rather than asking Intl.
-function toNativeDigits(s: string): string {
-  const lang = activeLang();
-  const sys = NUMBERING_SYSTEM[lang];
-  if (!sys) return s;
-  const baseTable: Record<string, string> = {
-    deva: "०१२३४५६७८९",
-    tamldec: "௦௧௨௩௪௫௬௭௮௯",
-    beng: "০১২৩৪৫৬৭৮৯",
-  };
-  const digits = baseTable[sys];
-  if (!digits) return s;
-  return s.replace(/[0-9]/g, (d) => digits[Number(d)]);
 }
 
 const TIME_OPTS: Intl.DateTimeFormatOptions = {
@@ -127,10 +76,7 @@ export function formatTime(iso?: string | null, tz?: string): string {
   return formatIntl(new Date(iso), { ...TIME_OPTS, timeZone: tz });
 }
 
-// Format a "HH:MM" 24-hour wall-clock string for display in the active
-// language. Used by TimePicker so the trigger button reads "௦௫:௩௫ மு.ப." in
-// Tamil mode while the underlying form value stays Latin "05:35" for the
-// backend.
+// "HH:MM" -> "05:35 AM" for display; the underlying form value stays "05:35".
 export function formatHHMM(hhmm?: string | null): string {
   if (!hhmm) return "";
   const m = /^(\d{1,2}):(\d{2})/.exec(hhmm);
@@ -142,23 +88,8 @@ export function formatHHMM(hhmm?: string | null): string {
   return formatIntl(d, TIME_OPTS);
 }
 
-// Active-language AM/PM labels. Languages with an explicit MERIDIEM_NATIVE
-// override (ta/hi/bn) return that pair; otherwise we derive from
-// Intl.formatToParts on sample 8 AM and 8 PM dates so locales whose Intl
-// backend already emits native dayPeriod text (ne/ar/fa/zh/ja/es/pt) still
-// produce something correct without hardcoded tables. Falls back to AM/PM if
-// Intl returns nothing.
 export function meridiemLabels(): { am: string; pm: string } {
-  const lang = activeLang();
-  const explicit = MERIDIEM_NATIVE[lang];
-  if (explicit) return explicit;
-  const fmt = new Intl.DateTimeFormat(timeLocale(lang), TIME_OPTS);
-  const am = new Date();
-  am.setHours(8, 0, 0, 0);
-  const pm = new Date();
-  pm.setHours(20, 0, 0, 0);
-  const partOf = (d: Date) => fmt.formatToParts(d).find((p) => p.type === "dayPeriod")?.value;
-  return { am: partOf(am) ?? "AM", pm: partOf(pm) ?? "PM" };
+  return { am: "AM", pm: "PM" };
 }
 
 export function formatTimeWithDate(iso?: string | null, tz?: string, refDate?: string): string {
@@ -184,10 +115,7 @@ export function formatTimeRange(startIso?: string, endIso?: string, tz?: string)
   }
 }
 
-// 24-hour wall-clock helper in Latin "HH:MM" form. Always returns Latin
-// digits because the panchang page sends this string to the backend as
-// `birth_time` - localized digits would fail server-side parsing. Callers
-// that want the native-script form for display should wrap with a.num().
+// 24-hour "HH:MM" in Latin digits - sent to the backend as `birth_time`.
 export function nowTimeInTz(tz?: string): string {
   try {
     return new Date().toLocaleTimeString("en-GB", {
@@ -201,19 +129,15 @@ export function nowTimeInTz(tz?: string): string {
   }
 }
 
-// Render a duration as "Hh MMm SSs" with native digits + native unit
-// abbreviations when the active locale is ta/hi/bn/ne/ar/fa/zh/ja. Falls back
-// to "h/m/s" otherwise. Used for Dinamana / Ratrimana on the panchang page.
+// "Hh MMm SSs" for Dinamana / Ratrimana; unit labels translated, digits Latin.
 export function hoursToHMS(h?: number): string {
   if (!h && h !== 0) return "-";
   const totalSec = Math.round(h * 3600);
   const hh = Math.floor(totalSec / 3600);
   const mm = Math.floor((totalSec % 3600) / 60);
   const ss = totalSec % 60;
-  const lang = activeLang();
-  const sfx = HMS_SUFFIX[lang] ?? { h: "h", m: "m", s: "s" };
-  const raw = `${hh}${sfx.h} ${String(mm).padStart(2, "0")}${sfx.m} ${String(ss).padStart(2, "0")}${sfx.s}`;
-  return toNativeDigits(raw);
+  const sfx = HMS_SUFFIX[activeLang()] ?? { h: "h", m: "m", s: "s" };
+  return `${hh}${sfx.h} ${String(mm).padStart(2, "0")}${sfx.m} ${String(ss).padStart(2, "0")}${sfx.s}`;
 }
 
 export function todayISO(): string {
@@ -259,5 +183,3 @@ export function formatDayMonthYear(iso: string): string {
     year: "numeric",
   });
 }
-
-export { activeLang, activeLocale };

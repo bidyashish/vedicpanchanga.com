@@ -2,6 +2,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
+import { MandalaMark } from "@/components/common/MandalaMark";
 import { DatePicker } from "@/components/ui/date-picker";
 import { fetchMuhurtaPurposes, findMuhurtas } from "@/lib/api";
 import { formatDayMonthYear, formatTimeRange, todayISO, daysFromNow } from "@/lib/format";
@@ -58,7 +59,7 @@ function ResultCard({ m, tz }: { m: MuhurtaResult; tz?: string }) {
     <div data-testid={`muhurta-result-${m.date}`} className="card card-lift p-6">
       <div className="min-w-0">
         <p className="eyebrow-accent">{m.weekday}</p>
-        <h4 className="heading-page mt-0.5">{formatDayMonthYear(m.date)}</h4>
+        <h4 className="heading-section mt-0.5">{formatDayMonthYear(m.date)}</h4>
         <p className="meta mt-1.5">
           {m.tithi} · {m.paksha?.replace(" Paksha", "")} · {m.nakshatra} · {m.moon_rashi}
         </p>
@@ -321,8 +322,11 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
 
         {!loading && !result && !error && (
           <div className="card p-8 text-center">
+            <div className="flex justify-center mb-4 text-ink-soft">
+              <MandalaMark size={56} />
+            </div>
             <p className="eyebrow">Muhurta</p>
-            <p className="heading-section mt-1">{t("muhurta_title")}</p>
+            <h3 className="heading-section mt-1">{t("muhurta_title")}</h3>
             <p className="meta mt-1.5 max-w-md mx-auto">{t("muhurta_subtitle")}</p>
           </div>
         )}
@@ -330,7 +334,7 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
         {result && (
           <>
             <div data-testid="muhurta-summary" className="card p-4 sm:p-5">
-              <p className="eyebrow">{result.purpose_label}</p>
+              <p className="eyebrow-accent">{result.purpose_label}</p>
               <h3 className="heading-section">{t("muhurta_results")}</h3>
               <div className="flex flex-wrap gap-x-5 gap-y-1 text-meta text-ink mt-2">
                 <div>
