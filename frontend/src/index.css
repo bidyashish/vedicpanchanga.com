@@ -77,11 +77,9 @@
   --radius-lg: 8px;
   --radius-xl: 10px;
 
-  /* Shadows — warm-ink alpha so they don't read cool against cream surfaces.
-     Almanac philosophy is "color-block first, shadow rare" - these stay quiet
-     and only appear on `.card-lift:hover`. Overridden in `.dark` for contrast. */
-  --shadow-card: 0 1px 2px rgba(28, 20, 13, 0.04);
-  --shadow-lift: 0 4px 14px rgba(28, 20, 13, 0.08);
+  /* Shadows — overridden in `.dark` for higher contrast. */
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-lift: 0 4px 12px rgba(15, 23, 42, 0.08);
   --shadow-glow: 0 0 0 3px rgb(var(--primary-rgb) / 0.18);
 
   /* Semantic font scale — every component should reach for one of
@@ -132,37 +130,35 @@
     --color-pumpkin-spice-900: #331400;
     --color-pumpkin-spice-950: #240e00;
 
-    /* Base surfaces (light) - celestial almanac palette.
-       Canvas is cream; cards lift onto VELLUM (lighter than canvas)
-       so elevation reads as a quiet brightness step, not a border. */
-    --bg-rgb: 244 234 218; /* cream #f4eada — body floor */
-    --surface-rgb: 249 242 225; /* vellum #f9f2e1 — cards (lighter than bg) */
-    --surface-soft-rgb: 237 226 205; /* cream-soft #ede2cd — section bands */
-    --surface-sunken-rgb: 227 214 188; /* cream-deep #e3d6bc — inset / inputs */
+    /* Base surfaces (light) */
+    --bg-rgb: 255 255 255;
+    --surface-rgb: 255 255 255;
+    --surface-soft-rgb: 248 250 252; /* slate-50 */
+    --surface-sunken-rgb: 241 245 249; /* slate-100 */
 
-    /* Borders - hairlines feel like one elevation step on cream, not ink lines */
-    --border-rgb: 227 214 188; /* cream-deep #e3d6bc */
-    --border-strong-rgb: 179 165 145; /* ink-faint #b3a591 */
+    /* Borders */
+    --border-rgb: 226 232 240; /* slate-200 */
+    --border-strong-rgb: 203 213 225; /* slate-300 */
 
-    /* Text - warm ink instead of slate */
-    --text-rgb: 28 20 13; /* ink #1c140d */
-    --text-soft-rgb: 74 58 44; /* ink-soft #4a3a2c */
-    --text-muted-rgb: 122 106 90; /* ink-mute #7a6a5a */
+    /* Text — high contrast neutrals */
+    --text-rgb: 15 23 42; /* slate-900 */
+    --text-soft-rgb: 71 85 105; /* slate-600 */
+    --text-muted-rgb: 100 116 139; /* slate-500 */
 
-    /* Functional primary - saffron #cc5200 (already on-palette). */
-    --primary-rgb: 204 82 0; /* saffron */
-    --primary-hover-rgb: 151 61 0; /* saffron-deep #973d00 */
-    --primary-soft-rgb: 255 231 209; /* saffron-soft #ffe7d1 */
+    /* Functional primary — pumpkin-600 (4.7:1 on white, 4.7:1 white-on-it) */
+    --primary-rgb: 204 82 0; /* pumpkin-600 */
+    --primary-hover-rgb: 153 61 0; /* pumpkin-700 */
+    --primary-soft-rgb: 255 240 229; /* pumpkin-50 */
 
-    /* Status - shifted to almanac-warm, vermilion for danger */
-    --success-rgb: 79 106 58; /* leaf #4f6a3a */
-    --warning-rgb: 168 122 48; /* brass #a87a30 */
-    --danger-rgb: 176 48 32; /* vermilion #b03020 */
+    /* Status */
+    --success-rgb: 22 163 74; /* green-600 */
+    --warning-rgb: 217 119 6; /* amber-600 */
+    --danger-rgb: 220 38 38; /* red-600 */
 
-    /* Decorative semantic accents - the cool companion is "night", not blue */
-    --accent-sun-rgb: 204 82 0; /* saffron — same as primary; one heat */
-    --accent-moon-rgb: 26 34 56; /* night #1a2238 */
-    --accent-amber-rgb: 168 122 48; /* brass #a87a30 */
+    /* Decorative semantic accents */
+    --accent-sun-rgb: 255 102 0; /* pumpkin-500 — vivid hero orange */
+    --accent-moon-rgb: 30 64 175; /* blue-800 */
+    --accent-amber-rgb: 180 83 9; /* amber-700 */
 
     /* Convenient color() helpers */
     --bg: rgb(var(--bg-rgb));
@@ -185,9 +181,7 @@
     --accent-moon: rgb(var(--accent-moon-rgb));
     --accent-amber: rgb(var(--accent-amber-rgb));
 
-    /* Legacy aliases - old code still references these names. Mapped to the
-       almanac palette so JSX that asks for "indigo" gets night, "leaf-soft"
-       gets a warm leaf-tinted cream, etc. */
+    /* Legacy aliases — old code still references these names */
     --parchment: var(--bg);
     --parchment-card: var(--surface);
     --parchment-border: var(--border);
@@ -196,13 +190,13 @@
     --saffron: var(--primary);
     --saffron-dark: var(--primary-hover);
     --saffron-soft: var(--primary-soft);
-    --gold: rgb(var(--accent-amber-rgb));
+    --gold: rgb(var(--text-muted-rgb));
     --gold-dark: rgb(var(--text-soft-rgb));
     --gold-soft: rgb(var(--surface-soft-rgb));
     --leaf: var(--success);
-    --leaf-soft: rgb(217 200 158 / 0.4); /* brass-soft tinted, warm */
+    --leaf-soft: rgb(220 252 231);
     --indigo: rgb(var(--accent-moon-rgb));
-    --indigo-soft: rgb(26 34 56 / 0.12); /* night at low alpha on cream */
+    --indigo-soft: rgb(219 234 254);
     --rose: var(--danger);
   }
 
@@ -258,34 +252,11 @@
     font-family: var(--font-sans);
     font-size: 16px;
     line-height: 1.55;
-    font-feature-settings: "cv11", "ss01", "ss03", "tnum"; /* Inter alternates + tabular nums */
+    font-feature-settings: "cv11", "ss01", "ss03"; /* Inter alternates */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     min-height: 100dvh; /* Honors mobile dynamic viewport (no jump on URL bar) */
-  }
-
-  /* Parchment grain - the cream surface picks up a barely-there texture
-     so it reads as paper rather than flat color. SVG fractal noise,
-     multiply-blended at low opacity, fixed to the viewport. */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.45;
-    mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.4 0 0 0 0 0.3 0 0 0 0 0.2 0 0 0 0.06 0'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>");
-  }
-  /* Stack app content above the grain so the noise can't intercept events. */
-  #root {
-    position: relative;
-    z-index: 1;
-  }
-  /* Dark mode hides the grain - cream texture on a dark canvas reads muddy. */
-  .dark body::before {
-    display: none;
   }
 
   /* Tap targets need ≥44px box on touch devices (Apple HIG, WCAG 2.5.5). */
@@ -320,8 +291,8 @@
     font-feature-settings: "ss01", "cv11"; /* Inter's tabular digits + alt 1/0 */
   }
 
-  html[lang="hi"] :is(h1, h2, h3, h4, h5, h6, .heading-page, .heading-section),
-  html[lang="ne"] :is(h1, h2, h3, h4, h5, h6, .heading-page, .heading-section) {
+  html[lang="hi"],
+  html[lang="ne"] :is(h1, h2, h3, h4, h5, h6) {
     font-family: var(--font-deva);
     line-height: 1.45;
     letter-spacing: 0;
@@ -480,7 +451,7 @@
     border-color: var(--primary);
   }
   .dark .rdp-selected .rdp-day_button {
-    color: rgb(28 20 13); /* warm ink, not slate-900 */
+    color: rgb(15 23 42);
   }
   .rdp-today:not(.rdp-selected) .rdp-day_button {
     font-weight: 700;
@@ -498,7 +469,7 @@
     padding: 0.6875rem 1.25rem;
     min-height: 44px; /* Touch target */
     border-radius: var(--radius-md);
-    box-shadow: 0 1px 2px rgba(28, 20, 13, 0.08); /* warm-ink alpha */
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
     transition:
       background-color 140ms ease,
       box-shadow 140ms ease,
@@ -517,7 +488,7 @@
     cursor: not-allowed;
   }
   .dark .btn-primary {
-    color: rgb(28 20 13); /* warm ink, not slate-900 */
+    color: rgb(15 23 42);
   }
 
   .btn-ghost {
@@ -779,9 +750,6 @@
   .glass {
     background-color: #ffffff !important;
     color: #000 !important;
-  }
-  body::before {
-    display: none !important; /* No parchment grain in print output */
   }
   .card {
     box-shadow: none !important;
