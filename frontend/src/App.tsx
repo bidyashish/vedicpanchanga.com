@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { TopBar } from "@/components/shell/TopBar";
 import { Footer } from "@/components/shell/Footer";
 import { KundaliPage } from "@/pages/KundaliPage";
@@ -7,6 +7,7 @@ import { MuhurtaPage } from "@/pages/MuhurtaPage";
 import { PrivacyPage } from "@/pages/PrivacyPage";
 import { TermsPage } from "@/pages/TermsPage";
 import { applySeo } from "@/lib/seo";
+import { fetchGeoIP } from "@/lib/api";
 import type { LocationChoice } from "@/types/api";
 
 export type View = "kundali" | "panchang" | "muhurta" | "privacy" | "terms";
@@ -94,6 +95,7 @@ function migrateHashOnce(): View | null {
 export default function App() {
   const [view, setView] = useState<View>(() => migrateHashOnce() ?? viewFromPath());
   const [sharedLocation, setSharedLocation] = useState<LocationChoice>(DEFAULT_LOCATION);
+  const [geoReady, setGeoReady] = useState(false);
 
   // Push the new path whenever the view changes from in-app navigation.
   useEffect(() => {
@@ -113,6 +115,25 @@ export default function App() {
     setSharedLocation(loc);
   }, []);
 
+  const geoFetchedRef = useRef(false);
+  useEffect(() => {
+    if (geoFetchedRef.current) return;
+    geoFetchedRef.current = true;
+    fetchGeoIP()
+      .then((geo) => {
+        if (geo) {
+          setSharedLocation({
+            place_name: geo.place_name,
+            latitude: geo.latitude,
+            longitude: geo.longitude,
+            timezone: null,
+          });
+        }
+      })
+      .catch(() => {})
+      .finally(() => setGeoReady(true));
+  }, []);
+
   // Keep <title>, <meta>, canonical link in sync with the current route.
   useEffect(() => {
     applySeo(SEO_BY_VIEW[view]);
@@ -123,11 +144,17 @@ export default function App() {
       <TopBar view={view} setView={setView} />
 
       <main className="flex-1 max-w-screen-3xl w-full mx-auto px-3 sm:px-6 lg:px-8">
-        {view === "kundali" && (
-          <KundaliPage sharedLocation={sharedLocation} onLocationChange={handleLocationChange} />
+        {geoReady ? (
+          <>
+            {view === "kundali" && (
+              <KundaliPage sharedLocation={sharedLocation} onLocationChange={handleLocationChange} />
+            )}
+            {view === "panchang" && <PanchangPage defaultLocation={sharedLocation} />}
+            {view === "muhurta" && <MuhurtaPage defaultLocation={sharedLocation} />}
+          </>
+        ) : (
+          (view === "kundali" || view === "panchang" || view === "muhurta") && null
         )}
-        {view === "panchang" && <PanchangPage defaultLocation={sharedLocation} />}
-        {view === "muhurta" && <MuhurtaPage defaultLocation={sharedLocation} />}
         {view === "privacy" && <PrivacyPage />}
         {view === "terms" && <TermsPage />}
       </main>
