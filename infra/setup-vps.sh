@@ -222,6 +222,11 @@ server {
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_set_header CF-IPCountry \$http_cf_ipcountry;
+        proxy_set_header CF-IPCity \$http_cf_ipcity;
+        proxy_set_header CF-IPRegion \$http_cf_ipregion;
+        proxy_set_header CF-IPLatitude \$http_cf_iplatitude;
+        proxy_set_header CF-IPLongitude \$http_cf_iplongitude;
     }
 }
 
@@ -269,6 +274,11 @@ server {
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_set_header CF-IPCountry \$http_cf_ipcountry;
+        proxy_set_header CF-IPCity \$http_cf_ipcity;
+        proxy_set_header CF-IPRegion \$http_cf_ipregion;
+        proxy_set_header CF-IPLatitude \$http_cf_iplatitude;
+        proxy_set_header CF-IPLongitude \$http_cf_iplongitude;
     }
 }
 

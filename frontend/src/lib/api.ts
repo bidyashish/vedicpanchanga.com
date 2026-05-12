@@ -66,6 +66,18 @@ export function suggestLang(): Promise<SuggestLangResponse> {
   return request<SuggestLangResponse>(`${API}/suggest-lang`);
 }
 
+export interface GeoIPResponse {
+  latitude: number;
+  longitude: number;
+  place_name: string;
+}
+
+export async function fetchGeoIP(): Promise<GeoIPResponse | null> {
+  const res = await fetch(`${API}/geo-ip`);
+  if (res.status === 204 || !res.ok) return null;
+  return (await res.json()) as GeoIPResponse;
+}
+
 export function fetchMuhurtaPurposes(): Promise<MuhurtaPurpose[]> {
   return request<MuhurtaPurpose[]>(`${API}/muhurta-purposes`);
 }

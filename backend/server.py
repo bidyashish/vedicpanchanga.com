@@ -178,6 +178,40 @@ def suggest_lang(request: Request, response: Response):
     return {"country": cc, "lang": lang}
 
 
+@api_router.get("/geo-ip")
+def geo_ip(request: Request, response: Response):
+    """Return approximate visitor location from Cloudflare geo headers.
+
+    Cloudflare adds CF-IPLatitude, CF-IPLongitude, CF-IPCity etc. to every
+    proxied request.  The frontend calls this once on first load when the user
+    has no saved location; it pre-populates the Place field so the Panchang
+    and Kundali pages show relevant data immediately.
+
+    Returns 204 No Content when the headers are absent (direct / non-CF hit).
+    """
+    raw_lat = request.headers.get("cf-iplatitude", "")
+    raw_lon = request.headers.get("cf-iplongitude", "")
+    if not raw_lat or not raw_lon:
+        return Response(status_code=204)
+
+    try:
+        lat = float(raw_lat)
+        lon = float(raw_lon)
+    except ValueError:
+        return Response(status_code=204)
+
+    city = request.headers.get("cf-ipcity") or ""
+    region = request.headers.get("cf-ipregion") or ""
+    country = (request.headers.get("cf-ipcountry") or "").upper()
+
+    parts = [p for p in (city, region, country) if p and p not in {"XX", "T1"}]
+    place_name = ", ".join(parts) if parts else f"{lat:.2f}, {lon:.2f}"
+
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Vary"] = "CF-IPLatitude, CF-IPLongitude, CF-IPCity"
+    return {"latitude": lat, "longitude": lon, "place_name": place_name}
+
+
 @api_router.get("/get-panchang")
 def get_panchang(
     latitude: float,
