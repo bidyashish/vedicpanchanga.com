@@ -178,27 +178,29 @@ def suggest_lang(request: Request, response: Response):
     return {"country": cc, "lang": lang}
 
 
+_UJJAIN = {"latitude": 23.1765, "longitude": 75.7885, "place_name": "Ujjain, Madhya Pradesh, India"}
+
+
 @api_router.get("/geo-ip")
 def geo_ip(request: Request, response: Response):
     """Return approximate visitor location from Cloudflare geo headers.
 
-    Cloudflare adds CF-IPLatitude, CF-IPLongitude, CF-IPCity etc. to every
-    proxied request.  The frontend calls this once on first load when the user
-    has no saved location; it pre-populates the Place field so the Panchang
-    and Kundali pages show relevant data immediately.
-
-    Returns 204 No Content when the headers are absent (direct / non-CF hit).
+    Falls back to Ujjain when headers are absent so the response is
+    always valid JSON - the frontend never sees a non-200.
     """
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Vary"] = "CF-IPLatitude, CF-IPLongitude, CF-IPCity"
+
     raw_lat = request.headers.get("cf-iplatitude", "")
     raw_lon = request.headers.get("cf-iplongitude", "")
     if not raw_lat or not raw_lon:
-        return Response(status_code=204)
+        return _UJJAIN
 
     try:
         lat = float(raw_lat)
         lon = float(raw_lon)
     except ValueError:
-        return Response(status_code=204)
+        return _UJJAIN
 
     city = request.headers.get("cf-ipcity") or ""
     region = request.headers.get("cf-ipregion") or ""
@@ -207,8 +209,6 @@ def geo_ip(request: Request, response: Response):
     parts = [p for p in (city, region, country) if p and p not in {"XX", "T1"}]
     place_name = ", ".join(parts) if parts else f"{lat:.2f}, {lon:.2f}"
 
-    response.headers["Cache-Control"] = "no-store"
-    response.headers["Vary"] = "CF-IPLatitude, CF-IPLongitude, CF-IPCity"
     return {"latitude": lat, "longitude": lon, "place_name": place_name}
 
 
