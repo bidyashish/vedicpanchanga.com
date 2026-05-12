@@ -254,6 +254,8 @@ const de: Record<string, string> = {
   footer_terms: "AGB",
 
   gowri_header: "Gowri",
+  nalla_neram_title: "Nalla Neram",
+  nalla_neram_sub: "Glueckliche Hora-Fenster (Jupiter, Venus, Merkur, Mond) ohne Rahu Kalam, Yamagandam und Gulika",
 };
 
 export default de;

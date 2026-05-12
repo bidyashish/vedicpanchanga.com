@@ -253,6 +253,8 @@ const hi: Record<string, string> = {
   footer_terms: "नियम",
 
   gowri_header: "गौरी",
+  nalla_neram_title: "नल्ल नेरम",
+  nalla_neram_sub: "शुभ होरा (गुरु, शुक्र, बुध, चंद्र) - राहु काल, यमगंड और गुलिक निकालकर",
 };
 
 export default hi;

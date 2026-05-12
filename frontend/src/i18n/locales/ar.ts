@@ -254,6 +254,8 @@ const ar: Record<string, string> = {
   footer_terms: "الشروط",
 
   gowri_header: "غوري",
+  nalla_neram_title: "نالا نيرام",
+  nalla_neram_sub: "ساعات ميمونة (المشتري، الزهرة، عطارد، القمر) - بعد استبعاد راهو كالام وياماغاندام وغوليكا",
 };
 
 export default ar;

@@ -257,6 +257,8 @@ const fr: Record<string, string> = {
   footer_terms: "Conditions",
 
   gowri_header: "Gowri",
+  nalla_neram_title: "Nalla Neram",
+  nalla_neram_sub: "Heures auspicieuses (Jupiter, Venus, Mercure, Lune) sans Rahu Kalam, Yamagandam et Gulika",
 };
 
 export default fr;

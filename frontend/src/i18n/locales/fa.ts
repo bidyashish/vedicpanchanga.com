@@ -254,6 +254,8 @@ const fa: Record<string, string> = {
   footer_terms: "شرایط",
 
   gowri_header: "گوری",
+  nalla_neram_title: "نالا نیرام",
+  nalla_neram_sub: "ساعات فرخنده (مشتری، زهره، عطارد، ماه) - پس از حذف راهو کالام، یاماگاندام و گولیکا",
 };
 
 export default fa;

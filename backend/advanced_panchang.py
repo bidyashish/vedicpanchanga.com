@@ -25,6 +25,7 @@ from constants import (
 )
 from gowri_panchang import compute_gowri_panchang
 from hora import compute_hora
+from nalla_neram import compute_nalla_neram
 from tamil_calendar import compute_tamil_calendar
 from panchang_constants import (
     CHANDRA_MASA,
@@ -1090,6 +1091,16 @@ def compute_detailed_panchang(
         timezone_name=timezone_name,
     )
 
+    # Nalla Neram — auspicious hora windows minus Rahu/Yama/Gulika.
+    inauspicious_for_nalla = {
+        "rahu_kalam": rahu,
+        "yamaganda": yama,
+        "gulika_kalam": gulika,
+    }
+    nalla = (
+        compute_nalla_neram(hora["day"], inauspicious_for_nalla) if hora else []
+    )
+
     # Tamil solar calendar (Nirayana) — month/date/year-cycle from sidereal Sun.
     tamil_cal = compute_tamil_calendar(target_date, timezone_name)
 
@@ -1198,6 +1209,7 @@ def compute_detailed_panchang(
         },
         "gowri_panchang": gowri,
         "hora": hora,
+        "nalla_neram": nalla,
         "tamil_calendar": tamil_cal,
         "calendars": {
             "kali_year": kali_year,
