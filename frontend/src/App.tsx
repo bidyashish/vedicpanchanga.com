@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TopBar } from "@/components/shell/TopBar";
 import { Footer } from "@/components/shell/Footer";
 import { KundaliPage } from "@/pages/KundaliPage";
@@ -8,9 +8,12 @@ import { PrivacyPage } from "@/pages/PrivacyPage";
 import { TermsPage } from "@/pages/TermsPage";
 import { applySeo } from "@/lib/seo";
 import { fetchGeoIP } from "@/lib/api";
+import { loadAdSense } from "@/lib/adsense";
 import type { LocationChoice } from "@/types/api";
 
 export type View = "kundali" | "panchang" | "muhurta" | "privacy" | "terms";
+
+const MONETIZED_VIEWS = new Set<View>(["panchang", "kundali", "muhurta"]);
 
 const SITE = "https://vedicpanchanga.com";
 
@@ -94,7 +97,9 @@ function migrateHashOnce(): View | null {
 
 export default function App() {
   const [view, setView] = useState<View>(() => migrateHashOnce() ?? viewFromPath());
-  const [sharedLocation, setSharedLocation] = useState<LocationChoice>(DEFAULT_LOCATION);
+  // null = geo-IP not yet resolved. Pages stay unmounted until it settles so
+  // their internal `loc` snapshots seed from the geo-IP result, not Ujjain.
+  const [sharedLocation, setSharedLocation] = useState<LocationChoice | null>(null);
 
   // Push the new path whenever the view changes from in-app navigation.
   useEffect(() => {
@@ -110,20 +115,23 @@ export default function App() {
     return () => window.removeEventListener("popstate", sync);
   }, []);
 
-  const handleLocationChange = useCallback((loc: LocationChoice) => {
-    setSharedLocation(loc);
-  }, []);
-
+  // StrictMode double-mounts the tree in dev; the ref guard makes sure we only
+  // hit /api/geo-ip once per page load. Production never double-fires.
+  const geoFetchedRef = useRef(false);
   useEffect(() => {
+    if (geoFetchedRef.current) return;
+    geoFetchedRef.current = true;
     fetchGeoIP().then((geo) => {
-      if (geo) {
-        setSharedLocation({
-          place_name: geo.place_name,
-          latitude: geo.latitude,
-          longitude: geo.longitude,
-          timezone: null,
-        });
-      }
+      setSharedLocation(
+        geo
+          ? {
+              place_name: geo.place_name,
+              latitude: geo.latitude,
+              longitude: geo.longitude,
+              timezone: null,
+            }
+          : DEFAULT_LOCATION,
+      );
     });
   }, []);
 
@@ -132,16 +140,31 @@ export default function App() {
     applySeo(SEO_BY_VIEW[view]);
   }, [view]);
 
+  // Lazy-load AdSense only after the calculator content is actually on screen
+  // and only on monetized routes. AdSense's crawler hitting /privacy or /terms
+  // directly will find no ad script - addresses the "ads on screens without
+  // publisher-content" violation. Once injected, the script persists.
+  useEffect(() => {
+    if (!sharedLocation) return;
+    if (!MONETIZED_VIEWS.has(view)) return;
+    const id = window.setTimeout(loadAdSense, 0);
+    return () => window.clearTimeout(id);
+  }, [view, sharedLocation]);
+
   return (
     <div className="parchment-bg min-h-screen flex flex-col">
       <TopBar view={view} setView={setView} />
 
       <main className="flex-1 max-w-screen-3xl w-full mx-auto px-3 sm:px-6 lg:px-8">
-        {view === "kundali" && (
-          <KundaliPage sharedLocation={sharedLocation} onLocationChange={handleLocationChange} />
+        {sharedLocation && view === "kundali" && (
+          <KundaliPage sharedLocation={sharedLocation} onLocationChange={setSharedLocation} />
         )}
-        {view === "panchang" && <PanchangPage defaultLocation={sharedLocation} />}
-        {view === "muhurta" && <MuhurtaPage defaultLocation={sharedLocation} />}
+        {sharedLocation && view === "panchang" && (
+          <PanchangPage defaultLocation={sharedLocation} />
+        )}
+        {sharedLocation && view === "muhurta" && (
+          <MuhurtaPage defaultLocation={sharedLocation} />
+        )}
         {view === "privacy" && <PrivacyPage />}
         {view === "terms" && <TermsPage />}
       </main>
