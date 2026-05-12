@@ -254,6 +254,10 @@ const en: Record<string, string> = {
   footer_terms: "Terms",
 
   gowri_header: "Gowri",
+
+  nalla_neram_title: "Nalla Neram",
+  nalla_neram_sub:
+    "Auspicious hora windows (Jupiter, Venus, Mercury, Moon) after removing Rahu Kalam, Yamagandam and Gulika",
 };
 
 export default en;

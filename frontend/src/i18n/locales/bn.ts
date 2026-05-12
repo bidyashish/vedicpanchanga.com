@@ -253,6 +253,8 @@ const bn: Record<string, string> = {
   footer_terms: "শর্তাবলী",
 
   gowri_header: "গৌরী",
+  nalla_neram_title: "নল্ল নেরম",
+  nalla_neram_sub: "শুভ হোরা (বৃহস্পতি, শুক্র, বুধ, চন্দ্র) - রাহু কাল, যমগণ্ড ও গুলিক বাদে",
 };
 
 export default bn;

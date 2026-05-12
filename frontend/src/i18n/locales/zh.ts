@@ -254,6 +254,8 @@ const zh: Record<string, string> = {
   footer_terms: "条款",
 
   gowri_header: "Gowri",
+  nalla_neram_title: "吉时",
+  nalla_neram_sub: "吉利时辰 (木星、金星、水星、月亮) - 去除罗睺时、阎摩时和古力时",
 };
 
 export default zh;

@@ -254,6 +254,8 @@ const ta: Record<string, string> = {
   footer_terms: "விதிமுறைகள்",
 
   gowri_header: "கௌரி",
+  nalla_neram_title: "நல்ல நேரம்",
+  nalla_neram_sub: "சுப ஹோரை (குரு, சுக்கிரன், புதன், சந்திரன்) - ராகு காலம், எமகண்டம், குளிகை நீக்கியது",
 };
 
 export default ta;

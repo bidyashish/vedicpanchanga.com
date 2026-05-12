@@ -254,6 +254,8 @@ const he: Record<string, string> = {
   footer_terms: "תנאים",
 
   gowri_header: "גוורי",
+  nalla_neram_title: "נאלה נירם",
+  nalla_neram_sub: "שעות מבורכות (צדק, נוגה, כוכב, ירח) - ללא ראהו קאלם, ימגנדם וגוליקה",
 };
 
 export default he;

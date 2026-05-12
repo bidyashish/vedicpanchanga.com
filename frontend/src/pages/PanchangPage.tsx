@@ -5,6 +5,7 @@ import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { DatePicker } from "@/components/ui/date-picker";
 import { GowriPanchangam } from "@/components/panchang/GowriPanchangam";
 import { HoraPanchangam } from "@/components/panchang/HoraPanchangam";
+import { NallaNeram } from "@/components/panchang/NallaNeram";
 import { Section } from "@/components/panchang/Section";
 import { TimeBand } from "@/components/panchang/TimeBand";
 import { VedicChart } from "@/components/kundali/VedicChart";
@@ -528,6 +529,16 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
             {data.hora && (
               <Section title={t("hora_title")} subtitle={t("hora_sub")} testId="section-hora">
                 <HoraPanchangam day={data.hora.day} night={data.hora.night} tz={tz} />
+              </Section>
+            )}
+
+            {data.nalla_neram && data.nalla_neram.length > 0 && (
+              <Section
+                title={t("nalla_neram_title")}
+                subtitle={t("nalla_neram_sub")}
+                testId="section-nalla-neram"
+              >
+                <NallaNeram windows={data.nalla_neram} tz={tz} testId="nalla-neram" />
               </Section>
             )}
 

@@ -254,6 +254,8 @@ const ru: Record<string, string> = {
   footer_terms: "Условия",
 
   gowri_header: "Гоури",
+  nalla_neram_title: "Налла Нерам",
+  nalla_neram_sub: "Благоприятные хоры (Юпитер, Венера, Меркурий, Луна) без Раху Калам, Ямаганда и Гулика",
 };
 
 export default ru;

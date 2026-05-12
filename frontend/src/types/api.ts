@@ -191,6 +191,12 @@ export interface LabelledSegment {
   auspicious: boolean;
 }
 
+export interface NallaNeramWindow {
+  start: string;
+  end: string;
+  planet: string;
+}
+
 export interface PanchangData {
   date: string;
   location: { timezone: string };
@@ -271,6 +277,7 @@ export interface PanchangData {
     day: LabelledSegment[];
     night: LabelledSegment[];
   };
+  nalla_neram?: NallaNeramWindow[];
   tamil_calendar?: {
     week_day: { en: string; ta: string };
     tamil_date: number;

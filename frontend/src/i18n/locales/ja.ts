@@ -254,6 +254,8 @@ const ja: Record<string, string> = {
   footer_terms: "利用規約",
 
   gowri_header: "Gowri",
+  nalla_neram_title: "吉時",
+  nalla_neram_sub: "吉祥ホーラ (木星・金星・水星・月) - ラーフカーラ・ヤマガンダ・グリカを除外",
 };
 
 export default ja;

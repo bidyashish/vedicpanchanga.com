@@ -254,6 +254,8 @@ const es: Record<string, string> = {
   footer_terms: "Términos",
 
   gowri_header: "Gowri",
+  nalla_neram_title: "Nalla Neram",
+  nalla_neram_sub: "Horas auspiciosas (Jupiter, Venus, Mercurio, Luna) sin Rahu Kalam, Yamagandam ni Gulika",
 };
 
 export default es;
