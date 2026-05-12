@@ -54,9 +54,9 @@ const SEO_BY_VIEW: Record<View, { title: string; description: string; canonical:
 };
 
 const DEFAULT_LOCATION: LocationChoice = {
-  place_name: "New Delhi, India",
-  latitude: 28.6139,
-  longitude: 77.209,
+  place_name: "Ujjain, Madhya Pradesh, India",
+  latitude: 23.1765,
+  longitude: 75.7885,
   timezone: "Asia/Kolkata",
 };
 
