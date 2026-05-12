@@ -313,7 +313,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                           onClick={() => setChartStyle(o.id)}
                           className={`px-3 py-1 text-mini font-medium rounded-2xs transition-colors ${
                             chartStyle === o.id
-                              ? "bg-white text-saffron shadow-card"
+                              ? "bg-parchment-50 text-saffron shadow-card"
                               : "text-ink-soft hover:text-ink"
                           }`}
                         >

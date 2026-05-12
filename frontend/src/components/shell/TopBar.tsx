@@ -10,8 +10,8 @@ export function TopBar({ view, setView }: { view: View; setView: (v: View) => vo
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const tabs: { id: View; label: string; href: string }[] = [
-    { id: "kundali", label: t("nav_kundali"), href: "/" },
-    { id: "panchang", label: t("nav_panchang"), href: "/panchang" },
+    { id: "panchang", label: t("nav_panchang"), href: "/" },
+    { id: "kundali", label: t("nav_kundali"), href: "/kundali" },
     { id: "muhurta", label: t("nav_muhurta"), href: "/muhurta" },
   ];
 
@@ -114,7 +114,7 @@ export function TopBar({ view, setView }: { view: View; setView: (v: View) => vo
             aria-expanded={drawerOpen}
             aria-controls="mobile-nav-drawer"
             onClick={() => setDrawerOpen((v) => !v)}
-            className="md:hidden inline-flex items-center justify-center w-8 h-8 rounded-sm border border-parchment-200 bg-white text-ink hover:border-saffron hover:text-saffron focus:outline-hidden focus:ring-2 focus:ring-saffron/30 transition-colors"
+            className="md:hidden inline-flex items-center justify-center w-8 h-8 rounded-sm border border-parchment-200 bg-parchment-50 text-ink hover:border-saffron hover:text-saffron focus:outline-hidden focus:ring-2 focus:ring-saffron/30 transition-colors"
           >
             {drawerOpen ? (
               <svg
@@ -161,7 +161,7 @@ export function TopBar({ view, setView }: { view: View; setView: (v: View) => vo
             id="mobile-nav-drawer"
             role="navigation"
             aria-label="Primary"
-            className="md:hidden absolute left-0 right-0 top-12 sm:top-14 z-30 bg-white border-b border-parchment-200 shadow-card"
+            className="md:hidden absolute left-0 right-0 top-12 sm:top-14 z-30 bg-parchment-50 border-b border-parchment-200 shadow-card"
           >
             <ul className="px-3 py-3 space-y-1">
               {tabs.map((tb) => {

@@ -14,25 +14,25 @@ export type View = "kundali" | "panchang" | "muhurta" | "privacy" | "terms";
 const SITE = "https://vedicpanchanga.com";
 
 const VIEW_PATH: Record<View, string> = {
-  kundali: "/",
-  panchang: "/panchang",
+  panchang: "/",
+  kundali: "/kundali",
   muhurta: "/muhurta",
   privacy: "/privacy",
   terms: "/terms",
 };
 
 const SEO_BY_VIEW: Record<View, { title: string; description: string; canonical: string }> = {
-  kundali: {
+  panchang: {
     title: "Vedic Panchanga - Free Drik Panchang, Kundali & Muhurta Calculator",
     description:
       "Free Vedic Panchanga calculator: daily Drik Panchang, North & South Indian Kundali (birth chart), Vimshottari Dasha, divisional charts, and Muhurta finder. Sidereal Lahiri, Swiss Ephemeris precision.",
     canonical: `${SITE}/`,
   },
-  panchang: {
-    title: "Daily Drik Panchang - Tithi, Nakshatra, Yoga, Karana · Vedic Panchanga",
+  kundali: {
+    title: "Free Kundali - North & South Indian Birth Chart Calculator · Vedic Panchanga",
     description:
-      "Daily Drik Panchang for any date and location: tithi, nakshatra, yoga, karana, sunrise/sunset, Rahu kala, Abhijit muhurta, Chandrabalam and Tarabalam.",
-    canonical: `${SITE}/panchang`,
+      "Generate a Kundali (Vedic birth chart) in North or South Indian style: planetary positions, 16 divisional charts, Vimshottari Dasha, Ashtakavarga. Lahiri ayanamsa, Swiss Ephemeris precision.",
+    canonical: `${SITE}/kundali`,
   },
   muhurta: {
     title: "Muhurta Finder - Auspicious Timings for Any Undertaking · Vedic Panchanga",
@@ -62,20 +62,20 @@ const DEFAULT_LOCATION: LocationChoice = {
 function viewFromPath(): View {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
   switch (path) {
-    case "/panchang":
-      return "panchang";
+    case "/kundali":
+      return "kundali";
     case "/muhurta":
       return "muhurta";
     case "/privacy":
       return "privacy";
     case "/terms":
       return "terms";
-    case "/kundali":
-      return "kundali";
+    case "/panchang":
+      return "panchang";
     case "/":
-      return "kundali";
+      return "panchang";
     default:
-      return "kundali";
+      return "panchang";
   }
 }
 

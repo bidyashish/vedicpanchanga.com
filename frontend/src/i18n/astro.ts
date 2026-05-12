@@ -1,24 +1,11 @@
-// Astronomical-name translations + native digits.
+// Astronomical-name translations.
 //
 // Mirrors backend/pdf/core/i18n - same key shape (`planet_sun`, `sign_aries`,
-// `nak_ashwini`) so both layers translate the same names with the same keys.
-// Kept separate from index.tsx so the UI-string dictionaries don't get
-// bloated with the 49 astro names per language.
+// `nak_ashwini`) so both layers translate the same names. Kept separate from
+// index.tsx so the UI-string dictionaries don't carry the 49 astro names per
+// language.
 
 import { useI18n } from "@/i18n";
-
-// Devanagari, Tamil, Bengali, Arabic-Indic, and Eastern Arabic numerals
-// routinely co-render with their respective scripts. CJK and European locales
-// conventionally keep Latin digits for technical values, so we don't
-// substitute there. Hebrew also conventionally uses Latin digits.
-const NATIVE_DIGITS: Record<string, string> = {
-  hi: "०१२३४५६७८९",
-  ne: "०१२३४५६७८९",
-  ta: "௦௧௨௩௪௫௬௭௮௯",
-  bn: "০১২৩৪৫৬৭৮৯",
-  ar: "٠١٢٣٤٥٦٧٨٩",
-  fa: "۰۱۲۳۴۵۶۷۸۹",
-};
 
 type Dict = Record<string, string>;
 
@@ -1924,13 +1911,6 @@ function lookup(prefix: string, name: string, lang: string): string {
   return dict[toKey(prefix, name)] ?? name;
 }
 
-function toNativeDigits(value: string | number | null | undefined, lang: string): string {
-  const s = String(value ?? "-");
-  const digits = NATIVE_DIGITS[lang];
-  if (!digits) return s;
-  return s.replace(/[0-9]/g, (d) => digits[Number(d)]);
-}
-
 // Tithi names arrive as "Krishna Pratipada" / "Shukla Chaturdashi" / "Amavasya".
 // Resolve paksha + ordinal independently so we don't need 30 entries per
 // locale - just 16 ordinals + 2 paksha words.
@@ -1968,12 +1948,11 @@ function lookupRitu(name: string, lang: string): string {
   return dict[toKey("ritu", head)] ?? name;
 }
 
-// Hook bound to the active language. Consumers call num/planet/sign/nakshatra
-// (etc) without threading lang through every callsite.
+// Hook bound to the active language. `num` coalesces null/undefined to "-".
 export function useAstro() {
   const { lang } = useI18n();
   return {
-    num: (v: string | number | null | undefined) => toNativeDigits(v, lang),
+    num: (v: string | number | null | undefined) => String(v ?? "-"),
     planet: (n: string) => lookup("planet", n, lang),
     sign: (n: string) => (n ? lookup("sign", n, lang) : n),
     nakshatra: (n: string) => (n ? lookup("nak", n, lang) : n),

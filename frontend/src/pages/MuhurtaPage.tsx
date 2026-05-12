@@ -2,6 +2,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
+import { MandalaMark } from "@/components/common/MandalaMark";
 import { DatePicker } from "@/components/ui/date-picker";
 import { fetchMuhurtaPurposes, findMuhurtas } from "@/lib/api";
 import { formatDayMonthYear, formatTimeRange, todayISO, daysFromNow } from "@/lib/format";
@@ -58,7 +59,7 @@ function ResultCard({ m, tz }: { m: MuhurtaResult; tz?: string }) {
     <div data-testid={`muhurta-result-${m.date}`} className="card card-lift p-6">
       <div className="min-w-0">
         <p className="eyebrow-accent">{m.weekday}</p>
-        <h4 className="heading-page mt-0.5">{formatDayMonthYear(m.date)}</h4>
+        <h4 className="heading-section mt-0.5">{formatDayMonthYear(m.date)}</h4>
         <p className="meta mt-1.5">
           {m.tithi} · {m.paksha?.replace(" Paksha", "")} · {m.nakshatra} · {m.moon_rashi}
         </p>
@@ -81,13 +82,12 @@ function ResultCard({ m, tz }: { m: MuhurtaResult; tz?: string }) {
       </div>
 
       {m.reasons?.length > 0 && (
-        <div className="mt-4 pt-3 border-t border-parchment-200">
+        <div className="mt-5 pt-4 border-t border-parchment-200">
           <p className="eyebrow-lg text-leaf">{t("muhurta_reasons")}</p>
-          <ul className="mt-1.5 space-y-1">
+          <ul className="mt-2 space-y-1.5">
             {m.reasons.map((r, i) => (
-              <li key={i} className="text-meta text-ink flex gap-2">
-                <span className="text-leaf font-bold mt-0.5">✓</span>
-                <span>{r}</span>
+              <li key={i} className="text-meta text-ink">
+                {r}
               </li>
             ))}
           </ul>
@@ -95,13 +95,12 @@ function ResultCard({ m, tz }: { m: MuhurtaResult; tz?: string }) {
       )}
 
       {m.cautions?.length > 0 && (
-        <div className="mt-3">
+        <div className="mt-4">
           <p className="eyebrow-lg text-rose">{t("muhurta_cautions")}</p>
-          <ul className="mt-1.5 space-y-1">
+          <ul className="mt-2 space-y-1.5">
             {m.cautions.map((c, i) => (
-              <li key={i} className="text-meta text-ink flex gap-2">
-                <span className="text-rose font-bold mt-0.5">!</span>
-                <span>{c}</span>
+              <li key={i} className="text-meta text-ink">
+                {c}
               </li>
             ))}
           </ul>
@@ -121,9 +120,9 @@ function InfoTile({
   valueColor?: string;
 }) {
   return (
-    <div className="bg-parchment-100 border border-parchment-200 rounded-sm px-3 py-2">
+    <div className="border border-parchment-200 rounded-md px-3 py-2.5">
       <p className="eyebrow">{label}</p>
-      <p className="num mt-0.5 text-meta font-medium" style={{ color: valueColor ?? "var(--ink)" }}>
+      <p className="num mt-1 text-meta font-medium" style={{ color: valueColor ?? "var(--ink)" }}>
         {value}
       </p>
     </div>
@@ -195,7 +194,7 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
       className="pt-4 pb-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8"
     >
       <aside className="lg:col-span-4 xl:col-span-3">
-        <div data-testid="muhurta-form" className="card card-lift p-5 lg:p-6 lg:sticky lg:top-20">
+        <div data-testid="muhurta-form" className="card p-5 lg:p-6 lg:sticky lg:top-20">
           <h2 className="heading-page">{t("muhurta_title")}</h2>
           <p className="meta mb-5">{t("muhurta_subtitle")}</p>
 
@@ -288,7 +287,7 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
             type="button"
             onClick={submit}
             disabled={loading}
-            className="btn-primary w-full px-6 py-3"
+            className="btn-primary w-full"
           >
             {loading ? (
               <>
@@ -321,8 +320,11 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
 
         {!loading && !result && !error && (
           <div className="card p-8 text-center">
+            <div className="flex justify-center mb-4 text-ink-soft">
+              <MandalaMark size={56} />
+            </div>
             <p className="eyebrow">Muhurta</p>
-            <p className="heading-section mt-1">{t("muhurta_title")}</p>
+            <h3 className="heading-section mt-1">{t("muhurta_title")}</h3>
             <p className="meta mt-1.5 max-w-md mx-auto">{t("muhurta_subtitle")}</p>
           </div>
         )}
@@ -330,7 +332,7 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
         {result && (
           <>
             <div data-testid="muhurta-summary" className="card p-4 sm:p-5">
-              <p className="eyebrow">{result.purpose_label}</p>
+              <p className="eyebrow-accent">{result.purpose_label}</p>
               <h3 className="heading-section">{t("muhurta_results")}</h3>
               <div className="flex flex-wrap gap-x-5 gap-y-1 text-meta text-ink mt-2">
                 <div>

@@ -16,7 +16,7 @@ const ROTATE_MS = 2400;
 const ANIMATE_FOR_MS = 10_000;
 
 const SHELL =
-  "relative inline-flex items-center bg-white border border-parchment-200 hover:border-saffron text-ink rounded-sm transition-colors h-8 focus-within:border-saffron focus-within:ring-2 focus-within:ring-saffron/30";
+  "relative inline-flex items-center bg-parchment-50 border border-parchment-200 hover:border-saffron text-ink rounded-sm transition-colors h-8 focus-within:border-saffron focus-within:ring-2 focus-within:ring-saffron/30";
 
 function isFreshVisit(): boolean {
   if (typeof window === "undefined") return false;
