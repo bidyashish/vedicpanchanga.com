@@ -75,7 +75,7 @@ export interface GeoIPResponse {
 export async function fetchGeoIP(): Promise<GeoIPResponse | null> {
   try {
     const res = await fetch(`${API}/geo-ip`);
-    if (res.status === 204 || !res.ok) return null;
+    if (!res.ok) return null;
     return (await res.json()) as GeoIPResponse;
   } catch {
     return null;

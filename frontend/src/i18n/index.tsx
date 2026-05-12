@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -118,8 +119,12 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   // First-load geo suggestion: if the user has never picked a language, ask
   // the backend (which reads Cloudflare's CF-IPCountry header) for a sensible
-  // default. Fails silently - English stays the fallback.
+  // default. Fails silently - English stays the fallback. Ref-guarded so
+  // StrictMode's dev-only double-mount doesn't fire two /api/suggest-lang calls.
+  const langSuggestedRef = useRef(false);
   useEffect(() => {
+    if (langSuggestedRef.current) return;
+    langSuggestedRef.current = true;
     if (typeof window === "undefined") return;
     if (localStorage.getItem("jk_lang")) return;
     const known = new Set(LANGUAGES.map((l) => l.id));
