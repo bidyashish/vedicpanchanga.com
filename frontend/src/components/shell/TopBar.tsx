@@ -10,8 +10,8 @@ export function TopBar({ view, setView }: { view: View; setView: (v: View) => vo
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const tabs: { id: View; label: string; href: string }[] = [
-    { id: "kundali", label: t("nav_kundali"), href: "/" },
-    { id: "panchang", label: t("nav_panchang"), href: "/panchang" },
+    { id: "panchang", label: t("nav_panchang"), href: "/" },
+    { id: "kundali", label: t("nav_kundali"), href: "/kundali" },
     { id: "muhurta", label: t("nav_muhurta"), href: "/muhurta" },
   ];
 
