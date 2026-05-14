@@ -28,6 +28,7 @@ const bn: Record<string, string> = {
   muhurta_reasons: "অনুকূল",
   muhurta_cautions: "সতর্কতা",
   muhurta_abhijit: "অভিজিৎ",
+  muhurta_shubh_section: "শুভ মুহূর্ত",
   muhurta_rahu: "রাহু কাল",
   muhurta_sunrise_sunset: "সূর্যোদয় - সূর্যাস্ত",
   muhurta_results: "প্রস্তাবিত দিন",

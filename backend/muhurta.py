@@ -232,6 +232,7 @@ def score_day(
 
     score = max(0, min(100, score))
 
+    aus = panch["auspicious_timings"]
     return {
         "score": score,
         "reasons": reasons,
@@ -241,7 +242,16 @@ def score_day(
         "vara": vara_name,
         "paksha": panch["panchang"]["paksha"],
         "moon_rashi": panch["rashi_nakshatra"]["moonsign"]["rashi"],
-        "abhijit": panch["auspicious_timings"]["abhijit"],
+        "abhijit": aus["abhijit"],
+        "brahma_muhurta": aus.get("brahma_muhurta"),
+        "pratah_sandhya": aus.get("pratah_sandhya"),
+        "vijay_muhurta": aus.get("vijay_muhurta"),
+        "godhuli_muhurta": aus.get("godhuli_muhurta"),
+        "sayahna_sandhya": aus.get("sayahna_sandhya"),
+        "nishita_muhurta": aus.get("nishita_muhurta"),
+        "amrit_kalam": aus.get("amrit_kalam") or [],
+        "sarvartha_siddhi_yoga": aus.get("sarvartha_siddhi_yoga") or [],
+        "amrita_siddhi_yoga": aus.get("amrita_siddhi_yoga") or [],
         "rahu_kalam": panch["inauspicious_timings"]["rahu_kalam"],
         "sunrise": panch["sun_moon"]["sunrise"],
         "sunset": panch["sun_moon"]["sunset"],

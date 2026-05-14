@@ -28,6 +28,7 @@ const ru: Record<string, string> = {
   muhurta_reasons: "Благоприятно",
   muhurta_cautions: "Предостережения",
   muhurta_abhijit: "Абхиджит",
+  muhurta_shubh_section: "Шубх Мухурат",
   muhurta_rahu: "Раху Кала",
   muhurta_sunrise_sunset: "Восход - Закат",
   muhurta_results: "Рекомендуемые дни",

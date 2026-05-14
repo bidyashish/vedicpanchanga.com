@@ -155,6 +155,15 @@ export interface MuhurtaResult {
   sunrise: string;
   sunset: string;
   abhijit?: MuhurtaWindow;
+  brahma_muhurta?: MuhurtaWindow;
+  pratah_sandhya?: MuhurtaWindow;
+  vijay_muhurta?: MuhurtaWindow;
+  godhuli_muhurta?: MuhurtaWindow;
+  sayahna_sandhya?: MuhurtaWindow;
+  nishita_muhurta?: MuhurtaWindow;
+  amrit_kalam?: AuspiciousWindow[];
+  sarvartha_siddhi_yoga?: AuspiciousWindow[];
+  amrita_siddhi_yoga?: AuspiciousWindow[];
   rahu_kalam?: MuhurtaWindow;
   reasons: string[];
   cautions: string[];

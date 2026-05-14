@@ -28,6 +28,7 @@ const hi: Record<string, string> = {
   muhurta_reasons: "शुभ कारण",
   muhurta_cautions: "सावधानी",
   muhurta_abhijit: "अभिजित",
+  muhurta_shubh_section: "शुभ मुहूर्त",
   muhurta_rahu: "राहु काल",
   muhurta_sunrise_sunset: "सूर्योदय - सूर्यास्त",
   muhurta_results: "संस्तुत दिनांक",

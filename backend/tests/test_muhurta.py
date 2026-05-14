@@ -57,6 +57,23 @@ def test_find_muhurtas_marriage_range():
         "sunset",
     ):
         assert field in top
+    # shubh muhurat windows surfaced for the frontend Muhurta finder
+    for field in (
+        "brahma_muhurta",
+        "pratah_sandhya",
+        "vijay_muhurta",
+        "godhuli_muhurta",
+        "sayahna_sandhya",
+        "nishita_muhurta",
+        "amrit_kalam",
+        "sarvartha_siddhi_yoga",
+        "amrita_siddhi_yoga",
+    ):
+        assert field in top
+    # list fields default to [] (never None) so the frontend can map without guarding
+    assert isinstance(top["amrit_kalam"], list)
+    assert isinstance(top["sarvartha_siddhi_yoga"], list)
+    assert isinstance(top["amrita_siddhi_yoga"], list)
 
 
 def test_marriage_avoids_rikta_tithis():

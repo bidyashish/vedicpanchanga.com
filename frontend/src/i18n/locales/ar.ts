@@ -28,6 +28,7 @@ const ar: Record<string, string> = {
   muhurta_reasons: "مواتٍ",
   muhurta_cautions: "تحذيرات",
   muhurta_abhijit: "أبهيجيت",
+  muhurta_shubh_section: "شوبه موهورات",
   muhurta_rahu: "راهو كالا",
   muhurta_sunrise_sunset: "الشروق - الغروب",
   muhurta_results: "الأيام الموصى بها",

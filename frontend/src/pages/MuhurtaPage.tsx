@@ -6,7 +6,14 @@ import { MandalaMark } from "@/components/common/MandalaMark";
 import { DatePicker } from "@/components/ui/date-picker";
 import { fetchMuhurtaPurposes, findMuhurtas } from "@/lib/api";
 import { formatDayMonthYear, formatTimeRange, todayISO, daysFromNow } from "@/lib/format";
-import type { LocationChoice, MuhurtaPurpose, MuhurtaResponse, MuhurtaResult } from "@/types/api";
+import type {
+  AuspiciousWindow,
+  LocationChoice,
+  MuhurtaPurpose,
+  MuhurtaResponse,
+  MuhurtaResult,
+  MuhurtaWindow,
+} from "@/types/api";
 
 const RASHI_OPTIONS = [
   "Mesha (Aries)",
@@ -81,6 +88,8 @@ function ResultCard({ m, tz }: { m: MuhurtaResult; tz?: string }) {
         />
       </div>
 
+      <ShubhMuhuratGrid m={m} tz={tz} />
+
       {m.reasons?.length > 0 && (
         <div className="mt-5 pt-4 border-t border-parchment-200">
           <p className="eyebrow-lg text-leaf">{t("muhurta_reasons")}</p>
@@ -114,10 +123,12 @@ function InfoTile({
   label,
   value,
   valueColor,
+  hint,
 }: {
   label: string;
   value: string;
   valueColor?: string;
+  hint?: string;
 }) {
   return (
     <div className="border border-parchment-200 rounded-md px-3 py-2.5">
@@ -125,6 +136,68 @@ function InfoTile({
       <p className="num mt-1 text-meta font-medium" style={{ color: valueColor ?? "var(--ink)" }}>
         {value}
       </p>
+      {hint && <p className="text-[10px] text-ink-soft mt-0.5">{hint}</p>}
+    </div>
+  );
+}
+
+function ShubhMuhuratGrid({ m, tz }: { m: MuhurtaResult; tz?: string }) {
+  const { t } = useI18n();
+  const fixed: { key: string; label: string; win?: MuhurtaWindow }[] = [
+    { key: "brahma", label: t("muhurta_brahma"), win: m.brahma_muhurta },
+    { key: "pratah", label: t("muhurta_pratah_sandhya"), win: m.pratah_sandhya },
+    { key: "vijay", label: t("muhurta_vijay"), win: m.vijay_muhurta },
+    { key: "godhuli", label: t("muhurta_godhuli"), win: m.godhuli_muhurta },
+    { key: "sayahna", label: t("muhurta_sayam_sandhya"), win: m.sayahna_sandhya },
+    { key: "nishita", label: t("muhurta_nishita"), win: m.nishita_muhurta },
+  ];
+  const variable: { key: string; label: string; win: AuspiciousWindow }[] = [
+    ...(m.amrit_kalam ?? []).map((w, i) => ({
+      key: `amrit-${i}`,
+      label: t("muhurta_amrit_kalam"),
+      win: w,
+    })),
+    ...(m.sarvartha_siddhi_yoga ?? []).map((w, i) => ({
+      key: `ss-${i}`,
+      label: t("muhurta_sarvartha"),
+      win: w,
+    })),
+    ...(m.amrita_siddhi_yoga ?? []).map((w, i) => ({
+      key: `as-${i}`,
+      label: t("muhurta_amrita_siddhi"),
+      win: w,
+    })),
+  ];
+  const hasAny = fixed.some((f) => f.win) || variable.length > 0;
+  if (!hasAny) return null;
+  return (
+    <div className="mt-5 pt-4 border-t border-parchment-200">
+      <p className="eyebrow-accent mb-2">{t("muhurta_shubh_section")}</p>
+      <div
+        data-testid="muhurta-shubh-grid"
+        className="grid grid-cols-2 sm:grid-cols-3 gap-3"
+      >
+        {fixed.map(
+          (f) =>
+            f.win && (
+              <InfoTile
+                key={f.key}
+                label={f.label}
+                value={formatTimeRange(f.win.start, f.win.end, tz)}
+                valueColor="var(--success)"
+              />
+            ),
+        )}
+        {variable.map((v) => (
+          <InfoTile
+            key={v.key}
+            label={v.label}
+            value={formatTimeRange(v.win.start, v.win.end, tz)}
+            valueColor="var(--success)"
+            hint={v.win.nakshatra}
+          />
+        ))}
+      </div>
     </div>
   );
 }

@@ -28,6 +28,7 @@ const he: Record<string, string> = {
   muhurta_reasons: "חיובי",
   muhurta_cautions: "אזהרות",
   muhurta_abhijit: "אבהיג'ית",
+  muhurta_shubh_section: "שובה מוהוראט",
   muhurta_rahu: "ראהו קאלא",
   muhurta_sunrise_sunset: "זריחה - שקיעה",
   muhurta_results: "ימים מומלצים",
