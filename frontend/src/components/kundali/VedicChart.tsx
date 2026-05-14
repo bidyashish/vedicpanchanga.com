@@ -136,7 +136,7 @@ export function VedicChart({ houseMap, ascSign, title, testId }: Props) {
                         fontWeight={isAsc ? 800 : 600}
                         style={{ fill: isAsc ? ascCol : planetColor(abbr) }}
                       >
-                        {abbr}
+                        {a.abbr(abbr)}
                       </text>
                     </g>
                   );

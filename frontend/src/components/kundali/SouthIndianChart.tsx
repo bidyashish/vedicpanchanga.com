@@ -120,7 +120,7 @@ export function SouthIndianChart({ houseMap, ascSign, title, testId }: Props) {
                       className="font-serif"
                       style={{ fill: ascCol }}
                     >
-                      Lg
+                      {a.abbr("Lg")}
                     </text>
                   </>
                 )}
@@ -162,7 +162,7 @@ export function SouthIndianChart({ houseMap, ascSign, title, testId }: Props) {
                         className="font-serif"
                         style={{ fill: planetColor(abbr) }}
                       >
-                        {abbr}
+                        {a.abbr(abbr)}
                       </text>
                     </g>
                   );
