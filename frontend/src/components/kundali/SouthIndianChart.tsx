@@ -90,6 +90,7 @@ export function SouthIndianChart({ houseMap, ascSign, title, testId }: Props) {
           {Array.from({ length: 12 }, (_, i) => i + 1).map((sign) => {
             const pos = CELL_POSITIONS[sign];
             const isAscSign = sign === ascSign;
+            const houseNum = ((sign - ascSign + 12) % 12) + 1;
             const planets = signToPlanets[sign] ?? [];
             return (
               <g key={sign} data-testid={`${testId}-cell-${sign}`}>
@@ -133,7 +134,7 @@ export function SouthIndianChart({ houseMap, ascSign, title, testId }: Props) {
                   style={{ fill: signCol }}
                   opacity="0.95"
                 >
-                  {a.num(sign)}
+                  {a.num(houseNum)}
                 </text>
                 <text
                   x={pos.x + CELL - 10}
