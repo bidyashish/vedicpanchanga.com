@@ -28,6 +28,7 @@ const fa: Record<string, string> = {
   muhurta_reasons: "سعد",
   muhurta_cautions: "هشدارها",
   muhurta_abhijit: "ابهی‌جیت",
+  muhurta_shubh_section: "شوبه موهورات",
   muhurta_rahu: "راهو کاله",
   muhurta_sunrise_sunset: "طلوع - غروب",
   muhurta_results: "روزهای پیشنهادی",

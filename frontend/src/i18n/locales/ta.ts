@@ -28,6 +28,7 @@ const ta: Record<string, string> = {
   muhurta_reasons: "சுபம்",
   muhurta_cautions: "எச்சரிக்கை",
   muhurta_abhijit: "அபிஜித்",
+  muhurta_shubh_section: "சுப முகூர்த்தம்",
   muhurta_rahu: "ராகு காலம்",
   muhurta_sunrise_sunset: "சூரிய உதயம் - சூரிய அஸ்தமனம்",
   muhurta_results: "பரிந்துரைக்கப்பட்ட நாட்கள்",

@@ -28,6 +28,7 @@ const ja: Record<string, string> = {
   muhurta_reasons: "吉因",
   muhurta_cautions: "注意",
   muhurta_abhijit: "Abhijit",
+  muhurta_shubh_section: "吉祥時 (Shubh Muhurat)",
   muhurta_rahu: "Rahu Kala",
   muhurta_sunrise_sunset: "日の出 - 日の入り",
   muhurta_results: "推奨日",

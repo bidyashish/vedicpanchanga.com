@@ -28,6 +28,7 @@ const zh: Record<string, string> = {
   muhurta_reasons: "吉因",
   muhurta_cautions: "注意",
   muhurta_abhijit: "Abhijit",
+  muhurta_shubh_section: "吉祥时刻 (Shubh Muhurat)",
   muhurta_rahu: "Rahu Kala",
   muhurta_sunrise_sunset: "日出 - 日落",
   muhurta_results: "推荐日期",

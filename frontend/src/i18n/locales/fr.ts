@@ -28,6 +28,7 @@ const fr: Record<string, string> = {
   muhurta_reasons: "Favorables",
   muhurta_cautions: "Précautions",
   muhurta_abhijit: "Abhijit",
+  muhurta_shubh_section: "Shubh Muhurat",
   muhurta_rahu: "Rahu Kala",
   muhurta_sunrise_sunset: "Lever - Coucher du Soleil",
   muhurta_results: "Jours recommandés",
