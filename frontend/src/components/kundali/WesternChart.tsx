@@ -322,7 +322,7 @@ export function WesternChart({ planets, ascendant, ascSign, title, testId }: Pro
                   fill={color}
                   transform={`rotate(${tangentRotation(labelLong)} ${labelPos.x} ${labelPos.y})`}
                 >
-                  {planet.abbr}
+                  {a.abbr(planet.abbr)}
                 </text>
               </g>
             );
