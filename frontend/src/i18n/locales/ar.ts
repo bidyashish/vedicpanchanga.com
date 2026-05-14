@@ -256,7 +256,12 @@ const ar: Record<string, string> = {
 
   gowri_header: "غوري",
   nalla_neram_title: "نالا نيرام",
-  nalla_neram_sub: "ساعات ميمونة (المشتري، الزهرة، عطارد، القمر) - بعد استبعاد راهو كالام وياماغاندام وغوليكا",
+  nalla_neram_sub:
+    "ساعات ميمونة (المشتري، الزهرة، عطارد، القمر) - بعد استبعاد راهو كالام وياماغاندام وغوليكا",
+
+  share_link_copy: "نسخ رابط المشاركة",
+  share_link_copied: "تم نسخ الرابط",
+  share_link_failed: "تعذر النسخ",
 };
 
 export default ar;

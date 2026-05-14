@@ -256,6 +256,10 @@ const bn: Record<string, string> = {
   gowri_header: "গৌরী",
   nalla_neram_title: "নল্ল নেরম",
   nalla_neram_sub: "শুভ হোরা (বৃহস্পতি, শুক্র, বুধ, চন্দ্র) - রাহু কাল, যমগণ্ড ও গুলিক বাদে",
+
+  share_link_copy: "লিঙ্ক কপি করুন",
+  share_link_copied: "লিঙ্ক কপি হয়েছে",
+  share_link_failed: "কপি করা যায়নি",
 };
 
 export default bn;

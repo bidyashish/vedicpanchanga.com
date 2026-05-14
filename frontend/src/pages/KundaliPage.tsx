@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { BirthForm, type BirthFormState } from "@/components/kundali/BirthForm";
 import { BirthHeader } from "@/components/kundali/BirthHeader";
@@ -8,7 +8,19 @@ import { DashaTable } from "@/components/kundali/DashaTable";
 import { AshtakavargaTable } from "@/components/kundali/AshtakavargaTable";
 import { JaiminiSection } from "@/components/kundali/JaiminiSection";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
+import { ShareLinkButton } from "@/components/common/ShareLinkButton";
 import { calculateChart, printPdf } from "@/lib/api";
+import {
+  parseDate,
+  parseFloat3,
+  parseStr,
+  parseTime,
+  parseTz,
+  readSearch,
+  replaceSearch,
+  round4,
+  shareUrlFor,
+} from "@/lib/urlState";
 import type { ChartData, LocationChoice } from "@/types/api";
 
 // PDF ships full label sets for all 15 UI languages. Bundled fonts cover
@@ -67,18 +79,54 @@ interface Props {
 
 export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   const { t, lang } = useI18n();
-  const [form, setForm] = useState<BirthFormState>(() => ({
-    ...DEFAULT_FORM,
-    place_name: sharedLocation.place_name,
-    latitude: sharedLocation.latitude,
-    longitude: sharedLocation.longitude,
-    timezone: sharedLocation.timezone,
-  }));
+
+  // Capture URL params once on mount. Lat/lon together signal a shared link
+  // worth honoring; without both we fall back to sharedLocation.
+  const initialParams = useMemo(() => {
+    const sp = readSearch();
+    const lat = parseFloat3(sp.get("lat"), -90, 90);
+    const lon = parseFloat3(sp.get("lon"), -180, 180);
+    return {
+      name: parseStr(sp.get("name"), 80),
+      birth_date: parseDate(sp.get("birth_date")),
+      birth_time: parseTime(sp.get("birth_time")),
+      lat,
+      lon,
+      tz: parseTz(sp.get("tz")),
+      place: parseStr(sp.get("place"), 120),
+      ayanamsa: parseStr(sp.get("ayanamsa"), 20),
+      hasLocation: lat != null && lon != null,
+    };
+  }, []);
+
+  const [form, setForm] = useState<BirthFormState>(() => {
+    const base: BirthFormState = {
+      ...DEFAULT_FORM,
+      place_name: sharedLocation.place_name,
+      latitude: sharedLocation.latitude,
+      longitude: sharedLocation.longitude,
+      timezone: sharedLocation.timezone,
+    };
+    if (initialParams.birth_date) base.birth_date = initialParams.birth_date;
+    if (initialParams.birth_time) base.birth_time = initialParams.birth_time;
+    if (initialParams.ayanamsa) base.ayanamsa = initialParams.ayanamsa;
+    if (initialParams.hasLocation) {
+      base.latitude = initialParams.lat as number;
+      base.longitude = initialParams.lon as number;
+      base.timezone = initialParams.tz;
+      base.place_name = initialParams.place ?? "Shared location";
+    }
+    return base;
+  });
   const [data, setData] = useState<ChartData | null>(null);
-  const [submittedPlaceName, setSubmittedPlaceName] = useState<string>(sharedLocation.place_name);
+  const [submittedPlaceName, setSubmittedPlaceName] = useState<string>(
+    initialParams.hasLocation
+      ? (initialParams.place ?? "Shared location")
+      : sharedLocation.place_name,
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [nativeName, setNativeName] = useState<string>("");
+  const [nativeName, setNativeName] = useState<string>(initialParams.name ?? "");
   const [printing, setPrinting] = useState(false);
   const didAutoRunRef = useRef(false);
 
@@ -111,6 +159,32 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
     calculate(form);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Reactive URL sync - every form-field edit (including the native name)
+  // rewrites the query string so the user can copy the address bar at any
+  // time without first clicking "Generate Kundali". replaceState keeps the
+  // back stack clean across keystrokes.
+  useEffect(() => {
+    replaceSearch({
+      name: nativeName || undefined,
+      birth_date: form.birth_date,
+      birth_time: form.birth_time,
+      lat: round4(form.latitude),
+      lon: round4(form.longitude),
+      tz: form.timezone || undefined,
+      place: form.place_name || undefined,
+      ayanamsa: form.ayanamsa === "lahiri" ? undefined : form.ayanamsa,
+    });
+  }, [
+    nativeName,
+    form.birth_date,
+    form.birth_time,
+    form.latitude,
+    form.longitude,
+    form.timezone,
+    form.place_name,
+    form.ayanamsa,
+  ]);
 
   const onSubmit = () => {
     if (!Number.isFinite(form.latitude) || !Number.isFinite(form.longitude)) {
@@ -260,6 +334,21 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
           {data && (
             <>
               <BirthHeader data={data} placeName={submittedPlaceName} />
+              <div className="flex justify-end">
+                <ShareLinkButton
+                  testId="kundali-share-link"
+                  url={shareUrlFor("/kundali", {
+                    name: nativeName || undefined,
+                    birth_date: form.birth_date,
+                    birth_time: form.birth_time,
+                    lat: round4(form.latitude),
+                    lon: round4(form.longitude),
+                    tz: form.timezone || undefined,
+                    place: form.place_name || undefined,
+                    ayanamsa: form.ayanamsa === "lahiri" ? undefined : form.ayanamsa,
+                  })}
+                />
+              </div>
               <ChartTabs data={data} />
               <PlanetsTable planets={data.planets_data} ascendant={data.ascendant} />
               <DashaTable dasha={data.dasha} dashaAntar={data.dasha_antar} />

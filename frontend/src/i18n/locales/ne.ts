@@ -256,6 +256,10 @@ const ne: Record<string, string> = {
   gowri_header: "गौरी",
   nalla_neram_title: "नल्ल नेरम",
   nalla_neram_sub: "शुभ होरा (गुरु, शुक्र, बुध, चन्द्र) - राहु काल, यमगण्ड र गुलिक हटाएर",
+
+  share_link_copy: "लिङ्क प्रतिलिपि गर्नुहोस्",
+  share_link_copied: "लिङ्क प्रतिलिपि भयो",
+  share_link_failed: "प्रतिलिपि गर्न सकिएन",
 };
 
 export default ne;

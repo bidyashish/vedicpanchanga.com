@@ -259,7 +259,12 @@ const fr: Record<string, string> = {
 
   gowri_header: "Gowri",
   nalla_neram_title: "Nalla Neram",
-  nalla_neram_sub: "Heures auspicieuses (Jupiter, Venus, Mercure, Lune) sans Rahu Kalam, Yamagandam et Gulika",
+  nalla_neram_sub:
+    "Heures auspicieuses (Jupiter, Venus, Mercure, Lune) sans Rahu Kalam, Yamagandam et Gulika",
+
+  share_link_copy: "Copier le lien",
+  share_link_copied: "Lien copié",
+  share_link_failed: "Échec de la copie",
 };
 
 export default fr;

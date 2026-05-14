@@ -159,12 +159,8 @@ export default function App() {
         {sharedLocation && view === "kundali" && (
           <KundaliPage sharedLocation={sharedLocation} onLocationChange={setSharedLocation} />
         )}
-        {sharedLocation && view === "panchang" && (
-          <PanchangPage defaultLocation={sharedLocation} />
-        )}
-        {sharedLocation && view === "muhurta" && (
-          <MuhurtaPage defaultLocation={sharedLocation} />
-        )}
+        {sharedLocation && view === "panchang" && <PanchangPage defaultLocation={sharedLocation} />}
+        {sharedLocation && view === "muhurta" && <MuhurtaPage defaultLocation={sharedLocation} />}
         {view === "privacy" && <PrivacyPage />}
         {view === "terms" && <TermsPage />}
       </main>

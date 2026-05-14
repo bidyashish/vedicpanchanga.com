@@ -256,7 +256,12 @@ const es: Record<string, string> = {
 
   gowri_header: "Gowri",
   nalla_neram_title: "Nalla Neram",
-  nalla_neram_sub: "Horas auspiciosas (Jupiter, Venus, Mercurio, Luna) sin Rahu Kalam, Yamagandam ni Gulika",
+  nalla_neram_sub:
+    "Horas auspiciosas (Jupiter, Venus, Mercurio, Luna) sin Rahu Kalam, Yamagandam ni Gulika",
+
+  share_link_copy: "Copiar enlace",
+  share_link_copied: "Enlace copiado",
+  share_link_failed: "No se pudo copiar",
 };
 
 export default es;

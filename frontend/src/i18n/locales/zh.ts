@@ -257,6 +257,10 @@ const zh: Record<string, string> = {
   gowri_header: "Gowri",
   nalla_neram_title: "吉时",
   nalla_neram_sub: "吉利时辰 (木星、金星、水星、月亮) - 去除罗睺时、阎摩时和古力时",
+
+  share_link_copy: "复制分享链接",
+  share_link_copied: "链接已复制",
+  share_link_failed: "复制失败",
 };
 
 export default zh;
