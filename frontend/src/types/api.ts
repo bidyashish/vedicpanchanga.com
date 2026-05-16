@@ -97,6 +97,41 @@ export interface JaiminiChart {
   chart: HouseMap;
 }
 
+export interface AspectDetail {
+  planet: string;
+  planet_abbr: string;
+  from_sign: number;
+  from_house: number;
+  to_sign: number;
+  to_house: number;
+  offset: number;
+  aspect_type: "standard" | "special";
+  strength: number;
+  benefic: boolean;
+}
+
+export interface PlanetAspects {
+  name: string;
+  abbr: string;
+  house: number;
+  benefic: boolean;
+  retrograde: boolean;
+  combust: boolean;
+  aspected_houses: number[];
+  details: AspectDetail[];
+}
+
+export interface MutualAspect {
+  planet1: string;
+  planet2: string;
+}
+
+export interface DrishtiData {
+  aspects: AspectDetail[];
+  by_planet: Record<string, PlanetAspects>;
+  mutual: MutualAspect[];
+}
+
 export interface ChartData {
   birth: BirthSummary;
   ascendant: Planet;
@@ -115,6 +150,7 @@ export interface ChartData {
   karakas?: Karaka[];
   karakamsa?: JaiminiChart;
   swamsa?: JaiminiChart;
+  drishti?: DrishtiData;
 }
 
 export interface AyanamsaOption {

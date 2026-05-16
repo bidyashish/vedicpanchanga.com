@@ -6,6 +6,7 @@ import { ChartTabs } from "@/components/kundali/ChartTabs";
 import { PlanetsTable } from "@/components/kundali/PlanetsTable";
 import { DashaTable } from "@/components/kundali/DashaTable";
 import { AshtakavargaTable } from "@/components/kundali/AshtakavargaTable";
+import { DrishtiPanel } from "@/components/kundali/DrishtiPanel";
 import { JaiminiSection } from "@/components/kundali/JaiminiSection";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { ShareLinkButton } from "@/components/common/ShareLinkButton";
@@ -128,6 +129,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [nativeName, setNativeName] = useState<string>(initialParams.name ?? "");
   const [printing, setPrinting] = useState(false);
+  const [selectedPlanet, setSelectedPlanet] = useState<string | null>(null);
   const didAutoRunRef = useRef(false);
 
   const calculate = async (body: BirthFormState) => {
@@ -349,8 +351,23 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
                   })}
                 />
               </div>
-              <ChartTabs data={data} />
-              <PlanetsTable planets={data.planets_data} ascendant={data.ascendant} />
+              <ChartTabs
+                data={data}
+                selectedPlanet={selectedPlanet}
+                onSelectPlanet={setSelectedPlanet}
+              />
+              <PlanetsTable
+                planets={data.planets_data}
+                ascendant={data.ascendant}
+                drishti={data.drishti}
+              />
+              {data.drishti && (
+                <DrishtiPanel
+                  drishti={data.drishti}
+                  selectedPlanet={selectedPlanet}
+                  onSelectPlanet={setSelectedPlanet}
+                />
+              )}
               <DashaTable dasha={data.dasha} dashaAntar={data.dasha_antar} />
               <JaiminiSection
                 karakas={data.karakas}

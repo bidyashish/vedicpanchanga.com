@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { useAstro } from "@/i18n/astro";
 import { VedicChart } from "@/components/kundali/VedicChart";
@@ -11,12 +11,15 @@ import type { ChartData } from "@/types/api";
 
 interface Props {
   data: ChartData;
+  selectedPlanet: string | null;
+  onSelectPlanet: (abbr: string | null) => void;
 }
 
 type ChartStyle = "north" | "south" | "west";
 
 const STYLE_KEY = "jk_chart_style";
 const SHOW_DEGREE_KEY = "jk_show_degree";
+const SHOW_ASPECTS_KEY = "jk_show_aspects";
 
 function loadStyle(): ChartStyle {
   if (typeof window === "undefined") return "north";
@@ -30,14 +33,29 @@ function loadShowDegree(): boolean {
   return window.localStorage.getItem(SHOW_DEGREE_KEY) === "1";
 }
 
-export function ChartTabs({ data }: Props) {
+function loadShowAspects(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem(SHOW_ASPECTS_KEY) === "1";
+}
+
+export function ChartTabs({ data, selectedPlanet, onSelectPlanet }: Props) {
   const { t, lang } = useI18n();
   const a = useAstro();
   const vargaKeys = data.varga_order ?? [1, 2, 9];
   const [tab, setTab] = useState<string>(`d${vargaKeys[0] ?? 1}`);
   const [chartStyle, setChartStyleState] = useState<ChartStyle>(loadStyle);
   const [showDegrees, setShowDegreesState] = useState<boolean>(loadShowDegree);
+  const [showAspects, setShowAspectsState] = useState<boolean>(loadShowAspects);
+  const didInitAspects = useRef(false);
   const vargas = data.vargas ?? {};
+
+  useEffect(() => {
+    if (didInitAspects.current) return;
+    didInitAspects.current = true;
+    if (showAspects && !selectedPlanet && data.drishti) {
+      onSelectPlanet("Ma");
+    }
+  }, [showAspects, selectedPlanet, data.drishti, onSelectPlanet]);
 
   const setChartStyle = (s: ChartStyle) => {
     setChartStyleState(s);
@@ -57,6 +75,20 @@ export function ChartTabs({ data }: Props) {
     }
   };
 
+  const setShowAspects = (v: boolean) => {
+    setShowAspectsState(v);
+    if (v) {
+      onSelectPlanet("Ma");
+    } else {
+      onSelectPlanet(null);
+    }
+    try {
+      window.localStorage.setItem(SHOW_ASPECTS_KEY, v ? "1" : "0");
+    } catch {
+      /* ignore quota errors */
+    }
+  };
+
   const active = vargas[tab] ?? {
     chart: data.d1_chart,
     asc_sign: data.d1_asc_sign,
@@ -67,13 +99,9 @@ export function ChartTabs({ data }: Props) {
 
   const activeName = vargaName(active.division, active.name, lang);
   const activeSubtitle = vargaSubtitle(active.division, active.subtitle, lang);
-
-  // Per-varga sub-degrees come straight from the backend — see
-  // backend/vargas.py::varga_degree_in_sign. Keep the frontend free of
-  // astronomical math so the two implementations can't drift.
   const planetDegrees = active.planet_degrees;
-
   const isWest = chartStyle === "west";
+  const isD1 = tab === "d1";
 
   return (
     <div className="card p-4 sm:p-5" data-testid="chart-tabs">
@@ -131,6 +159,21 @@ export function ChartTabs({ data }: Props) {
             />
           </label>
         )}
+
+        {!isWest && isD1 && data.drishti && (
+          <label
+            data-testid="show-aspects-toggle"
+            className="inline-flex items-center gap-2 text-mini font-medium text-ink-soft cursor-pointer select-none shrink-0"
+          >
+            <span>{t("drishti_show")}</span>
+            <Switch
+              checked={showAspects}
+              onCheckedChange={setShowAspects}
+              aria-label={t("drishti_show")}
+              data-testid="show-aspects-switch"
+            />
+          </label>
+        )}
       </div>
 
       <div className="bg-parchment-50 p-2 rounded-sm">
@@ -150,6 +193,10 @@ export function ChartTabs({ data }: Props) {
             testId={`chart-${tab}`}
             planetDegrees={planetDegrees}
             showDegrees={showDegrees}
+            selectedPlanet={isD1 && showAspects ? selectedPlanet : null}
+            onSelectPlanet={isD1 && showAspects ? onSelectPlanet : undefined}
+            drishti={isD1 ? data.drishti : undefined}
+            showAspects={isD1 && showAspects}
           />
         ) : (
           <VedicChart
@@ -159,10 +206,19 @@ export function ChartTabs({ data }: Props) {
             testId={`chart-${tab}`}
             planetDegrees={planetDegrees}
             showDegrees={showDegrees}
+            selectedPlanet={isD1 && showAspects ? selectedPlanet : null}
+            onSelectPlanet={isD1 && showAspects ? onSelectPlanet : undefined}
+            drishti={isD1 ? data.drishti : undefined}
+            showAspects={isD1 && showAspects}
           />
         )}
         {!isWest && activeSubtitle && (
           <p className="text-center text-xs text-ink-soft mt-3 italic">{activeSubtitle}</p>
+        )}
+        {!isWest && isD1 && showAspects && (
+          <p className="text-center text-xs mt-3 italic" style={{ color: "var(--accent-amber)" }}>
+            {t("drishti_hint")}
+          </p>
         )}
       </div>
 

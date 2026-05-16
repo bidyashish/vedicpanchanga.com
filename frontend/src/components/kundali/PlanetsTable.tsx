@@ -1,14 +1,15 @@
 import { useI18n } from "@/i18n";
 import { useAstro } from "@/i18n/astro";
 import { planetColor } from "@/lib/planets";
-import type { Planet } from "@/types/api";
+import type { DrishtiData, Planet } from "@/types/api";
 
 interface Props {
   planets: Planet[];
   ascendant: Planet;
+  drishti?: DrishtiData;
 }
 
-export function PlanetsTable({ planets, ascendant }: Props) {
+export function PlanetsTable({ planets, ascendant, drishti }: Props) {
   const { t } = useI18n();
   const a = useAstro();
   const rows = [ascendant, ...planets];
@@ -32,6 +33,9 @@ export function PlanetsTable({ planets, ascendant }: Props) {
             </th>
             <th className="py-2 pe-3 font-bold whitespace-nowrap text-start w-16">
               {t("col_house")}
+            </th>
+            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
+              {t("col_aspects")}
             </th>
             <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
               {t("col_retrograde")}
@@ -59,6 +63,11 @@ export function PlanetsTable({ planets, ascendant }: Props) {
               </td>
               <td className="py-2 pe-3 num whitespace-nowrap tabular-nums text-start">
                 {a.num(p.house ?? "-")}
+              </td>
+              <td className="py-2 pe-3 num whitespace-nowrap tabular-nums text-start">
+                {drishti?.by_planet[p.abbr]?.aspected_houses
+                  .map((h) => a.num(h))
+                  .join(", ") ?? "-"}
               </td>
               <td className="py-2 pe-3 whitespace-nowrap text-start">
                 {p.retrograde && (

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { TopBar } from "@/components/shell/TopBar";
+import { NotificationBanner } from "@/components/shell/NotificationBanner";
 import { Footer } from "@/components/shell/Footer";
 import { KundaliPage } from "@/pages/KundaliPage";
 import { PanchangPage } from "@/pages/PanchangPage";
@@ -153,6 +154,7 @@ export default function App() {
 
   return (
     <div className="parchment-bg min-h-screen flex flex-col">
+      <NotificationBanner />
       <TopBar view={view} setView={setView} />
 
       <main className="flex-1 max-w-screen-3xl w-full mx-auto px-3 sm:px-6 lg:px-8">
