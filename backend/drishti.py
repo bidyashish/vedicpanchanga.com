@@ -36,9 +36,7 @@ def _house_offset(from_sign: int, to_sign: int) -> int:
     return ((to_sign - from_sign) % 12) + 1
 
 
-def _aspect_strength(
-    planet_lon: float, target_sign_mid: float
-) -> int:
+def _aspect_strength(planet_lon: float, target_sign_mid: float) -> int:
     """Percentage strength (0-100) based on angular closeness.
 
     ``target_sign_mid`` is the midpoint longitude of the aspected sign

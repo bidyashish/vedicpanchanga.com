@@ -178,7 +178,11 @@ def suggest_lang(request: Request, response: Response):
     return {"country": cc, "lang": lang}
 
 
-_UJJAIN = {"latitude": 23.1765, "longitude": 75.7885, "place_name": "Ujjain, Madhya Pradesh, India"}
+_UJJAIN = {
+    "latitude": 23.1765,
+    "longitude": 75.7885,
+    "place_name": "Ujjain, Madhya Pradesh, India",
+}
 
 
 @api_router.get("/geo-ip")

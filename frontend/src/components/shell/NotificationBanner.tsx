@@ -14,11 +14,19 @@ const STORAGE_PREFIX = "vp_notif_dismissed_";
 const VISITED_KEY = "vp_visited";
 
 function ls(key: string): string | null {
-  try { return localStorage.getItem(key); } catch { return null; }
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
 }
 
 function lsSet(key: string, val: string) {
-  try { localStorage.setItem(key, val); } catch { /* private mode */ }
+  try {
+    localStorage.setItem(key, val);
+  } catch {
+    /* private mode */
+  }
 }
 
 function getActiveNotice(): Notice | null {
@@ -72,7 +80,15 @@ export function NotificationBanner() {
         aria-label="Dismiss notification"
         className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-white/20 transition-colors"
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        >
           <line x1="6" y1="6" x2="18" y2="18" />
           <line x1="6" y1="18" x2="18" y2="6" />
         </svg>

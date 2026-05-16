@@ -63,15 +63,21 @@ export function DrishtiPanel({ drishti, selectedPlanet, onSelectPlanet }: Props)
                     backgroundColor: isActive
                       ? "color-mix(in oklab, " + planetColor(p.abbr) + " 16%, transparent)"
                       : "transparent",
-                    outline: isActive ? `2px solid ${planetColor(p.abbr)}` : "1px solid var(--border)",
+                    outline: isActive
+                      ? `2px solid ${planetColor(p.abbr)}`
+                      : "1px solid var(--border)",
                   }}
                 >
                   {a.planet(p.name)}
                   {p.retrograde && (
-                    <span className="text-mini" style={{ color: "var(--accent-amber)" }}>R</span>
+                    <span className="text-mini" style={{ color: "var(--accent-amber)" }}>
+                      R
+                    </span>
                   )}
                   {p.combust && (
-                    <span className="text-mini" style={{ color: "var(--danger)" }}>C</span>
+                    <span className="text-mini" style={{ color: "var(--danger)" }}>
+                      C
+                    </span>
                   )}
                 </button>
               );
@@ -228,9 +234,7 @@ function SelectedPlanetDetail({ planet, mutual }: DetailProps) {
               <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
                 {t("drishti_to")} {t("drishti_house")}
               </th>
-              <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
-                {t("col_sign")}
-              </th>
+              <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">{t("col_sign")}</th>
               <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
                 {t("col_aspects")}
               </th>
@@ -252,9 +256,7 @@ function SelectedPlanetDetail({ planet, mutual }: DetailProps) {
                   <span className="inline-flex items-center gap-1">
                     {d.aspect_type === "special" ? "⇒" : "→"}
                     <span className="text-mini">
-                      {d.aspect_type === "special"
-                        ? t("drishti_special")
-                        : t("drishti_standard")}
+                      {d.aspect_type === "special" ? t("drishti_special") : t("drishti_standard")}
                     </span>
                   </span>
                 </td>
@@ -265,9 +267,7 @@ function SelectedPlanetDetail({ planet, mutual }: DetailProps) {
                       style={{ backgroundColor: strengthColor(d.strength) }}
                     />
                     <span className="num tabular-nums">{a.num(d.strength)}%</span>
-                    <span className="text-mini text-ink-soft">
-                      {strengthLabel(t, d.strength)}
-                    </span>
+                    <span className="text-mini text-ink-soft">{strengthLabel(t, d.strength)}</span>
                   </span>
                 </td>
               </tr>

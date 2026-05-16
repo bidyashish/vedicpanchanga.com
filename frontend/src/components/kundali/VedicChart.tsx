@@ -203,13 +203,14 @@ export function VedicChart({
                   const isAsc = abbr === "As" || abbr === "Lg";
                   const label = showDeg ? `${a.abbr(abbr)} ${formatDegree(deg)}` : a.abbr(abbr);
                   const isSelected = selectedPlanet === abbr;
-                  const dimmed =
-                    showAspects && selectedPlanet && !isSelected && !isAsc ? 0.4 : 1;
+                  const dimmed = showAspects && selectedPlanet && !isSelected && !isAsc ? 0.4 : 1;
                   const clickable = !isAsc && onSelectPlanet;
                   return (
                     <g
                       key={`${h}-${idx}`}
-                      onClick={clickable ? () => onSelectPlanet!(isSelected ? null : abbr) : undefined}
+                      onClick={
+                        clickable ? () => onSelectPlanet!(isSelected ? null : abbr) : undefined
+                      }
                       style={{ cursor: clickable ? "pointer" : "default" }}
                     >
                       <title>{planetTitle(abbr)}</title>

@@ -34,9 +34,7 @@ export function PlanetsTable({ planets, ascendant, drishti }: Props) {
             <th className="py-2 pe-3 font-bold whitespace-nowrap text-start w-16">
               {t("col_house")}
             </th>
-            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
-              {t("col_aspects")}
-            </th>
+            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">{t("col_aspects")}</th>
             <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
               {t("col_retrograde")}
             </th>
@@ -65,9 +63,7 @@ export function PlanetsTable({ planets, ascendant, drishti }: Props) {
                 {a.num(p.house ?? "-")}
               </td>
               <td className="py-2 pe-3 num whitespace-nowrap tabular-nums text-start">
-                {drishti?.by_planet[p.abbr]?.aspected_houses
-                  .map((h) => a.num(h))
-                  .join(", ") ?? "-"}
+                {drishti?.by_planet[p.abbr]?.aspected_houses.map((h) => a.num(h)).join(", ") ?? "-"}
               </td>
               <td className="py-2 pe-3 whitespace-nowrap text-start">
                 {p.retrograde && (

@@ -244,13 +244,14 @@ export function SouthIndianChart({
                   const py = pos.y + (showDeg ? 62 : 70) + rowIdx * rowGap;
                   const label = showDeg ? `${a.abbr(abbr)} ${formatDegree(deg)}` : a.abbr(abbr);
                   const isSelected = selectedPlanet === abbr;
-                  const dimmed =
-                    showAspects && selectedPlanet && !isSelected ? 0.4 : 1;
+                  const dimmed = showAspects && selectedPlanet && !isSelected ? 0.4 : 1;
                   const clickable = onSelectPlanet;
                   return (
                     <g
                       key={`${sign}-${idx}`}
-                      onClick={clickable ? () => onSelectPlanet!(isSelected ? null : abbr) : undefined}
+                      onClick={
+                        clickable ? () => onSelectPlanet!(isSelected ? null : abbr) : undefined
+                      }
                       style={{ cursor: clickable ? "pointer" : "default" }}
                     >
                       <title>{planetTitle(abbr)}</title>

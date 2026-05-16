@@ -1097,9 +1097,7 @@ def compute_detailed_panchang(
         "yamaganda": yama,
         "gulika_kalam": gulika,
     }
-    nalla = (
-        compute_nalla_neram(hora["day"], inauspicious_for_nalla) if hora else []
-    )
+    nalla = compute_nalla_neram(hora["day"], inauspicious_for_nalla) if hora else []
 
     # Tamil solar calendar (Nirayana) — month/date/year-cycle from sidereal Sun.
     tamil_cal = compute_tamil_calendar(target_date, timezone_name)
