@@ -1,4 +1,5 @@
 import type { DrishtiData, HouseMap } from "@/types/api";
+import type { PlanetStatus } from "@/components/kundali/VedicChart";
 import { planetColor, planetTitle, SIGN_SHORT } from "@/lib/planets";
 import { useAstro } from "@/i18n/astro";
 import { OmGlyph } from "@/components/kundali/OmGlyph";
@@ -28,6 +29,7 @@ interface Props {
   title?: string;
   testId?: string;
   planetDegrees?: Record<string, number>;
+  planetStatus?: Record<string, PlanetStatus>;
   showDegrees?: boolean;
   selectedPlanet?: string | null;
   onSelectPlanet?: (abbr: string | null) => void;
@@ -49,6 +51,14 @@ function orderPlanets(planets: string[], degrees?: Record<string, number>): stri
 
 const formatDegree = (deg: number) => String(Math.floor(deg)).padStart(2, "0");
 
+function statusTag(status?: PlanetStatus): string {
+  if (!status) return "";
+  const t: string[] = [];
+  if (status.retrograde) t.push("R");
+  if (status.combust) t.push("C");
+  return t.join(",");
+}
+
 function houseToSign(house: number, ascSign: number): number {
   return ((ascSign - 1 + (house - 1)) % 12) + 1;
 }
@@ -59,6 +69,7 @@ export function SouthIndianChart({
   title,
   testId,
   planetDegrees,
+  planetStatus,
   showDegrees,
   selectedPlanet,
   onSelectPlanet,
@@ -242,10 +253,14 @@ export function SouthIndianChart({
                   const px = pos.x + 14 + colIdx * (showDeg ? 0 : 48);
                   const rowGap = showDeg ? 16 : 20;
                   const py = pos.y + (showDeg ? 62 : 70) + rowIdx * rowGap;
-                  const label = showDeg ? `${a.abbr(abbr)} ${formatDegree(deg)}` : a.abbr(abbr);
+                  const tag = statusTag(planetStatus?.[abbr]);
+                  const mainLabel = showDeg
+                    ? `${a.abbr(abbr)} ${formatDegree(deg)}`
+                    : a.abbr(abbr);
                   const isSelected = selectedPlanet === abbr;
                   const dimmed = showAspects && selectedPlanet && !isSelected ? 0.4 : 1;
                   const clickable = onSelectPlanet;
+                  const fs = showDeg ? 14 : 18;
                   return (
                     <g
                       key={`${sign}-${idx}`}
@@ -258,13 +273,18 @@ export function SouthIndianChart({
                       <text
                         x={px}
                         y={py}
-                        fontSize={showDeg ? 14 : 18}
+                        fontSize={fs}
                         fontWeight={isSelected ? 900 : 600}
                         className="font-serif"
                         style={{ fill: planetColor(abbr) }}
                         opacity={dimmed}
                       >
-                        {label}
+                        {mainLabel}
+                        {tag && (
+                          <tspan fontSize={fs * 0.55} dy={-fs * 0.35}>
+                            {tag}
+                          </tspan>
+                        )}
                       </text>
                     </g>
                   );

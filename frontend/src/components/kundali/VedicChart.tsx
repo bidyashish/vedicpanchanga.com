@@ -36,12 +36,18 @@ const SIGN_LABEL_POSITIONS: Record<
   12: { x: 414, y: 22, anchor: "end" },
 };
 
+export interface PlanetStatus {
+  retrograde: boolean;
+  combust: boolean;
+}
+
 interface Props {
   houseMap?: HouseMap;
   ascSign: number;
   title?: string;
   testId?: string;
   planetDegrees?: Record<string, number>;
+  planetStatus?: Record<string, PlanetStatus>;
   showDegrees?: boolean;
   selectedPlanet?: string | null;
   onSelectPlanet?: (abbr: string | null) => void;
@@ -63,12 +69,21 @@ function orderPlanets(planets: string[], degrees?: Record<string, number>): stri
 
 const formatDegree = (deg: number) => String(Math.floor(deg)).padStart(2, "0");
 
+function statusTag(status?: PlanetStatus): string {
+  if (!status) return "";
+  const t: string[] = [];
+  if (status.retrograde) t.push("R");
+  if (status.combust) t.push("C");
+  return t.join(",");
+}
+
 export function VedicChart({
   houseMap,
   ascSign,
   title,
   testId,
   planetDegrees,
+  planetStatus,
   showDegrees,
   selectedPlanet,
   onSelectPlanet,
@@ -196,15 +211,17 @@ export function VedicChart({
                   const cols = showDeg ? 1 : Math.min(Math.max(planets.length, 1), 3);
                   const rowIdx = Math.floor(idx / cols);
                   const colIdx = idx % cols;
-                  const xOffset = (colIdx - (cols - 1) / 2) * 32;
+                  const xOffset = (colIdx - (cols - 1) / 2) * 38;
                   const rowGap = showDeg ? 17 : 24;
                   const yStart = showDeg ? -((planets.length - 1) * rowGap) / 2 : 0;
                   const yOffset = yStart + rowIdx * rowGap;
                   const isAsc = abbr === "As" || abbr === "Lg";
-                  const label = showDeg ? `${a.abbr(abbr)} ${formatDegree(deg)}` : a.abbr(abbr);
+                  const tag = isAsc ? "" : statusTag(planetStatus?.[abbr]);
+                  const mainLabel = showDeg ? `${a.abbr(abbr)} ${formatDegree(deg)}` : a.abbr(abbr);
                   const isSelected = selectedPlanet === abbr;
                   const dimmed = showAspects && selectedPlanet && !isSelected && !isAsc ? 0.4 : 1;
                   const clickable = !isAsc && onSelectPlanet;
+                  const fs = showDeg ? 15 : 18;
                   return (
                     <g
                       key={`${h}-${idx}`}
@@ -231,12 +248,17 @@ export function VedicChart({
                         textAnchor="middle"
                         dominantBaseline="middle"
                         className="font-serif"
-                        fontSize={showDeg ? 15 : 18}
+                        fontSize={fs}
                         fontWeight={isAsc ? 800 : isSelected ? 900 : 600}
                         style={{ fill: isAsc ? ascCol : planetColor(abbr) }}
                         opacity={dimmed}
                       >
-                        {label}
+                        {mainLabel}
+                        {tag && (
+                          <tspan fontSize={fs * 0.55} dy={-fs * 0.35}>
+                            {tag}
+                          </tspan>
+                        )}
                       </text>
                     </g>
                   );

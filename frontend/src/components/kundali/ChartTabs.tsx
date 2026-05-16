@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { useAstro } from "@/i18n/astro";
 import { VedicChart } from "@/components/kundali/VedicChart";
+import type { PlanetStatus } from "@/components/kundali/VedicChart";
 import { SouthIndianChart } from "@/components/kundali/SouthIndianChart";
 import { WesternChart } from "@/components/kundali/WesternChart";
 import { SegmentedControl } from "@/components/ui/segmented-control";
@@ -103,6 +104,16 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet }: Props) {
   const isWest = chartStyle === "west";
   const isD1 = tab === "d1";
 
+  const planetStatus = useMemo(() => {
+    const map: Record<string, PlanetStatus> = {};
+    for (const p of data.planets_data) {
+      if (p.retrograde || p.combust) {
+        map[p.abbr] = { retrograde: p.retrograde, combust: !!p.combust };
+      }
+    }
+    return map;
+  }, [data.planets_data]);
+
   return (
     <div className="card p-4 sm:p-5" data-testid="chart-tabs">
       <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 pb-3 border-b border-parchment-200">
@@ -192,6 +203,7 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet }: Props) {
             title={`${activeName} · D${a.num(active.division)}`}
             testId={`chart-${tab}`}
             planetDegrees={planetDegrees}
+            planetStatus={isD1 ? planetStatus : undefined}
             showDegrees={showDegrees}
             selectedPlanet={isD1 && showAspects ? selectedPlanet : null}
             onSelectPlanet={isD1 && showAspects ? onSelectPlanet : undefined}
@@ -205,6 +217,7 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet }: Props) {
             title={`${activeName} · D${a.num(active.division)}`}
             testId={`chart-${tab}`}
             planetDegrees={planetDegrees}
+            planetStatus={isD1 ? planetStatus : undefined}
             showDegrees={showDegrees}
             selectedPlanet={isD1 && showAspects ? selectedPlanet : null}
             onSelectPlanet={isD1 && showAspects ? onSelectPlanet : undefined}
