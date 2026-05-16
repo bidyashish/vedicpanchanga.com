@@ -254,9 +254,7 @@ export function SouthIndianChart({
                   const rowGap = showDeg ? 16 : 20;
                   const py = pos.y + (showDeg ? 62 : 70) + rowIdx * rowGap;
                   const tag = statusTag(planetStatus?.[abbr]);
-                  const mainLabel = showDeg
-                    ? `${a.abbr(abbr)} ${formatDegree(deg)}`
-                    : a.abbr(abbr);
+                  const mainLabel = showDeg ? `${a.abbr(abbr)} ${formatDegree(deg)}` : a.abbr(abbr);
                   const isSelected = selectedPlanet === abbr;
                   const dimmed = showAspects && selectedPlanet && !isSelected ? 0.4 : 1;
                   const clickable = onSelectPlanet;

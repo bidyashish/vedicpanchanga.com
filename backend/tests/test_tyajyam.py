@@ -1,7 +1,6 @@
 """Tests for Tyajyam calculations."""
 
 import pytz
-import pytest
 
 from tyajyam import (
     NAKSHATRA_TYAJYAM_RATIO,
@@ -9,7 +8,6 @@ from tyajyam import (
     _AMRITADI_TABLE,
     _tithi_ratio,
     compute_nakshatra_tyajyam,
-    compute_tithi_tyajyam,
     compute_vara_tyajyam,
     compute_amritadi_yogam,
     compute_tyajyam,
@@ -149,7 +147,14 @@ def test_amritadi_bharani_sunday_is_prabalarishta():
 def test_compute_tyajyam_returns_all_keys():
     base_jd = 2460000.0
     naks = [{"nak_idx": 0, "start_jd": base_jd, "end_jd": base_jd + 0.5}]
-    tithis = [{"index": 1, "name": "Shukla Pratipada", "start_jd": base_jd, "ends_at_jd": base_jd + 0.5}]
+    tithis = [
+        {
+            "index": 1,
+            "name": "Shukla Pratipada",
+            "start_jd": base_jd,
+            "ends_at_jd": base_jd + 0.5,
+        }
+    ]
     result = compute_tyajyam(
         nakshatras_with_bounds=naks,
         tithis_in_window=tithis,
@@ -169,7 +174,9 @@ def test_full_panchang_includes_tyajyam():
     """End-to-end: compute_detailed_panchang returns tyajyam section."""
     from advanced_panchang import compute_detailed_panchang
 
-    result = compute_detailed_panchang("2026-05-16", 49.888, -119.496, "America/Vancouver")
+    result = compute_detailed_panchang(
+        "2026-05-16", 49.888, -119.496, "America/Vancouver"
+    )
     assert "tyajyam" in result
     tyajyam = result["tyajyam"]
     assert "nakshatra_tyajyam" in tyajyam
