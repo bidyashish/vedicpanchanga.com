@@ -268,6 +268,21 @@ const ne: Record<string, string> = {
   muhurta_ganda_mula_desc: "नयाँ आरम्भ त्याग्नुहोस्",
   muhurta_moon_in: "चन्द्र",
 
+  tyajyam_title: "त्याज्यम् (वर्जनीय काल)",
+  tyajyam_sub: "वर्तमान नक्षत्र, तिथि र वारमा अशुभ अवधि",
+  tyajyam_nakshatra: "नक्षत्र त्याज्यम्",
+  tyajyam_nakshatra_desc: "नक्षत्रभित्र 96 मिनेट अशुभ काल",
+  tyajyam_tithi: "तिथि त्याज्यम्",
+  tyajyam_tithi_desc: "तिथिभित्र 96 मिनेट अशुभ काल",
+  tyajyam_vara: "वार त्याज्यम्",
+  tyajyam_vara_desc: "सूर्योदयबाट 90 मिनेट वार-वर्जन काल",
+  amritadi_title: "अमृतादि योगम्",
+  amritadi_sub: "वार र नक्षत्र संयोजन गुणस्तर",
+  amritadi_amrita: "अमृत योगम् - अत्यन्त शुभ",
+  amritadi_siddha: "सिद्ध योगम् - शुभ",
+  amritadi_marana: "मरण योगम् - अशुभ",
+  amritadi_prabalarishta: "प्रबलारिष्ट योगम् - अत्यन्त अशुभ",
+
   footer_privacy: "गोपनीयता",
   footer_terms: "नियम",
 

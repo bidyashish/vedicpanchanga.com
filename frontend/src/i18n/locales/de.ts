@@ -269,6 +269,21 @@ const de: Record<string, string> = {
   muhurta_ganda_mula_desc: "Neue Anfänge vermeiden",
   muhurta_moon_in: "Mond in",
 
+  tyajyam_title: "Tyajyam (Meidungszeiten)",
+  tyajyam_sub: "Unguenstige Zeitfenster im aktuellen Nakshatra, Tithi und Wochentag",
+  tyajyam_nakshatra: "Nakshatra Tyajyam",
+  tyajyam_nakshatra_desc: "96-min unguenstiges Zeitfenster im Nakshatra",
+  tyajyam_tithi: "Tithi Tyajyam",
+  tyajyam_tithi_desc: "96-min unguenstiges Zeitfenster im Tithi",
+  tyajyam_vara: "Vara Tyajyam",
+  tyajyam_vara_desc: "90-min Wochentag-Meidungszeit ab Sonnenaufgang",
+  amritadi_title: "Amritadi Yogam",
+  amritadi_sub: "Qualitaet der Wochentag-Nakshatra-Kombination",
+  amritadi_amrita: "Amrita Yogam - sehr glueckverheissend",
+  amritadi_siddha: "Siddha Yogam - glueckverheissend",
+  amritadi_marana: "Marana Yogam - unguenstig",
+  amritadi_prabalarishta: "Prabalarishta Yogam - sehr unguenstig",
+
   footer_privacy: "Datenschutz",
   footer_terms: "AGB",
 

@@ -269,6 +269,21 @@ const fa: Record<string, string> = {
   muhurta_ganda_mula_desc: "از آغازهای نو پرهیز کنید",
   muhurta_moon_in: "ماه در",
 
+  tyajyam_title: "تیاجیام (دوره‌های پرهیز)",
+  tyajyam_sub: "دوره‌های نامبارک در نکشتره، تیتهی و روز هفته فعلی",
+  tyajyam_nakshatra: "نکشتره تیاجیام",
+  tyajyam_nakshatra_desc: "دوره نامبارک 96 دقیقه در نکشتره",
+  tyajyam_tithi: "تیتهی تیاجیام",
+  tyajyam_tithi_desc: "دوره نامبارک 96 دقیقه در تیتهی",
+  tyajyam_vara: "واره تیاجیام",
+  tyajyam_vara_desc: "دوره پرهیز 90 دقیقه از طلوع آفتاب",
+  amritadi_title: "آمریتادی یوگام",
+  amritadi_sub: "کیفیت ترکیب روز و نکشتره",
+  amritadi_amrita: "آمریتا یوگام - بسیار فرخنده",
+  amritadi_siddha: "سیدها یوگام - فرخنده",
+  amritadi_marana: "مارانا یوگام - نامبارک",
+  amritadi_prabalarishta: "پرابالاریشتا یوگام - بسیار نامبارک",
+
   footer_privacy: "حریم خصوصی",
   footer_terms: "شرایط",
 

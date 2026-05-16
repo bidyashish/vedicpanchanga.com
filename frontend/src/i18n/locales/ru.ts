@@ -269,6 +269,21 @@ const ru: Record<string, string> = {
   muhurta_ganda_mula_desc: "Избегайте новых начинаний",
   muhurta_moon_in: "Луна в",
 
+  tyajyam_title: "Тьяджьям (периоды избегания)",
+  tyajyam_sub: "Неблагоприятные периоды в текущей накшатре, титхи и дне недели",
+  tyajyam_nakshatra: "Накшатра Тьяджьям",
+  tyajyam_nakshatra_desc: "96-мин неблагоприятный период в накшатре",
+  tyajyam_tithi: "Титхи Тьяджьям",
+  tyajyam_tithi_desc: "96-мин неблагоприятный период в титхи",
+  tyajyam_vara: "Вара Тьяджьям",
+  tyajyam_vara_desc: "90-мин период избегания от восхода",
+  amritadi_title: "Амритади Йогам",
+  amritadi_sub: "Качество сочетания дня и накшатры",
+  amritadi_amrita: "Амрита Йогам - весьма благоприятный",
+  amritadi_siddha: "Сиддха Йогам - благоприятный",
+  amritadi_marana: "Марана Йогам - неблагоприятный",
+  amritadi_prabalarishta: "Прабаларишта Йогам - крайне неблагоприятный",
+
   footer_privacy: "Конфиденциальность",
   footer_terms: "Условия",
 
