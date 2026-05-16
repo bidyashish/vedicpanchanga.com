@@ -80,7 +80,7 @@ export function SouthIndianChart({
   const signToPlanets: Record<number, string[]> = {};
   for (let h = 1; h <= 12; h++) {
     const sign = ((ascSign - 1 + (h - 1)) % 12) + 1;
-    const cellPlanets = (houseMap?.[h] ?? []).filter((p) => p !== "As" && p !== "Lg");
+    const cellPlanets = (houseMap?.[h] ?? []).filter((p) => p !== "Lg");
     signToPlanets[sign] = orderPlanets(cellPlanets, planetDegrees);
   }
 
@@ -174,7 +174,6 @@ export function SouthIndianChart({
 
           {Array.from({ length: 12 }, (_, i) => i + 1).map((sign) => {
             const pos = CELL_POSITIONS[sign];
-            const isAscSign = sign === ascSign;
             const houseNum = ((sign - ascSign + 12) % 12) + 1;
             const planets = signToPlanets[sign] ?? [];
             const isAspected = aspectedHouses?.has(houseNum) ?? false;
@@ -192,36 +191,6 @@ export function SouthIndianChart({
                     opacity={0.1}
                     className="transition-opacity duration-200"
                   />
-                )}
-                {isAscSign && (
-                  <>
-                    <line
-                      x1={pos.x + 8}
-                      y1={pos.y + 8}
-                      x2={pos.x + 38}
-                      y2={pos.y + 38}
-                      style={{ stroke: ascCol }}
-                      strokeWidth="2"
-                    />
-                    <line
-                      x1={pos.x + 8}
-                      y1={pos.y + 38}
-                      x2={pos.x + 38}
-                      y2={pos.y + 8}
-                      style={{ stroke: ascCol }}
-                      strokeWidth="2"
-                    />
-                    <text
-                      x={pos.x + 62}
-                      y={pos.y + 28}
-                      fontSize="16"
-                      fontWeight="700"
-                      className="font-serif"
-                      style={{ fill: ascCol }}
-                    >
-                      {a.abbr("Lg")}
-                    </text>
-                  </>
                 )}
                 <text
                   x={pos.x + CELL - 10}
@@ -245,6 +214,7 @@ export function SouthIndianChart({
                   {SIGN_SHORT[sign - 1]}
                 </text>
                 {planets.map((abbr, idx) => {
+                  const isAsc = abbr === "As";
                   const deg = planetDegrees?.[abbr];
                   const showDeg = showDegrees && deg != null;
                   const cols = showDeg ? 1 : 2;
@@ -253,11 +223,11 @@ export function SouthIndianChart({
                   const px = pos.x + 14 + colIdx * (showDeg ? 0 : 48);
                   const rowGap = showDeg ? 16 : 20;
                   const py = pos.y + (showDeg ? 62 : 70) + rowIdx * rowGap;
-                  const tag = statusTag(planetStatus?.[abbr]);
+                  const tag = isAsc ? "" : statusTag(planetStatus?.[abbr]);
                   const mainLabel = showDeg ? `${a.abbr(abbr)} ${formatDegree(deg)}` : a.abbr(abbr);
                   const isSelected = selectedPlanet === abbr;
-                  const dimmed = showAspects && selectedPlanet && !isSelected ? 0.4 : 1;
-                  const clickable = onSelectPlanet;
+                  const dimmed = showAspects && selectedPlanet && !isSelected && !isAsc ? 0.4 : 1;
+                  const clickable = !isAsc && onSelectPlanet;
                   const fs = showDeg ? 14 : 18;
                   return (
                     <g
@@ -272,9 +242,9 @@ export function SouthIndianChart({
                         x={px}
                         y={py}
                         fontSize={fs}
-                        fontWeight={isSelected ? 900 : 600}
+                        fontWeight={isAsc ? 800 : isSelected ? 900 : 600}
                         className="font-serif"
-                        style={{ fill: planetColor(abbr) }}
+                        style={{ fill: isAsc ? ascCol : planetColor(abbr) }}
                         opacity={dimmed}
                       >
                         {mainLabel}
