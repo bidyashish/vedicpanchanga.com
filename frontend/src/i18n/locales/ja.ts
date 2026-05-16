@@ -257,6 +257,10 @@ const ja: Record<string, string> = {
   gowri_header: "Gowri",
   nalla_neram_title: "吉時",
   nalla_neram_sub: "吉祥ホーラ (木星・金星・水星・月) - ラーフカーラ・ヤマガンダ・グリカを除外",
+
+  share_link_copy: "共有リンクをコピー",
+  share_link_copied: "リンクをコピーしました",
+  share_link_failed: "コピーできませんでした",
 };
 
 export default ja;

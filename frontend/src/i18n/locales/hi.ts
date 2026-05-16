@@ -256,6 +256,10 @@ const hi: Record<string, string> = {
   gowri_header: "गौरी",
   nalla_neram_title: "नल्ल नेरम",
   nalla_neram_sub: "शुभ होरा (गुरु, शुक्र, बुध, चंद्र) - राहु काल, यमगंड और गुलिक निकालकर",
+
+  share_link_copy: "लिंक कॉपी करें",
+  share_link_copied: "लिंक कॉपी हो गया",
+  share_link_failed: "कॉपी नहीं हो सका",
 };
 
 export default hi;

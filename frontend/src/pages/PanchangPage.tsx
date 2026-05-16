@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
+import { ShareLinkButton } from "@/components/common/ShareLinkButton";
 import { DatePicker } from "@/components/ui/date-picker";
 import { GowriPanchangam } from "@/components/panchang/GowriPanchangam";
 import { HoraPanchangam } from "@/components/panchang/HoraPanchangam";
@@ -21,6 +22,17 @@ import {
   nowTimeInTz,
   todayISO,
 } from "@/lib/format";
+import {
+  parseDate,
+  parseEnum,
+  parseFloat3,
+  parseStr,
+  parseTz,
+  readSearch,
+  replaceSearch,
+  round4,
+  shareUrlFor,
+} from "@/lib/urlState";
 import type { ChartData, LocationChoice, PanchangData, TransitItem } from "@/types/api";
 
 function TransitList({
@@ -84,8 +96,35 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
   // (e.g. weekday `{ta:"செவ்வாய்", en:"Tuesday"}`). The bilingual annotation
   // helps non-Tamil users cross-reference; in Tamil mode itself it's noise.
   const showEn = lang === "en";
-  const [date, setDate] = useState(todayISO());
-  const [loc, setLoc] = useState<LocationChoice>(defaultLocation);
+
+  // Initial query-string snapshot. Captured once on mount so later edits to
+  // window.location don't re-seed state mid-session.
+  const initialParams = useMemo(() => {
+    const sp = readSearch();
+    const lat = parseFloat3(sp.get("lat"), -90, 90);
+    const lon = parseFloat3(sp.get("lon"), -180, 180);
+    return {
+      date: parseDate(sp.get("date")),
+      lat,
+      lon,
+      tz: parseTz(sp.get("tz")),
+      place: parseStr(sp.get("place"), 120),
+      style: parseEnum(sp.get("style"), ["north", "south"] as const),
+      hasLocation: lat != null && lon != null,
+    };
+  }, []);
+
+  const [date, setDate] = useState(() => initialParams.date ?? todayISO());
+  const [loc, setLoc] = useState<LocationChoice>(() =>
+    initialParams.hasLocation
+      ? {
+          place_name: initialParams.place ?? "Shared location",
+          latitude: initialParams.lat as number,
+          longitude: initialParams.lon as number,
+          timezone: initialParams.tz,
+        }
+      : defaultLocation,
+  );
   const [data, setData] = useState<PanchangData | null>(null);
   const [chart, setChart] = useState<ChartData | null>(null);
   // The HH:MM the lagna kundali is cast for. We use *current* wall-clock time
@@ -93,7 +132,9 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
   // the lagna co-rises with the sun and the chart looked frozen on Aries when
   // the sun was in Aries.
   const [chartTime, setChartTime] = useState<string>("");
-  const [chartStyle, setChartStyle] = useState<"north" | "south">("north");
+  const [chartStyle, setChartStyle] = useState<"north" | "south">(
+    () => initialParams.style ?? "north",
+  );
   const [loading, setLoading] = useState(false);
   const [chartLoading, setChartLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -153,6 +194,30 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
     run();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Reactive URL sync - every form change rewrites the query string so the
+  // user can copy the address bar at any moment. replaceState (not push) keeps
+  // the back stack clean across keystrokes. Prefer the backend-resolved tz
+  // (data.location.timezone) once available so a tz-null CitySearch pick still
+  // produces a complete shareable link after the first fetch.
+  useEffect(() => {
+    replaceSearch({
+      date,
+      lat: round4(loc.latitude),
+      lon: round4(loc.longitude),
+      tz: data?.location.timezone ?? loc.timezone ?? undefined,
+      place: loc.place_name || undefined,
+      style: chartStyle === "north" ? undefined : chartStyle,
+    });
+  }, [
+    date,
+    loc.latitude,
+    loc.longitude,
+    loc.timezone,
+    loc.place_name,
+    chartStyle,
+    data?.location.timezone,
+  ]);
 
   const useGeo = () => {
     if (!navigator.geolocation) {
@@ -273,12 +338,25 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     {formatLongDate(data.date)}
                   </h2>
                 </div>
-                <p className="text-mini text-ink-soft text-right">
-                  {loc.place_name}
-                  <br className="sm:hidden" />
-                  <span className="hidden sm:inline"> · </span>
-                  {data.location.timezone}
-                </p>
+                <div className="flex items-baseline gap-3 flex-wrap justify-end">
+                  <p className="text-mini text-ink-soft text-right">
+                    {loc.place_name}
+                    <br className="sm:hidden" />
+                    <span className="hidden sm:inline"> · </span>
+                    {data.location.timezone}
+                  </p>
+                  <ShareLinkButton
+                    testId="panchang-share-link"
+                    url={shareUrlFor("/", {
+                      date,
+                      lat: round4(loc.latitude),
+                      lon: round4(loc.longitude),
+                      tz: data.location.timezone,
+                      place: loc.place_name || undefined,
+                      style: chartStyle === "north" ? undefined : chartStyle,
+                    })}
+                  />
+                </div>
               </div>
             </div>
 

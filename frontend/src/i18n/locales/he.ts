@@ -257,6 +257,10 @@ const he: Record<string, string> = {
   gowri_header: "גוורי",
   nalla_neram_title: "נאלה נירם",
   nalla_neram_sub: "שעות מבורכות (צדק, נוגה, כוכב, ירח) - ללא ראהו קאלם, ימגנדם וגוליקה",
+
+  share_link_copy: "העתק קישור שיתוף",
+  share_link_copied: "הקישור הועתק",
+  share_link_failed: "ההעתקה נכשלה",
 };
 
 export default he;

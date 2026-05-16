@@ -256,7 +256,12 @@ const ru: Record<string, string> = {
 
   gowri_header: "Гоури",
   nalla_neram_title: "Налла Нерам",
-  nalla_neram_sub: "Благоприятные хоры (Юпитер, Венера, Меркурий, Луна) без Раху Калам, Ямаганда и Гулика",
+  nalla_neram_sub:
+    "Благоприятные хоры (Юпитер, Венера, Меркурий, Луна) без Раху Калам, Ямаганда и Гулика",
+
+  share_link_copy: "Скопировать ссылку",
+  share_link_copied: "Ссылка скопирована",
+  share_link_failed: "Не удалось скопировать",
 };
 
 export default ru;

@@ -257,6 +257,10 @@ const ta: Record<string, string> = {
   gowri_header: "கௌரி",
   nalla_neram_title: "நல்ல நேரம்",
   nalla_neram_sub: "சுப ஹோரை (குரு, சுக்கிரன், புதன், சந்திரன்) - ராகு காலம், எமகண்டம், குளிகை நீக்கியது",
+
+  share_link_copy: "இணைப்பை நகலெடு",
+  share_link_copied: "இணைப்பு நகலெடுக்கப்பட்டது",
+  share_link_failed: "நகலெடுக்க முடியவில்லை",
 };
 
 export default ta;

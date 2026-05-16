@@ -259,6 +259,10 @@ const en: Record<string, string> = {
   nalla_neram_title: "Nalla Neram",
   nalla_neram_sub:
     "Auspicious hora windows (Jupiter, Venus, Mercury, Moon) after removing Rahu Kalam, Yamagandam and Gulika",
+
+  share_link_copy: "Copy share link",
+  share_link_copied: "Link copied",
+  share_link_failed: "Could not copy",
 };
 
 export default en;

@@ -256,7 +256,12 @@ const fa: Record<string, string> = {
 
   gowri_header: "گوری",
   nalla_neram_title: "نالا نیرام",
-  nalla_neram_sub: "ساعات فرخنده (مشتری، زهره، عطارد، ماه) - پس از حذف راهو کالام، یاماگاندام و گولیکا",
+  nalla_neram_sub:
+    "ساعات فرخنده (مشتری، زهره، عطارد، ماه) - پس از حذف راهو کالام، یاماگاندام و گولیکا",
+
+  share_link_copy: "کپی پیوند اشتراک‌گذاری",
+  share_link_copied: "پیوند کپی شد",
+  share_link_failed: "کپی انجام نشد",
 };
 
 export default fa;

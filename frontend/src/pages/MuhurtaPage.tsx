@@ -1,11 +1,23 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { MandalaMark } from "@/components/common/MandalaMark";
+import { ShareLinkButton } from "@/components/common/ShareLinkButton";
 import { DatePicker } from "@/components/ui/date-picker";
 import { fetchMuhurtaPurposes, findMuhurtas } from "@/lib/api";
 import { formatDayMonthYear, formatTimeRange, todayISO, daysFromNow } from "@/lib/format";
+import {
+  parseDate,
+  parseFloat3,
+  parseIntIn,
+  parseStr,
+  parseTz,
+  readSearch,
+  replaceSearch,
+  round4,
+  shareUrlFor,
+} from "@/lib/urlState";
 import type {
   AuspiciousWindow,
   LocationChoice,
@@ -173,10 +185,7 @@ function ShubhMuhuratGrid({ m, tz }: { m: MuhurtaResult; tz?: string }) {
   return (
     <div className="mt-5 pt-4 border-t border-parchment-200">
       <p className="eyebrow-accent mb-2">{t("muhurta_shubh_section")}</p>
-      <div
-        data-testid="muhurta-shubh-grid"
-        className="grid grid-cols-2 sm:grid-cols-3 gap-3"
-      >
+      <div data-testid="muhurta-shubh-grid" className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {fixed.map(
           (f) =>
             f.win && (
@@ -204,13 +213,48 @@ function ShubhMuhuratGrid({ m, tz }: { m: MuhurtaResult; tz?: string }) {
 
 export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoice }) {
   const { t } = useI18n();
+
+  // Snapshot URL params once on mount. We seed the form from them and, if a
+  // location is present, kick off an initial submit so a shared link renders
+  // results without a manual click.
+  const initialParams = useMemo(() => {
+    const sp = readSearch();
+    const lat = parseFloat3(sp.get("lat"), -90, 90);
+    const lon = parseFloat3(sp.get("lon"), -180, 180);
+    return {
+      purpose: parseStr(sp.get("purpose"), 40),
+      start: parseDate(sp.get("start")),
+      end: parseDate(sp.get("end")),
+      lat,
+      lon,
+      tz: parseTz(sp.get("tz")),
+      place: parseStr(sp.get("place"), 120),
+      rashi: parseIntIn(sp.get("rashi"), 1, 12),
+      nakshatra: parseIntIn(sp.get("nakshatra"), 1, 27),
+      hasLocation: lat != null && lon != null,
+    };
+  }, []);
+
   const [purposes, setPurposes] = useState<MuhurtaPurpose[]>([]);
-  const [purpose, setPurpose] = useState("marriage");
-  const [startDate, setStartDate] = useState(todayISO());
-  const [endDate, setEndDate] = useState(daysFromNow(30));
-  const [loc, setLoc] = useState<LocationChoice>(defaultLocation);
-  const [birthRashiId, setBirthRashiId] = useState<string>("");
-  const [birthNakId, setBirthNakId] = useState<string>("");
+  const [purpose, setPurpose] = useState(initialParams.purpose ?? "marriage");
+  const [startDate, setStartDate] = useState(initialParams.start ?? todayISO());
+  const [endDate, setEndDate] = useState(initialParams.end ?? daysFromNow(30));
+  const [loc, setLoc] = useState<LocationChoice>(() =>
+    initialParams.hasLocation
+      ? {
+          place_name: initialParams.place ?? "Shared location",
+          latitude: initialParams.lat as number,
+          longitude: initialParams.lon as number,
+          timezone: initialParams.tz,
+        }
+      : defaultLocation,
+  );
+  const [birthRashiId, setBirthRashiId] = useState<string>(
+    initialParams.rashi != null ? String(initialParams.rashi) : "",
+  );
+  const [birthNakId, setBirthNakId] = useState<string>(
+    initialParams.nakshatra != null ? String(initialParams.nakshatra) : "",
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MuhurtaResponse | null>(null);
@@ -260,6 +304,47 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
       setLoading(false);
     }
   };
+
+  // Auto-submit once on mount when the URL carries a complete-enough request.
+  // We need at least a location (lat/lon) for the search to make sense; the
+  // other fields fall back to today / 30-day window / no birth filter.
+  const didAutoRunRef = useRef(false);
+  useEffect(() => {
+    if (didAutoRunRef.current) return;
+    if (!initialParams.hasLocation) return;
+    didAutoRunRef.current = true;
+    submit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Reactive URL sync - every dropdown / date / city change rewrites the query
+  // string so the user can copy the address bar at any time, even before
+  // clicking "Find Muhurtas". Prefer the backend-resolved tz once available so
+  // a CitySearch pick (which sets tz:null) still produces a complete link.
+  useEffect(() => {
+    replaceSearch({
+      purpose,
+      start: startDate,
+      end: endDate,
+      lat: round4(loc.latitude),
+      lon: round4(loc.longitude),
+      tz: result?.location?.timezone ?? loc.timezone ?? undefined,
+      place: loc.place_name || undefined,
+      rashi: birthRashiId || undefined,
+      nakshatra: birthNakId || undefined,
+    });
+  }, [
+    purpose,
+    startDate,
+    endDate,
+    loc.latitude,
+    loc.longitude,
+    loc.timezone,
+    loc.place_name,
+    birthRashiId,
+    birthNakId,
+    result?.location?.timezone,
+  ]);
 
   return (
     <section
@@ -405,8 +490,26 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
         {result && (
           <>
             <div data-testid="muhurta-summary" className="card p-4 sm:p-5">
-              <p className="eyebrow-accent">{result.purpose_label}</p>
-              <h3 className="heading-section">{t("muhurta_results")}</h3>
+              <div className="flex items-start justify-between gap-3 flex-wrap">
+                <div>
+                  <p className="eyebrow-accent">{result.purpose_label}</p>
+                  <h3 className="heading-section">{t("muhurta_results")}</h3>
+                </div>
+                <ShareLinkButton
+                  testId="muhurta-share-link"
+                  url={shareUrlFor("/muhurta", {
+                    purpose,
+                    start: startDate,
+                    end: endDate,
+                    lat: round4(loc.latitude),
+                    lon: round4(loc.longitude),
+                    tz: result.location?.timezone ?? loc.timezone ?? undefined,
+                    place: loc.place_name || undefined,
+                    rashi: birthRashiId || undefined,
+                    nakshatra: birthNakId || undefined,
+                  })}
+                />
+              </div>
               <div className="flex flex-wrap gap-x-5 gap-y-1 text-meta text-ink mt-2">
                 <div>
                   <span className="text-ink-soft">{result.date_range.days_scanned}</span>{" "}
