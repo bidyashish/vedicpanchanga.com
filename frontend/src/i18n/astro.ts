@@ -228,6 +228,11 @@ const HI: Dict = {
   karaka_gnatikaraka: "ज्ञातिकारक",
   karaka_darakaraka: "दारकारक",
   karaka_pitrukaraka: "पितृकारक",
+
+  yogam_amrita: "अमृत",
+  yogam_siddha: "सिद्ध",
+  yogam_marana: "मरण",
+  yogam_prabalarishta: "प्रबलारिष्ट",
 };
 
 const TA: Dict = {
@@ -450,6 +455,11 @@ const TA: Dict = {
   karaka_gnatikaraka: "ஞாதிகாரகம்",
   karaka_darakaraka: "தாரகாரகம்",
   karaka_pitrukaraka: "பித்ருகாரகம்",
+
+  yogam_amrita: "அமிர்தம்",
+  yogam_siddha: "சித்தம்",
+  yogam_marana: "மரணம்",
+  yogam_prabalarishta: "பிரபலாரிஷ்டம்",
 };
 
 const ZH: Dict = {
@@ -1977,6 +1987,11 @@ const BN: Dict = {
   karaka_gnatikaraka: "জ্ঞাতিকারক",
   karaka_darakaraka: "দারকারক",
   karaka_pitrukaraka: "পিতৃকারক",
+
+  yogam_amrita: "অমৃত",
+  yogam_siddha: "সিদ্ধ",
+  yogam_marana: "মরণ",
+  yogam_prabalarishta: "প্রবলারিষ্ট",
 };
 
 // Nepali uses Devanagari and shares Vedic vocabulary with Hindi - reuse HI.
@@ -2075,5 +2090,6 @@ export function useAstro() {
     samvatsara: (n: string) => n,
     gowri: (n: string) => (n ? lookup("gowri", n, lang) : n),
     karaka: (n: string) => (n ? lookup("karaka", n, lang) : n),
+    yogam: (n: string) => (n ? lookup("yogam", n, lang) : n),
   };
 }

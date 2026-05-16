@@ -269,6 +269,21 @@ const he: Record<string, string> = {
   muhurta_ganda_mula_desc: "הימנע מהתחלות חדשות",
   muhurta_moon_in: "ירח ב",
 
+  tyajyam_title: "טיאג'יאם (תקופות להימנעות)",
+  tyajyam_sub: "תקופות לא מבורכות בנקשטרה, טיתהי ויום השבוע הנוכחיים",
+  tyajyam_nakshatra: "נקשטרה טיאג'יאם",
+  tyajyam_nakshatra_desc: "תקופה לא מבורכת של 96 דקות בנקשטרה",
+  tyajyam_tithi: "טיתהי טיאג'יאם",
+  tyajyam_tithi_desc: "תקופה לא מבורכת של 96 דקות בטיתהי",
+  tyajyam_vara: "וארה טיאג'יאם",
+  tyajyam_vara_desc: "תקופת הימנעות של 90 דקות מהזריחה",
+  amritadi_title: "אמריטאדי יוגאם",
+  amritadi_sub: "איכות שילוב יום-נקשטרה",
+  amritadi_amrita: "אמריטא יוגאם - מבורך מאוד",
+  amritadi_siddha: "סידהא יוגאם - מבורך",
+  amritadi_marana: "מאראנא יוגאם - לא מבורך",
+  amritadi_prabalarishta: "פראבאלאריישטא יוגאם - לא מבורך מאוד",
+
   footer_privacy: "פרטיות",
   footer_terms: "תנאים",
 

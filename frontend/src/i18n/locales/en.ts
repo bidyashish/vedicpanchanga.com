@@ -269,6 +269,21 @@ const en: Record<string, string> = {
   muhurta_ganda_mula_desc: "avoid new starts",
   muhurta_moon_in: "Moon in",
 
+  tyajyam_title: "Tyajyam (Avoidance Periods)",
+  tyajyam_sub: "Inauspicious windows within the current nakshatra, tithi, and weekday",
+  tyajyam_nakshatra: "Nakshatra Tyajyam",
+  tyajyam_nakshatra_desc: "96-min inauspicious window within nakshatra",
+  tyajyam_tithi: "Tithi Tyajyam",
+  tyajyam_tithi_desc: "96-min inauspicious window within tithi",
+  tyajyam_vara: "Vara Tyajyam",
+  tyajyam_vara_desc: "90-min weekday avoidance period from sunrise",
+  amritadi_title: "Amritadi Yogam",
+  amritadi_sub: "Weekday and nakshatra combination quality",
+  amritadi_amrita: "Amrita Yogam - highly auspicious",
+  amritadi_siddha: "Siddha Yogam - auspicious",
+  amritadi_marana: "Marana Yogam - inauspicious",
+  amritadi_prabalarishta: "Prabalarishta Yogam - highly inauspicious",
+
   footer_privacy: "Privacy",
   footer_terms: "Terms",
 

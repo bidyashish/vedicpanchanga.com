@@ -269,6 +269,21 @@ const ar: Record<string, string> = {
   muhurta_ganda_mula_desc: "تجنّب البدايات الجديدة",
   muhurta_moon_in: "القمر في",
 
+  tyajyam_title: "تياجيام (فترات التجنب)",
+  tyajyam_sub: "فترات غير ميمونة ضمن الناكشاترا والتيثي واليوم الحاليين",
+  tyajyam_nakshatra: "ناكشاترا تياجيام",
+  tyajyam_nakshatra_desc: "فترة غير ميمونة 96 دقيقة ضمن الناكشاترا",
+  tyajyam_tithi: "تيثي تياجيام",
+  tyajyam_tithi_desc: "فترة غير ميمونة 96 دقيقة ضمن التيثي",
+  tyajyam_vara: "فارا تياجيام",
+  tyajyam_vara_desc: "فترة تجنب 90 دقيقة من شروق الشمس",
+  amritadi_title: "أمريتادي يوغام",
+  amritadi_sub: "جودة تركيبة اليوم والناكشاترا",
+  amritadi_amrita: "أمريتا يوغام - ميمون جدا",
+  amritadi_siddha: "سيدها يوغام - ميمون",
+  amritadi_marana: "مارانا يوغام - غير ميمون",
+  amritadi_prabalarishta: "برابالاريشتا يوغام - غير ميمون جدا",
+
   footer_privacy: "الخصوصية",
   footer_terms: "الشروط",
 

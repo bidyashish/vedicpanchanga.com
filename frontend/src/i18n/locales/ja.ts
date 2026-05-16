@@ -269,6 +269,21 @@ const ja: Record<string, string> = {
   muhurta_ganda_mula_desc: "新規開始を避ける",
   muhurta_moon_in: "月の位置",
 
+  tyajyam_title: "回避時間帯",
+  tyajyam_sub: "現在のナクシャトラ、ティティ、曜日における不吉な時間帯",
+  tyajyam_nakshatra: "ナクシャトラ回避",
+  tyajyam_nakshatra_desc: "ナクシャトラ内の96分不吉時間帯",
+  tyajyam_tithi: "ティティ回避",
+  tyajyam_tithi_desc: "ティティ内の96分不吉時間帯",
+  tyajyam_vara: "曜日回避",
+  tyajyam_vara_desc: "日の出から90分の曜日回避時間帯",
+  amritadi_title: "アムリタディ・ヨーガ",
+  amritadi_sub: "曜日とナクシャトラの組み合わせの質",
+  amritadi_amrita: "アムリタ・ヨーガ - 極めて吉",
+  amritadi_siddha: "シッダ・ヨーガ - 吉",
+  amritadi_marana: "マラナ・ヨーガ - 凶",
+  amritadi_prabalarishta: "プラバラリシュタ・ヨーガ - 極凶",
+
   footer_privacy: "プライバシー",
   footer_terms: "利用規約",
 

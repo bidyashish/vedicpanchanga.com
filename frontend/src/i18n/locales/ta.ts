@@ -269,6 +269,21 @@ const ta: Record<string, string> = {
   muhurta_ganda_mula_desc: "புதிய தொடக்கங்களைத் தவிர்க்கவும்",
   muhurta_moon_in: "சந்திரன்",
 
+  tyajyam_title: "தியாஜ்யம் (தவிர்க்க வேண்டிய நேரம்)",
+  tyajyam_sub: "தற்போதைய நட்சத்திரம், திதி மற்றும் வாரத்தில் அசுப நேரங்கள்",
+  tyajyam_nakshatra: "நட்சத்திர தியாஜ்யம்",
+  tyajyam_nakshatra_desc: "நட்சத்திரத்தில் 96 நிமிட அசுப காலம்",
+  tyajyam_tithi: "திதி தியாஜ்யம்",
+  tyajyam_tithi_desc: "திதியில் 96 நிமிட அசுப காலம்",
+  tyajyam_vara: "வார தியாஜ்யம்",
+  tyajyam_vara_desc: "சூரிய உதயத்திலிருந்து 90 நிமிட வார தவிர்ப்பு காலம்",
+  amritadi_title: "அமிர்தாதி யோகம்",
+  amritadi_sub: "வாரம் மற்றும் நட்சத்திர இணைப்பு தரம்",
+  amritadi_amrita: "அமிர்த யோகம் - மிகவும் சுபம்",
+  amritadi_siddha: "சித்த யோகம் - சுபம்",
+  amritadi_marana: "மரண யோகம் - அசுபம்",
+  amritadi_prabalarishta: "பிரபலாரிஷ்ட யோகம் - மிகவும் அசுபம்",
+
   footer_privacy: "தனியுரிமை",
   footer_terms: "விதிமுறைகள்",
 

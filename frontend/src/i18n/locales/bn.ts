@@ -268,6 +268,21 @@ const bn: Record<string, string> = {
   muhurta_ganda_mula_desc: "নতুন আরম্ভ এড়িয়ে চলুন",
   muhurta_moon_in: "চন্দ্র",
 
+  tyajyam_title: "ত্যাজ্যম (বর্জনীয় সময়)",
+  tyajyam_sub: "বর্তমান নক্ষত্র, তিথি ও বারে অশুভ সময়কাল",
+  tyajyam_nakshatra: "নক্ষত্র ত্যাজ্যম",
+  tyajyam_nakshatra_desc: "নক্ষত্রের মধ্যে 96 মিনিট অশুভ কাল",
+  tyajyam_tithi: "তিথি ত্যাজ্যম",
+  tyajyam_tithi_desc: "তিথির মধ্যে 96 মিনিট অশুভ কাল",
+  tyajyam_vara: "বার ত্যাজ্যম",
+  tyajyam_vara_desc: "সূর্যোদয় থেকে 90 মিনিট বার-বর্জন কাল",
+  amritadi_title: "অমৃতাদি যোগম",
+  amritadi_sub: "বার ও নক্ষত্র সংযোজন গুণমান",
+  amritadi_amrita: "অমৃত যোগম - অত্যন্ত শুভ",
+  amritadi_siddha: "সিদ্ধ যোগম - শুভ",
+  amritadi_marana: "মরণ যোগম - অশুভ",
+  amritadi_prabalarishta: "প্রবলারিষ্ট যোগম - অত্যন্ত অশুভ",
+
   footer_privacy: "গোপনীয়তা",
   footer_terms: "শর্তাবলী",
 

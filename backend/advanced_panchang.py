@@ -27,6 +27,7 @@ from gowri_panchang import compute_gowri_panchang
 from hora import compute_hora
 from nalla_neram import compute_nalla_neram
 from tamil_calendar import compute_tamil_calendar
+from tyajyam import compute_tyajyam
 from panchang_constants import (
     CHANDRA_MASA,
     CHANDRA_VASA,
@@ -982,6 +983,17 @@ def compute_detailed_panchang(
     va = _compute_varjyam_amrit(naks_with_bounds, tz)
     siddhi = _compute_siddhi_yogas(naks_with_bounds, vara_iso, tz)
 
+    # Tyajyam (nakshatra, tithi, vara, amritadi yogam)
+    tyajyam = compute_tyajyam(
+        nakshatras_with_bounds=naks_with_bounds,
+        tithis_in_window=tithis,
+        sunrise_jd=sunrise_jd,
+        next_sunrise_jd=next_sunrise_jd,
+        weekday_iso=vara_iso,
+        iso_fn=_iso,
+        tz=tz,
+    )
+
     # Bhadra (any Vishti karana period in window) - compute start/end
     bhadra = []
     prev_end_jd = ref_jd
@@ -1207,6 +1219,7 @@ def compute_detailed_panchang(
         },
         "gowri_panchang": gowri,
         "hora": hora,
+        "tyajyam": tyajyam,
         "nalla_neram": nalla,
         "tamil_calendar": tamil_cal,
         "calendars": {

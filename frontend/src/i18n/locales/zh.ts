@@ -269,6 +269,21 @@ const zh: Record<string, string> = {
   muhurta_ganda_mula_desc: "避免新启",
   muhurta_moon_in: "月在",
 
+  tyajyam_title: "避忌时段",
+  tyajyam_sub: "当前星宿、月相及星期中的不吉时段",
+  tyajyam_nakshatra: "星宿避忌",
+  tyajyam_nakshatra_desc: "星宿内96分钟不吉时段",
+  tyajyam_tithi: "月相避忌",
+  tyajyam_tithi_desc: "月相内96分钟不吉时段",
+  tyajyam_vara: "星期避忌",
+  tyajyam_vara_desc: "日出起90分钟星期回避时段",
+  amritadi_title: "甘露瑜伽",
+  amritadi_sub: "星期与星宿组合质量",
+  amritadi_amrita: "甘露瑜伽 - 极吉",
+  amritadi_siddha: "成就瑜伽 - 吉",
+  amritadi_marana: "死亡瑜伽 - 凶",
+  amritadi_prabalarishta: "大凶瑜伽 - 极凶",
+
   footer_privacy: "隐私",
   footer_terms: "条款",
 

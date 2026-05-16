@@ -10,6 +10,7 @@ import { NallaNeram } from "@/components/panchang/NallaNeram";
 import { Section } from "@/components/panchang/Section";
 import { TimeBand } from "@/components/panchang/TimeBand";
 import { VedicChart } from "@/components/kundali/VedicChart";
+import type { PlanetStatus } from "@/components/kundali/VedicChart";
 import { SouthIndianChart } from "@/components/kundali/SouthIndianChart";
 import { PlanetsTable } from "@/components/kundali/PlanetsTable";
 import { SegmentedControl } from "@/components/ui/segmented-control";
@@ -198,6 +199,17 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
       setLoading(false);
     }
   };
+
+  const chartPlanetStatus = useMemo(() => {
+    if (!chart) return undefined;
+    const map: Record<string, PlanetStatus> = {};
+    for (const p of chart.planets_data) {
+      if (p.retrograde || p.combust) {
+        map[p.abbr] = { retrograde: p.retrograde, combust: !!p.combust };
+      }
+    }
+    return Object.keys(map).length ? map : undefined;
+  }, [chart]);
 
   // StrictMode in dev fires effects twice; guard so the initial fetch only
   // hits the backend once. Production builds run effects once and ignore this.
@@ -431,6 +443,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                           title={t("rashi_chart_title")}
                           testId="lagna-chart-south"
                           planetDegrees={chart.vargas?.d1?.planet_degrees}
+                          planetStatus={chartPlanetStatus}
                           showDegrees={showDegrees}
                         />
                       ) : (
@@ -440,6 +453,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                           title={t("rashi_chart_title")}
                           testId="lagna-chart-north"
                           planetDegrees={chart.vargas?.d1?.planet_degrees}
+                          planetStatus={chartPlanetStatus}
                           showDegrees={showDegrees}
                         />
                       )}
@@ -857,6 +871,74 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 )}
               </div>
             </Section>
+
+            {data.tyajyam && (
+              <Section
+                title={t("tyajyam_title")}
+                subtitle={t("tyajyam_sub")}
+                testId="section-tyajyam"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {data.tyajyam.nakshatra_tyajyam.map((nt, i) => (
+                    <TimeBand
+                      key={`nt-${i}`}
+                      testId={`band-nak-tyajyam-${i}`}
+                      title={t("tyajyam_nakshatra")}
+                      window={nt}
+                      color="var(--danger)"
+                      desc={`${t("tyajyam_nakshatra_desc")} · ${a.nakshatra(nt.nakshatra)}`}
+                      tz={tz}
+                      refDate={refDate}
+                    />
+                  ))}
+                  {data.tyajyam.tithi_tyajyam.map((tt, i) => (
+                    <TimeBand
+                      key={`tt-${i}`}
+                      testId={`band-tithi-tyajyam-${i}`}
+                      title={t("tyajyam_tithi")}
+                      window={tt}
+                      color="var(--danger)"
+                      desc={`${t("tyajyam_tithi_desc")} · ${a.tithi(tt.tithi)}`}
+                      tz={tz}
+                      refDate={refDate}
+                    />
+                  ))}
+                  {data.tyajyam.vara_tyajyam && (
+                    <TimeBand
+                      testId="band-vara-tyajyam"
+                      title={t("tyajyam_vara")}
+                      window={data.tyajyam.vara_tyajyam}
+                      color="var(--accent-sun)"
+                      desc={t("tyajyam_vara_desc")}
+                      tz={tz}
+                      refDate={refDate}
+                    />
+                  )}
+                  {data.tyajyam.amritadi_yogam.map((ay, i) => (
+                    <TimeBand
+                      key={`ay-${i}`}
+                      testId={`band-amritadi-${i}`}
+                      title={`${t("amritadi_title")} · ${a.yogam(ay.yogam)}`}
+                      window={ay}
+                      color={
+                        ay.yogam === "Amrita"
+                          ? "var(--success)"
+                          : ay.yogam === "Siddha"
+                            ? "var(--success)"
+                            : ay.yogam === "Marana"
+                              ? "var(--danger)"
+                              : ay.yogam === "Prabalarishta"
+                                ? "var(--danger)"
+                                : "var(--ink-soft)"
+                      }
+                      desc={`${a.nakshatra(ay.nakshatra)} · ${t(`amritadi_${ay.yogam.toLowerCase()}`)}`}
+                      tz={tz}
+                      refDate={refDate}
+                    />
+                  ))}
+                </div>
+              </Section>
+            )}
 
             <Section
               title={t("udaya_lagna_title")}

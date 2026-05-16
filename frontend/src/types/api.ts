@@ -315,6 +315,12 @@ export interface PanchangData {
     ganda_mula?: { nakshatra: string; ends_at: string } | null;
     ravi_yoga?: { start: string; end: string } | null;
   };
+  tyajyam?: {
+    nakshatra_tyajyam: (MuhurtaWindow & { nakshatra: string })[];
+    tithi_tyajyam: (MuhurtaWindow & { tithi: string })[];
+    vara_tyajyam?: MuhurtaWindow;
+    amritadi_yogam: (MuhurtaWindow & { nakshatra: string; yogam: string })[];
+  };
   gowri_panchang?: {
     day: LabelledSegment[];
     night: LabelledSegment[];

@@ -269,6 +269,21 @@ const es: Record<string, string> = {
   muhurta_ganda_mula_desc: "Evita nuevos inicios",
   muhurta_moon_in: "Luna en",
 
+  tyajyam_title: "Tyajyam (Periodos a evitar)",
+  tyajyam_sub: "Periodos desfavorables dentro del nakshatra, tithi y dia de la semana actuales",
+  tyajyam_nakshatra: "Nakshatra Tyajyam",
+  tyajyam_nakshatra_desc: "Periodo desfavorable de 96 min dentro del nakshatra",
+  tyajyam_tithi: "Tithi Tyajyam",
+  tyajyam_tithi_desc: "Periodo desfavorable de 96 min dentro del tithi",
+  tyajyam_vara: "Vara Tyajyam",
+  tyajyam_vara_desc: "Periodo de 90 min a evitar desde el amanecer",
+  amritadi_title: "Amritadi Yogam",
+  amritadi_sub: "Calidad de la combinacion dia-nakshatra",
+  amritadi_amrita: "Amrita Yogam - altamente auspicioso",
+  amritadi_siddha: "Siddha Yogam - auspicioso",
+  amritadi_marana: "Marana Yogam - desfavorable",
+  amritadi_prabalarishta: "Prabalarishta Yogam - altamente desfavorable",
+
   footer_privacy: "Privacidad",
   footer_terms: "Términos",
 
