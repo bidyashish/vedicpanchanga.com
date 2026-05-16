@@ -1,0 +1,18 @@
+[
+  {
+    "id": "welcome-2026-05",
+    "message": "This site is new! Try it out and help us improve.",
+    "linkText": "Raise an issue on GitHub",
+    "linkUrl": "https://github.com/bidyashish/vedicpanchanga.com/issues",
+    "showUntil": "2026-08-31",
+    "newVisitorOnly": true
+  },
+  {
+    "id": "cookies-2026-05",
+    "message": "This site uses cookies and local storage to remember your preferences and serve ads via Google AdSense.",
+    "linkText": "Privacy Policy",
+    "linkUrl": "/privacy",
+    "showUntil": "2099-12-31",
+    "newVisitorOnly": false
+  }
+]

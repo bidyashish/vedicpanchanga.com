@@ -456,6 +456,7 @@ def compute_chart(
     ashtakavarga = compute_ashtakavarga(planets, asc_sign)
 
     # Jaimini karakas + Karakamsa / Swamsa
+    from drishti import compute_aspects
     from jaimini import compute_chara_karakas, compute_karakamsa_swamsa
     from kalsarpa import analyse_kalsarpa
     from relationships import compute_friendship_tables
@@ -479,6 +480,7 @@ def compute_chart(
     karakamsa_swamsa = compute_karakamsa_swamsa(planets_list, karakas, asc_lon)
     friendships = compute_friendship_tables(planets_list)
     kalsarpa = analyse_kalsarpa(planets_list, asc_sign)
+    drishti = compute_aspects(planets_list, asc_sign)
 
     return {
         "birth": {
@@ -510,6 +512,7 @@ def compute_chart(
         "friendships": friendships,
         "kalsarpa": kalsarpa,
         "ashtakavarga": ashtakavarga,
+        "drishti": drishti,
     }
 
 

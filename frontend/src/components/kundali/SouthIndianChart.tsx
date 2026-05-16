@@ -1,4 +1,4 @@
-import type { HouseMap } from "@/types/api";
+import type { DrishtiData, HouseMap } from "@/types/api";
 import { planetColor, planetTitle, SIGN_SHORT } from "@/lib/planets";
 import { useAstro } from "@/i18n/astro";
 import { OmGlyph } from "@/components/kundali/OmGlyph";
@@ -18,6 +18,10 @@ const CELL_POSITIONS: Record<number, { x: number; y: number }> = {
   11: { x: 0, y: 125 },
 };
 
+const CELL_CENTERS: Record<number, { x: number; y: number }> = Object.fromEntries(
+  Object.entries(CELL_POSITIONS).map(([k, v]) => [k, { x: v.x + 62.5, y: v.y + 62.5 }]),
+);
+
 interface Props {
   houseMap?: HouseMap;
   ascSign: number;
@@ -25,6 +29,10 @@ interface Props {
   testId?: string;
   planetDegrees?: Record<string, number>;
   showDegrees?: boolean;
+  selectedPlanet?: string | null;
+  onSelectPlanet?: (abbr: string | null) => void;
+  drishti?: DrishtiData;
+  showAspects?: boolean;
 }
 
 function orderPlanets(planets: string[], degrees?: Record<string, number>): string[] {
@@ -41,6 +49,10 @@ function orderPlanets(planets: string[], degrees?: Record<string, number>): stri
 
 const formatDegree = (deg: number) => String(Math.floor(deg)).padStart(2, "0");
 
+function houseToSign(house: number, ascSign: number): number {
+  return ((ascSign - 1 + (house - 1)) % 12) + 1;
+}
+
 export function SouthIndianChart({
   houseMap,
   ascSign,
@@ -48,6 +60,10 @@ export function SouthIndianChart({
   testId,
   planetDegrees,
   showDegrees,
+  selectedPlanet,
+  onSelectPlanet,
+  drishti,
+  showAspects,
 }: Props) {
   const a = useAstro();
   const signToPlanets: Record<number, string[]> = {};
@@ -65,6 +81,12 @@ export function SouthIndianChart({
   const dimCol = "var(--ink-soft)";
   const innerSurface = "var(--surface-soft)";
   const baseSurface = "var(--surface)";
+
+  const activeAspects = showAspects && selectedPlanet && drishti?.by_planet[selectedPlanet];
+  const aspectedHouses = activeAspects
+    ? new Set(drishti!.by_planet[selectedPlanet!].aspected_houses)
+    : null;
+  const fromHouse = activeAspects ? drishti!.by_planet[selectedPlanet!].house : null;
 
   return (
     <div className="w-full" data-testid={testId}>
@@ -111,13 +133,55 @@ export function SouthIndianChart({
           />
           <OmGlyph cx={250} cy={250} size={70} color="var(--primary)" opacity={0.76} />
 
+          {activeAspects && fromHouse != null && aspectedHouses && (
+            <g className="aspect-lines">
+              {drishti!.by_planet[selectedPlanet!].details.map((d) => {
+                const fromSign = houseToSign(fromHouse, ascSign);
+                const toSign = houseToSign(d.to_house, ascSign);
+                const from = CELL_CENTERS[fromSign];
+                const to = CELL_CENTERS[toSign];
+                if (!from || !to) return null;
+                const isSpecial = d.aspect_type === "special";
+                const color = d.benefic ? "var(--success)" : "var(--danger)";
+                return (
+                  <line
+                    key={`line-${d.to_house}`}
+                    x1={from.x}
+                    y1={from.y}
+                    x2={to.x}
+                    y2={to.y}
+                    stroke={color}
+                    strokeWidth={isSpecial ? 2.5 : 1.8}
+                    strokeDasharray={isSpecial ? "none" : "6 4"}
+                    opacity={0.7}
+                    className="transition-opacity duration-200"
+                  />
+                );
+              })}
+            </g>
+          )}
+
           {Array.from({ length: 12 }, (_, i) => i + 1).map((sign) => {
             const pos = CELL_POSITIONS[sign];
             const isAscSign = sign === ascSign;
             const houseNum = ((sign - ascSign + 12) % 12) + 1;
             const planets = signToPlanets[sign] ?? [];
+            const isAspected = aspectedHouses?.has(houseNum) ?? false;
+            const isSource = fromHouse === houseNum;
             return (
               <g key={sign} data-testid={`${testId}-cell-${sign}`}>
+                {(isAspected || isSource) && (
+                  <rect
+                    x={pos.x + 2}
+                    y={pos.y + 2}
+                    width={CELL - 4}
+                    height={CELL - 4}
+                    rx={4}
+                    fill={isSource ? planetColor(selectedPlanet!) : "var(--success)"}
+                    opacity={0.1}
+                    className="transition-opacity duration-200"
+                  />
+                )}
                 {isAscSign && (
                   <>
                     <line
@@ -179,16 +243,26 @@ export function SouthIndianChart({
                   const rowGap = showDeg ? 16 : 20;
                   const py = pos.y + (showDeg ? 62 : 70) + rowIdx * rowGap;
                   const label = showDeg ? `${a.abbr(abbr)} ${formatDegree(deg)}` : a.abbr(abbr);
+                  const isSelected = selectedPlanet === abbr;
+                  const dimmed = showAspects && selectedPlanet && !isSelected ? 0.4 : 1;
+                  const clickable = onSelectPlanet;
                   return (
-                    <g key={`${sign}-${idx}`}>
+                    <g
+                      key={`${sign}-${idx}`}
+                      onClick={
+                        clickable ? () => onSelectPlanet!(isSelected ? null : abbr) : undefined
+                      }
+                      style={{ cursor: clickable ? "pointer" : "default" }}
+                    >
                       <title>{planetTitle(abbr)}</title>
                       <text
                         x={px}
                         y={py}
                         fontSize={showDeg ? 14 : 18}
-                        fontWeight="600"
+                        fontWeight={isSelected ? 900 : 600}
                         className="font-serif"
                         style={{ fill: planetColor(abbr) }}
+                        opacity={dimmed}
                       >
                         {label}
                       </text>

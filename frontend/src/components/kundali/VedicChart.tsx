@@ -1,4 +1,4 @@
-import type { HouseMap } from "@/types/api";
+import type { DrishtiData, HouseMap } from "@/types/api";
 import { planetColor, planetTitle } from "@/lib/planets";
 import { useAstro } from "@/i18n/astro";
 import { OmGlyph } from "@/components/kundali/OmGlyph";
@@ -43,6 +43,10 @@ interface Props {
   testId?: string;
   planetDegrees?: Record<string, number>;
   showDegrees?: boolean;
+  selectedPlanet?: string | null;
+  onSelectPlanet?: (abbr: string | null) => void;
+  drishti?: DrishtiData;
+  showAspects?: boolean;
 }
 
 function orderPlanets(planets: string[], degrees?: Record<string, number>): string[] {
@@ -66,16 +70,25 @@ export function VedicChart({
   testId,
   planetDegrees,
   showDegrees,
+  selectedPlanet,
+  onSelectPlanet,
+  drishti,
+  showAspects,
 }: Props) {
   const a = useAstro();
   const signForHouse = (h: number) => ((ascSign - 1 + (h - 1)) % 12) + 1;
 
-  // CSS variables resolved at render so colours follow the active theme.
   const lineCol = "var(--ink-soft)";
   const innerCol = "var(--accent-amber)";
   const signCol = "var(--primary)";
   const surfaceCol = "var(--surface)";
   const ascCol = "var(--primary)";
+
+  const activeAspects = showAspects && selectedPlanet && drishti?.by_planet[selectedPlanet];
+  const aspectedHouses = activeAspects
+    ? new Set(drishti!.by_planet[selectedPlanet!].aspected_houses)
+    : null;
+  const fromHouse = activeAspects ? drishti!.by_planet[selectedPlanet!].house : null;
 
   return (
     <div className="w-full" data-testid={testId}>
@@ -119,13 +132,51 @@ export function VedicChart({
           />
           <OmGlyph cx={250} cy={250} size={70} color="var(--primary)" opacity={0.76} />
 
+          {activeAspects && fromHouse != null && aspectedHouses && (
+            <g className="aspect-lines">
+              {drishti!.by_planet[selectedPlanet!].details.map((d) => {
+                const from = HOUSE_CENTROIDS[fromHouse];
+                const to = HOUSE_CENTROIDS[d.to_house];
+                if (!from || !to) return null;
+                const isSpecial = d.aspect_type === "special";
+                const color = d.benefic ? "var(--success)" : "var(--danger)";
+                return (
+                  <line
+                    key={`line-${d.to_house}`}
+                    x1={from.x}
+                    y1={from.y}
+                    x2={to.x}
+                    y2={to.y}
+                    stroke={color}
+                    strokeWidth={isSpecial ? 2.5 : 1.8}
+                    strokeDasharray={isSpecial ? "none" : "6 4"}
+                    opacity={0.7}
+                    className="transition-opacity duration-200"
+                  />
+                );
+              })}
+            </g>
+          )}
+
           {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => {
             const c = HOUSE_CENTROIDS[h];
             const sign = signForHouse(h);
             const planets = orderPlanets(houseMap?.[h] ?? [], planetDegrees);
             const labelPos = SIGN_LABEL_POSITIONS[h];
+            const isAspected = aspectedHouses?.has(h) ?? false;
+            const isSource = fromHouse === h;
             return (
               <g key={h} data-testid={`${testId}-house-${h}`}>
+                {(isAspected || isSource) && (
+                  <circle
+                    cx={c.x}
+                    cy={c.y}
+                    r={40}
+                    fill={isSource ? planetColor(selectedPlanet!) : "var(--success)"}
+                    opacity={0.1}
+                    className="transition-opacity duration-200"
+                  />
+                )}
                 <text
                   x={labelPos.x}
                   y={labelPos.y}
@@ -151,9 +202,29 @@ export function VedicChart({
                   const yOffset = yStart + rowIdx * rowGap;
                   const isAsc = abbr === "As" || abbr === "Lg";
                   const label = showDeg ? `${a.abbr(abbr)} ${formatDegree(deg)}` : a.abbr(abbr);
+                  const isSelected = selectedPlanet === abbr;
+                  const dimmed = showAspects && selectedPlanet && !isSelected && !isAsc ? 0.4 : 1;
+                  const clickable = !isAsc && onSelectPlanet;
                   return (
-                    <g key={`${h}-${idx}`}>
+                    <g
+                      key={`${h}-${idx}`}
+                      onClick={
+                        clickable ? () => onSelectPlanet!(isSelected ? null : abbr) : undefined
+                      }
+                      style={{ cursor: clickable ? "pointer" : "default" }}
+                    >
                       <title>{planetTitle(abbr)}</title>
+                      {isSelected && (
+                        <rect
+                          x={c.x + xOffset - 20}
+                          y={c.y + yOffset - 10}
+                          width={40}
+                          height={20}
+                          rx={4}
+                          fill={planetColor(abbr)}
+                          opacity={0.15}
+                        />
+                      )}
                       <text
                         x={c.x + xOffset}
                         y={c.y + yOffset + 2}
@@ -161,8 +232,9 @@ export function VedicChart({
                         dominantBaseline="middle"
                         className="font-serif"
                         fontSize={showDeg ? 15 : 18}
-                        fontWeight={isAsc ? 800 : 600}
+                        fontWeight={isAsc ? 800 : isSelected ? 900 : 600}
                         style={{ fill: isAsc ? ascCol : planetColor(abbr) }}
+                        opacity={dimmed}
                       >
                         {label}
                       </text>
