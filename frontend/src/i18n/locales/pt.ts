@@ -52,6 +52,7 @@ const pt: Record<string, string> = {
   north_indian: "Norte da Índia",
   south_indian: "Sul da Índia",
   western: "Ocidental",
+  show_degree: "Mostrar grau",
 
   local: "Local",
   timezone: "Fuso horário",

@@ -54,6 +54,7 @@ export interface VargaChart {
   name: string;
   subtitle?: string;
   division: number;
+  planet_degrees: Record<string, number>;
 }
 
 export interface DashaPeriod {

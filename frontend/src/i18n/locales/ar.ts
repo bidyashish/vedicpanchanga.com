@@ -52,6 +52,7 @@ const ar: Record<string, string> = {
   north_indian: "هندي شمالي",
   south_indian: "هندي جنوبي",
   western: "غربي",
+  show_degree: "إظهار الدرجة",
 
   local: "محلي",
   timezone: "المنطقة الزمنية",

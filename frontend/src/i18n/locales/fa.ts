@@ -52,6 +52,7 @@ const fa: Record<string, string> = {
   north_indian: "شمال هند",
   south_indian: "جنوب هند",
   western: "غربی",
+  show_degree: "نمایش درجه",
 
   local: "محلی",
   timezone: "منطقه زمانی",

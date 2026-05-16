@@ -52,6 +52,7 @@ const ta: Record<string, string> = {
   north_indian: "வடக்கு இந்திய",
   south_indian: "தெற்கு இந்திய",
   western: "மேற்கத்திய",
+  show_degree: "பாகை காட்டு",
 
   local: "உள்ளூர்",
   timezone: "நேர மண்டலம்",

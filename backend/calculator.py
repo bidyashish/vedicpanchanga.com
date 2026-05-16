@@ -11,7 +11,13 @@ import swisseph as swe
 from timezonefinder import TimezoneFinder
 
 from ayanamsa import set_ayanamsa
-from vargas import VARGA_NAMES, VARGA_ORDER, VARGA_SUBTITLE, varga_sign
+from vargas import (
+    VARGA_NAMES,
+    VARGA_ORDER,
+    VARGA_SUBTITLE,
+    varga_degree_in_sign,
+    varga_sign,
+)
 
 # Configure Swiss Ephemeris
 EPHE_PATH = str(Path(__file__).parent / "ephe")
@@ -407,21 +413,30 @@ def compute_chart(
     for n in VARGA_ORDER:
         v_asc_sign = varga_sign(asc_lon, n)
         house_map = {i: [] for i in range(1, 13)}
+        # Per-planet position within the D-n sign, keyed by abbreviation.
+        # Frontend reads this to render sub-degrees and to sort planets
+        # within each house — sorting by D1 degree in a varga is meaningless.
+        planet_degrees: Dict[str, float] = {}
         # Populate with planets
         for p in planets.values():
             p_sign = varga_sign(p["longitude"], n)
             house = ((p_sign - v_asc_sign) % 12) + 1
             house_map[house].append(p["abbr"])
+            planet_degrees[p["abbr"]] = round(
+                varga_degree_in_sign(p["longitude"], n), 4
+            )
             # Store D-n sign on each planet for later tables
             p[f"d{n}_sign"] = p_sign
         # Put "As" in house 1
         house_map[1].insert(0, "As")
+        planet_degrees["As"] = round(varga_degree_in_sign(asc_lon, n), 4)
         varga_charts[f"d{n}"] = {
             "chart": house_map,
             "asc_sign": v_asc_sign,
             "name": VARGA_NAMES[n],
             "subtitle": VARGA_SUBTITLE[n],
             "division": n,
+            "planet_degrees": planet_degrees,
         }
 
     # Preserve legacy top-level keys for backward-compat

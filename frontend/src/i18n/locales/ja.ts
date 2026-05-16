@@ -52,6 +52,7 @@ const ja: Record<string, string> = {
   north_indian: "北インド式",
   south_indian: "南インド式",
   western: "西洋式",
+  show_degree: "度数を表示",
 
   local: "現地時刻",
   timezone: "タイムゾーン",

@@ -219,3 +219,38 @@ def varga_sign(longitude: float, n: int) -> int:
 
     # Fallback
     return sign
+
+
+# D30 uneven planetary segments per rasi (mirrors the breakpoints in
+# varga_sign() above). Odd-sign breaks: Mars 0-5, Saturn 5-10, Jupiter 10-18,
+# Mercury 18-25, Venus 25-30. Even-sign breaks: Venus 0-5, Mercury 5-12,
+# Jupiter 12-20, Saturn 20-25, Mars 25-30.
+_D30_BREAKS_ODD = (0.0, 5.0, 10.0, 18.0, 25.0, 30.0)
+_D30_BREAKS_EVEN = (0.0, 5.0, 12.0, 20.0, 25.0, 30.0)
+
+
+def varga_degree_in_sign(longitude: float, n: int) -> float:
+    """Return the planet's position within its divisional D<n> sign (0-30°).
+
+    For D1 this is just `longitude % 30`. For uniform vargas the formula is
+    `(deg_in_rashi * n) mod 30` — each rasi is split into n equal segments
+    of width 30/n, and scaling the offset within a segment back to 30° gives
+    the sub-degree. D30 is the exception (uneven planetary segments) and
+    needs piecewise scaling against `_D30_BREAKS_*`.
+    """
+    lon = longitude % 360
+    sign = int(lon // 30) + 1
+    deg_in_sign = lon - (sign - 1) * 30
+
+    if n <= 1:
+        return deg_in_sign
+
+    if n == 30:
+        breaks = _D30_BREAKS_ODD if sign % 2 == 1 else _D30_BREAKS_EVEN
+        for i in range(len(breaks) - 1):
+            lo, hi = breaks[i], breaks[i + 1]
+            if deg_in_sign < hi:
+                return (deg_in_sign - lo) / (hi - lo) * 30.0
+        return 30.0
+
+    return (deg_in_sign * n) % 30
