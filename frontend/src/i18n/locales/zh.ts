@@ -52,6 +52,7 @@ const zh: Record<string, string> = {
   north_indian: "北印度式",
   south_indian: "南印度式",
   western: "西方式",
+  show_degree: "显示度数",
 
   local: "本地",
   timezone: "时区",

@@ -52,6 +52,7 @@ const ru: Record<string, string> = {
   north_indian: "Северо-индийский",
   south_indian: "Южно-индийский",
   western: "Западный",
+  show_degree: "Показывать градусы",
 
   local: "Местное",
   timezone: "Часовой пояс",

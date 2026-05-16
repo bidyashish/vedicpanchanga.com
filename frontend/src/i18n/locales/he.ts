@@ -52,6 +52,7 @@ const he: Record<string, string> = {
   north_indian: "צפון הודי",
   south_indian: "דרום הודי",
   western: "מערבי",
+  show_degree: "הצג מעלה",
 
   local: "מקומי",
   timezone: "אזור זמן",

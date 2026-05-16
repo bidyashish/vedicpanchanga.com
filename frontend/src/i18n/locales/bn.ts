@@ -52,6 +52,7 @@ const bn: Record<string, string> = {
   north_indian: "উত্তর ভারতীয়",
   south_indian: "দক্ষিণ ভারতীয়",
   western: "পাশ্চাত্য",
+  show_degree: "ডিগ্রি দেখান",
 
   local: "স্থানীয়",
   timezone: "সময় অঞ্চল",

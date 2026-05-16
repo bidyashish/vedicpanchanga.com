@@ -12,6 +12,8 @@ import { TimeBand } from "@/components/panchang/TimeBand";
 import { VedicChart } from "@/components/kundali/VedicChart";
 import { SouthIndianChart } from "@/components/kundali/SouthIndianChart";
 import { PlanetsTable } from "@/components/kundali/PlanetsTable";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Switch } from "@/components/ui/switch";
 import { useAstro } from "@/i18n/astro";
 import { calculateChart, fetchPanchang, reverseGeocode } from "@/lib/api";
 import {
@@ -135,6 +137,18 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
   const [chartStyle, setChartStyle] = useState<"north" | "south">(
     () => initialParams.style ?? "north",
   );
+  const [showDegrees, setShowDegrees] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("jk_show_degree") === "1";
+  });
+  const onShowDegrees = (v: boolean) => {
+    setShowDegrees(v);
+    try {
+      window.localStorage.setItem("jk_show_degree", v ? "1" : "0");
+    } catch {
+      /* ignore quota errors */
+    }
+  };
   const [loading, setLoading] = useState(false);
   const [chartLoading, setChartLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -377,28 +391,37 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
               ) : chart ? (
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-5">
                   <div className="lg:col-span-3 space-y-3">
-                    <div
-                      className="inline-flex rounded-sm border border-parchment-200 overflow-hidden p-0.5 gap-0.5 bg-parchment-100"
-                      data-testid="lagna-chart-style-toggle"
-                    >
-                      {[
-                        { id: "north" as const, label: t("north_indian") },
-                        { id: "south" as const, label: t("south_indian") },
-                      ].map((o) => (
-                        <button
-                          key={o.id}
-                          type="button"
-                          data-testid={`lagna-chart-style-${o.id}`}
-                          onClick={() => setChartStyle(o.id)}
-                          className={`px-3 py-1 text-mini font-medium rounded-2xs transition-colors ${
-                            chartStyle === o.id
-                              ? "bg-parchment-50 text-saffron shadow-card"
-                              : "text-ink-soft hover:text-ink"
-                          }`}
-                        >
-                          {o.label}
-                        </button>
-                      ))}
+                    <div className="flex flex-wrap items-center gap-3">
+                      <SegmentedControl<"north" | "south">
+                        testId="lagna-chart-style-toggle"
+                        ariaLabel={t("chart_style")}
+                        value={chartStyle}
+                        onChange={setChartStyle}
+                        options={[
+                          {
+                            id: "north",
+                            label: t("north_indian"),
+                            testId: "lagna-chart-style-north",
+                          },
+                          {
+                            id: "south",
+                            label: t("south_indian"),
+                            testId: "lagna-chart-style-south",
+                          },
+                        ]}
+                      />
+                      <label
+                        data-testid="lagna-show-degree-toggle"
+                        className="inline-flex items-center gap-2 text-mini font-medium text-ink-soft cursor-pointer select-none"
+                      >
+                        <span>{t("show_degree")}</span>
+                        <Switch
+                          checked={showDegrees}
+                          onCheckedChange={onShowDegrees}
+                          aria-label={t("show_degree")}
+                          data-testid="lagna-show-degree-switch"
+                        />
+                      </label>
                     </div>
                     <div className="bg-parchment-50 p-2 rounded-sm">
                       {chartStyle === "south" ? (
@@ -407,6 +430,8 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                           ascSign={chart.d1_asc_sign}
                           title={t("rashi_chart_title")}
                           testId="lagna-chart-south"
+                          planetDegrees={chart.vargas?.d1?.planet_degrees}
+                          showDegrees={showDegrees}
                         />
                       ) : (
                         <VedicChart
@@ -414,6 +439,8 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                           ascSign={chart.d1_asc_sign}
                           title={t("rashi_chart_title")}
                           testId="lagna-chart-north"
+                          planetDegrees={chart.vargas?.d1?.planet_degrees}
+                          showDegrees={showDegrees}
                         />
                       )}
                     </div>

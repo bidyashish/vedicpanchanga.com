@@ -52,6 +52,7 @@ const ne: Record<string, string> = {
   north_indian: "उत्तर भारतीय",
   south_indian: "दक्षिण भारतीय",
   western: "पश्चिमी",
+  show_degree: "अंश देखाउनुहोस्",
 
   local: "स्थानीय",
   timezone: "समय क्षेत्र",

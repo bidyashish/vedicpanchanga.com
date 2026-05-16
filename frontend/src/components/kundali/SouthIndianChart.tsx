@@ -23,14 +23,38 @@ interface Props {
   ascSign: number;
   title?: string;
   testId?: string;
+  planetDegrees?: Record<string, number>;
+  showDegrees?: boolean;
 }
 
-export function SouthIndianChart({ houseMap, ascSign, title, testId }: Props) {
+function orderPlanets(planets: string[], degrees?: Record<string, number>): string[] {
+  if (!degrees) return planets;
+  return [...planets].sort((a, b) => {
+    const da = degrees[a];
+    const db = degrees[b];
+    if (da == null && db == null) return 0;
+    if (da == null) return 1;
+    if (db == null) return -1;
+    return da - db;
+  });
+}
+
+const formatDegree = (deg: number) => String(Math.floor(deg)).padStart(2, "0");
+
+export function SouthIndianChart({
+  houseMap,
+  ascSign,
+  title,
+  testId,
+  planetDegrees,
+  showDegrees,
+}: Props) {
   const a = useAstro();
   const signToPlanets: Record<number, string[]> = {};
   for (let h = 1; h <= 12; h++) {
     const sign = ((ascSign - 1 + (h - 1)) % 12) + 1;
-    signToPlanets[sign] = (houseMap?.[h] ?? []).filter((p) => p !== "As" && p !== "Lg");
+    const cellPlanets = (houseMap?.[h] ?? []).filter((p) => p !== "As" && p !== "Lg");
+    signToPlanets[sign] = orderPlanets(cellPlanets, planetDegrees);
   }
 
   const CELL = 125;
@@ -146,23 +170,27 @@ export function SouthIndianChart({ houseMap, ascSign, title, testId }: Props) {
                   {SIGN_SHORT[sign - 1]}
                 </text>
                 {planets.map((abbr, idx) => {
-                  const cols = 2;
+                  const deg = planetDegrees?.[abbr];
+                  const showDeg = showDegrees && deg != null;
+                  const cols = showDeg ? 1 : 2;
                   const rowIdx = Math.floor(idx / cols);
                   const colIdx = idx % cols;
-                  const px = pos.x + 28 + colIdx * 48;
-                  const py = pos.y + 70 + rowIdx * 22;
+                  const px = pos.x + 14 + colIdx * (showDeg ? 0 : 48);
+                  const rowGap = showDeg ? 16 : 20;
+                  const py = pos.y + (showDeg ? 62 : 70) + rowIdx * rowGap;
+                  const label = showDeg ? `${a.abbr(abbr)} ${formatDegree(deg)}` : a.abbr(abbr);
                   return (
                     <g key={`${sign}-${idx}`}>
                       <title>{planetTitle(abbr)}</title>
                       <text
                         x={px}
                         y={py}
-                        fontSize="18"
+                        fontSize={showDeg ? 14 : 18}
                         fontWeight="600"
                         className="font-serif"
                         style={{ fill: planetColor(abbr) }}
                       >
-                        {a.abbr(abbr)}
+                        {label}
                       </text>
                     </g>
                   );

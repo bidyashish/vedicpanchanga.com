@@ -125,3 +125,79 @@ class TestD30Trimshamsha:
     def test_capricorn_10_degrees_lands_in_virgo(self, varga_sign):
         # Capricorn (even, starts 270°). 10° in sign → Mercury segment (5-12°) → Virgo(6).
         assert varga_sign(280.0, 30) == 6
+
+
+# ── varga_degree_in_sign direct unit tests ────────────────────────────────
+class TestVargaDegreeInSign:
+    @pytest.fixture
+    def fn(self):
+        from vargas import varga_degree_in_sign as f  # noqa: WPS433
+
+        return f
+
+    def test_d1_is_degree_in_rashi(self, fn):
+        # D1 should equal longitude % 30 (position within the rashi).
+        assert fn(5.0, 1) == pytest.approx(5.0)
+        assert fn(35.0, 1) == pytest.approx(5.0)  # 5° Taurus
+        assert fn(123.4, 1) == pytest.approx(3.4)  # 3.4° Leo
+
+    def test_d9_uniform_formula(self, fn):
+        # Aries 5° lies in the 2nd navamsa (3.33-6.66°). Position within = 1.67;
+        # scaled to 30° within the navamsa sign = 15.
+        assert fn(5.0, 9) == pytest.approx(15.0, abs=1e-9)
+        # Aries 0° → start of first navamsa → 0°.
+        assert fn(0.0, 9) == pytest.approx(0.0, abs=1e-9)
+        # Aries 3.333...° → end of first navamsa / start of second → ~0°.
+        assert fn(30 / 9, 9) == pytest.approx(0.0, abs=1e-9)
+
+    def test_d2_hora(self, fn):
+        # Aries 5° → 1/3 into first 15° hora → 10° within the hora sign.
+        assert fn(5.0, 2) == pytest.approx(10.0)
+        # Aries 15° → start of second hora → 0°.
+        assert fn(15.0, 2) == pytest.approx(0.0)
+        # Aries 22.5° → halfway through second hora → 15°.
+        assert fn(22.5, 2) == pytest.approx(15.0)
+
+    def test_d60_shashtiamsa(self, fn):
+        # 60 parts of 0.5°. 0.25° → halfway into first segment → 15°.
+        assert fn(0.25, 60) == pytest.approx(15.0, abs=1e-9)
+        assert fn(0.5, 60) == pytest.approx(0.0, abs=1e-9)
+
+    def test_d30_odd_sign_segments(self, fn):
+        # Aries (odd) breaks: 0-5 (Mars), 5-10 (Sat), 10-18 (Jup), 18-25 (Mer), 25-30 (Ven).
+        # 2° → 2/5 of Mars segment → 12° within Aries (Mars varga sign).
+        assert fn(2.0, 30) == pytest.approx(12.0)
+        # 5° → start of Saturn segment → 0°.
+        assert fn(5.0, 30) == pytest.approx(0.0)
+        # 14° → 4/8 of Jupiter segment (10-18) → 15° within Sagittarius.
+        assert fn(14.0, 30) == pytest.approx(15.0)
+
+    def test_d30_even_sign_segments(self, fn):
+        # Taurus (even, starts 30°) breaks: 0-5 (Ven), 5-12 (Mer), 12-20 (Jup), 20-25 (Sat), 25-30 (Mars).
+        # 30 + 8 = 8° in Taurus → 3/7 of Mercury segment → ~12.857° within Virgo.
+        assert fn(30 + 8, 30) == pytest.approx(3.0 / 7.0 * 30.0)
+
+    def test_range_is_within_0_30(self, fn):
+        # No matter the longitude, the result must be in [0, 30) for every varga.
+        for lon in (0.0, 12.34, 30.0, 89.99, 180.5, 359.999):
+            for n in (1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60):
+                d = fn(lon, n)
+                assert 0.0 <= d <= 30.0, f"out of range for lon={lon}, n={n}: {d}"
+
+
+# ── HTTP test: planet_degrees exposed on every varga response ────────────
+@pytest.mark.http
+class TestPlanetDegreesResponse:
+    def test_planet_degrees_present_on_every_varga(self, chart):
+        for key, v in chart["vargas"].items():
+            assert "planet_degrees" in v, f"{key} missing planet_degrees"
+            pd = v["planet_degrees"]
+            assert "Su" in pd, f"{key} planet_degrees missing Sun"
+            assert "As" in pd, f"{key} planet_degrees missing Ascendant"
+            for abbr, deg in pd.items():
+                assert 0.0 <= deg <= 30.0, f"{key} {abbr} degree out of range: {deg}"
+
+    def test_d1_matches_planets_data_degree_in_sign(self, chart):
+        d1_degrees = chart["vargas"]["d1"]["planet_degrees"]
+        for p in chart["planets_data"]:
+            assert d1_degrees[p["abbr"]] == pytest.approx(p["degree_in_sign"])

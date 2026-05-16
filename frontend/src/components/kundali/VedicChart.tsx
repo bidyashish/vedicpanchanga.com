@@ -41,9 +41,32 @@ interface Props {
   ascSign: number;
   title?: string;
   testId?: string;
+  planetDegrees?: Record<string, number>;
+  showDegrees?: boolean;
 }
 
-export function VedicChart({ houseMap, ascSign, title, testId }: Props) {
+function orderPlanets(planets: string[], degrees?: Record<string, number>): string[] {
+  if (!degrees) return planets;
+  return [...planets].sort((a, b) => {
+    const da = degrees[a];
+    const db = degrees[b];
+    if (da == null && db == null) return 0;
+    if (da == null) return 1;
+    if (db == null) return -1;
+    return da - db;
+  });
+}
+
+const formatDegree = (deg: number) => String(Math.floor(deg)).padStart(2, "0");
+
+export function VedicChart({
+  houseMap,
+  ascSign,
+  title,
+  testId,
+  planetDegrees,
+  showDegrees,
+}: Props) {
   const a = useAstro();
   const signForHouse = (h: number) => ((ascSign - 1 + (h - 1)) % 12) + 1;
 
@@ -99,7 +122,7 @@ export function VedicChart({ houseMap, ascSign, title, testId }: Props) {
           {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => {
             const c = HOUSE_CENTROIDS[h];
             const sign = signForHouse(h);
-            const planets = houseMap?.[h] ?? [];
+            const planets = orderPlanets(houseMap?.[h] ?? [], planetDegrees);
             const labelPos = SIGN_LABEL_POSITIONS[h];
             return (
               <g key={h} data-testid={`${testId}-house-${h}`}>
@@ -117,12 +140,17 @@ export function VedicChart({ houseMap, ascSign, title, testId }: Props) {
                   {a.num(sign)}
                 </text>
                 {planets.map((abbr, idx) => {
-                  const cols = Math.min(Math.max(planets.length, 1), 3);
+                  const deg = planetDegrees?.[abbr];
+                  const showDeg = showDegrees && deg != null;
+                  const cols = showDeg ? 1 : Math.min(Math.max(planets.length, 1), 3);
                   const rowIdx = Math.floor(idx / cols);
                   const colIdx = idx % cols;
                   const xOffset = (colIdx - (cols - 1) / 2) * 32;
-                  const yOffset = rowIdx * 24;
+                  const rowGap = showDeg ? 17 : 24;
+                  const yStart = showDeg ? -((planets.length - 1) * rowGap) / 2 : 0;
+                  const yOffset = yStart + rowIdx * rowGap;
                   const isAsc = abbr === "As" || abbr === "Lg";
+                  const label = showDeg ? `${a.abbr(abbr)} ${formatDegree(deg)}` : a.abbr(abbr);
                   return (
                     <g key={`${h}-${idx}`}>
                       <title>{planetTitle(abbr)}</title>
@@ -132,11 +160,11 @@ export function VedicChart({ houseMap, ascSign, title, testId }: Props) {
                         textAnchor="middle"
                         dominantBaseline="middle"
                         className="font-serif"
-                        fontSize="18"
+                        fontSize={showDeg ? 15 : 18}
                         fontWeight={isAsc ? 800 : 600}
                         style={{ fill: isAsc ? ascCol : planetColor(abbr) }}
                       >
-                        {a.abbr(abbr)}
+                        {label}
                       </text>
                     </g>
                   );
