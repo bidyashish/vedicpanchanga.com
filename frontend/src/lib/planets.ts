@@ -8,6 +8,9 @@ export const PLANET_LONG_NAMES: Record<string, string> = {
   Sa: "Shani",
   Ra: "Rahu",
   Ke: "Ketu",
+  Ur: "Uranus",
+  Ne: "Neptune",
+  Pl: "Pluto",
   As: "Lagna",
   Lg: "Lagna",
 };
@@ -20,10 +23,13 @@ export const PLANET_COLORS: Record<string, string> = {
   Ma: "var(--danger)",
   Me: "var(--success)",
   Ju: "var(--accent-amber)",
-  Ve: "rgb(168 85 247)", // violet-500 — readable in both themes
+  Ve: "rgb(168 85 247)", // violet-500 - readable in both themes
   Sa: "var(--ink-soft)",
   Ra: "var(--ink-soft)",
   Ke: "var(--ink-soft)",
+  Ur: "rgb(56 189 248)", // sky-400 - cool blue for the modern planets
+  Ne: "rgb(34 197 94)", // green-500
+  Pl: "rgb(217 119 6)", // amber-600
   As: "var(--primary)",
   Lg: "var(--primary)",
 };

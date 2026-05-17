@@ -36,6 +36,9 @@ PLANET_ORDER_FOR_TABLE = [
     ("Saturn", "Satn"),
     ("Rahu", "Rahu"),
     ("Ketu", "Ketu"),
+    ("Uranus", "Uran"),
+    ("Neptune", "Nept"),
+    ("Pluto", "Plut"),
 ]
 
 
