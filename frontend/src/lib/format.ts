@@ -129,6 +129,20 @@ export function nowTimeInTz(tz?: string): string {
   }
 }
 
+export function nowTimeWithSecondsInTz(tz?: string): string {
+  try {
+    return new Date().toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+      timeZone: tz,
+    });
+  } catch {
+    return "12:00:00";
+  }
+}
+
 // "Hh MMm SSs" for Dinamana / Ratrimana; unit labels translated, digits Latin.
 export function hoursToHMS(h?: number): string {
   if (!h && h !== 0) return "-";

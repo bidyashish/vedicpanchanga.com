@@ -23,6 +23,7 @@ import {
   formatLongDate,
   hoursToHMS,
   nowTimeInTz,
+  nowTimeWithSecondsInTz,
   todayISO,
 } from "@/lib/format";
 import {
@@ -157,6 +158,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
     if (typeof window === "undefined") return false;
     return window.localStorage.getItem("jk_panchang_live") === "1";
   });
+  const [liveTime, setLiveTime] = useState<string>("");
   const onLiveMode = (v: boolean) => {
     setLiveMode(v);
     try {
@@ -251,6 +253,21 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
     }, 60_000);
     return () => window.clearInterval(id);
   }, [liveMode]);
+
+  // Wall-clock ticker for the live-mode time display. Runs every second so the
+  // displayed HH:MM flips within ~1s of the real minute boundary, but React's
+  // primitive-equality skip keeps re-renders to once a minute.
+  useEffect(() => {
+    if (!liveMode) {
+      setLiveTime("");
+      return;
+    }
+    const tz = data?.location.timezone;
+    const tick = () => setLiveTime(nowTimeWithSecondsInTz(tz));
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+  }, [liveMode, data?.location.timezone]);
 
   // Reactive URL sync - every form change rewrites the query string so the
   // user can copy the address bar at any moment. replaceState (not push) keeps
@@ -385,11 +402,11 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
             {liveMode && (
               <span
                 data-testid="panchang-live-indicator"
-                className="inline-flex items-center gap-1.5 text-mini font-medium text-saffron"
+                className="inline-flex items-center gap-1.5 text-mini font-medium text-leaf"
               >
                 <span className="relative inline-flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-saffron opacity-75 animate-ping" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-saffron" />
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-leaf opacity-75 animate-ping" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-leaf" />
                 </span>
                 {t("live_badge")}
               </span>
@@ -420,6 +437,11 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   <p className="eyebrow-accent">{t("panchang_title")}</p>
                   <h2 className="heading-page mt-0.5" data-testid="panchang-title">
                     {formatLongDate(data.date)}
+                    {liveMode && liveTime && (
+                      <span data-testid="panchang-live-time" className="ml-3">
+                        · {a.num(liveTime)}
+                      </span>
+                    )}
                   </h2>
                 </div>
                 <div className="flex items-baseline gap-3 flex-wrap justify-end">
