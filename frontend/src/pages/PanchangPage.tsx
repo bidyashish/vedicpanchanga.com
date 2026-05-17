@@ -23,6 +23,7 @@ import {
   formatLongDate,
   hoursToHMS,
   nowTimeInTz,
+  nowTimeWithSecondsInTz,
   todayISO,
 } from "@/lib/format";
 import {
@@ -153,6 +154,19 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
   const [loading, setLoading] = useState(false);
   const [chartLoading, setChartLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [liveMode, setLiveMode] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("jk_panchang_live") === "1";
+  });
+  const [liveTime, setLiveTime] = useState<string>("");
+  const onLiveMode = (v: boolean) => {
+    setLiveMode(v);
+    try {
+      window.localStorage.setItem("jk_panchang_live", v ? "1" : "0");
+    } catch {
+      /* ignore quota errors */
+    }
+  };
 
   const run = async (overrides: Partial<LocationChoice> & { date?: string } = {}) => {
     setLoading(true);
@@ -220,6 +234,40 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
     run();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Live mode: refresh the whole panchang (data + lagna chart) every 60s.
+  // `run` and `loading` are captured via refs so the interval always sees the
+  // latest closure without forcing us to tear down and re-create the timer on
+  // every render.
+  const runRef = useRef(run);
+  const loadingRef = useRef(loading);
+  useEffect(() => {
+    runRef.current = run;
+    loadingRef.current = loading;
+  });
+  useEffect(() => {
+    if (!liveMode) return;
+    const id = window.setInterval(() => {
+      if (loadingRef.current) return;
+      runRef.current();
+    }, 60_000);
+    return () => window.clearInterval(id);
+  }, [liveMode]);
+
+  // Wall-clock ticker for the live-mode time display. Runs every second so the
+  // displayed HH:MM flips within ~1s of the real minute boundary, but React's
+  // primitive-equality skip keeps re-renders to once a minute.
+  useEffect(() => {
+    if (!liveMode) {
+      setLiveTime("");
+      return;
+    }
+    const tz = data?.location.timezone;
+    const tick = () => setLiveTime(nowTimeWithSecondsInTz(tz));
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+  }, [liveMode, data?.location.timezone]);
 
   // Reactive URL sync - every form change rewrites the query string so the
   // user can copy the address bar at any moment. replaceState (not push) keeps
@@ -337,6 +385,33 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
               </button>
             </div>
           </div>
+          <div className="mt-3 pt-3 border-t border-parchment-200 flex flex-wrap items-center justify-between gap-3">
+            <label
+              data-testid="panchang-live-toggle"
+              className="inline-flex items-center gap-2 cursor-pointer select-none"
+            >
+              <Switch
+                checked={liveMode}
+                onCheckedChange={onLiveMode}
+                aria-label={t("live_mode")}
+                data-testid="panchang-live-switch"
+              />
+              <span className="text-mini font-medium text-ink">{t("live_mode")}</span>
+              <span className="text-mini text-ink-soft">({t("live_mode_hint")})</span>
+            </label>
+            {liveMode && (
+              <span
+                data-testid="panchang-live-indicator"
+                className="inline-flex items-center gap-1.5 text-mini font-medium text-leaf"
+              >
+                <span className="relative inline-flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-leaf opacity-75 animate-ping" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-leaf" />
+                </span>
+                {t("live_badge")}
+              </span>
+            )}
+          </div>
           {error && (
             <div
               data-testid="panchang-error"
@@ -362,6 +437,11 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   <p className="eyebrow-accent">{t("panchang_title")}</p>
                   <h2 className="heading-page mt-0.5" data-testid="panchang-title">
                     {formatLongDate(data.date)}
+                    {liveMode && liveTime && (
+                      <span data-testid="panchang-live-time" className="ml-3">
+                        · {a.num(liveTime)}
+                      </span>
+                    )}
                   </h2>
                 </div>
                 <div className="flex items-baseline gap-3 flex-wrap justify-end">
