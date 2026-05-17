@@ -132,6 +132,43 @@ export interface DrishtiData {
   mutual: MutualAspect[];
 }
 
+export type TransitEventType =
+  | "sign_ingress"
+  | "nakshatra_ingress"
+  | "retrograde"
+  | "direct";
+
+export interface TransitEvent {
+  planet: string;
+  abbr: string;
+  event_type: TransitEventType;
+  date_utc: string;
+  date_local: string;
+  // sign_ingress fields
+  from_sign?: string;
+  from_sign_id?: number;
+  to_sign?: string;
+  to_sign_id?: number;
+  // nakshatra_ingress fields
+  from_nakshatra?: string;
+  from_nakshatra_id?: number;
+  to_nakshatra?: string;
+  to_nakshatra_id?: number;
+  // retrograde / direct fields
+  in_sign?: string;
+  in_sign_id?: number;
+  in_nakshatra?: string;
+  in_nakshatra_id?: number;
+}
+
+export interface TransitsResponse {
+  start_date: string;
+  end_date: string;
+  timezone: string;
+  count: number;
+  events: TransitEvent[];
+}
+
 export interface ChartData {
   birth: BirthSummary;
   ascendant: Planet;

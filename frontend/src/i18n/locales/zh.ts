@@ -12,6 +12,8 @@ const zh: Record<string, string> = {
   nav_kundali: "出生星图",
   nav_panchang: "潘查昂迦",
   nav_muhurta: "吉时",
+  nav_transits: "凌相",
+  transits_today: "今天",
 
   muhurta_title: "吉时查询",
   muhurta_subtitle: "为任何活动寻找吉祥时段",

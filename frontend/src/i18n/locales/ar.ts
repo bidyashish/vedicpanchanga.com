@@ -12,6 +12,8 @@ const ar: Record<string, string> = {
   nav_kundali: "كونداليني",
   nav_panchang: "بانشانغا",
   nav_muhurta: "موهورتا",
+  nav_transits: "عبور الكواكب",
+  transits_today: "اليوم",
 
   muhurta_title: "باحث الموهورتا",
   muhurta_subtitle: "ابحث عن أوقات ميمونة لأي عمل",

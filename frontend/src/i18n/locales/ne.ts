@@ -12,6 +12,8 @@ const ne: Record<string, string> = {
   nav_kundali: "कुण्डली",
   nav_panchang: "पञ्चाङ्ग",
   nav_muhurta: "मुहूर्त",
+  nav_transits: "गोचर",
+  transits_today: "आज",
 
   muhurta_title: "मुहूर्त खोज",
   muhurta_subtitle: "कुनै पनि कामको लागि शुभ समय पत्ता लगाउनुहोस्",

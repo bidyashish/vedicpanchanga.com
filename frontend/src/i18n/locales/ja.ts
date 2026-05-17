@@ -12,6 +12,8 @@ const ja: Record<string, string> = {
   nav_kundali: "クンダリー",
   nav_panchang: "パンチャーンガ",
   nav_muhurta: "ムフールタ",
+  nav_transits: "トランジット",
+  transits_today: "今日",
 
   muhurta_title: "ムフールタ検索",
   muhurta_subtitle: "あらゆる行いに吉となる時間帯を探す",

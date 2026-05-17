@@ -12,6 +12,8 @@ const he: Record<string, string> = {
   nav_kundali: "קונדלי",
   nav_panchang: "פנצ'נגה",
   nav_muhurta: "מוהורתה",
+  nav_transits: "מעברי כוכבים",
+  transits_today: "היום",
 
   muhurta_title: "מאתר מוהורתה",
   muhurta_subtitle: "מצא חלונות זמן מבורכים לכל מעשה",

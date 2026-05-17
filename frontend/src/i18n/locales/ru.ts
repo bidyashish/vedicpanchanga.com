@@ -12,6 +12,8 @@ const ru: Record<string, string> = {
   nav_kundali: "Кундали",
   nav_panchang: "Панчанга",
   nav_muhurta: "Мухурта",
+  nav_transits: "Транзиты",
+  transits_today: "Сегодня",
 
   muhurta_title: "Поиск Мухурты",
   muhurta_subtitle: "Найдите благоприятные окна для любого начинания",
