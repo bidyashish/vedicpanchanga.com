@@ -279,11 +279,7 @@ def compute_transits(
                         }
                     )
 
-            if (
-                include_retrograde
-                and has_retro
-                and curr_speed_pos != prev_speed_pos
-            ):
+            if include_retrograde and has_retro and curr_speed_pos != prev_speed_pos:
                 jd_event = _refine_zero_speed(jd, next_jd, name, prev_speed_pos)
                 iso = _jd_to_iso(jd_event, tz)
                 in_lon, _ = _state(jd_event, name)

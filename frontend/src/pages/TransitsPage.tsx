@@ -140,11 +140,7 @@ export function TransitsPage({ defaultLocation }: { defaultLocation: LocationCho
           <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-end">
             <div className="md:col-span-3">
               <label className="field-label">{t("transits_start")}</label>
-              <DatePicker
-                value={startDate}
-                onChange={setStartDate}
-                testIdPrefix="transits-start"
-              />
+              <DatePicker value={startDate} onChange={setStartDate} testIdPrefix="transits-start" />
             </div>
             <div className="md:col-span-3">
               <label className="field-label">{t("transits_end")}</label>
@@ -211,8 +207,8 @@ export function TransitsPage({ defaultLocation }: { defaultLocation: LocationCho
                   {t("transits_events_short")}
                   <span className="text-ink-soft">
                     {" "}
-                    · {stats.sign} {t("transits_sign_short")}, {stats.nak}{" "}
-                    {t("transits_nak_short")}, {stats.retro} {t("transits_retro_short")}
+                    · {stats.sign} {t("transits_sign_short")}, {stats.nak} {t("transits_nak_short")}
+                    , {stats.retro} {t("transits_retro_short")}
                   </span>
                 </div>
                 <div className="text-mini text-ink-soft">{tz}</div>

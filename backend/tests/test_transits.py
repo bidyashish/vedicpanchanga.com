@@ -60,8 +60,11 @@ class TestPlanetCoverage:
         # ingress near the same period). We don't pin which one because
         # swisseph's process-global state shifts events by arc-seconds
         # across test ordering.
-        outers = {e["planet"] for e in transits_60d["events"]
-                  if e["planet"] in ("Uranus", "Neptune", "Pluto")}
+        outers = {
+            e["planet"]
+            for e in transits_60d["events"]
+            if e["planet"] in ("Uranus", "Neptune", "Pluto")
+        }
         assert len(outers) >= 1, "Expected at least one outer-planet event"
 
 
@@ -74,7 +77,8 @@ class TestMercuryGeminiIngress:
 
     def test_event_present(self, transits_60d):
         match = [
-            e for e in transits_60d["events"]
+            e
+            for e in transits_60d["events"]
             if e["planet"] == "Mercury"
             and e["event_type"] == "sign_ingress"
             and e["to_sign"] == "Gemini"
@@ -83,18 +87,21 @@ class TestMercuryGeminiIngress:
 
     def test_first_ingress_late_may(self, transits_60d):
         match = next(
-            e for e in transits_60d["events"]
+            e
+            for e in transits_60d["events"]
             if e["planet"] == "Mercury"
             and e["event_type"] == "sign_ingress"
             and e["to_sign"] == "Gemini"
         )
-        assert match["date_local"].startswith("2026-05-29") or \
-            match["date_local"].startswith("2026-05-30")
+        assert match["date_local"].startswith("2026-05-29") or match[
+            "date_local"
+        ].startswith("2026-05-30")
 
     def test_mercury_retrogrades_in_window(self, transits_60d):
         # Mercury's June 2026 retrograde must be detected
         retro = [
-            e for e in transits_60d["events"]
+            e
+            for e in transits_60d["events"]
             if e["planet"] == "Mercury" and e["event_type"] == "retrograde"
         ]
         assert len(retro) >= 1
@@ -163,7 +170,8 @@ class TestMoonToggle:
             moon_nakshatras=True,
         )
         moon_nak = [
-            e for e in out["events"]
+            e
+            for e in out["events"]
             if e["planet"] == "Moon" and e["event_type"] == "nakshatra_ingress"
         ]
         # ~1 nakshatra per day
@@ -182,11 +190,13 @@ class TestKetuAntipode:
             timezone_name="Asia/Kolkata",
         )
         rahu_ingress = [
-            e for e in out["events"]
+            e
+            for e in out["events"]
             if e["planet"] == "Rahu" and e["event_type"] == "sign_ingress"
         ]
         ketu_ingress = [
-            e for e in out["events"]
+            e
+            for e in out["events"]
             if e["planet"] == "Ketu" and e["event_type"] == "sign_ingress"
         ]
         if rahu_ingress and ketu_ingress:

@@ -173,9 +173,7 @@ export default function App() {
         )}
         {sharedLocation && view === "panchang" && <PanchangPage defaultLocation={sharedLocation} />}
         {sharedLocation && view === "muhurta" && <MuhurtaPage defaultLocation={sharedLocation} />}
-        {sharedLocation && view === "transits" && (
-          <TransitsPage defaultLocation={sharedLocation} />
-        )}
+        {sharedLocation && view === "transits" && <TransitsPage defaultLocation={sharedLocation} />}
         {view === "privacy" && <PrivacyPage />}
         {view === "terms" && <TermsPage />}
       </main>

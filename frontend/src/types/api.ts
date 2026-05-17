@@ -132,11 +132,7 @@ export interface DrishtiData {
   mutual: MutualAspect[];
 }
 
-export type TransitEventType =
-  | "sign_ingress"
-  | "nakshatra_ingress"
-  | "retrograde"
-  | "direct";
+export type TransitEventType = "sign_ingress" | "nakshatra_ingress" | "retrograde" | "direct";
 
 export interface TransitEvent {
   planet: string;
