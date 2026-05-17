@@ -12,6 +12,8 @@ const de: Record<string, string> = {
   nav_kundali: "Kundali",
   nav_panchang: "Panchang",
   nav_muhurta: "Muhurta",
+  nav_transits: "Transite",
+  transits_today: "Heute",
 
   muhurta_title: "Muhurta-Suche",
   muhurta_subtitle: "Günstige Zeitfenster für jedes Vorhaben finden",

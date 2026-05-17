@@ -7,6 +7,7 @@ import type {
   MuhurtaResponse,
   NominatimResult,
   PanchangData,
+  TransitsResponse,
 } from "@/types/api";
 
 const BASE = (import.meta.env.VITE_BACKEND_URL ?? "").replace(/\/$/, "");
@@ -80,6 +81,35 @@ export async function fetchGeoIP(): Promise<GeoIPResponse | null> {
   } catch {
     return null;
   }
+}
+
+export interface TransitsParams {
+  latitude: number;
+  longitude: number;
+  start_date?: string;
+  end_date?: string;
+  timezone?: string | null;
+  include_signs?: boolean;
+  include_nakshatras?: boolean;
+  include_retrograde?: boolean;
+  include_moon?: boolean;
+  moon_nakshatras?: boolean;
+}
+
+export function fetchTransits(params: TransitsParams): Promise<TransitsResponse> {
+  const qs = new URLSearchParams({
+    latitude: String(params.latitude),
+    longitude: String(params.longitude),
+  });
+  if (params.start_date) qs.set("start_date", params.start_date);
+  if (params.end_date) qs.set("end_date", params.end_date);
+  if (params.timezone) qs.set("timezone", params.timezone);
+  if (params.include_signs === false) qs.set("include_signs", "false");
+  if (params.include_nakshatras === false) qs.set("include_nakshatras", "false");
+  if (params.include_retrograde === false) qs.set("include_retrograde", "false");
+  if (params.include_moon) qs.set("include_moon", "true");
+  if (params.moon_nakshatras) qs.set("moon_nakshatras", "true");
+  return request<TransitsResponse>(`${API}/transits?${qs.toString()}`);
 }
 
 export function fetchMuhurtaPurposes(): Promise<MuhurtaPurpose[]> {

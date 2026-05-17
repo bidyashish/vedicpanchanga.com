@@ -5,6 +5,7 @@ import { Footer } from "@/components/shell/Footer";
 import { KundaliPage } from "@/pages/KundaliPage";
 import { PanchangPage } from "@/pages/PanchangPage";
 import { MuhurtaPage } from "@/pages/MuhurtaPage";
+import { TransitsPage } from "@/pages/TransitsPage";
 import { PrivacyPage } from "@/pages/PrivacyPage";
 import { TermsPage } from "@/pages/TermsPage";
 import { applySeo } from "@/lib/seo";
@@ -12,9 +13,9 @@ import { fetchGeoIP } from "@/lib/api";
 import { loadAdSense } from "@/lib/adsense";
 import type { LocationChoice } from "@/types/api";
 
-export type View = "kundali" | "panchang" | "muhurta" | "privacy" | "terms";
+export type View = "kundali" | "panchang" | "muhurta" | "transits" | "privacy" | "terms";
 
-const MONETIZED_VIEWS = new Set<View>(["panchang", "kundali", "muhurta"]);
+const MONETIZED_VIEWS = new Set<View>(["panchang", "kundali", "muhurta", "transits"]);
 
 const SITE = "https://vedicpanchanga.com";
 
@@ -22,6 +23,7 @@ const VIEW_PATH: Record<View, string> = {
   panchang: "/",
   kundali: "/kundali",
   muhurta: "/muhurta",
+  transits: "/transits",
   privacy: "/privacy",
   terms: "/terms",
 };
@@ -44,6 +46,12 @@ const SEO_BY_VIEW: Record<View, { title: string; description: string; canonical:
     description:
       "Find auspicious muhurta windows by purpose, date range and location. Purpose-based scoring with explainable reasons; native filters for Chandrabalam and Tarabalam.",
     canonical: `${SITE}/muhurta`,
+  },
+  transits: {
+    title: "Planetary Transits - Sign, Nakshatra & Retrograde Timeline · Vedic Panchanga",
+    description:
+      "Year-long Vedic planetary transit timeline: sign ingresses, nakshatra changes, retrograde stations for all 12 planets including Uranus, Neptune, Pluto. Sidereal Lahiri.",
+    canonical: `${SITE}/transits`,
   },
   privacy: {
     title: "Privacy Policy · Vedic Panchanga",
@@ -71,6 +79,8 @@ function viewFromPath(): View {
       return "kundali";
     case "/muhurta":
       return "muhurta";
+    case "/transits":
+      return "transits";
     case "/privacy":
       return "privacy";
     case "/terms":
@@ -89,7 +99,7 @@ function viewFromPath(): View {
 function migrateHashOnce(): View | null {
   const hash = window.location.hash.replace("#", "");
   if (!hash) return null;
-  const allowed: View[] = ["kundali", "panchang", "muhurta"];
+  const allowed: View[] = ["kundali", "panchang", "muhurta", "transits"];
   const v = allowed.includes(hash as View) ? (hash as View) : null;
   if (!v) return null;
   window.history.replaceState(null, "", VIEW_PATH[v] + window.location.search);
@@ -163,6 +173,7 @@ export default function App() {
         )}
         {sharedLocation && view === "panchang" && <PanchangPage defaultLocation={sharedLocation} />}
         {sharedLocation && view === "muhurta" && <MuhurtaPage defaultLocation={sharedLocation} />}
+        {sharedLocation && view === "transits" && <TransitsPage defaultLocation={sharedLocation} />}
         {view === "privacy" && <PrivacyPage />}
         {view === "terms" && <TermsPage />}
       </main>

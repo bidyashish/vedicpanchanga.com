@@ -14,6 +14,7 @@ from ayanamsa import AYANAMSA_OPTIONS
 from calculator import compute_chart
 from muhurta import find_muhurtas, list_purposes
 from pdf import render_pdf
+from transits import compute_transits
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
@@ -288,6 +289,51 @@ def find_muhurta(req: MuhurtaRequest):
     except Exception as e:
         logging.exception("Muhurta search failed")
         raise HTTPException(status_code=500, detail=f"Muhurta error: {e}")
+
+
+@api_router.get("/transits")
+def get_transits(
+    latitude: float,
+    longitude: float,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    timezone: Optional[str] = None,
+    include_signs: bool = True,
+    include_nakshatras: bool = True,
+    include_retrograde: bool = True,
+    include_moon: bool = False,
+    moon_nakshatras: bool = False,
+):
+    """Planetary transit events (sign ingress, nakshatra ingress, retrograde
+    stations) over a date range.
+
+    Defaults to a 1-year window starting today in the requested timezone.
+    Moon is hidden by default because its 27-day cycle produces 12+ sign
+    events per month - flip include_moon=true to add its sign ingresses,
+    moon_nakshatras=true to also include its daily nakshatra crossings."""
+    from datetime import date as date_cls, timedelta as td
+
+    if not start_date:
+        start_date = date_cls.today().isoformat()
+    if not end_date:
+        end_dt = date_cls.fromisoformat(start_date) + td(days=365)
+        end_date = end_dt.isoformat()
+    try:
+        return compute_transits(
+            start_date=start_date,
+            end_date=end_date,
+            latitude=latitude,
+            longitude=longitude,
+            timezone_name=timezone,
+            include_signs=include_signs,
+            include_nakshatras=include_nakshatras,
+            include_retrograde=include_retrograde,
+            include_moon=include_moon,
+            moon_nakshatras=moon_nakshatras,
+        )
+    except Exception as e:
+        logging.exception("Transit computation failed")
+        raise HTTPException(status_code=500, detail=f"Transit error: {e}")
 
 
 class PrintPdfRequest(BaseModel):

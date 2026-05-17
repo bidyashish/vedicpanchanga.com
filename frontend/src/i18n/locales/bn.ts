@@ -12,6 +12,8 @@ const bn: Record<string, string> = {
   nav_kundali: "কুণ্ডলী",
   nav_panchang: "পঞ্জিকা",
   nav_muhurta: "মুহূর্ত",
+  nav_transits: "গোচর",
+  transits_today: "আজ",
 
   muhurta_title: "মুহূর্ত অনুসন্ধান",
   muhurta_subtitle: "যেকোনো কাজের জন্য শুভ সময় খুঁজুন",

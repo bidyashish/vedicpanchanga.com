@@ -12,6 +12,8 @@ const fa: Record<string, string> = {
   nav_kundali: "کوندالی",
   nav_panchang: "پنچانگه",
   nav_muhurta: "مهورته",
+  nav_transits: "ترانزیت",
+  transits_today: "امروز",
 
   muhurta_title: "یابنده مهورته",
   muhurta_subtitle: "زمان‌های فرخنده برای هر کاری بیابید",
