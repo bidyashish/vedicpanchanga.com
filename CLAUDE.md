@@ -6,6 +6,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 `AGENTS.md` at the repo root is the canonical agent brief (project summary, coding standards, security rules, deployment, backlog). Read it first. The notes below focus on commands, current architecture reality, and gotchas — they do **not** repeat what's in `AGENTS.md`.
 
+`CONTRIBUTING.md` (root) is the human-oriented onboarding doc - file-location conventions, where new code goes, hot-spot list. Cross-reference it when adding any non-trivial module so the layout stays consistent.
+
+## Tooling (use this, not the individual commands below)
+
+A root `Makefile` bundles every workflow. Prefer these targets over remembering tool flags - they mirror CI exactly:
+
+```bash
+make help          # list every target
+make install       # first-time: venv + npm ci + pre-commit install
+make dev           # backend (:8001) + frontend (:3121) together
+make check         # ruff + ruff format --check + tsc + oxlint + oxfmt --check (CI mirror)
+make format        # ruff format + oxfmt (auto-fix)
+make pre-commit    # format then check - run before every commit
+make test          # pytest (CI doesn't run tests, but the suite is fast)
+make ci            # check + test
+make clean         # caches and dist/
+```
+
+`make pre-commit` is the safe path. CI runs only the `--check` modes; if format-check fails on CI it means you skipped `make format` (or `make pre-commit`) locally. Pre-commit hooks (see `.pre-commit-config.yaml`) catch the same thing on `git commit` once `make install-hooks` has been run.
+
 **Known drift from `AGENTS.md`**: `AGENTS.md` still describes the frontend as "Next.js 15 with App Router" and the backend using MongoDB. Neither is current. The frontend is **Vite + React 19 + TypeScript** (not CRA, not Next.js, not craco — all removed). The backend no longer uses MongoDB at all (removed April 2026 — the MongoDB server-selection timeout was the source of a 30 s request-latency bug). Backend entry is `server:app` (`backend/server.py`). Trust the code, not `AGENTS.md`, on these points.
 
 ## Commands
