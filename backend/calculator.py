@@ -131,6 +131,9 @@ PLANET_ORDER = [
     ("Venus", swe.VENUS, "Ve"),
     ("Saturn", swe.SATURN, "Sa"),
     ("Rahu", swe.MEAN_NODE, "Ra"),  # Mean node for Rahu
+    ("Uranus", swe.URANUS, "Ur"),
+    ("Neptune", swe.NEPTUNE, "Ne"),
+    ("Pluto", swe.PLUTO, "Pl"),
 ]
 
 # Ashtakavarga contribution tables (benefic points)
@@ -473,6 +476,9 @@ def compute_chart(
         "Saturn",
         "Rahu",
         "Ketu",
+        "Uranus",
+        "Neptune",
+        "Pluto",
     ]:
         planets_list.append(planets[name])
 

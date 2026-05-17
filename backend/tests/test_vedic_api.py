@@ -59,6 +59,9 @@ class TestCalculateContract:
             "Saturn",
             "Rahu",
             "Ketu",
+            "Uranus",
+            "Neptune",
+            "Pluto",
         ]
 
     def test_planet_entry_fields(self, chart):

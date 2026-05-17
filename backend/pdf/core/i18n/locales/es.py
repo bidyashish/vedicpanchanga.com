@@ -75,6 +75,9 @@ LABELS: Dict[str, str] = {
     "abbr_sa": "Sa",
     "abbr_ra": "Ra",
     "abbr_ke": "Ke",
+    "abbr_ur": "Ur",
+    "abbr_ne": "Ne",
+    "abbr_pl": "Pl",
     "abbr_as": "As",
     "planet_sun": "Sol",
     "planet_moon": "Luna",
@@ -85,5 +88,8 @@ LABELS: Dict[str, str] = {
     "planet_saturn": "Saturno",
     "planet_rahu": "Rahu",
     "planet_ketu": "Ketu",
+    "planet_uranus": "Urano",
+    "planet_neptune": "Neptuno",
+    "planet_pluto": "Plutón",
     "planet_ascendant": "Ascendente",
 }

@@ -55,6 +55,9 @@ PLANET_ROWS = [
     ("Saturn", "Satn"),
     ("Rahu", "Rahu"),
     ("Ketu", "Ketu"),
+    ("Uranus", "Uran"),
+    ("Neptune", "Nept"),
+    ("Pluto", "Plut"),
 ]
 
 
