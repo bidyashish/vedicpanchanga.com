@@ -25,6 +25,7 @@ import {
   nowTimeInTz,
   nowTimeWithSecondsInTz,
   todayISO,
+  todayISOInTz,
 } from "@/lib/format";
 import {
   parseDate,
@@ -236,20 +237,35 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
   }, []);
 
   // Live mode: refresh the whole panchang (data + lagna chart) every 60s.
-  // `run` and `loading` are captured via refs so the interval always sees the
-  // latest closure without forcing us to tear down and re-create the timer on
-  // every render.
+  // `run`, `loading`, and `setDate` are captured via refs so the interval
+  // always sees the latest closure without forcing us to tear down and
+  // re-create the timer on every render. On each tick the date is advanced
+  // to "today" in the panchang location's timezone so the page rolls over
+  // at midnight automatically.
   const runRef = useRef(run);
   const loadingRef = useRef(loading);
+  const dateRef = useRef(date);
+  const locRef = useRef(loc);
+  const dataRef = useRef(data);
   useEffect(() => {
     runRef.current = run;
     loadingRef.current = loading;
+    dateRef.current = date;
+    locRef.current = loc;
+    dataRef.current = data;
   });
   useEffect(() => {
     if (!liveMode) return;
     const id = window.setInterval(() => {
       if (loadingRef.current) return;
-      runRef.current();
+      const tz = dataRef.current?.location.timezone ?? locRef.current.timezone ?? undefined;
+      const today = todayISOInTz(tz);
+      if (today !== dateRef.current) {
+        setDate(today);
+        runRef.current({ date: today });
+      } else {
+        runRef.current();
+      }
     }, 60_000);
     return () => window.clearInterval(id);
   }, [liveMode]);

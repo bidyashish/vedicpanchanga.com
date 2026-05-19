@@ -2135,12 +2135,46 @@ function lookupAbbr(code: string, lang: string): string {
   return dict[`abbr_${code.toLowerCase()}`] ?? code;
 }
 
+const SIGN_SHORT_EN = ["Ar", "Ta", "Ge", "Cn", "Le", "Vi", "Li", "Sc", "Sg", "Cp", "Aq", "Pi"];
+
+const SIGN_SHORT_I18N: Record<string, string[]> = {
+  hi: ["मे", "वृ", "मि", "कर्", "सिं", "कन्", "तु", "वृश्", "ध", "मक", "कु", "मी"],
+  ta: ["மே", "ரி", "மி", "கட", "சி", "கன்", "து", "வி", "த", "மக", "கு", "மீ"],
+  bn: ["মে", "বৃ", "মি", "কর্", "সিং", "কন্", "তু", "বৃশ্", "ধ", "মক", "কু", "মী"],
+  zh: [
+    "白羊",
+    "金牛",
+    "双子",
+    "巨蟹",
+    "狮子",
+    "处女",
+    "天秤",
+    "天蝎",
+    "射手",
+    "摩羯",
+    "水瓶",
+    "双鱼",
+  ],
+  ja: ["牡羊", "牡牛", "双子", "蟹", "獅子", "乙女", "天秤", "蠍", "射手", "山羊", "水瓶", "魚"],
+  ru: ["Ов", "Те", "Бл", "Ра", "Ле", "Де", "Ве", "Ск", "Ст", "Ко", "Во", "Ры"],
+  ar: ["حم", "ثو", "جو", "سر", "أس", "عذ", "مي", "عق", "قو", "جد", "دل", "حو"],
+  fa: ["بر", "گا", "دو", "خر", "شی", "خو", "تر", "کژ", "کم", "بز", "دل", "ما"],
+  he: ["טל", "שו", "תא", "סר", "אר", "בת", "מא", "עק", "קש", "גד", "דל", "דג"],
+};
+
+function lookupSignShort(signIdx: number, lang: string): string {
+  const arr = SIGN_SHORT_I18N[lang === "ne" ? "hi" : lang];
+  if (arr) return arr[signIdx - 1] ?? SIGN_SHORT_EN[signIdx - 1] ?? "";
+  return SIGN_SHORT_EN[signIdx - 1] ?? "";
+}
+
 // Hook bound to the active language. `num` coalesces null/undefined to "-".
 export function useAstro() {
   const { lang } = useI18n();
   return {
     num: (v: string | number | null | undefined) => String(v ?? "-"),
     abbr: (code: string) => lookupAbbr(code, lang),
+    signShort: (signIdx: number) => lookupSignShort(signIdx, lang),
     planet: (n: string) => lookup("planet", n, lang),
     sign: (n: string) => (n ? lookup("sign", n, lang) : n),
     nakshatra: (n: string) => (n ? lookup("nak", n, lang) : n),
