@@ -6,6 +6,7 @@ import { KundaliPage } from "@/pages/KundaliPage";
 import { PanchangPage } from "@/pages/PanchangPage";
 import { MuhurtaPage } from "@/pages/MuhurtaPage";
 import { TransitsPage } from "@/pages/TransitsPage";
+import { FrequencyPage } from "@/pages/FrequencyPage";
 import { PrivacyPage } from "@/pages/PrivacyPage";
 import { TermsPage } from "@/pages/TermsPage";
 import { applySeo } from "@/lib/seo";
@@ -13,9 +14,9 @@ import { fetchGeoIP } from "@/lib/api";
 import { loadAdSense } from "@/lib/adsense";
 import type { LocationChoice } from "@/types/api";
 
-export type View = "kundali" | "panchang" | "muhurta" | "transits" | "privacy" | "terms";
+export type View = "kundali" | "panchang" | "muhurta" | "transits" | "frequency" | "privacy" | "terms";
 
-const MONETIZED_VIEWS = new Set<View>(["panchang", "kundali", "muhurta", "transits"]);
+const MONETIZED_VIEWS = new Set<View>(["panchang", "kundali", "muhurta", "transits", "frequency"]);
 
 const SITE = "https://vedicpanchanga.com";
 
@@ -24,6 +25,7 @@ const VIEW_PATH: Record<View, string> = {
   kundali: "/kundali",
   muhurta: "/muhurta",
   transits: "/transits",
+  frequency: "/frequency",
   privacy: "/privacy",
   terms: "/terms",
 };
@@ -53,6 +55,12 @@ const SEO_BY_VIEW: Record<View, { title: string; description: string; canonical:
       "Year-long Vedic planetary transit timeline: sign ingresses, nakshatra changes, retrograde stations for all 12 planets including Uranus, Neptune, Pluto. Sidereal Lahiri.",
     canonical: `${SITE}/transits`,
   },
+  frequency: {
+    title: "Healing Frequency Generator - Solfeggio & Chakra Tones · Vedic Panchanga",
+    description:
+      "Free healing frequency generator: Solfeggio tones (174-963 Hz), Chakra frequencies, and White/Pink/Brown noise. Pure sine waves synthesized in your browser.",
+    canonical: `${SITE}/frequency`,
+  },
   privacy: {
     title: "Privacy Policy · Vedic Panchanga",
     description: "How vedicpanchanga.com handles your data.",
@@ -81,6 +89,8 @@ function viewFromPath(): View {
       return "muhurta";
     case "/transits":
       return "transits";
+    case "/frequency":
+      return "frequency";
     case "/privacy":
       return "privacy";
     case "/terms":
@@ -99,7 +109,7 @@ function viewFromPath(): View {
 function migrateHashOnce(): View | null {
   const hash = window.location.hash.replace("#", "");
   if (!hash) return null;
-  const allowed: View[] = ["kundali", "panchang", "muhurta", "transits"];
+  const allowed: View[] = ["kundali", "panchang", "muhurta", "transits", "frequency"];
   const v = allowed.includes(hash as View) ? (hash as View) : null;
   if (!v) return null;
   window.history.replaceState(null, "", VIEW_PATH[v] + window.location.search);
@@ -174,6 +184,7 @@ export default function App() {
         {sharedLocation && view === "panchang" && <PanchangPage defaultLocation={sharedLocation} />}
         {sharedLocation && view === "muhurta" && <MuhurtaPage defaultLocation={sharedLocation} />}
         {sharedLocation && view === "transits" && <TransitsPage defaultLocation={sharedLocation} />}
+        {view === "frequency" && <FrequencyPage />}
         {view === "privacy" && <PrivacyPage />}
         {view === "terms" && <TermsPage />}
       </main>
