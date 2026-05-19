@@ -1,6 +1,5 @@
 import { useI18n } from "@/i18n";
 import { useAstro } from "@/i18n/astro";
-import { SIGN_SHORT } from "@/lib/planets";
 import type { Ashtakavarga } from "@/types/api";
 
 const PLANET_ORDER = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"];
@@ -18,9 +17,9 @@ export function AshtakavargaTable({ ashtakavarga }: { ashtakavarga: Ashtakavarga
         <thead>
           <tr className="eyebrow-lg border-b border-parchment-200">
             <th className="py-2 px-2 text-start font-bold">{t("th_planet")}</th>
-            {SIGN_SHORT.map((s) => (
+            {Array.from({ length: 12 }, (_, i) => i + 1).map((s) => (
               <th key={s} className="py-2 px-2 font-bold">
-                {s}
+                {a.signShort(s)}
               </th>
             ))}
             <th className="py-2 px-2 font-bold">{t("th_total")}</th>

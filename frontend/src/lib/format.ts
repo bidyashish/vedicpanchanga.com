@@ -162,6 +162,23 @@ export function todayISO(): string {
   return `${y}-${m}-${day}`;
 }
 
+export function todayISOInTz(tz?: string): string {
+  try {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: tz,
+    }).formatToParts(new Date());
+    const y = parts.find((p) => p.type === "year")!.value;
+    const m = parts.find((p) => p.type === "month")!.value;
+    const d = parts.find((p) => p.type === "day")!.value;
+    return `${y}-${m}-${d}`;
+  } catch {
+    return todayISO();
+  }
+}
+
 export function daysFromNow(days: number): string {
   const d = new Date();
   d.setDate(d.getDate() + days);

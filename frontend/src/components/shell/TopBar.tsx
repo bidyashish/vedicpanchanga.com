@@ -14,6 +14,7 @@ export function TopBar({ view, setView }: { view: View; setView: (v: View) => vo
     { id: "kundali", label: t("nav_kundali"), href: "/kundali" },
     { id: "muhurta", label: t("nav_muhurta"), href: "/muhurta" },
     { id: "transits", label: t("nav_transits"), href: "/transits" },
+    { id: "frequency", label: t("nav_frequency"), href: "/frequency" },
   ];
 
   // Close mobile drawer on Esc or when viewport grows past mobile.

@@ -1,6 +1,6 @@
 import type { DrishtiData, HouseMap } from "@/types/api";
 import type { PlanetStatus } from "@/components/kundali/VedicChart";
-import { planetColor, planetTitle, SIGN_SHORT } from "@/lib/planets";
+import { planetColor, planetTitle } from "@/lib/planets";
 import { useAstro } from "@/i18n/astro";
 import { OmGlyph } from "@/components/kundali/OmGlyph";
 
@@ -211,8 +211,18 @@ export function SouthIndianChart({
                   fontSize="11"
                   style={{ fill: dimCol }}
                 >
-                  {SIGN_SHORT[sign - 1]}
+                  {a.signShort(sign)}
                 </text>
+                {sign === ascSign && (
+                  <line
+                    x1={pos.x + 2}
+                    y1={pos.y + 2}
+                    x2={pos.x + 20}
+                    y2={pos.y + 20}
+                    style={{ stroke: ascCol }}
+                    strokeWidth="1.5"
+                  />
+                )}
                 {planets.map((abbr, idx) => {
                   const isAsc = abbr === "As";
                   const deg = planetDegrees?.[abbr];
