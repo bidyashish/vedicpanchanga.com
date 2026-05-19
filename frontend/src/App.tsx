@@ -30,36 +30,46 @@ const VIEW_PATH: Record<View, string> = {
   terms: "/terms",
 };
 
-const SEO_BY_VIEW: Record<View, { title: string; description: string; canonical: string }> = {
+const SEO_BY_VIEW: Record<View, { title: string; description: string; canonical: string; keywords?: string }> = {
   panchang: {
     title: "Vedic Panchanga - Free Drik Panchang, Kundali & Muhurta Calculator",
     description:
       "Free Vedic Panchanga calculator: daily Drik Panchang, North & South Indian Kundali (birth chart), Vimshottari Dasha, divisional charts, and Muhurta finder. Sidereal Lahiri, Swiss Ephemeris precision.",
     canonical: `${SITE}/`,
+    keywords:
+      "vedic panchanga, drik panchang, panchang today, tithi, nakshatra, yoga, karana, sunrise sunset, hindu calendar, jyotisha",
   },
   kundali: {
     title: "Free Kundali - North & South Indian Birth Chart Calculator · Vedic Panchanga",
     description:
       "Generate a Kundali (Vedic birth chart) in North or South Indian style: planetary positions, 16 divisional charts, Vimshottari Dasha, Ashtakavarga. Lahiri ayanamsa, Swiss Ephemeris precision.",
     canonical: `${SITE}/kundali`,
+    keywords:
+      "kundali, birth chart, vedic astrology, jyotish, navamsa, vimshottari dasha, ashtakavarga, divisional charts, north indian chart, south indian chart, planetary positions",
   },
   muhurta: {
     title: "Muhurta Finder - Auspicious Timings for Any Undertaking · Vedic Panchanga",
     description:
       "Find auspicious muhurta windows by purpose, date range and location. Purpose-based scoring with explainable reasons; native filters for Chandrabalam and Tarabalam.",
     canonical: `${SITE}/muhurta`,
+    keywords:
+      "muhurta, shubh muhurat, auspicious time, vedic timing, chandrabalam, tarabalam, electional astrology, griha pravesh muhurat, vivah muhurat",
   },
   transits: {
     title: "Planetary Transits - Sign, Nakshatra & Retrograde Timeline · Vedic Panchanga",
     description:
       "Year-long Vedic planetary transit timeline: sign ingresses, nakshatra changes, retrograde stations for all 12 planets including Uranus, Neptune, Pluto. Sidereal Lahiri.",
     canonical: `${SITE}/transits`,
+    keywords:
+      "planetary transits, gochar, saturn transit, jupiter transit, rahu ketu transit, retrograde planets, nakshatra transit, vedic astrology transits",
   },
   frequency: {
-    title: "Healing Frequency Generator - Solfeggio & Chakra Tones · Vedic Panchanga",
+    title: "Free Healing Frequency Generator - Solfeggio, Chakra, OM & Navagraha Tones · Vedic Panchanga",
     description:
-      "Free healing frequency generator: Solfeggio tones (174-963 Hz), Chakra frequencies, and White/Pink/Brown noise. Pure sine waves synthesized in your browser.",
+      "Free online healing frequency generator with Solfeggio tones (174-963 Hz), 7 Chakra frequencies, Vedic OM (136.1 Hz), Navagraha planetary tones, Schumann resonance, and White/Pink/Brown noise. Sine, square, sawtooth and triangle waveforms. No download needed.",
     canonical: `${SITE}/frequency`,
+    keywords:
+      "healing frequency generator, solfeggio frequencies, 528 hz, 432 hz, chakra healing tones, om frequency, 136.1 hz, navagraha frequency, schumann resonance, white noise generator, pink noise, brown noise, sound healing, meditation tones, frequency therapy, binaural tones",
   },
   privacy: {
     title: "Privacy Policy · Vedic Panchanga",
@@ -123,10 +133,11 @@ export default function App() {
   const [sharedLocation, setSharedLocation] = useState<LocationChoice | null>(null);
 
   // Push the new path whenever the view changes from in-app navigation.
+  // Drop query params so the URL stays clean; share links are built on demand.
   useEffect(() => {
     const desiredPath = VIEW_PATH[view];
     if (window.location.pathname === desiredPath) return;
-    window.history.pushState(null, "", desiredPath + window.location.search);
+    window.history.pushState(null, "", desiredPath);
   }, [view]);
 
   // Browser back/forward → re-derive the view from the URL.

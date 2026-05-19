@@ -18,7 +18,6 @@ import {
   parseTime,
   parseTz,
   readSearch,
-  replaceSearch,
   round4,
   shareUrlFor,
 } from "@/lib/urlState";
@@ -162,31 +161,8 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Reactive URL sync - every form-field edit (including the native name)
-  // rewrites the query string so the user can copy the address bar at any
-  // time without first clicking "Generate Kundali". replaceState keeps the
-  // back stack clean across keystrokes.
-  useEffect(() => {
-    replaceSearch({
-      name: nativeName || undefined,
-      birth_date: form.birth_date,
-      birth_time: form.birth_time,
-      lat: round4(form.latitude),
-      lon: round4(form.longitude),
-      tz: form.timezone || undefined,
-      place: form.place_name || undefined,
-      ayanamsa: form.ayanamsa === "lahiri" ? undefined : form.ayanamsa,
-    });
-  }, [
-    nativeName,
-    form.birth_date,
-    form.birth_time,
-    form.latitude,
-    form.longitude,
-    form.timezone,
-    form.place_name,
-    form.ayanamsa,
-  ]);
+  // URL params are only generated on-demand via the share-link button
+  // (shareUrlFor). The address bar stays clean at all times.
 
   const onSubmit = () => {
     if (!Number.isFinite(form.latitude) || !Number.isFinite(form.longitude)) {

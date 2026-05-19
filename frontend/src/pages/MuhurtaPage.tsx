@@ -14,7 +14,6 @@ import {
   parseStr,
   parseTz,
   readSearch,
-  replaceSearch,
   round4,
   shareUrlFor,
 } from "@/lib/urlState";
@@ -317,34 +316,8 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Reactive URL sync - every dropdown / date / city change rewrites the query
-  // string so the user can copy the address bar at any time, even before
-  // clicking "Find Muhurtas". Prefer the backend-resolved tz once available so
-  // a CitySearch pick (which sets tz:null) still produces a complete link.
-  useEffect(() => {
-    replaceSearch({
-      purpose,
-      start: startDate,
-      end: endDate,
-      lat: round4(loc.latitude),
-      lon: round4(loc.longitude),
-      tz: result?.location?.timezone ?? loc.timezone ?? undefined,
-      place: loc.place_name || undefined,
-      rashi: birthRashiId || undefined,
-      nakshatra: birthNakId || undefined,
-    });
-  }, [
-    purpose,
-    startDate,
-    endDate,
-    loc.latitude,
-    loc.longitude,
-    loc.timezone,
-    loc.place_name,
-    birthRashiId,
-    birthNakId,
-    result?.location?.timezone,
-  ]);
+  // URL params are only generated on-demand via the share-link button
+  // (shareUrlFor). The address bar stays clean at all times.
 
   return (
     <section
