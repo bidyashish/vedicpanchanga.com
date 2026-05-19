@@ -21,6 +21,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://vedicpanchanga.com/frequency</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://vedicpanchanga.com/privacy</loc>
     <changefreq>weekly</changefreq>
     <priority>0.3</priority>

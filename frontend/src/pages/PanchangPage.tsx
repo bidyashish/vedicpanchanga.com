@@ -34,7 +34,6 @@ import {
   parseStr,
   parseTz,
   readSearch,
-  replaceSearch,
   round4,
   shareUrlFor,
 } from "@/lib/urlState";
@@ -285,29 +284,8 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
     return () => window.clearInterval(id);
   }, [liveMode, data?.location.timezone]);
 
-  // Reactive URL sync - every form change rewrites the query string so the
-  // user can copy the address bar at any moment. replaceState (not push) keeps
-  // the back stack clean across keystrokes. Prefer the backend-resolved tz
-  // (data.location.timezone) once available so a tz-null CitySearch pick still
-  // produces a complete shareable link after the first fetch.
-  useEffect(() => {
-    replaceSearch({
-      date,
-      lat: round4(loc.latitude),
-      lon: round4(loc.longitude),
-      tz: data?.location.timezone ?? loc.timezone ?? undefined,
-      place: loc.place_name || undefined,
-      style: chartStyle === "north" ? undefined : chartStyle,
-    });
-  }, [
-    date,
-    loc.latitude,
-    loc.longitude,
-    loc.timezone,
-    loc.place_name,
-    chartStyle,
-    data?.location.timezone,
-  ]);
+  // URL params are only generated on-demand via the share-link button
+  // (shareUrlFor). The address bar stays clean at all times.
 
   const useGeo = () => {
     if (!navigator.geolocation) {
