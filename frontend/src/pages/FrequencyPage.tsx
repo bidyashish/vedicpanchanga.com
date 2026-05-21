@@ -298,14 +298,14 @@ export function FrequencyPage() {
   return (
     <section data-testid="frequency-view" className="pt-3 sm:pt-4 pb-8 max-w-4xl mx-auto space-y-4">
       {/* Page header */}
-      <div className="card p-4 sm:p-5">
+      <div className="card p-3 sm:p-4 lg:p-5">
         <p className="eyebrow-accent">{t("freq_eyebrow")}</p>
         <h2 className="heading-page mt-0.5">{t("freq_title")}</h2>
         <p className="meta mt-1">{t("freq_subtitle")}</p>
       </div>
 
       {/* Frequency Generator */}
-      <div className="card p-4 sm:p-6">
+      <div className="card p-3 sm:p-4 lg:p-6">
         <h3 className="heading-section">{t("freq_generator")}</h3>
 
         {/* Status line */}
@@ -582,7 +582,7 @@ export function FrequencyPage() {
       </div>
 
       {/* Noise Generator */}
-      <div className="card p-4 sm:p-6">
+      <div className="card p-3 sm:p-4 lg:p-6">
         <h3 className="heading-section">{t("freq_noise")}</h3>
 
         {/* Status */}

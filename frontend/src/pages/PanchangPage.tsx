@@ -439,7 +439,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
 
         {data && (
           <>
-            <div className="card p-4 sm:p-5">
+            <div className="card p-3 sm:p-4 lg:p-5">
               <div className="flex items-baseline justify-between gap-3 flex-wrap">
                 <div>
                   <p className="eyebrow-accent">{t("panchang_title")}</p>
@@ -490,8 +490,8 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 </div>
               ) : chart ? (
                 <>
-                  <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-5">
-                    <div className="lg:col-span-3 space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+                    <div className="md:col-span-1 space-y-3 max-w-xs mx-auto md:mx-0 md:max-w-none">
                       <div className="flex flex-wrap items-center gap-3">
                         <SegmentedControl<"north" | "south" | "west">
                           testId="lagna-chart-style-toggle"
@@ -572,7 +572,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                         {a.num(chart.ascendant.nakshatra_pada)})
                       </p>
                     </div>
-                    <div className="lg:col-span-2">
+                    <div className="md:col-span-2">
                       <PlanetsTable
                         planets={chart.planets_data}
                         ascendant={chart.ascendant}

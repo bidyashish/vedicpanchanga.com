@@ -305,7 +305,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
         {/* Left sidebar — form */}
         <aside className="lg:col-span-4 xl:col-span-3">
-          <div className="card p-4 sm:p-5 lg:sticky lg:top-16">
+          <div className="card p-3 sm:p-4 lg:p-5 lg:sticky lg:top-16">
             <h2 className="heading-section">{t("birth_details")}</h2>
             <p className="meta mb-4">{t("enter_native_time_place")}</p>
             <div className="mb-3">
