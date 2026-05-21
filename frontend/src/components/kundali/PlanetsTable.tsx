@@ -7,9 +7,10 @@ interface Props {
   planets: Planet[];
   ascendant: Planet;
   drishti?: DrishtiData;
+  onSelectPlanet?: (abbr: string) => void;
 }
 
-export function PlanetsTable({ planets, ascendant, drishti }: Props) {
+export function PlanetsTable({ planets, ascendant, drishti, onSelectPlanet }: Props) {
   const { t } = useI18n();
   const a = useAstro();
   const rows = [ascendant, ...planets];
@@ -43,7 +44,11 @@ export function PlanetsTable({ planets, ascendant, drishti }: Props) {
         </thead>
         <tbody className="text-meta">
           {rows.map((p) => (
-            <tr key={p.name} className="border-b border-parchment-200 last:border-0">
+            <tr
+              key={p.name}
+              className={`border-b border-parchment-200 last:border-0${onSelectPlanet ? " cursor-pointer hover:bg-parchment-50 transition-colors" : ""}`}
+              onClick={onSelectPlanet ? () => onSelectPlanet(p.abbr) : undefined}
+            >
               <td
                 className="py-2 pe-3 font-semibold whitespace-nowrap text-start"
                 style={{ color: planetColor(p.abbr) }}

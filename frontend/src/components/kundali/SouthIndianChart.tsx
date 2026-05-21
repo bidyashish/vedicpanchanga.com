@@ -142,8 +142,6 @@ export function SouthIndianChart({
             strokeDasharray="4 4"
             opacity="0.5"
           />
-          <OmGlyph cx={250} cy={250} size={70} color="var(--primary)" opacity={0.76} />
-
           {activeAspects && fromHouse != null && aspectedHouses && (
             <g className="aspect-lines">
               {drishti!.by_planet[selectedPlanet!].details.map((d) => {
@@ -270,6 +268,8 @@ export function SouthIndianChart({
               </g>
             );
           })}
+
+          <OmGlyph cx={250} cy={250} size={70} color="var(--primary)" opacity={1} />
         </svg>
       </div>
     </div>

@@ -19,7 +19,7 @@ def fr(delhi_chart):
     return delhi_chart["friendships"]
 
 
-def test_seven_planets_all_present(fr):
+def test_all_planets_present(fr):
     assert fr["planets"] == list(VISIBLE_PLANETS)
 
 
@@ -48,8 +48,6 @@ def test_natural_friend_plus_temporal_friend_yields_great_friend():
     # Pure-function check: synthesise minimal planet entries so we can craft
     # a temporal-friend relationship without relying on the live ephemeris.
     planets = [
-        # Sun in sign 1 (Aries); Moon in sign 2 (Taurus) — Moon is in 2nd
-        # from Sun → temporal Friend; Sun-Moon naturally Friend → composite GF.
         {"name": "Sun", "sign_id": 1},
         {"name": "Moon", "sign_id": 2},
         {"name": "Mars", "sign_id": 5},
@@ -57,6 +55,8 @@ def test_natural_friend_plus_temporal_friend_yields_great_friend():
         {"name": "Jupiter", "sign_id": 11},
         {"name": "Venus", "sign_id": 3},
         {"name": "Saturn", "sign_id": 7},
+        {"name": "Rahu", "sign_id": 10},
+        {"name": "Ketu", "sign_id": 4},
     ]
     out = compute_friendship_tables(planets)
     assert out["natural"]["Sun"]["Moon"] == "F"
@@ -65,16 +65,16 @@ def test_natural_friend_plus_temporal_friend_yields_great_friend():
 
 
 def test_natural_enemy_plus_temporal_enemy_yields_great_enemy():
-    # Sun and Saturn are natural enemies. Place them 6 signs apart so neither
-    # is in {2,3,4,10,11,12} from the other → temporal enemy → composite GE.
     planets = [
         {"name": "Sun", "sign_id": 1},
-        {"name": "Saturn", "sign_id": 7},  # 7th from Sun → temporal enemy
+        {"name": "Saturn", "sign_id": 7},
         {"name": "Moon", "sign_id": 4},
         {"name": "Mars", "sign_id": 5},
         {"name": "Mercury", "sign_id": 6},
         {"name": "Jupiter", "sign_id": 9},
         {"name": "Venus", "sign_id": 11},
+        {"name": "Rahu", "sign_id": 10},
+        {"name": "Ketu", "sign_id": 4},
     ]
     out = compute_friendship_tables(planets)
     assert out["natural"]["Sun"]["Saturn"] == "E"

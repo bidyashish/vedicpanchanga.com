@@ -290,8 +290,6 @@ export function WesternChart({ planets, ascendant, ascSign, title, testId }: Pro
             );
           })}
 
-          <OmGlyph cx={CX} cy={CY} size={70} color="var(--primary)" opacity={1} />
-
           {all.map((planet, idx) => {
             const trueLong = planet.longitude;
             const labelLong = labelLongs[idx];
@@ -327,6 +325,8 @@ export function WesternChart({ planets, ascendant, ascSign, title, testId }: Pro
               </g>
             );
           })}
+
+          <OmGlyph cx={CX} cy={CY} size={70} color="var(--primary)" opacity={1} />
         </svg>
       </div>
     </div>

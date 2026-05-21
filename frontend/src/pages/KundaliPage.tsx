@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { BirthForm, type BirthFormState } from "@/components/kundali/BirthForm";
 import { BirthHeader } from "@/components/kundali/BirthHeader";
 import { ChartTabs } from "@/components/kundali/ChartTabs";
 import { PlanetsTable } from "@/components/kundali/PlanetsTable";
+import { PlanetDetailModal } from "@/components/kundali/PlanetDetailModal";
 import { DashaTable } from "@/components/kundali/DashaTable";
 import { AshtakavargaTable } from "@/components/kundali/AshtakavargaTable";
 import { DrishtiPanel } from "@/components/kundali/DrishtiPanel";
@@ -129,7 +130,18 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   const [nativeName, setNativeName] = useState<string>(initialParams.name ?? "");
   const [printing, setPrinting] = useState(false);
   const [selectedPlanet, setSelectedPlanet] = useState<string | null>(null);
+  const [detailPlanetAbbr, setDetailPlanetAbbr] = useState<string | null>(null);
   const didAutoRunRef = useRef(false);
+
+  const detailPlanet = useMemo(() => {
+    if (!detailPlanetAbbr || !data) return null;
+    if (data.ascendant.abbr === detailPlanetAbbr) return data.ascendant;
+    return data.planets_data.find((p) => p.abbr === detailPlanetAbbr) ?? null;
+  }, [detailPlanetAbbr, data]);
+
+  const openPlanetDetail = useCallback((abbr: string | null) => {
+    setDetailPlanetAbbr(abbr);
+  }, []);
 
   const calculate = async (body: BirthFormState) => {
     setLoading(true);
@@ -331,11 +343,13 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
                 data={data}
                 selectedPlanet={selectedPlanet}
                 onSelectPlanet={setSelectedPlanet}
+                onPlanetDetail={openPlanetDetail}
               />
               <PlanetsTable
                 planets={data.planets_data}
                 ascendant={data.ascendant}
                 drishti={data.drishti}
+                onSelectPlanet={openPlanetDetail}
               />
               {data.drishti && (
                 <DrishtiPanel
@@ -351,6 +365,11 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
                 swamsa={data.swamsa}
               />
               <AshtakavargaTable ashtakavarga={data.ashtakavarga} />
+              <PlanetDetailModal
+                planet={detailPlanet}
+                data={data}
+                onClose={() => setDetailPlanetAbbr(null)}
+              />
             </>
           )}
         </div>

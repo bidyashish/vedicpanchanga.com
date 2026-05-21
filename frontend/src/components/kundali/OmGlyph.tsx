@@ -22,13 +22,17 @@ export function OmGlyph({
   const scale = size / PATH_H;
   const w = PATH_W * scale;
   const h = PATH_H * scale;
+  const r = Math.max(w, h) / 2 + 4;
   return (
-    <g
-      transform={`translate(${cx - w / 2} ${cy - h / 2}) scale(${scale})`}
-      fill={color}
-      opacity={opacity}
-    >
-      <path d={OM_PATH} />
+    <g pointerEvents="none">
+      <circle cx={cx} cy={cy} r={r} fill="white" />
+      <g
+        transform={`translate(${cx - w / 2} ${cy - h / 2}) scale(${scale})`}
+        fill={color}
+        opacity={opacity}
+      >
+        <path d={OM_PATH} />
+      </g>
     </g>
   );
 }
