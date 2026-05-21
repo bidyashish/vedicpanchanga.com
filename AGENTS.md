@@ -56,15 +56,9 @@ vedicpanchanga.com/
 │   └── package.json
 ├── infra/                  # Deployment & infrastructure
 │   ├── setup-vps.sh        # One-command VPS provisioning
-│   ├── setup-firewall.sh   # UFW firewall rules
-│   ├── setup-monitoring.sh # Prometheus + Grafana installer
-│   ├── setup-cron.sh       # Auto-update cron installer
-│   ├── auto-update-cron.sh # Auto-update script
-│   ├── update-deploy.sh    # Manual redeploy script
-│   ├── nginx-vedicpanchanga.conf
-│   ├── panchanga-backend.service
-│   ├── panchanga-frontend.service
-│   └── *.service / *.yml   # Monitoring configs
+│   ├── auto-update-cron.sh # Auto-update + manual deploy (--install for cron)
+│   ├── setup-monitoring.sh # Prometheus + Grafana + Node Exporter (optional)
+│   └── README.md           # Topology diagram and troubleshooting
 ├── tests/                  # All test suites
 │   ├── test_vedic_api.py
 │   ├── test_panchang_detailed.py
@@ -183,10 +177,9 @@ Open http://localhost:3121
 ### Production (VPS)
 
 ```bash
-sudo bash infra/setup-vps.sh      # Full setup (one time)
-sudo certbot --nginx -d vedicpanchanga.com  # SSL (one time)
-bash infra/setup-cron.sh           # Auto-updates (optional)
-bash infra/update-deploy.sh        # Manual redeploy
+sudo bash infra/setup-vps.sh                   # Full setup (one time)
+sudo bash infra/auto-update-cron.sh --install  # Auto-updates (optional)
+bash infra/auto-update-cron.sh                 # Manual redeploy
 ```
 
 ### Deployment Checklist

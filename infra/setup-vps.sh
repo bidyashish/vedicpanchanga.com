@@ -449,5 +449,5 @@ echo
 echo "Useful commands:"
 echo "  sudo journalctl -u panchanga-backend -f      # backend logs"
 echo "  sudo systemctl restart panchanga-backend     # restart backend"
-echo "  sudo bash $APP_DIR/infra/update-deploy.sh    # rebuild & redeploy"
+echo "  bash $APP_DIR/infra/auto-update-cron.sh       # rebuild & redeploy"
 echo
