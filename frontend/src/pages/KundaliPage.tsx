@@ -64,11 +64,11 @@ const pdfLangFor = (uiLang: string): PdfLang =>
   PDF_LANGS.has(uiLang as PdfLang) ? (uiLang as PdfLang) : "en";
 
 const DEFAULT_FORM: BirthFormState = {
-  birth_date: "1990-01-01",
+  birth_date: "1995-08-29",
   birth_time: "12:00",
-  place_name: "New Delhi, India",
-  latitude: 28.6139,
-  longitude: 77.209,
+  place_name: "Ujjain, India",
+  latitude: 23.1765,
+  longitude: 75.7885,
   timezone: "Asia/Kolkata",
   ayanamsa: "lahiri",
 };
@@ -131,16 +131,49 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   const [printing, setPrinting] = useState(false);
   const [selectedPlanet, setSelectedPlanet] = useState<string | null>(null);
   const [detailPlanetAbbr, setDetailPlanetAbbr] = useState<string | null>(null);
+  const [detailDivision, setDetailDivision] = useState(1);
   const didAutoRunRef = useRef(false);
 
   const detailPlanet = useMemo(() => {
     if (!detailPlanetAbbr || !data) return null;
-    if (data.ascendant.abbr === detailPlanetAbbr) return data.ascendant;
-    return data.planets_data.find((p) => p.abbr === detailPlanetAbbr) ?? null;
-  }, [detailPlanetAbbr, data]);
+    const base =
+      data.ascendant.abbr === detailPlanetAbbr
+        ? data.ascendant
+        : (data.planets_data.find((p) => p.abbr === detailPlanetAbbr) ?? null);
+    if (!base || detailDivision === 1) return base;
+    const varga = data.vargas?.[`d${detailDivision}`];
+    if (!varga) return base;
+    const house = Object.entries(varga.chart).find(([, planets]) => planets.includes(base.abbr));
+    const houseNum = house ? Number(house[0]) : base.house;
+    const signId = houseNum != null ? ((varga.asc_sign - 1 + (houseNum - 1)) % 12) + 1 : undefined;
+    const SIGN_NAMES = [
+      "Aries",
+      "Taurus",
+      "Gemini",
+      "Cancer",
+      "Leo",
+      "Virgo",
+      "Libra",
+      "Scorpio",
+      "Sagittarius",
+      "Capricorn",
+      "Aquarius",
+      "Pisces",
+    ];
+    return {
+      ...base,
+      house: houseNum,
+      sign: signId != null ? SIGN_NAMES[signId - 1] : base.sign,
+      dms:
+        varga.planet_degrees[base.abbr] != null
+          ? `${Math.floor(varga.planet_degrees[base.abbr])}°`
+          : base.dms,
+    };
+  }, [detailPlanetAbbr, detailDivision, data]);
 
-  const openPlanetDetail = useCallback((abbr: string | null) => {
+  const openPlanetDetail = useCallback((abbr: string | null, division = 1) => {
     setDetailPlanetAbbr(abbr);
+    setDetailDivision(division);
   }, []);
 
   const calculate = async (body: BirthFormState) => {
@@ -368,6 +401,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
               <PlanetDetailModal
                 planet={detailPlanet}
                 data={data}
+                division={detailDivision}
                 onClose={() => setDetailPlanetAbbr(null)}
               />
             </>

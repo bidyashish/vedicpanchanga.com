@@ -7,6 +7,7 @@ import type { ChartData, FriendshipCode, Planet } from "@/types/api";
 interface Props {
   planet: Planet | null;
   data: ChartData;
+  division?: number;
   onClose: () => void;
 }
 
@@ -18,7 +19,7 @@ const FRIENDSHIP_STYLE: Record<string, { bg: string; fg: string }> = {
   GE: { bg: "color-mix(in oklab, var(--danger) 14%, transparent)", fg: "var(--danger)" },
 };
 
-export function PlanetDetailModal({ planet, data, onClose }: Props) {
+export function PlanetDetailModal({ planet, data, division = 1, onClose }: Props) {
   const { t } = useI18n();
   const a = useAstro();
 
@@ -107,6 +108,9 @@ export function PlanetDetailModal({ planet, data, onClose }: Props) {
               </h3>
               <p className="text-xs text-ink-soft">
                 {a.nakshatra(planet.nakshatra)} {t("col_pada")} {a.num(planet.nakshatra_pada)}
+                {division > 1 && (
+                  <span className="ml-1.5 font-bold text-saffron">D{a.num(division)}</span>
+                )}
               </p>
             </div>
           </div>

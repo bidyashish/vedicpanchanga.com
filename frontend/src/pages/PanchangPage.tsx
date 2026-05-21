@@ -539,6 +539,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                             ascSign={chart.d1_asc_sign}
                             title={t("rashi_chart_title")}
                             testId="lagna-chart-west"
+                            onSelectPlanet={openPlanetDetail}
                           />
                         ) : chartStyle === "south" ? (
                           <SouthIndianChart

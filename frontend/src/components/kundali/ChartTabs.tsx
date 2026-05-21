@@ -14,7 +14,7 @@ interface Props {
   data: ChartData;
   selectedPlanet: string | null;
   onSelectPlanet: (abbr: string | null) => void;
-  onPlanetDetail?: (abbr: string) => void;
+  onPlanetDetail?: (abbr: string, division: number) => void;
 }
 
 type ChartStyle = "north" | "south" | "west";
@@ -117,10 +117,13 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet, onPlanetDetail
 
   const handleChartPlanetClick = useCallback(
     (abbr: string | null) => {
-      if (showAspects) onSelectPlanet(abbr);
-      if (abbr && onPlanetDetail) onPlanetDetail(abbr);
+      if (showAspects) {
+        onSelectPlanet(abbr);
+      } else if (abbr && onPlanetDetail) {
+        onPlanetDetail(abbr, active.division);
+      }
     },
-    [showAspects, onSelectPlanet, onPlanetDetail],
+    [showAspects, onSelectPlanet, onPlanetDetail, active.division],
   );
 
   return (
@@ -204,6 +207,7 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet, onPlanetDetail
             ascSign={data.d1_asc_sign}
             title={`Rashi Chakra · D${a.num(1)}`}
             testId="chart-west"
+            onSelectPlanet={onPlanetDetail ? (abbr: string) => onPlanetDetail(abbr, 1) : undefined}
           />
         ) : chartStyle === "south" ? (
           <SouthIndianChart
@@ -215,7 +219,7 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet, onPlanetDetail
             planetStatus={isD1 ? planetStatus : undefined}
             showDegrees={showDegrees}
             selectedPlanet={isD1 && showAspects ? selectedPlanet : null}
-            onSelectPlanet={isD1 ? handleChartPlanetClick : undefined}
+            onSelectPlanet={handleChartPlanetClick}
             drishti={isD1 ? data.drishti : undefined}
             showAspects={isD1 && showAspects}
           />
@@ -229,7 +233,7 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet, onPlanetDetail
             planetStatus={isD1 ? planetStatus : undefined}
             showDegrees={showDegrees}
             selectedPlanet={isD1 && showAspects ? selectedPlanet : null}
-            onSelectPlanet={isD1 ? handleChartPlanetClick : undefined}
+            onSelectPlanet={handleChartPlanetClick}
             drishti={isD1 ? data.drishti : undefined}
             showAspects={isD1 && showAspects}
           />
@@ -237,7 +241,7 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet, onPlanetDetail
         {!isWest && activeSubtitle && (
           <p className="text-center text-xs text-ink-soft mt-3 italic">{activeSubtitle}</p>
         )}
-        {!isWest && isD1 && onPlanetDetail && (
+        {!isWest && onPlanetDetail && (
           <p className="text-center text-xs mt-3 italic" style={{ color: "var(--accent-amber)" }}>
             {t("drishti_hint")}
           </p>

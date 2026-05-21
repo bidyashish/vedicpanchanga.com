@@ -41,6 +41,7 @@ interface Props {
   ascSign: number;
   title?: string;
   testId?: string;
+  onSelectPlanet?: (abbr: string) => void;
 }
 
 const CX = 250;
@@ -51,7 +52,8 @@ const R_SIGN_INNER = 215;
 const R_NAK_INNER = 175;
 const R_PLANET_TICK_OUT = 175;
 const R_PLANET_TICK_IN = 165;
-const R_PLANET_LABEL = 150;
+const R_LABEL_NEAR = 150;
+const R_LABEL_FAR = 120;
 const R_HOUSE_NUM = 70;
 
 // Aries CENTER (longitude 15) sits at SVG -90deg (top of circle), matching
@@ -70,20 +72,10 @@ function tangentRotation(longitude: number): number {
   return -longitude - 75 + 90;
 }
 
-// Spread overlapping labels apart, but never let an adjusted longitude
-// cross out of the sign that the planet actually occupies - otherwise the
-// label visually drifts into the next house.
-function spreadOverlaps(longs: number[], minGap = 4): number[] {
+function spreadOverlaps(longs: number[], minGap = 10): number[] {
   const indexed = longs.map((v, i) => ({ v, i })).sort((a, b) => a.v - b.v);
   const adjusted = indexed.map((p) => p.v);
-  const signOf = (lng: number) => Math.floor(lng / 30);
-  const clampToSign = (orig: number, next: number): number => {
-    const sign = signOf(orig);
-    const lo = sign * 30 + 1;
-    const hi = sign * 30 + 29;
-    return Math.min(hi, Math.max(lo, next));
-  };
-  for (let pass = 0; pass < 6; pass++) {
+  for (let pass = 0; pass < 12; pass++) {
     let moved = false;
     for (let k = 0; k < adjusted.length; k++) {
       const next = (k + 1) % adjusted.length;
@@ -91,8 +83,8 @@ function spreadOverlaps(longs: number[], minGap = 4): number[] {
       if (next === 0) diff += 360;
       if (diff < minGap) {
         const push = (minGap - diff) / 2;
-        const newK = clampToSign(indexed[k].v, adjusted[k] - push);
-        const newNext = clampToSign(indexed[next].v, adjusted[next] + push);
+        const newK = adjusted[k] - push;
+        const newNext = adjusted[next] + push;
         if (newK !== adjusted[k] || newNext !== adjusted[next]) moved = true;
         adjusted[k] = newK;
         adjusted[next] = newNext;
@@ -102,12 +94,33 @@ function spreadOverlaps(longs: number[], minGap = 4): number[] {
   }
   const out = Array.from({ length: longs.length }, () => 0);
   indexed.forEach((p, k) => {
-    out[p.i] = adjusted[k];
+    out[p.i] = ((adjusted[k] % 360) + 360) % 360;
   });
   return out;
 }
 
-export function WesternChart({ planets, ascendant, ascSign, title, testId }: Props) {
+function assignRadii(spreadLongs: number[], threshold = 14): number[] {
+  const indexed = spreadLongs.map((v, i) => ({ v, i })).sort((a, b) => a.v - b.v);
+  const radii = new Array(spreadLongs.length).fill(R_LABEL_NEAR);
+  for (let k = 0; k < indexed.length; k++) {
+    const prev = (k - 1 + indexed.length) % indexed.length;
+    let diff = indexed[k].v - indexed[prev].v;
+    if (k === 0) diff += 360;
+    if (diff < threshold && radii[indexed[prev].i] === R_LABEL_NEAR) {
+      radii[indexed[k].i] = R_LABEL_FAR;
+    }
+  }
+  return radii;
+}
+
+export function WesternChart({
+  planets,
+  ascendant,
+  ascSign,
+  title,
+  testId,
+  onSelectPlanet,
+}: Props) {
   const a = useAstro();
   const lineCol = "var(--ink-soft)";
   const surfaceCol = "var(--surface)";
@@ -116,6 +129,7 @@ export function WesternChart({ planets, ascendant, ascSign, title, testId }: Pro
 
   const all = [...planets, ascendant];
   const labelLongs = spreadOverlaps(all.map((p) => p.longitude));
+  const labelRadii = assignRadii(labelLongs);
 
   return (
     <div className="w-full" data-testid={testId}>
@@ -293,13 +307,21 @@ export function WesternChart({ planets, ascendant, ascSign, title, testId }: Pro
           {all.map((planet, idx) => {
             const trueLong = planet.longitude;
             const labelLong = labelLongs[idx];
+            const r = labelRadii[idx];
             const tickOut = pointAt(trueLong, R_PLANET_TICK_OUT);
             const tickIn = pointAt(trueLong, R_PLANET_TICK_IN);
-            const labelPos = pointAt(labelLong, R_PLANET_LABEL);
+            const branchEnd = pointAt(labelLong, r + 8);
+            const labelPos = pointAt(labelLong, r);
             const isAsc = planet.abbr === "As" || planet.abbr === "Lg";
+            const clickable = !isAsc && onSelectPlanet;
             const color = isAsc ? ascCol : planetColor(planet.abbr);
             return (
-              <g key={`planet-${idx}`} data-testid={`${testId}-planet-${planet.abbr}`}>
+              <g
+                key={`planet-${idx}`}
+                data-testid={`${testId}-planet-${planet.abbr}`}
+                onClick={clickable ? () => onSelectPlanet(planet.abbr) : undefined}
+                style={{ cursor: clickable ? "pointer" : "default" }}
+              >
                 <title>{`${planetTitle(planet.abbr)} · ${planet.dms} ${planet.sign}`}</title>
                 <line
                   x1={tickOut.x}
@@ -308,6 +330,15 @@ export function WesternChart({ planets, ascendant, ascSign, title, testId }: Pro
                   y2={tickIn.y}
                   stroke={color}
                   strokeWidth="2"
+                />
+                <line
+                  x1={tickIn.x}
+                  y1={tickIn.y}
+                  x2={branchEnd.x}
+                  y2={branchEnd.y}
+                  stroke={color}
+                  strokeWidth="1"
+                  opacity={0.5}
                 />
                 <text
                   x={labelPos.x}
