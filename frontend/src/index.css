@@ -3,6 +3,15 @@
 /* Class-based dark mode (was darkMode: "class" in v3 config). */
 @custom-variant dark (&:where(.dark, .dark *));
 
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("-apple-system"), local("BlinkMacSystemFont"), local("Segoe UI");
+  size-adjust: 107%;
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
 /* ────────────────────────────────────────────────────────────
    Theme tokens. Colors are wired through CSS rgb-channel vars
    (--surface-rgb, --primary-rgb, etc.) declared further down,
@@ -16,8 +25,8 @@
      Android. Inter loads in the background and swaps in via
      font-display: swap (declared on the Google Fonts URL). */
   --font-sans:
-    -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI Variable", "Segoe UI", system-ui, Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+    "Inter", "Inter Fallback", -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI",
+    system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-serif: var(--font-sans);
   --font-deva: "Noto Sans Devanagari", "Hind", var(--font-sans);
   --font-deva-body: "Noto Sans Devanagari", "Hind", var(--font-sans);

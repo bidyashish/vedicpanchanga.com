@@ -198,6 +198,13 @@ server {
     add_header X-Content-Type-Options "nosniff" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 5;
+    gzip_min_length 256;
+    gzip_types text/plain text/css text/javascript application/javascript application/json image/svg+xml application/xml;
+
     root $APP_DIR/frontend/dist;
     index index.html;
 
@@ -206,6 +213,23 @@ server {
         expires 1y;
         add_header Cache-Control "public, immutable";
         try_files \$uri =404;
+    }
+
+    location ~* \.(png|jpg|jpeg|gif|ico|svg|webp)$ {
+        access_log off;
+        expires 30d;
+        add_header Cache-Control "public";
+        try_files \$uri =404;
+    }
+
+    location = /robots.txt {
+        access_log off;
+        expires 7d;
+    }
+
+    location = /sitemap.xml {
+        access_log off;
+        expires 1d;
     }
 
     location = /index.html {
@@ -250,6 +274,13 @@ server {
     add_header X-Content-Type-Options "nosniff" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 5;
+    gzip_min_length 256;
+    gzip_types text/plain text/css text/javascript application/javascript application/json image/svg+xml application/xml;
+
     root $APP_DIR/frontend/dist;
     index index.html;
 
@@ -258,6 +289,23 @@ server {
         expires 1y;
         add_header Cache-Control "public, immutable";
         try_files \$uri =404;
+    }
+
+    location ~* \.(png|jpg|jpeg|gif|ico|svg|webp)$ {
+        access_log off;
+        expires 30d;
+        add_header Cache-Control "public";
+        try_files \$uri =404;
+    }
+
+    location = /robots.txt {
+        access_log off;
+        expires 7d;
+    }
+
+    location = /sitemap.xml {
+        access_log off;
+        expires 1d;
     }
 
     location = /index.html {

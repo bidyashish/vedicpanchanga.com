@@ -156,7 +156,9 @@ export function FrequencyPage() {
   function startFreq(hz: number, wave: Waveform) {
     const ctx = getCtx();
     if (oscRef.current) {
-      try { oscRef.current.stop(); } catch {}
+      try {
+        oscRef.current.stop();
+      } catch {}
       oscRef.current.disconnect();
     }
     if (freqGainRef.current) freqGainRef.current.disconnect();
@@ -177,7 +179,9 @@ export function FrequencyPage() {
 
   function stopFreq() {
     if (oscRef.current) {
-      try { oscRef.current.stop(); } catch {}
+      try {
+        oscRef.current.stop();
+      } catch {}
       oscRef.current.disconnect();
       oscRef.current = null;
     }
@@ -216,7 +220,9 @@ export function FrequencyPage() {
   function startNoise(type: NoiseType) {
     const ctx = getCtx();
     if (noiseSourceRef.current) {
-      try { noiseSourceRef.current.stop(); } catch {}
+      try {
+        noiseSourceRef.current.stop();
+      } catch {}
       noiseSourceRef.current.disconnect();
     }
     if (noiseGainRef.current) noiseGainRef.current.disconnect();
@@ -242,7 +248,9 @@ export function FrequencyPage() {
 
   function stopNoise() {
     if (noiseSourceRef.current) {
-      try { noiseSourceRef.current.stop(); } catch {}
+      try {
+        noiseSourceRef.current.stop();
+      } catch {}
       noiseSourceRef.current.disconnect();
       noiseSourceRef.current = null;
     }
@@ -270,8 +278,12 @@ export function FrequencyPage() {
 
   useEffect(() => {
     return () => {
-      try { oscRef.current?.stop(); } catch {}
-      try { noiseSourceRef.current?.stop(); } catch {}
+      try {
+        oscRef.current?.stop();
+      } catch {}
+      try {
+        noiseSourceRef.current?.stop();
+      } catch {}
       oscRef.current?.disconnect();
       freqGainRef.current?.disconnect();
       noiseSourceRef.current?.disconnect();
@@ -284,10 +296,7 @@ export function FrequencyPage() {
     `freq_${w}` as "freq_sine" | "freq_square" | "freq_sawtooth" | "freq_triangle";
 
   return (
-    <section
-      data-testid="frequency-view"
-      className="pt-3 sm:pt-4 pb-8 max-w-4xl mx-auto space-y-4"
-    >
+    <section data-testid="frequency-view" className="pt-3 sm:pt-4 pb-8 max-w-4xl mx-auto space-y-4">
       {/* Page header */}
       <div className="card p-4 sm:p-5">
         <p className="eyebrow-accent">{t("freq_eyebrow")}</p>
@@ -410,9 +419,7 @@ export function FrequencyPage() {
                   }`}
                 >
                   {p.hz} {t("freq_hz")}
-                  {p.labelKey && (
-                    <span className="text-ink-muted ml-1">({t(p.labelKey)})</span>
-                  )}
+                  {p.labelKey && <span className="text-ink-muted ml-1">({t(p.labelKey)})</span>}
                 </button>
               ))}
             </div>
