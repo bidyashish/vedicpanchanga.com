@@ -1,20 +1,42 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { TopBar } from "@/components/shell/TopBar";
 import { NotificationBanner } from "@/components/shell/NotificationBanner";
 import { Footer } from "@/components/shell/Footer";
-import { KundaliPage } from "@/pages/KundaliPage";
-import { PanchangPage } from "@/pages/PanchangPage";
-import { MuhurtaPage } from "@/pages/MuhurtaPage";
-import { TransitsPage } from "@/pages/TransitsPage";
-import { FrequencyPage } from "@/pages/FrequencyPage";
-import { PrivacyPage } from "@/pages/PrivacyPage";
-import { TermsPage } from "@/pages/TermsPage";
+import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { applySeo } from "@/lib/seo";
 import { fetchGeoIP } from "@/lib/api";
 import { loadAdSense } from "@/lib/adsense";
+import { loadGtag } from "@/lib/gtag";
 import type { LocationChoice } from "@/types/api";
 
-export type View = "kundali" | "panchang" | "muhurta" | "transits" | "frequency" | "privacy" | "terms";
+const KundaliPage = lazy(() =>
+  import("@/pages/KundaliPage").then((m) => ({ default: m.KundaliPage })),
+);
+const PanchangPage = lazy(() =>
+  import("@/pages/PanchangPage").then((m) => ({ default: m.PanchangPage })),
+);
+const MuhurtaPage = lazy(() =>
+  import("@/pages/MuhurtaPage").then((m) => ({ default: m.MuhurtaPage })),
+);
+const TransitsPage = lazy(() =>
+  import("@/pages/TransitsPage").then((m) => ({ default: m.TransitsPage })),
+);
+const FrequencyPage = lazy(() =>
+  import("@/pages/FrequencyPage").then((m) => ({ default: m.FrequencyPage })),
+);
+const PrivacyPage = lazy(() =>
+  import("@/pages/PrivacyPage").then((m) => ({ default: m.PrivacyPage })),
+);
+const TermsPage = lazy(() => import("@/pages/TermsPage").then((m) => ({ default: m.TermsPage })));
+
+export type View =
+  | "kundali"
+  | "panchang"
+  | "muhurta"
+  | "transits"
+  | "frequency"
+  | "privacy"
+  | "terms";
 
 const MONETIZED_VIEWS = new Set<View>(["panchang", "kundali", "muhurta", "transits", "frequency"]);
 
@@ -30,7 +52,10 @@ const VIEW_PATH: Record<View, string> = {
   terms: "/terms",
 };
 
-const SEO_BY_VIEW: Record<View, { title: string; description: string; canonical: string; keywords?: string }> = {
+const SEO_BY_VIEW: Record<
+  View,
+  { title: string; description: string; canonical: string; keywords?: string }
+> = {
   panchang: {
     title: "Vedic Panchanga - Free Drik Panchang, Kundali & Muhurta Calculator",
     description:
@@ -64,7 +89,8 @@ const SEO_BY_VIEW: Record<View, { title: string; description: string; canonical:
       "planetary transits, gochar, saturn transit, jupiter transit, rahu ketu transit, retrograde planets, nakshatra transit, vedic astrology transits",
   },
   frequency: {
-    title: "Free Healing Frequency Generator - Solfeggio, Chakra, OM & Navagraha Tones · Vedic Panchanga",
+    title:
+      "Free Healing Frequency Generator - Solfeggio, Chakra, OM & Navagraha Tones · Vedic Panchanga",
     description:
       "Free online healing frequency generator with Solfeggio tones (174-963 Hz), 7 Chakra frequencies, Vedic OM (136.1 Hz), Navagraha planetary tones, Schumann resonance, and White/Pink/Brown noise. Sine, square, sawtooth and triangle waveforms. No download needed.",
     canonical: `${SITE}/frequency`,
@@ -126,11 +152,17 @@ function migrateHashOnce(): View | null {
   return v;
 }
 
+function PageSkeleton() {
+  return (
+    <div className="pt-3 sm:pt-4 pb-8 flex items-center justify-center py-16">
+      <MandalaLoader size={56} />
+    </div>
+  );
+}
+
 export default function App() {
   const [view, setView] = useState<View>(() => migrateHashOnce() ?? viewFromPath());
-  // null = geo-IP not yet resolved. Pages stay unmounted until it settles so
-  // their internal `loc` snapshots seed from the geo-IP result, not Ujjain.
-  const [sharedLocation, setSharedLocation] = useState<LocationChoice | null>(null);
+  const [sharedLocation, setSharedLocation] = useState<LocationChoice>(DEFAULT_LOCATION);
 
   // Push the new path whenever the view changes from in-app navigation.
   // Drop query params so the URL stays clean; share links are built on demand.
@@ -147,23 +179,19 @@ export default function App() {
     return () => window.removeEventListener("popstate", sync);
   }, []);
 
-  // StrictMode double-mounts the tree in dev; the ref guard makes sure we only
-  // hit /api/geo-ip once per page load. Production never double-fires.
   const geoFetchedRef = useRef(false);
   useEffect(() => {
     if (geoFetchedRef.current) return;
     geoFetchedRef.current = true;
     fetchGeoIP().then((geo) => {
-      setSharedLocation(
-        geo
-          ? {
-              place_name: geo.place_name,
-              latitude: geo.latitude,
-              longitude: geo.longitude,
-              timezone: null,
-            }
-          : DEFAULT_LOCATION,
-      );
+      if (geo) {
+        setSharedLocation({
+          place_name: geo.place_name,
+          latitude: geo.latitude,
+          longitude: geo.longitude,
+          timezone: null,
+        });
+      }
     });
   }, []);
 
@@ -172,16 +200,40 @@ export default function App() {
     applySeo(SEO_BY_VIEW[view]);
   }, [view]);
 
-  // Lazy-load AdSense only after the calculator content is actually on screen
-  // and only on monetized routes. AdSense's crawler hitting /privacy or /terms
-  // directly will find no ad script - addresses the "ads on screens without
-  // publisher-content" violation. Once injected, the script persists.
   useEffect(() => {
-    if (!sharedLocation) return;
     if (!MONETIZED_VIEWS.has(view)) return;
-    const id = window.setTimeout(loadAdSense, 0);
+    const id = window.setTimeout(() => {
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(() => loadAdSense());
+      } else {
+        loadAdSense();
+      }
+    }, 3000);
     return () => window.clearTimeout(id);
-  }, [view, sharedLocation]);
+  }, [view]);
+
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(() => loadGtag());
+      } else {
+        loadGtag();
+      }
+    }, 2000);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(() => {
+          import("@/pages/KundaliPage");
+          import("@/pages/MuhurtaPage");
+        });
+      }
+    }, 5000);
+    return () => window.clearTimeout(id);
+  }, []);
 
   return (
     <div className="parchment-bg min-h-screen flex flex-col">
@@ -189,15 +241,17 @@ export default function App() {
       <TopBar view={view} setView={setView} />
 
       <main className="flex-1 max-w-screen-3xl w-full mx-auto px-3 sm:px-6 lg:px-8">
-        {sharedLocation && view === "kundali" && (
-          <KundaliPage sharedLocation={sharedLocation} onLocationChange={setSharedLocation} />
-        )}
-        {sharedLocation && view === "panchang" && <PanchangPage defaultLocation={sharedLocation} />}
-        {sharedLocation && view === "muhurta" && <MuhurtaPage defaultLocation={sharedLocation} />}
-        {sharedLocation && view === "transits" && <TransitsPage defaultLocation={sharedLocation} />}
-        {view === "frequency" && <FrequencyPage />}
-        {view === "privacy" && <PrivacyPage />}
-        {view === "terms" && <TermsPage />}
+        <Suspense fallback={<PageSkeleton />}>
+          {view === "kundali" && (
+            <KundaliPage sharedLocation={sharedLocation} onLocationChange={setSharedLocation} />
+          )}
+          {view === "panchang" && <PanchangPage defaultLocation={sharedLocation} />}
+          {view === "muhurta" && <MuhurtaPage defaultLocation={sharedLocation} />}
+          {view === "transits" && <TransitsPage defaultLocation={sharedLocation} />}
+          {view === "frequency" && <FrequencyPage />}
+          {view === "privacy" && <PrivacyPage />}
+          {view === "terms" && <TermsPage />}
+        </Suspense>
       </main>
 
       <Footer />

@@ -20,5 +20,21 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks(id: string) {
+          if (id.includes("node_modules/react-dom") || id.includes("node_modules/react/")) {
+            return "vendor-react";
+          }
+          if (
+            id.includes("node_modules/react-day-picker") ||
+            id.includes("node_modules/@radix-ui") ||
+            id.includes("node_modules/lucide-react")
+          ) {
+            return "vendor-ui";
+          }
+        },
+      },
+    },
   },
 });

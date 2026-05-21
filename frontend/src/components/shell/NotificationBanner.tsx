@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import notifications from "@/notifications.json";
 
 interface Notice {
@@ -41,12 +41,10 @@ function getActiveNotice(): Notice | null {
 }
 
 export function NotificationBanner() {
-  const [notice, setNotice] = useState<Notice | null>(null);
-
-  useEffect(() => {
-    setNotice(getActiveNotice());
+  const [notice, setNotice] = useState<Notice | null>(() => {
     lsSet(VISITED_KEY, "1");
-  }, []);
+    return getActiveNotice();
+  });
 
   if (!notice) return null;
 
