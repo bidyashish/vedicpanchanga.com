@@ -117,9 +117,14 @@ export function PlanetsTable({ planets, ascendant, drishti, friendships, onSelec
             <th className="py-2 pe-3 font-bold num whitespace-nowrap text-start">
               {t("col_degree")}
             </th>
-            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">{t("col_lord")}</th>
+            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
+              {t("col_sign_lord")}
+            </th>
             <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
               {t("col_nakshatra")}
+            </th>
+            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
+              {t("col_nak_lord")}
             </th>
             <th className="py-2 pe-3 font-bold whitespace-nowrap text-start w-16">
               {t("col_pada")}
@@ -155,6 +160,9 @@ export function PlanetsTable({ planets, ascendant, drishti, friendships, onSelec
                 <td className="py-2 pe-3 whitespace-nowrap text-start">{a.planet(p.sign_lord)}</td>
                 <td className="py-2 pe-3 whitespace-nowrap text-start">
                   {a.nakshatra(p.nakshatra)}
+                </td>
+                <td className="py-2 pe-3 whitespace-nowrap text-start">
+                  {a.planet(p.nakshatra_lord)}
                 </td>
                 <td className="py-2 pe-3 num whitespace-nowrap tabular-nums text-start">
                   {a.num(p.nakshatra_pada)}
