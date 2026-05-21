@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
@@ -12,7 +12,9 @@ import { TimeBand } from "@/components/panchang/TimeBand";
 import { VedicChart } from "@/components/kundali/VedicChart";
 import type { PlanetStatus } from "@/components/kundali/VedicChart";
 import { SouthIndianChart } from "@/components/kundali/SouthIndianChart";
+import { WesternChart } from "@/components/kundali/WesternChart";
 import { PlanetsTable } from "@/components/kundali/PlanetsTable";
+import { PlanetDetailModal } from "@/components/kundali/PlanetDetailModal";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Switch } from "@/components/ui/switch";
 import { useAstro } from "@/i18n/astro";
@@ -113,7 +115,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
       lon,
       tz: parseTz(sp.get("tz")),
       place: parseStr(sp.get("place"), 120),
-      style: parseEnum(sp.get("style"), ["north", "south"] as const),
+      style: parseEnum(sp.get("style"), ["north", "south", "west"] as const),
       hasLocation: lat != null && lon != null,
     };
   }, []);
@@ -131,12 +133,24 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
   );
   const [data, setData] = useState<PanchangData | null>(null);
   const [chart, setChart] = useState<ChartData | null>(null);
+  const [detailPlanetAbbr, setDetailPlanetAbbr] = useState<string | null>(null);
+
+  const detailPlanet = useMemo(() => {
+    if (!detailPlanetAbbr || !chart) return null;
+    if (chart.ascendant.abbr === detailPlanetAbbr) return chart.ascendant;
+    return chart.planets_data.find((p) => p.abbr === detailPlanetAbbr) ?? null;
+  }, [detailPlanetAbbr, chart]);
+
+  const openPlanetDetail = useCallback((abbr: string | null) => {
+    if (abbr) setDetailPlanetAbbr(abbr);
+  }, []);
+
   // The HH:MM the lagna kundali is cast for. We use *current* wall-clock time
   // in the chart's location so the chart reflects the live sky — at sunrise
   // the lagna co-rises with the sun and the chart looked frozen on Aries when
   // the sun was in Aries.
   const [chartTime, setChartTime] = useState<string>("");
-  const [chartStyle, setChartStyle] = useState<"north" | "south">(
+  const [chartStyle, setChartStyle] = useState<"north" | "south" | "west">(
     () => initialParams.style ?? "north",
   );
   const [showDegrees, setShowDegrees] = useState<boolean>(() => {
@@ -475,74 +489,103 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   <p className="meta italic">{t("consulting_heavens")}</p>
                 </div>
               ) : chart ? (
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-5">
-                  <div className="lg:col-span-3 space-y-3">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <SegmentedControl<"north" | "south">
-                        testId="lagna-chart-style-toggle"
-                        ariaLabel={t("chart_style")}
-                        value={chartStyle}
-                        onChange={setChartStyle}
-                        options={[
-                          {
-                            id: "north",
-                            label: t("north_indian"),
-                            testId: "lagna-chart-style-north",
-                          },
-                          {
-                            id: "south",
-                            label: t("south_indian"),
-                            testId: "lagna-chart-style-south",
-                          },
-                        ]}
+                <>
+                  <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-5">
+                    <div className="lg:col-span-3 space-y-3">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <SegmentedControl<"north" | "south" | "west">
+                          testId="lagna-chart-style-toggle"
+                          ariaLabel={t("chart_style")}
+                          value={chartStyle}
+                          onChange={setChartStyle}
+                          options={[
+                            {
+                              id: "north",
+                              label: t("north_indian"),
+                              testId: "lagna-chart-style-north",
+                            },
+                            {
+                              id: "south",
+                              label: t("south_indian"),
+                              testId: "lagna-chart-style-south",
+                            },
+                            {
+                              id: "west",
+                              label: t("western"),
+                              testId: "lagna-chart-style-west",
+                            },
+                          ]}
+                        />
+                        {chartStyle !== "west" && (
+                          <label
+                            data-testid="lagna-show-degree-toggle"
+                            className="inline-flex items-center gap-2 text-mini font-medium text-ink-soft cursor-pointer select-none"
+                          >
+                            <span>{t("show_degree")}</span>
+                            <Switch
+                              checked={showDegrees}
+                              onCheckedChange={onShowDegrees}
+                              aria-label={t("show_degree")}
+                              data-testid="lagna-show-degree-switch"
+                            />
+                          </label>
+                        )}
+                      </div>
+                      <div className="bg-parchment-50 p-2 rounded-sm">
+                        {chartStyle === "west" ? (
+                          <WesternChart
+                            planets={chart.planets_data}
+                            ascendant={chart.ascendant}
+                            ascSign={chart.d1_asc_sign}
+                            title={t("rashi_chart_title")}
+                            testId="lagna-chart-west"
+                            onSelectPlanet={openPlanetDetail}
+                          />
+                        ) : chartStyle === "south" ? (
+                          <SouthIndianChart
+                            houseMap={chart.d1_chart}
+                            ascSign={chart.d1_asc_sign}
+                            title={t("rashi_chart_title")}
+                            testId="lagna-chart-south"
+                            planetDegrees={chart.vargas?.d1?.planet_degrees}
+                            planetStatus={chartPlanetStatus}
+                            showDegrees={showDegrees}
+                            onSelectPlanet={openPlanetDetail}
+                          />
+                        ) : (
+                          <VedicChart
+                            houseMap={chart.d1_chart}
+                            ascSign={chart.d1_asc_sign}
+                            title={t("rashi_chart_title")}
+                            testId="lagna-chart-north"
+                            planetDegrees={chart.vargas?.d1?.planet_degrees}
+                            planetStatus={chartPlanetStatus}
+                            showDegrees={showDegrees}
+                            onSelectPlanet={openPlanetDetail}
+                          />
+                        )}
+                      </div>
+                      <p className="text-mini text-ink-soft text-center italic">
+                        {t("lagna_caption_at")} {a.sign(chart.ascendant.sign)}{" "}
+                        {a.num(chart.ascendant.dms)} · {t("lagna_caption_nakshatra")}{" "}
+                        {a.nakshatra(chart.ascendant.nakshatra)} ({t("lagna_caption_pada")}{" "}
+                        {a.num(chart.ascendant.nakshatra_pada)})
+                      </p>
+                    </div>
+                    <div className="lg:col-span-2">
+                      <PlanetsTable
+                        planets={chart.planets_data}
+                        ascendant={chart.ascendant}
+                        onSelectPlanet={openPlanetDetail}
                       />
-                      <label
-                        data-testid="lagna-show-degree-toggle"
-                        className="inline-flex items-center gap-2 text-mini font-medium text-ink-soft cursor-pointer select-none"
-                      >
-                        <span>{t("show_degree")}</span>
-                        <Switch
-                          checked={showDegrees}
-                          onCheckedChange={onShowDegrees}
-                          aria-label={t("show_degree")}
-                          data-testid="lagna-show-degree-switch"
-                        />
-                      </label>
                     </div>
-                    <div className="bg-parchment-50 p-2 rounded-sm">
-                      {chartStyle === "south" ? (
-                        <SouthIndianChart
-                          houseMap={chart.d1_chart}
-                          ascSign={chart.d1_asc_sign}
-                          title={t("rashi_chart_title")}
-                          testId="lagna-chart-south"
-                          planetDegrees={chart.vargas?.d1?.planet_degrees}
-                          planetStatus={chartPlanetStatus}
-                          showDegrees={showDegrees}
-                        />
-                      ) : (
-                        <VedicChart
-                          houseMap={chart.d1_chart}
-                          ascSign={chart.d1_asc_sign}
-                          title={t("rashi_chart_title")}
-                          testId="lagna-chart-north"
-                          planetDegrees={chart.vargas?.d1?.planet_degrees}
-                          planetStatus={chartPlanetStatus}
-                          showDegrees={showDegrees}
-                        />
-                      )}
-                    </div>
-                    <p className="text-mini text-ink-soft text-center italic">
-                      {t("lagna_caption_at")} {a.sign(chart.ascendant.sign)}{" "}
-                      {a.num(chart.ascendant.dms)} · {t("lagna_caption_nakshatra")}{" "}
-                      {a.nakshatra(chart.ascendant.nakshatra)} ({t("lagna_caption_pada")}{" "}
-                      {a.num(chart.ascendant.nakshatra_pada)})
-                    </p>
                   </div>
-                  <div className="lg:col-span-2">
-                    <PlanetsTable planets={chart.planets_data} ascendant={chart.ascendant} />
-                  </div>
-                </div>
+                  <PlanetDetailModal
+                    planet={detailPlanet}
+                    data={chart}
+                    onClose={() => setDetailPlanetAbbr(null)}
+                  />
+                </>
               ) : (
                 <p className="meta italic">{t("chart_unavailable")}</p>
               )}

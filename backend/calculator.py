@@ -458,6 +458,11 @@ def compute_chart(
     # Ashtakavarga
     ashtakavarga = compute_ashtakavarga(planets, asc_sign)
 
+    # Special placements (exaltation, debilitation, own sign, etc.)
+    from placements import compute_special_placements
+
+    compute_special_placements(list(planets.values()))
+
     # Jaimini karakas + Karakamsa / Swamsa
     from drishti import compute_aspects
     from jaimini import compute_chara_karakas, compute_karakamsa_swamsa

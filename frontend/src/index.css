@@ -770,6 +770,55 @@
   }
 }
 
+/* Reusable modal */
+.modal-dialog {
+  border: none;
+  padding: 0;
+  background: transparent;
+  width: min(28rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.modal-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+}
+.modal-dialog[open] {
+  animation: modal-fade-in 150ms ease-out;
+}
+.modal-dialog[open]::backdrop {
+  animation: modal-backdrop-in 150ms ease-out;
+}
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+@keyframes modal-backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+@media (max-width: 480px) {
+  .modal-dialog {
+    width: 100vw;
+    max-height: 100dvh;
+    height: 100dvh;
+    margin: 0;
+    inset: unset;
+    border-radius: 0;
+  }
+  .modal-dialog > * {
+    min-height: 100dvh;
+    border-radius: 0 !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

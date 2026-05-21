@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { BirthForm, type BirthFormState } from "@/components/kundali/BirthForm";
 import { BirthHeader } from "@/components/kundali/BirthHeader";
 import { ChartTabs } from "@/components/kundali/ChartTabs";
 import { PlanetsTable } from "@/components/kundali/PlanetsTable";
+import { PlanetDetailModal } from "@/components/kundali/PlanetDetailModal";
 import { DashaTable } from "@/components/kundali/DashaTable";
 import { AshtakavargaTable } from "@/components/kundali/AshtakavargaTable";
 import { DrishtiPanel } from "@/components/kundali/DrishtiPanel";
@@ -63,11 +64,11 @@ const pdfLangFor = (uiLang: string): PdfLang =>
   PDF_LANGS.has(uiLang as PdfLang) ? (uiLang as PdfLang) : "en";
 
 const DEFAULT_FORM: BirthFormState = {
-  birth_date: "1990-01-01",
+  birth_date: "1995-08-29",
   birth_time: "12:00",
-  place_name: "New Delhi, India",
-  latitude: 28.6139,
-  longitude: 77.209,
+  place_name: "Ujjain, India",
+  latitude: 23.1765,
+  longitude: 75.7885,
   timezone: "Asia/Kolkata",
   ayanamsa: "lahiri",
 };
@@ -129,7 +130,51 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   const [nativeName, setNativeName] = useState<string>(initialParams.name ?? "");
   const [printing, setPrinting] = useState(false);
   const [selectedPlanet, setSelectedPlanet] = useState<string | null>(null);
+  const [detailPlanetAbbr, setDetailPlanetAbbr] = useState<string | null>(null);
+  const [detailDivision, setDetailDivision] = useState(1);
   const didAutoRunRef = useRef(false);
+
+  const detailPlanet = useMemo(() => {
+    if (!detailPlanetAbbr || !data) return null;
+    const base =
+      data.ascendant.abbr === detailPlanetAbbr
+        ? data.ascendant
+        : (data.planets_data.find((p) => p.abbr === detailPlanetAbbr) ?? null);
+    if (!base || detailDivision === 1) return base;
+    const varga = data.vargas?.[`d${detailDivision}`];
+    if (!varga) return base;
+    const house = Object.entries(varga.chart).find(([, planets]) => planets.includes(base.abbr));
+    const houseNum = house ? Number(house[0]) : base.house;
+    const signId = houseNum != null ? ((varga.asc_sign - 1 + (houseNum - 1)) % 12) + 1 : undefined;
+    const SIGN_NAMES = [
+      "Aries",
+      "Taurus",
+      "Gemini",
+      "Cancer",
+      "Leo",
+      "Virgo",
+      "Libra",
+      "Scorpio",
+      "Sagittarius",
+      "Capricorn",
+      "Aquarius",
+      "Pisces",
+    ];
+    return {
+      ...base,
+      house: houseNum,
+      sign: signId != null ? SIGN_NAMES[signId - 1] : base.sign,
+      dms:
+        varga.planet_degrees[base.abbr] != null
+          ? `${Math.floor(varga.planet_degrees[base.abbr])}°`
+          : base.dms,
+    };
+  }, [detailPlanetAbbr, detailDivision, data]);
+
+  const openPlanetDetail = useCallback((abbr: string | null, division = 1) => {
+    setDetailPlanetAbbr(abbr);
+    setDetailDivision(division);
+  }, []);
 
   const calculate = async (body: BirthFormState) => {
     setLoading(true);
@@ -331,11 +376,13 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
                 data={data}
                 selectedPlanet={selectedPlanet}
                 onSelectPlanet={setSelectedPlanet}
+                onPlanetDetail={openPlanetDetail}
               />
               <PlanetsTable
                 planets={data.planets_data}
                 ascendant={data.ascendant}
                 drishti={data.drishti}
+                onSelectPlanet={openPlanetDetail}
               />
               {data.drishti && (
                 <DrishtiPanel
@@ -351,6 +398,12 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
                 swamsa={data.swamsa}
               />
               <AshtakavargaTable ashtakavarga={data.ashtakavarga} />
+              <PlanetDetailModal
+                planet={detailPlanet}
+                data={data}
+                division={detailDivision}
+                onClose={() => setDetailPlanetAbbr(null)}
+              />
             </>
           )}
         </div>

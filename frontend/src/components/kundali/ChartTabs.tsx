@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { useAstro } from "@/i18n/astro";
 import { VedicChart } from "@/components/kundali/VedicChart";
@@ -14,6 +14,7 @@ interface Props {
   data: ChartData;
   selectedPlanet: string | null;
   onSelectPlanet: (abbr: string | null) => void;
+  onPlanetDetail?: (abbr: string, division: number) => void;
 }
 
 type ChartStyle = "north" | "south" | "west";
@@ -39,7 +40,7 @@ function loadShowAspects(): boolean {
   return window.localStorage.getItem(SHOW_ASPECTS_KEY) === "1";
 }
 
-export function ChartTabs({ data, selectedPlanet, onSelectPlanet }: Props) {
+export function ChartTabs({ data, selectedPlanet, onSelectPlanet, onPlanetDetail }: Props) {
   const { t, lang } = useI18n();
   const a = useAstro();
   const vargaKeys = data.varga_order ?? [1, 2, 9];
@@ -113,6 +114,17 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet }: Props) {
     }
     return map;
   }, [data.planets_data]);
+
+  const handleChartPlanetClick = useCallback(
+    (abbr: string | null) => {
+      if (showAspects) {
+        onSelectPlanet(abbr);
+      } else if (abbr && onPlanetDetail) {
+        onPlanetDetail(abbr, active.division);
+      }
+    },
+    [showAspects, onSelectPlanet, onPlanetDetail, active.division],
+  );
 
   return (
     <div className="card p-4 sm:p-5" data-testid="chart-tabs">
@@ -195,6 +207,7 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet }: Props) {
             ascSign={data.d1_asc_sign}
             title={`Rashi Chakra · D${a.num(1)}`}
             testId="chart-west"
+            onSelectPlanet={onPlanetDetail ? (abbr: string) => onPlanetDetail(abbr, 1) : undefined}
           />
         ) : chartStyle === "south" ? (
           <SouthIndianChart
@@ -206,7 +219,7 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet }: Props) {
             planetStatus={isD1 ? planetStatus : undefined}
             showDegrees={showDegrees}
             selectedPlanet={isD1 && showAspects ? selectedPlanet : null}
-            onSelectPlanet={isD1 && showAspects ? onSelectPlanet : undefined}
+            onSelectPlanet={handleChartPlanetClick}
             drishti={isD1 ? data.drishti : undefined}
             showAspects={isD1 && showAspects}
           />
@@ -220,7 +233,7 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet }: Props) {
             planetStatus={isD1 ? planetStatus : undefined}
             showDegrees={showDegrees}
             selectedPlanet={isD1 && showAspects ? selectedPlanet : null}
-            onSelectPlanet={isD1 && showAspects ? onSelectPlanet : undefined}
+            onSelectPlanet={handleChartPlanetClick}
             drishti={isD1 ? data.drishti : undefined}
             showAspects={isD1 && showAspects}
           />
@@ -228,7 +241,7 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet }: Props) {
         {!isWest && activeSubtitle && (
           <p className="text-center text-xs text-ink-soft mt-3 italic">{activeSubtitle}</p>
         )}
-        {!isWest && isD1 && showAspects && (
+        {!isWest && onPlanetDetail && (
           <p className="text-center text-xs mt-3 italic" style={{ color: "var(--accent-amber)" }}>
             {t("drishti_hint")}
           </p>

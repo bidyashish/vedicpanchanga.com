@@ -17,8 +17,20 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
-VISIBLE_PLANETS = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
+VISIBLE_PLANETS = (
+    "Sun",
+    "Moon",
+    "Mars",
+    "Mercury",
+    "Jupiter",
+    "Venus",
+    "Saturn",
+    "Rahu",
+    "Ketu",
+)
 
+# Classical 7-planet table plus Rahu/Ketu extensions.
+# Rahu behaves like Saturn; Ketu behaves like Mars.
 NATURAL_FRIENDSHIP: Dict[str, Dict[str, str]] = {
     "Sun": {
         "Moon": "F",
@@ -27,6 +39,8 @@ NATURAL_FRIENDSHIP: Dict[str, Dict[str, str]] = {
         "Jupiter": "F",
         "Venus": "E",
         "Saturn": "E",
+        "Rahu": "E",
+        "Ketu": "N",
     },
     "Moon": {
         "Sun": "F",
@@ -35,6 +49,8 @@ NATURAL_FRIENDSHIP: Dict[str, Dict[str, str]] = {
         "Jupiter": "N",
         "Venus": "N",
         "Saturn": "N",
+        "Rahu": "E",
+        "Ketu": "N",
     },
     "Mars": {
         "Sun": "F",
@@ -43,6 +59,8 @@ NATURAL_FRIENDSHIP: Dict[str, Dict[str, str]] = {
         "Jupiter": "F",
         "Venus": "N",
         "Saturn": "N",
+        "Rahu": "N",
+        "Ketu": "F",
     },
     "Mercury": {
         "Sun": "F",
@@ -51,6 +69,8 @@ NATURAL_FRIENDSHIP: Dict[str, Dict[str, str]] = {
         "Jupiter": "N",
         "Venus": "F",
         "Saturn": "N",
+        "Rahu": "F",
+        "Ketu": "E",
     },
     "Jupiter": {
         "Sun": "F",
@@ -59,6 +79,8 @@ NATURAL_FRIENDSHIP: Dict[str, Dict[str, str]] = {
         "Mercury": "E",
         "Venus": "E",
         "Saturn": "N",
+        "Rahu": "E",
+        "Ketu": "F",
     },
     "Venus": {
         "Sun": "E",
@@ -67,6 +89,8 @@ NATURAL_FRIENDSHIP: Dict[str, Dict[str, str]] = {
         "Mercury": "F",
         "Jupiter": "N",
         "Saturn": "F",
+        "Rahu": "F",
+        "Ketu": "E",
     },
     "Saturn": {
         "Sun": "E",
@@ -75,6 +99,28 @@ NATURAL_FRIENDSHIP: Dict[str, Dict[str, str]] = {
         "Mercury": "F",
         "Jupiter": "N",
         "Venus": "F",
+        "Rahu": "F",
+        "Ketu": "N",
+    },
+    "Rahu": {
+        "Sun": "E",
+        "Moon": "E",
+        "Mars": "N",
+        "Mercury": "F",
+        "Jupiter": "E",
+        "Venus": "F",
+        "Saturn": "F",
+        "Ketu": "E",
+    },
+    "Ketu": {
+        "Sun": "N",
+        "Moon": "N",
+        "Mars": "F",
+        "Mercury": "E",
+        "Jupiter": "F",
+        "Venus": "E",
+        "Saturn": "N",
+        "Rahu": "E",
     },
 }
 
@@ -139,7 +185,7 @@ def compute_friendship_tables(
             if pa and pb:
                 t = _temporal(int(pa["sign_id"]), int(pb["sign_id"]))
             else:
-                t = "N"
+                t = "F"
             natural[a][b] = n
             temporal[a][b] = t
             composite[a][b] = _composite(n, t)

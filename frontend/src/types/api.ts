@@ -32,6 +32,12 @@ export interface Planet {
   nakshatra_lord: string;
   retrograde: boolean;
   house?: number;
+  exalted?: boolean;
+  debilitated?: boolean;
+  own_sign?: boolean;
+  moolatrikona?: boolean;
+  vargottama?: boolean;
+  digbala?: boolean;
 }
 
 export interface BirthSummary {
@@ -165,6 +171,16 @@ export interface TransitsResponse {
   events: TransitEvent[];
 }
 
+export type FriendshipCode = "GF" | "F" | "N" | "E" | "GE" | "";
+
+export interface Friendships {
+  planets: string[];
+  natural: Record<string, Record<string, FriendshipCode>>;
+  temporal: Record<string, Record<string, FriendshipCode>>;
+  composite: Record<string, Record<string, FriendshipCode>>;
+  labels: Record<string, string>;
+}
+
 export interface ChartData {
   birth: BirthSummary;
   ascendant: Planet;
@@ -183,6 +199,7 @@ export interface ChartData {
   karakas?: Karaka[];
   karakamsa?: JaiminiChart;
   swamsa?: JaiminiChart;
+  friendships?: Friendships;
   drishti?: DrishtiData;
 }
 
