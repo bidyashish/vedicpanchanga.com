@@ -14,7 +14,7 @@ Drik Panchang calculator with a modern web interface. Computes traditional Hindu
 
 **Live**: <https://vedicpanchanga.com>
 
-⭐ If this project is useful to you, please star the repo — it helps others find it.
+⭐ If this project is useful to you, please star the repo - it helps others find it.
 
 ---
 
@@ -45,14 +45,14 @@ Requires Python 3.10+ and Node.js 20+.
 git clone https://github.com/bidyashish/vedicpanchanga.com
 cd vedicpanchanga.com
 
-# 2. Backend (terminal 1) — FastAPI on :8001
+# 2. Backend (terminal 1) - FastAPI on :8001
 cd backend
 python3 -m venv venv
 source venv/bin/activate.fish        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn server:app --host 127.0.0.1 --port 8001 --reload
 
-# 3. Frontend (terminal 2) — Vite dev server on :3121
+# 3. Frontend (terminal 2) - Vite dev server on :3121
 cd frontend
 cp .env.example .env            # sets VITE_BACKEND_URL=http://localhost:8001
 npm install
@@ -68,7 +68,7 @@ npm run dev          # Vite dev server with HMR
 npm run build        # tsc --noEmit && vite build → dist/
 npm run preview      # serve the built bundle
 npm run lint         # oxlint (oxc-project)
-npm run format       # oxfmt — write
+npm run format       # oxfmt - write
 npm run format:check # oxfmt --check (CI)
 npx tsc --noEmit     # TypeScript type-check
 ```
@@ -79,7 +79,7 @@ npx tsc --noEmit     # TypeScript type-check
 cd backend && source venv/bin/activate
 ruff check .          # lint
 ruff check . --fix    # lint + auto-fix
-ruff format .         # format — write
+ruff format .         # format - write
 ruff format --check . # format check (CI)
 ```
 
@@ -111,25 +111,27 @@ suite covers and the canonical birth payloads.
 | `backend/.env`     | `CORS_ORIGINS`       | Comma-separated allowlist. Dev default: `http://localhost:3121`. Prod: `setup-vps.sh` writes `https://vedicpanchanga.com,https://www.vedicpanchanga.com`. |
 | `frontend/.env`    | `VITE_BACKEND_URL`   | Backend origin. Leave empty in prod → same-origin `/api` via Nginx.     |
 
-Vite bakes `VITE_*` vars in at **build time**, so edit `.env` and rebuild — restarting isn't enough.
+Vite bakes `VITE_*` vars in at **build time**, so edit `.env` and rebuild - restarting isn't enough.
 
 ---
 
 ## Features
 
-- **Jyotisha Kundali** · birth chart with 16 divisional charts (D1–D60), North- or South-Indian style
-- **Drik Panchang** · Tithi · Nakshatra · Yoga · Karana · Vara, Sun/Moon timings, Rahu Kala, Abhijit & more
-- **Muhurta Finder** · scan up to 120 days for Marriage, Griha Pravesha, Business, Travel etc. with 0–100 scoring
-- **Vimshottari Mahadasha** · full 120-year planetary cycle from birth
-- **Ashtakavarga** · Bhinnashtakavarga per planet + Sarvashtakavarga totals
-- **Multi-ayanamsa** · NC Lahiri (default), KP New/Old, BV Raman, KP Khullar, Sayana, Manoj
-- **Multilingual UI** · 15 languages — English, हिन्दी, தமிழ், বাংলা, नेपाली, 中文, 日本語, Español, Deutsch, Português, Français, Русский, العربية, فارسی, עברית. RTL flips automatically for Arabic / Persian / Hebrew.
+- **Jyotisha Kundali** - birth chart with 16 divisional charts (D1-D60), North- or South-Indian style, with Dignity and Status columns showing 5-fold friendship and special placements
+- **Drik Panchang** - Tithi, Nakshatra, Yoga, Karana, Vara, Sun/Moon timings, Rahu Kala, Abhijit, Gowri Panchangam, Hora, Tyajyam and more
+- **Muhurta Finder** - scan up to 120 days for Marriage, Griha Pravesha, Business, Travel etc. with 0-100 scoring
+- **Planetary Transits** - year-long transit timeline with sign ingresses, nakshatra changes, and retrograde stations
+- **Frequency Generator** - healing frequency / tone generator with Solfeggio, Chakra, Navagraha, and noise presets
+- **Vimshottari Mahadasha** - full 120-year planetary cycle with Antardasha and Pratyantar sub-periods
+- **Ashtakavarga** - Bhinnashtakavarga per planet + Sarvashtakavarga totals
+- **Multi-ayanamsa** - NC Lahiri (default), KP New/Old, BV Raman, KP Khullar, Sayana, Manoj
+- **Multilingual UI** - 15 languages: English, Hindi, Tamil, Bengali, Nepali, Chinese, Japanese, Spanish, German, Portuguese, French, Russian, Arabic, Persian, Hebrew. RTL flips automatically for Arabic / Persian / Hebrew.
 
 ---
 
 ## Deploy to a VPS (Ubuntu 22.04 / 24.04)
 
-The site sits behind Cloudflare. TLS uses a **Cloudflare Origin Certificate** (free, 15-year, no rate limits, no auto-renew). `setup-vps.sh` is idempotent — re-running it never breaks TLS as long as the cert files are in place.
+The site sits behind Cloudflare. TLS uses a **Cloudflare Origin Certificate** (free, 15-year, no rate limits, no auto-renew). `setup-vps.sh` is idempotent - re-running it never breaks TLS as long as the cert files are in place.
 
 ```bash
 # 1. Clone into the canonical path
@@ -137,7 +139,7 @@ sudo mkdir -p /apps && cd /apps
 sudo git clone https://github.com/bidyashish/vedicpanchanga.com panchanga
 cd panchanga
 
-# 2. First pass — installs nginx, Node 20, Python venv, systemd unit, firewall.
+# 2. First pass - installs nginx, Node 20, Python venv, systemd unit, firewall.
 #    On first run it warns that no Origin Cert is present and writes an HTTP-only
 #    Nginx config so the site is reachable on port 80.
 sudo bash infra/setup-vps.sh
@@ -158,17 +160,17 @@ sudo bash infra/setup-vps.sh
 # 5. Cloudflare → SSL/TLS → Overview → set mode to Full (strict).
 
 # 6. (Optional) Auto-update from GitHub every 6 h
-bash infra/setup-cron.sh
+sudo bash infra/auto-update-cron.sh --install
 ```
 
-While step 3–4 are pending, set Cloudflare's SSL/TLS mode to **Flexible** — the site loads immediately over CF-edge HTTPS terminating to plain HTTP at the origin.
+While step 3–4 are pending, set Cloudflare's SSL/TLS mode to **Flexible** - the site loads immediately over CF-edge HTTPS terminating to plain HTTP at the origin.
 
 `setup-vps.sh` writes `panchanga-backend.service` (runs `uvicorn server:app` on `127.0.0.1:8001`) and an Nginx vhost that serves the static Vite build from `frontend/dist/` with 1-year cache on fingerprinted `/assets/`. It also writes `backend/.env` with a tight `CORS_ORIGINS` allowlist (production domain only).
 
 ### Manual redeploy
 
 ```bash
-sudo bash /apps/panchanga/infra/update-deploy.sh
+cd /apps/panchanga && git pull && sudo bash infra/setup-vps.sh
 ```
 
 ### Security posture baked in
@@ -180,7 +182,7 @@ sudo bash /apps/panchanga/infra/update-deploy.sh
 | Nginx        | HSTS + X-Frame-Options + nosniff + Referrer-Policy; direct-IP requests return `444`; HTTP→HTTPS redirect |
 | TLS          | Cloudflare Origin Certificate (15-year, no auto-renew, no rate limits). TLS 1.2/1.3 only |
 | CORS         | `CORS_ORIGINS` locked to production domains; same-origin via Nginx proxy in browser |
-| Monitoring   | Ports 3002/9090/9100 open by default — **restrict to your admin IP before going live** |
+| Monitoring   | Ports 3002/9090/9100 open by default - **restrict to your admin IP before going live** |
 
 ---
 
@@ -188,44 +190,54 @@ sudo bash /apps/panchanga/infra/update-deploy.sh
 
 ```
 vedicpanchanga.com/
-├── backend/                 # Python FastAPI server (port 8001) — see backend/README.md
+├── backend/                 # Python FastAPI server (port 8001) - see backend/README.md
 │   ├── server.py            # entry: uvicorn server:app
-│   ├── calculator.py        # compute_chart (planets, vargas, dasha + dasha_antar,
-│   │                        # ashtakavarga, karakas, karakamsa, friendships, kalsarpa)
+│   ├── calculator.py        # compute_chart (planets, vargas, dasha, ashtakavarga,
+│   │                        # karakas, karakamsa, friendships, kalsarpa, placements)
 │   ├── advanced_panchang.py # detailed Drik panchang
 │   ├── panchang_extras.py   # Ganda Mula + Ravi Yoga detectors
-│   ├── vargas.py            # 16 divisional charts (D1–D60)
+│   ├── gowri_panchang.py    # Gowri Panchangam (Nalla Neram)
+│   ├── hora.py              # Planetary Hora hours
+│   ├── tyajyam.py           # Tyajyam inauspicious periods
+│   ├── vargas.py            # 16 divisional charts (D1-D60)
 │   ├── ayanamsa.py          # ayanamsa selection
 │   ├── muhurta.py           # muhurta scoring engine
 │   ├── dasha_extras.py      # Vimshottari Antardasha + Pratyantar
 │   ├── jaimini.py           # Chara karakas + Karakamsa/Swamsa
 │   ├── relationships.py     # natural / temporal / panchadha friendships
+│   ├── placements.py        # special placements (exaltation through Graha Yuddha)
 │   ├── kalsarpa.py          # Kalsarpa Yoga detection
+│   ├── transits.py          # planetary transit timeline
+│   ├── drishti.py           # planetary aspects
+│   ├── mangal.py            # Mangal Dosha analysis
+│   ├── sade_sati.py         # Saturn transit table
 │   ├── pdf/                 # multi-page PDF report (core/ + pages/)
 │   ├── ephe/                # Swiss Ephemeris data files (REQUIRED)
-│   └── tests/               # pytest suites — see backend/tests/README.md
-├── frontend/                # Vite + React + TypeScript (port 3121) — see frontend/README.md
+│   └── tests/               # pytest suites (315 tests) - see backend/tests/README.md
+├── frontend/                # Vite + React + TypeScript (port 3121) - see frontend/README.md
 │   ├── index.html           # static SEO + JSON-LD (WebSite/WebApplication/Organization)
 │   ├── public/              # favicon, og-image, sitemap.xml, robots.txt
 │   ├── src/
 │   │   ├── App.tsx          # shell (top bar + path-routed pages + footer)
-│   │   ├── pages/           # KundaliPage, PanchangPage, MuhurtaPage, Privacy, Terms
+│   │   ├── pages/           # Kundali, Panchang, Muhurta, Transits, Frequency,
+│   │   │                    # Privacy, Terms
 │   │   ├── components/
-│   │   │   ├── shell/       # TopBar, Footer
+│   │   │   ├── shell/       # TopBar, Footer, NotificationBanner
 │   │   │   ├── common/      # CitySearch, LanguageSwitcher, MandalaLoader, ThemeToggle
-│   │   │   ├── kundali/     # BirthForm, ChartTabs, VedicChart, SouthIndianChart, tables
-│   │   │   └── panchang/    # Section, TimeBand
-│   │   ├── lib/             # api.ts (typed fetch), format.ts, planets.ts, seo.ts
+│   │   │   ├── kundali/     # BirthForm, ChartTabs, VedicChart, SouthIndianChart,
+│   │   │   │                # PlanetsTable, PlanetDetailModal, DashaTable, etc.
+│   │   │   └── panchang/    # Section, TimeBand, GowriPanchangam, HoraPanchangam
+│   │   ├── lib/             # api.ts, format.ts, planets.ts, seo.ts, adsense.ts
 │   │   ├── types/api.ts     # TypeScript shapes for all backend responses
 │   │   └── i18n/            # index.tsx (provider, LANGUAGES, RTL dispatch),
 │   │                        # astro.ts (planet/sign/nakshatra dicts), locales/*.ts (15 langs)
 │   └── vite.config.ts
-├── infra/                   # provisioning + deploy scripts — see infra/README.md
+├── infra/                   # provisioning + deploy scripts - see infra/README.md
 │   ├── setup-vps.sh         # one-shot VPS provisioning (idempotent)
-│   ├── setup-cron.sh        # install auto-update cron
-│   ├── auto-update-cron.sh  # pulls, rebuilds, reloads — run by cron
-│   ├── update-deploy.sh     # manual redeploy helper
-│   └── setup-monitoring.sh  # Prometheus + Grafana installer
+│   ├── auto-update-cron.sh  # auto-update + manual deploy (--install for cron)
+│   └── setup-monitoring.sh  # Prometheus + Grafana installer (optional)
+├── Makefile                 # bundled workflow targets (make help)
+├── CONTRIBUTING.md          # human onboarding doc
 ├── AGENTS.md                # canonical brief for AI coding agents
 ├── CLAUDE.md                # Claude-specific notes (architecture reality + gotchas)
 └── README.md                # this file

@@ -5,10 +5,10 @@ dev. In production it's a static `dist/` build that Nginx serves with
 year-long cache on fingerprinted `/assets/`.
 
 - **Stack**: Vite 5 · React 19 · TypeScript · Tailwind CSS v4
-  (CSS-based theme tokens — no `tailwind.config.js`)
+  (CSS-based theme tokens - no `tailwind.config.js`)
 - **Routing**: clean paths (`/`, `/panchang`, `/muhurta`, `/privacy`,
-  `/terms`) — no hash. Path → view mapping lives in `App.tsx`.
-- **No global state library** — each page owns its own form state and
+  `/terms`) - no hash. Path → view mapping lives in `App.tsx`.
+- **No global state library** - each page owns its own form state and
   fetch logic. `App.tsx` keeps a shared `LocationChoice` so switching
   tabs preserves the selected city.
 
@@ -27,16 +27,16 @@ npm run dev                # http://localhost:3121
 | `npm run dev`          | Vite dev server with HMR (port 3121)                                 |
 | `npm run build`        | `tsc --noEmit` then `vite build` → `dist/`                           |
 | `npm run preview`      | Serve the built bundle (sanity-check prod output)                    |
-| `npm run lint`         | [oxlint](https://github.com/oxc-project/oxc) — Rust-based linter     |
-| `npm run format`       | [oxfmt](https://github.com/oxc-project/oxc) — write formatted output |
-| `npm run format:check` | `oxfmt --check` — exits non-zero on a diff (used by CI)              |
+| `npm run lint`         | [oxlint](https://github.com/oxc-project/oxc) - Rust-based linter     |
+| `npm run format`       | [oxfmt](https://github.com/oxc-project/oxc) - write formatted output |
+| `npm run format:check` | `oxfmt --check` - exits non-zero on a diff (used by CI)              |
 | `npx tsc --noEmit`     | TypeScript type-check (also runs as part of `npm run build`)         |
 
 `npm run lint` and `npm run format:check` are enforced by
 `.github/workflows/ci.yml` on every push to `main` and every PR. To run
 them automatically before each commit, install
 [pre-commit](https://pre-commit.com) at the repo root and run
-`pre-commit install` once — see the root `.pre-commit-config.yaml`.
+`pre-commit install` once - see the root `.pre-commit-config.yaml`.
 
 There's no test runner wired up yet (Jest was part of the removed CRA
 setup). When you need one, add Vitest.
@@ -44,7 +44,7 @@ setup). When you need one, add Vitest.
 ## Environment
 
 Vite bakes `VITE_*` variables in **at build time**, so editing `.env`
-needs a rebuild — restarting the dev server isn't enough.
+needs a rebuild - restarting the dev server isn't enough.
 
 | Var                | Required | Purpose                                                             |
 | ------------------ | -------- | ------------------------------------------------------------------- |
@@ -52,7 +52,7 @@ needs a rebuild — restarting the dev server isn't enough.
 
 ## Routing
 
-Real path-based SPA — refreshing on `/panchang` works (Vite dev server
+Real path-based SPA - refreshing on `/panchang` works (Vite dev server
 falls back to `index.html` automatically; nginx prod has
 `try_files $uri $uri/ /index.html;` for the same reason).
 
@@ -61,14 +61,14 @@ first load by `migrateHashOnce()` in `App.tsx`, so any existing inbound
 links survive.
 
 Nav tabs render as real `<a href="/path">` anchors with `aria-current`
-— middle-click and right-click "Open in new tab" work, and crawlers see
+- middle-click and right-click "Open in new tab" work, and crawlers see
 real links.
 
 ## Layout
 
 ```
 src/
-├── main.tsx                bootstrap — StrictMode + I18nProvider
+├── main.tsx                bootstrap - StrictMode + I18nProvider
 ├── App.tsx                 shell: TopBar · path-routed view switcher · Footer.
 │                           Per-route SEO (title/description/canonical/og:tags)
 │                           applied via lib/seo.applySeo on view change.
@@ -77,23 +77,34 @@ src/
 │   ├── PanchangPage.tsx    daily Drik panchang + live lagna kundali (anchored
 │   │                       to current wall-clock time in chart's timezone)
 │   ├── MuhurtaPage.tsx     date-range scanner with native filters
+│   ├── TransitsPage.tsx    year-long planetary transit timeline
+│   ├── FrequencyPage.tsx   healing frequency / tone generator
 │   ├── PrivacyPage.tsx
 │   └── TermsPage.tsx
 ├── components/
-│   ├── shell/              TopBar, Footer
+│   ├── shell/              TopBar, Footer, NotificationBanner
 │   ├── common/             CitySearch, LanguageSwitcher, MandalaLoader,
-│   │                       MandalaMark, ThemeToggle
+│   │                       MandalaMark, ShareLinkButton, ThemeToggle
 │   ├── kundali/            BirthForm, BirthHeader, ChartTabs, VedicChart
-│   │                       (North Indian), SouthIndianChart, PlanetsTable,
-│   │                       DashaTable, AshtakavargaTable
-│   └── panchang/           Section, TimeBand
+│   │                       (North Indian), SouthIndianChart, WesternChart,
+│   │                       PlanetsTable (Dignity + Status columns),
+│   │                       PlanetDetailModal, DashaTable, AshtakavargaTable,
+│   │                       DrishtiPanel, JaiminiSection, OmGlyph
+│   └── panchang/           Section, TimeBand, GowriPanchangam,
+│                           HoraPanchangam, NallaNeram, SegmentTable
 ├── lib/
 │   ├── api.ts              typed fetch for every backend endpoint +
 │   │                       Nominatim geocode/reverse-geocode
+│   ├── adsense.ts          Auto Ads loader (lazy, route-aware)
 │   ├── format.ts           date/time/dms formatters
-│   ├── planets.ts          planet → colour / long-name tables
-│   ├── seo.ts              applySeo({ title, description, canonical }) — sets
+│   ├── gtag.ts             Google Analytics helper
+│   ├── planets.ts          planet -> colour / long-name tables
+│   ├── seo.ts              applySeo({ title, description, canonical }) - sets
 │   │                       <title>, meta tags, og/twitter tags, canonical link
+│   ├── theme.ts            dark/light theme toggle
+│   ├── urlState.ts         URL state sync helpers
+│   ├── utils.ts            shared utility functions
+│   ├── vargas.ts           varga chart helpers
 │   └── contact.ts          contact email constant
 ├── types/api.ts            TypeScript shapes mirroring every backend response
 ├── i18n/                   index.tsx (LANGUAGES list, I18nProvider, RTL
@@ -115,7 +126,7 @@ Path alias `@/*` → `src/*` is set in both `vite.config.ts` and
 
 - `index.html` ships with full meta (description, keywords, og/twitter,
   Apple touch icon, theme-color, format-detection) and three JSON-LD
-  blocks (`WebSite`, `WebApplication`, `Organization`) — these stay
+  blocks (`WebSite`, `WebApplication`, `Organization`) - these stay
   static for every route.
 - Per-route `<title>`, description and canonical are rewritten by
   `lib/seo.applySeo()` whenever the view changes.
@@ -124,10 +135,10 @@ Path alias `@/*` → `src/*` is set in both `vite.config.ts` and
 
 ## AdSense
 
-Auto Ads only — the loader script
-(`pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-…`)
-is hard-coded in `index.html` and Google places ads automatically. There
-is no in-app `<AdSlot>` component and no per-slot env vars.
+Auto Ads only - the loader lives in `src/lib/adsense.ts` and is
+lazy-injected post-mount on monetized routes (not `/privacy` or `/terms`).
+`index.html` only has the `<meta name="google-adsense-account">` tag.
+There is no in-app `<AdSlot>` component and no per-slot env vars.
 
 ## React-18 StrictMode dev quirk
 
