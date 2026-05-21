@@ -325,7 +325,7 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
       className="pt-4 pb-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8"
     >
       <aside className="lg:col-span-4 xl:col-span-3">
-        <div data-testid="muhurta-form" className="card p-5 lg:p-6 lg:sticky lg:top-20">
+        <div data-testid="muhurta-form" className="card p-3 sm:p-4 lg:p-5 lg:sticky lg:top-20">
           <h2 className="heading-page">{t("muhurta_title")}</h2>
           <p className="meta mb-5">{t("muhurta_subtitle")}</p>
 
@@ -462,7 +462,7 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
 
         {result && (
           <>
-            <div data-testid="muhurta-summary" className="card p-4 sm:p-5">
+            <div data-testid="muhurta-summary" className="card p-3 sm:p-4 lg:p-5">
               <div className="flex items-start justify-between gap-3 flex-wrap">
                 <div>
                   <p className="eyebrow-accent">{result.purpose_label}</p>

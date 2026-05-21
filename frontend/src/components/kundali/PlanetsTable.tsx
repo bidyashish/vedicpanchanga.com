@@ -107,33 +107,33 @@ export function PlanetsTable({ planets, ascendant, drishti, friendships, onSelec
   const a = useAstro();
   const rows = [ascendant, ...planets];
   return (
-    <div data-testid="planets-table" className="card p-4 sm:p-5 overflow-x-auto">
+    <div data-testid="planets-table" className="card p-2 sm:p-3 lg:p-4 overflow-x-auto">
       <h3 className="heading-section mb-3">{t("graha_positions")}</h3>
       <table className="w-full text-start border-collapse">
         <thead>
           <tr className="eyebrow-lg border-b border-parchment-200">
-            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">{t("col_body")}</th>
-            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">{t("col_sign")}</th>
-            <th className="py-2 pe-3 font-bold num whitespace-nowrap text-start">
+            <th className="py-2 pe-2 font-bold whitespace-nowrap text-start">{t("col_body")}</th>
+            <th className="py-2 pe-2 font-bold whitespace-nowrap text-start">{t("col_sign")}</th>
+            <th className="py-2 pe-2 font-bold num whitespace-nowrap text-start">
               {t("col_degree")}
             </th>
-            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
+            <th className="py-2 pe-2 font-bold whitespace-nowrap text-start">
               {t("col_sign_lord")}
             </th>
-            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
+            <th className="py-2 pe-2 font-bold whitespace-nowrap text-start">
               {t("col_nakshatra")}
             </th>
-            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">
+            <th className="py-2 pe-2 font-bold whitespace-nowrap text-start">
               {t("col_nak_lord")}
             </th>
-            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start w-16">
+            <th className="py-2 pe-2 font-bold whitespace-nowrap text-start w-16">
               {t("col_pada")}
             </th>
-            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start w-16">
+            <th className="py-2 pe-2 font-bold whitespace-nowrap text-start w-16">
               {t("col_house")}
             </th>
-            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">{t("col_dignity")}</th>
-            <th className="py-2 pe-3 font-bold whitespace-nowrap text-start">{t("col_aspects")}</th>
+            <th className="py-2 pe-2 font-bold whitespace-nowrap text-start">{t("col_dignity")}</th>
+            <th className="py-2 pe-2 font-bold whitespace-nowrap text-start">{t("col_aspects")}</th>
             <th className="py-2 font-bold whitespace-nowrap text-start">{t("col_status")}</th>
           </tr>
         </thead>
@@ -148,29 +148,29 @@ export function PlanetsTable({ planets, ascendant, drishti, friendships, onSelec
                 onClick={onSelectPlanet ? () => onSelectPlanet(p.abbr) : undefined}
               >
                 <td
-                  className="py-2 pe-3 font-semibold whitespace-nowrap text-start"
+                  className="py-2 pe-2 font-semibold whitespace-nowrap text-start"
                   style={{ color: planetColor(p.abbr) }}
                 >
                   {a.planet(p.name)}
                 </td>
-                <td className="py-2 pe-3 whitespace-nowrap text-start">{a.sign(p.sign)}</td>
-                <td className="py-2 pe-3 num whitespace-nowrap tabular-nums text-start">
+                <td className="py-2 pe-2 whitespace-nowrap text-start">{a.sign(p.sign)}</td>
+                <td className="py-2 pe-2 num whitespace-nowrap tabular-nums text-start">
                   {a.num(p.dms)}
                 </td>
-                <td className="py-2 pe-3 whitespace-nowrap text-start">{a.planet(p.sign_lord)}</td>
-                <td className="py-2 pe-3 whitespace-nowrap text-start">
+                <td className="py-2 pe-2 whitespace-nowrap text-start">{a.planet(p.sign_lord)}</td>
+                <td className="py-2 pe-2 whitespace-nowrap text-start">
                   {a.nakshatra(p.nakshatra)}
                 </td>
-                <td className="py-2 pe-3 whitespace-nowrap text-start">
+                <td className="py-2 pe-2 whitespace-nowrap text-start">
                   {a.planet(p.nakshatra_lord)}
                 </td>
-                <td className="py-2 pe-3 num whitespace-nowrap tabular-nums text-start">
+                <td className="py-2 pe-2 num whitespace-nowrap tabular-nums text-start">
                   {a.num(p.nakshatra_pada)}
                 </td>
-                <td className="py-2 pe-3 num whitespace-nowrap tabular-nums text-start">
+                <td className="py-2 pe-2 num whitespace-nowrap tabular-nums text-start">
                   {a.num(p.house ?? "-")}
                 </td>
-                <td className="py-2 pe-3 whitespace-nowrap text-start">
+                <td className="py-2 pe-2 whitespace-nowrap text-start">
                   {dignity && (
                     <span
                       className="inline-block rounded-2xs px-2 py-0.5 text-mini font-bold"
@@ -183,7 +183,7 @@ export function PlanetsTable({ planets, ascendant, drishti, friendships, onSelec
                     </span>
                   )}
                 </td>
-                <td className="py-2 pe-3 num whitespace-nowrap tabular-nums text-start">
+                <td className="py-2 pe-2 num whitespace-nowrap tabular-nums text-start">
                   {drishti?.by_planet[p.abbr]?.aspected_houses.map((h) => a.num(h)).join(", ") ??
                     "-"}
                 </td>

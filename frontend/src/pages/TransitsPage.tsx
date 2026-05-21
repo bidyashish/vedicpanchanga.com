@@ -128,7 +128,7 @@ export function TransitsPage({ defaultLocation }: { defaultLocation: LocationCho
       className="pt-3 sm:pt-4 pb-8 grid grid-cols-1 xl:grid-cols-12 gap-4 xl:gap-5"
     >
       <div className="xl:col-span-12 space-y-3">
-        <div className="card p-4 sm:p-5">
+        <div className="card p-3 sm:p-4 lg:p-5">
           <div className="flex items-baseline justify-between gap-3 flex-wrap mb-3">
             <div>
               <p className="eyebrow-accent">{t("transits_eyebrow")}</p>
@@ -200,7 +200,7 @@ export function TransitsPage({ defaultLocation }: { defaultLocation: LocationCho
 
         {data && (
           <>
-            <div className="card p-4 sm:p-5">
+            <div className="card p-3 sm:p-4 lg:p-5">
               <div className="flex flex-wrap items-baseline justify-between gap-3">
                 <div className="text-meta text-ink-soft">
                   <span className="font-semibold text-ink">{filteredEvents.length}</span>{" "}
@@ -236,7 +236,7 @@ export function TransitsPage({ defaultLocation }: { defaultLocation: LocationCho
               </div>
             </div>
 
-            <div className="card p-4 sm:p-6">
+            <div className="card p-3 sm:p-4 lg:p-6">
               <TransitTimeline events={filteredEvents} tz={tz} />
             </div>
           </>
