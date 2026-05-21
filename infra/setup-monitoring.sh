@@ -1,38 +1,36 @@
 #!/bin/bash
 
-# Monitoring Stack Setup Script
-# Installs and configures Prometheus, Grafana, and Node Exporter
+# Monitoring Stack Setup - Prometheus, Grafana, Node Exporter
+# Run once on a fresh VPS:  sudo bash infra/setup-monitoring.sh
+# NOT idempotent - re-running will skip existing users but may move binaries.
 
-set -e
+set -euo pipefail
 
 echo "========================================="
 echo "  Monitoring Stack Setup"
 echo "========================================="
-echo ""
+echo
 
-# Check if running as root
-if [ "$EUID" -ne 0 ]; then
-    echo "Please run as root (use sudo)"
+if [ "$(id -u)" -ne 0 ]; then
+    echo "Please run as root (use sudo)" >&2
     exit 1
 fi
 
-# Install Prometheus
+# ── Prometheus ──────────────────────────────────────────────────────────────
 echo "1. Installing Prometheus..."
 cd /tmp
-PROM_VERSION="2.45.0"
-wget https://github.com/prometheus/prometheus/releases/download/v${PROM_VERSION}/prometheus-${PROM_VERSION}.linux-amd64.tar.gz
-tar xzf prometheus-${PROM_VERSION}.linux-amd64.tar.gz
-mv prometheus-${PROM_VERSION}.linux-amd64 /opt/prometheus
+PROM_VERSION="2.53.0"
+wget -q "https://github.com/prometheus/prometheus/releases/download/v${PROM_VERSION}/prometheus-${PROM_VERSION}.linux-amd64.tar.gz"
+tar xzf "prometheus-${PROM_VERSION}.linux-amd64.tar.gz"
+rm -rf /opt/prometheus
+mv "prometheus-${PROM_VERSION}.linux-amd64" /opt/prometheus
 
-# Create prometheus user
-useradd --no-create-home --shell /bin/false prometheus || true
+useradd --no-create-home --shell /bin/false prometheus 2>/dev/null || true
 chown -R prometheus:prometheus /opt/prometheus
 
-# Create data directory
 mkdir -p /var/lib/prometheus
 chown -R prometheus:prometheus /var/lib/prometheus
 
-# Configure prometheus
 mkdir -p /etc/prometheus
 cat > /etc/prometheus/prometheus.yml <<'EOF'
 global:
@@ -47,35 +45,9 @@ scrape_configs:
   - job_name: 'node-exporter'
     static_configs:
       - targets: ['localhost:9100']
-
-  - job_name: 'process-exporter'
-    static_configs:
-      - targets: ['localhost:9256']
-
-  - job_name: 'cadvisor'
-    static_configs:
-      - targets: ['localhost:8080']
-
-  - job_name: 'grafana'
-    static_configs:
-      - targets: ['localhost:3002']
-    metrics_path: '/metrics'
-    scrape_interval: 30s
-
-  - job_name: 'panchanga-backend'
-    static_configs:
-      - targets: ['localhost:8001']
-    metrics_path: '/metrics'
-    scrape_interval: 30s
-    scrape_timeout: 10s
-
-  - job_name: 'nginx'
-    static_configs:
-      - targets: ['localhost:9113']
 EOF
 chown -R prometheus:prometheus /etc/prometheus
 
-# Install prometheus service
 cat > /etc/systemd/system/prometheus.service <<'EOF'
 [Unit]
 Description=Prometheus
@@ -93,24 +65,23 @@ ExecStart=/opt/prometheus/prometheus \
   --storage.tsdb.path=/var/lib/prometheus/ \
   --web.console.templates=/opt/prometheus/consoles \
   --web.console.libraries=/opt/prometheus/console_libraries \
-  --web.listen-address=0.0.0.0:9090 \
+  --web.listen-address=127.0.0.1:9090 \
   --web.enable-lifecycle
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-echo ""
+# ── Node Exporter ───────────────────────────────────────────────────────────
+echo
 echo "2. Installing Node Exporter..."
-NODE_EXP_VERSION="1.6.1"
-wget https://github.com/prometheus/node_exporter/releases/download/v${NODE_EXP_VERSION}/node_exporter-${NODE_EXP_VERSION}.linux-amd64.tar.gz
-tar xzf node_exporter-${NODE_EXP_VERSION}.linux-amd64.tar.gz
-mv node_exporter-${NODE_EXP_VERSION}.linux-amd64/node_exporter /usr/local/bin/
+NODE_EXP_VERSION="1.8.1"
+wget -q "https://github.com/prometheus/node_exporter/releases/download/v${NODE_EXP_VERSION}/node_exporter-${NODE_EXP_VERSION}.linux-amd64.tar.gz"
+tar xzf "node_exporter-${NODE_EXP_VERSION}.linux-amd64.tar.gz"
+mv "node_exporter-${NODE_EXP_VERSION}.linux-amd64/node_exporter" /usr/local/bin/
 
-# Create node_exporter user
-useradd --no-create-home --shell /bin/false node_exporter || true
+useradd --no-create-home --shell /bin/false node_exporter 2>/dev/null || true
 
-# Install node_exporter service
 cat > /etc/systemd/system/node_exporter.service <<'EOF'
 [Unit]
 Description=Node Exporter
@@ -124,30 +95,29 @@ Type=simple
 Restart=always
 RestartSec=5
 ExecStart=/usr/local/bin/node_exporter \
-  --web.listen-address=:9100
+  --web.listen-address=127.0.0.1:9100
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-echo ""
+# ── Grafana ─────────────────────────────────────────────────────────────────
+echo
 echo "3. Installing Grafana..."
-# Add Grafana GPG key and repository
-wget -q -O - https://packages.grafana.com/gpg.key | apt-key add -
-echo "deb https://packages.grafana.com/oss/deb stable main" > /etc/apt/sources.list.d/grafana.list
-apt update
-apt install -y grafana
+apt-get install -y apt-transport-https software-properties-common
+mkdir -p /etc/apt/keyrings
+wget -qO- https://apt.grafana.com/gpg.key | gpg --dearmor -o /etc/apt/keyrings/grafana.gpg
+echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" \
+    > /etc/apt/sources.list.d/grafana.list
+apt-get update
+apt-get install -y grafana
 
-# Setup Grafana configuration
-SERVER_IP=$(curl -s ifconfig.me)
 GRAFANA_PASS=$(openssl rand -base64 16)
 
 cat > /etc/grafana/grafana.ini <<EOF
 [server]
-http_addr = 0.0.0.0
+http_addr = 127.0.0.1
 http_port = 3002
-domain = $SERVER_IP
-root_url = http://$SERVER_IP:3002/
 
 [database]
 type = sqlite3
@@ -170,7 +140,6 @@ auto_assign_org_role = Admin
 provisioning = /etc/grafana/provisioning
 EOF
 
-# Setup Grafana provisioning
 mkdir -p /etc/grafana/provisioning/{datasources,dashboards}
 
 cat > /etc/grafana/provisioning/datasources/prometheus-datasource.yml <<'EOF'
@@ -201,44 +170,36 @@ providers:
       path: /var/lib/grafana/dashboards
 EOF
 
-# Create dashboard directory
 mkdir -p /var/lib/grafana/dashboards
 chown -R grafana:grafana /var/lib/grafana
 
-echo ""
+# ── Start ───────────────────────────────────────────────────────────────────
+echo
 echo "4. Starting services..."
 systemctl daemon-reload
 systemctl enable prometheus node_exporter grafana-server
 systemctl start prometheus node_exporter grafana-server
 
-# Wait for services to start
 sleep 5
 
-echo ""
+echo
 echo "========================================="
-echo "  ✅ Monitoring Stack Setup Complete!"
+echo "  Monitoring Stack Setup Complete"
 echo "========================================="
-echo ""
+echo
 echo "Service Status:"
-systemctl status prometheus --no-pager -l | head -10
-echo ""
-systemctl status node_exporter --no-pager -l | head -10
-echo ""
-systemctl status grafana-server --no-pager -l | head -10
-echo ""
-echo "Access URLs:"
-echo "  Prometheus:  http://$SERVER_IP:9090"
-echo "  Grafana:     http://$SERVER_IP:3002"
-echo "  Node Exporter: http://$SERVER_IP:9100/metrics"
-echo ""
+systemctl status prometheus --no-pager -l | head -5
+echo
+systemctl status node_exporter --no-pager -l | head -5
+echo
+systemctl status grafana-server --no-pager -l | head -5
+echo
+echo "All services bind to 127.0.0.1."
+echo "To access remotely, use SSH tunnels or add UFW rules for your admin IP."
+echo
 echo "Grafana Credentials:"
 echo "  Username: admin"
 echo "  Password: $GRAFANA_PASS"
-echo ""
-echo "⚠️  IMPORTANT: Save the Grafana password above!"
-echo ""
-echo "Useful commands:"
-echo "  Check logs:     sudo journalctl -u prometheus -f"
-echo "  Restart:        sudo systemctl restart prometheus grafana-server"
-echo "  Stop:           sudo systemctl stop prometheus grafana-server"
-echo ""
+echo
+echo "IMPORTANT: Save the Grafana password above!"
+echo

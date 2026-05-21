@@ -2,12 +2,12 @@
 
 FastAPI service that wraps the [Swiss Ephemeris](https://www.astro.com/swisseph/)
 to compute Vedic charts, Drik Pañcāṅga, Muhūrta windows and a
-multi-page PDF report. Stateless — there is no database.
+multi-page PDF report. Stateless - there is no database.
 
 * **Runtime**: Python 3.10+
 * **Entry point**: `server.py` (`uvicorn server:app`)
 * **Bind address (prod)**: `127.0.0.1:8001` only (Nginx proxies `/api/`)
-* **Ephemeris data**: `backend/ephe/*.se1` — required, never delete
+* **Ephemeris data**: `backend/ephe/*.se1` - required, never delete
 
 ## Run locally
 
@@ -45,14 +45,14 @@ Backend Python is linted and formatted by [ruff](https://docs.astral.sh/ruff/)
 source venv/bin/activate
 ruff check .          # lint
 ruff check . --fix    # lint and auto-fix what's safe
-ruff format .         # format — write
+ruff format .         # format - write
 ruff format --check . # format check (used by CI)
 ```
 
 `ruff check` and `ruff format --check` run in `.github/workflows/ci.yml`
 on every push to `main` and every PR. To enforce them locally before each
 commit, install [pre-commit](https://pre-commit.com) at the repo root and
-run `pre-commit install` once — the `.pre-commit-config.yaml` ships with
+run `pre-commit install` once - the `.pre-commit-config.yaml` ships with
 ruff hooks already wired up.
 
 ## API
@@ -71,31 +71,43 @@ All endpoints are under `/api`. Field shapes live in
 
 CPU-bound endpoints (`/calculate`, `/get-panchang`, `/find-muhurta`,
 `/print-pdf`) are plain `def` handlers so FastAPI runs them in its
-thread-pool — keeps the event loop responsive under concurrent load.
+thread-pool - keeps the event loop responsive under concurrent load.
 
 ## Module layout
 
 ```
 backend/
 ├── server.py                  FastAPI app + request/response models + CORS
-├── calculator.py              compute_chart — planets, houses, dasha, ashtakavarga,
-│                              dasha_antar, karakas, karakamsa, swamsa, friendships, kalsarpa
-├── advanced_panchang.py       compute_detailed_panchang — full Drik panchang
-├── panchang_extras.py         Ganda Mūla + Ravi Yoga detectors (verified vs drikpanchang)
-├── vargas.py                  16 divisional charts (D1–D60). D30 has special uneven rules
+├── calculator.py              compute_chart - planets, houses, dasha, ashtakavarga,
+│                              dasha_antar, karakas, karakamsa, friendships, kalsarpa,
+│                              placements, drishti
+├── advanced_panchang.py       compute_detailed_panchang - full Drik panchang
+├── panchang_extras.py         Ganda Mula + Ravi Yoga detectors (verified vs drikpanchang)
+├── gowri_panchang.py          Gowri Panchangam / Nalla Neram (Tamil/Telugu tradition)
+├── hora.py                    Planetary Hora hours (12 day + 12 night)
+├── tyajyam.py                 Tyajyam inauspicious periods (nakshatra/tithi/vara + Amritadi)
+├── tamil_calendar.py          Tamil calendar date conversion
+├── nalla_neram.py             Nalla Neram (auspicious time) calculation
+├── vargas.py                  16 divisional charts (D1-D60). D30 has special uneven rules
 ├── ayanamsa.py                AYANAMSA_OPTIONS lookup; default = lahiri
-├── muhurta.py                 Muhūrta scanner with purpose-based scoring
-├── dasha_extras.py            Vimshottari Antardaśā + Pratyantar (level 2 & 3)
+├── muhurta.py                 Muhurta scanner with purpose-based scoring
+├── dasha_extras.py            Vimshottari Antardasha + Pratyantar (level 2 & 3)
 ├── jaimini.py                 Chara karakas + Karakamsa/Swamsa charts
 ├── relationships.py           Natural / temporal / panchadha friendship matrices
+├── placements.py              Special placements: exaltation, debilitation, own sign,
+│                              moolatrikona, vargottama, digbala, combust, Pushkara,
+│                              Neecha Bhanga, Parivartana, Mrityu Bhaga, Gandanta,
+│                              Graha Yuddha
+├── drishti.py                 Planetary aspects (Graha Drishti)
 ├── kalsarpa.py                Kalsarpa Yoga detection (12 named variants + direction)
+├── transits.py                Planetary transit timeline (sign ingresses, retrogrades)
 ├── mangal.py                  Mangal Dosha analysis (PDF only)
 ├── sade_sati.py               120-year Saturn-from-Moon transit table (PDF only)
 ├── constants.py               magic numbers used by calculator
 ├── panchang_constants.py      magic numbers used by panchang
 ├── pdf/                       PDF report (see below)
 ├── ephe/                      Swiss Ephemeris data files (REQUIRED; do not delete)
-└── tests/                     pytest suites — see tests/README.md
+└── tests/                     pytest suites (315 tests) - see tests/README.md
 ```
 
 ### `pdf/` sub-package
@@ -105,7 +117,7 @@ Multi-page A4 PDF report (~19 pages). Built with [`fpdf2`](https://py-pdf.github
 ```
 pdf/
 ├── __init__.py                exports render_pdf
-├── report.py                  orchestrator — composes page 1 (Traditional summary)
+├── report.py                  orchestrator - composes page 1 (Traditional summary)
 │                              and dispatches detail pages, tracking each section's
 │                              start page for the Index. _ReportPDF subclass overrides
 │                              fpdf2's footer() hook so every page gets stamped with
@@ -141,7 +153,7 @@ pdf/
 
 * All astronomical math goes through `swisseph` (PySwissEph). Never
   hardcode planetary positions.
-* The `compute_*` functions are pure and stateless — easy to unit-test
+* The `compute_*` functions are pure and stateless - easy to unit-test
   without spinning up FastAPI.
 * When a panchang value (Tithi / Nakṣatra / Yoga / Karaṇa) changes during
   the day, the response includes a `*_sequence` array of every value with

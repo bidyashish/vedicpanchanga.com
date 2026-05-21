@@ -55,15 +55,20 @@ interface Props {
   showAspects?: boolean;
 }
 
-function orderPlanets(planets: string[], degrees?: Record<string, number>): string[] {
+function orderPlanets(
+  planets: string[],
+  degrees?: Record<string, number>,
+  sign?: number,
+): string[] {
   if (!degrees) return planets;
+  const desc = sign != null && sign >= 7;
   return [...planets].sort((a, b) => {
     const da = degrees[a];
     const db = degrees[b];
     if (da == null && db == null) return 0;
     if (da == null) return 1;
     if (db == null) return -1;
-    return da - db;
+    return desc ? db - da : da - db;
   });
 }
 
@@ -174,7 +179,7 @@ export function VedicChart({
           {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => {
             const c = HOUSE_CENTROIDS[h];
             const sign = signForHouse(h);
-            const planets = orderPlanets(houseMap?.[h] ?? [], planetDegrees);
+            const planets = orderPlanets(houseMap?.[h] ?? [], planetDegrees, sign);
             const labelPos = SIGN_LABEL_POSITIONS[h];
             const isAspected = aspectedHouses?.has(h) ?? false;
             const isSource = fromHouse === h;
@@ -219,7 +224,7 @@ export function VedicChart({
                   const isSelected = selectedPlanet === abbr;
                   const dimmed = showAspects && selectedPlanet && !isSelected && !isAsc ? 0.4 : 1;
                   const clickable = !isAsc && onSelectPlanet;
-                  const fs = showDeg ? 15 : 18;
+                  const fs = 16;
                   return (
                     <g
                       key={`${h}-${idx}`}

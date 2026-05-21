@@ -37,15 +37,20 @@ interface Props {
   showAspects?: boolean;
 }
 
-function orderPlanets(planets: string[], degrees?: Record<string, number>): string[] {
+function orderPlanets(
+  planets: string[],
+  degrees?: Record<string, number>,
+  sign?: number,
+): string[] {
   if (!degrees) return planets;
+  const desc = sign != null && sign >= 7;
   return [...planets].sort((a, b) => {
     const da = degrees[a];
     const db = degrees[b];
     if (da == null && db == null) return 0;
     if (da == null) return 1;
     if (db == null) return -1;
-    return da - db;
+    return desc ? db - da : da - db;
   });
 }
 
@@ -81,7 +86,7 @@ export function SouthIndianChart({
   for (let h = 1; h <= 12; h++) {
     const sign = ((ascSign - 1 + (h - 1)) % 12) + 1;
     const cellPlanets = (houseMap?.[h] ?? []).filter((p) => p !== "Lg");
-    signToPlanets[sign] = orderPlanets(cellPlanets, planetDegrees);
+    signToPlanets[sign] = orderPlanets(cellPlanets, planetDegrees, sign);
   }
 
   const CELL = 125;
@@ -236,7 +241,7 @@ export function SouthIndianChart({
                   const isSelected = selectedPlanet === abbr;
                   const dimmed = showAspects && selectedPlanet && !isSelected && !isAsc ? 0.4 : 1;
                   const clickable = !isAsc && onSelectPlanet;
-                  const fs = showDeg ? 14 : 18;
+                  const fs = 16;
                   return (
                     <g
                       key={`${sign}-${idx}`}
