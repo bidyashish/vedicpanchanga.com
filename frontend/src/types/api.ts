@@ -38,6 +38,15 @@ export interface Planet {
   moolatrikona?: boolean;
   vargottama?: boolean;
   digbala?: boolean;
+  pushkara_bhaga?: boolean;
+  pushkara_navamsa?: boolean;
+  neecha_bhanga?: boolean;
+  parivartana?: boolean;
+  parivartana_with?: string | null;
+  mrityu_bhaga?: boolean;
+  gandanta?: boolean;
+  graha_yuddha?: boolean;
+  graha_yuddha_with?: string | null;
 }
 
 export interface BirthSummary {

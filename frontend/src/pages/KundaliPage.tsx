@@ -382,6 +382,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
                 planets={data.planets_data}
                 ascendant={data.ascendant}
                 drishti={data.drishti}
+                friendships={data.friendships}
                 onSelectPlanet={openPlanetDetail}
               />
               {data.drishti && (
