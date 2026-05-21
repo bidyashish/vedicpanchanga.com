@@ -61,8 +61,9 @@ first load by `migrateHashOnce()` in `App.tsx`, so any existing inbound
 links survive.
 
 Nav tabs render as real `<a href="/path">` anchors with `aria-current`
+
 - middle-click and right-click "Open in new tab" work, and crawlers see
-real links.
+  real links.
 
 ## Layout
 
