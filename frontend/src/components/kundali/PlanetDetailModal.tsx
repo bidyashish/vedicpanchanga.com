@@ -87,6 +87,55 @@ export function PlanetDetailModal({ planet, data, division = 1, onClose }: Props
       color: "var(--danger)",
       bg: "color-mix(in oklab, var(--danger) 14%, transparent)",
     });
+  if (planet.pushkara_bhaga)
+    placements.push({
+      key: "pb",
+      label: t("pd_pushkara_bhaga"),
+      color: "var(--success)",
+      bg: "color-mix(in oklab, var(--success) 14%, transparent)",
+    });
+  if (planet.pushkara_navamsa)
+    placements.push({
+      key: "pn",
+      label: t("pd_pushkara_navamsa"),
+      color: "var(--success)",
+      bg: "color-mix(in oklab, var(--success) 14%, transparent)",
+    });
+  if (planet.neecha_bhanga)
+    placements.push({
+      key: "nb",
+      label: t("pd_neecha_bhanga"),
+      color: "var(--primary)",
+      bg: "color-mix(in oklab, var(--primary) 14%, transparent)",
+    });
+  if (planet.parivartana)
+    placements.push({
+      key: "pari",
+      label: `${t("pd_parivartana")}${planet.parivartana_with ? ` (${a.planet(planet.parivartana_with)})` : ""}`,
+      color: "var(--primary)",
+      bg: "color-mix(in oklab, var(--primary) 14%, transparent)",
+    });
+  if (planet.mrityu_bhaga)
+    placements.push({
+      key: "mb",
+      label: t("pd_mrityu_bhaga"),
+      color: "var(--danger)",
+      bg: "color-mix(in oklab, var(--danger) 14%, transparent)",
+    });
+  if (planet.gandanta)
+    placements.push({
+      key: "gand",
+      label: t("pd_gandanta"),
+      color: "var(--danger)",
+      bg: "color-mix(in oklab, var(--danger) 14%, transparent)",
+    });
+  if (planet.graha_yuddha)
+    placements.push({
+      key: "war",
+      label: `${t("pd_graha_yuddha")}${planet.graha_yuddha_with ? ` (${a.planet(planet.graha_yuddha_with)})` : ""}`,
+      color: "var(--danger)",
+      bg: "color-mix(in oklab, var(--danger) 14%, transparent)",
+    });
 
   return (
     <Modal open={!!planet} onClose={onClose}>

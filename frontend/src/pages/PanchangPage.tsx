@@ -576,6 +576,8 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                       <PlanetsTable
                         planets={chart.planets_data}
                         ascendant={chart.ascendant}
+                        drishti={chart.drishti}
+                        friendships={chart.friendships}
                         onSelectPlanet={openPlanetDetail}
                       />
                     </div>
