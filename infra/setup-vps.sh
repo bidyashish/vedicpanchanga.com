@@ -152,6 +152,12 @@ fi
 
 if [ "$TLS_ENABLED" = "1" ]; then
 cat > /etc/nginx/sites-available/vedicpanchanga <<EOF
+# Serve markdown to agents that request it (Accept: text/markdown).
+map \$http_accept \$serve_markdown {
+    default        0;
+    ~text/markdown  1;
+}
+
 # Redirect plain HTTP to HTTPS (Cloudflare honours this on the edge too).
 server {
     listen 80;
@@ -197,6 +203,7 @@ server {
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Link "</.well-known/api-catalog>; rel=\"api-catalog\", </sitemap.xml>; rel=\"describedby\"" always;
 
     gzip on;
     gzip_vary on;
@@ -207,6 +214,12 @@ server {
 
     root $APP_DIR/frontend/dist;
     index index.html;
+
+    location = /.well-known/api-catalog {
+        default_type application/json;
+        access_log off;
+        expires 1d;
+    }
 
     location /assets/ {
         access_log off;
@@ -237,10 +250,25 @@ server {
     }
 
     location / {
+        if (\$serve_markdown) {
+            rewrite ^ /index.md last;
+        }
         try_files \$uri \$uri/ /index.html;
     }
 
+    location = /index.md {
+        internal;
+        default_type text/markdown;
+        add_header Content-Type "text/markdown; charset=utf-8" always;
+        add_header X-Markdown-Tokens "430" always;
+    }
+
     location /api/ {
+        valid_referers none server_names *.vedicpanchanga.com vedicpanchanga.com;
+        if (\$invalid_referer) {
+            return 403;
+        }
+
         proxy_pass http://127.0.0.1:8001/api/;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
@@ -266,6 +294,11 @@ server {
 EOF
 else
 cat > /etc/nginx/sites-available/vedicpanchanga <<EOF
+map \$http_accept \$serve_markdown {
+    default        0;
+    ~text/markdown  1;
+}
+
 server {
     listen 80;
     server_name vedicpanchanga.com www.vedicpanchanga.com;
@@ -273,6 +306,7 @@ server {
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Link "</.well-known/api-catalog>; rel=\"api-catalog\", </sitemap.xml>; rel=\"describedby\"" always;
 
     gzip on;
     gzip_vary on;
@@ -283,6 +317,12 @@ server {
 
     root $APP_DIR/frontend/dist;
     index index.html;
+
+    location = /.well-known/api-catalog {
+        default_type application/json;
+        access_log off;
+        expires 1d;
+    }
 
     location /assets/ {
         access_log off;
@@ -313,10 +353,25 @@ server {
     }
 
     location / {
+        if (\$serve_markdown) {
+            rewrite ^ /index.md last;
+        }
         try_files \$uri \$uri/ /index.html;
     }
 
+    location = /index.md {
+        internal;
+        default_type text/markdown;
+        add_header Content-Type "text/markdown; charset=utf-8" always;
+        add_header X-Markdown-Tokens "430" always;
+    }
+
     location /api/ {
+        valid_referers none server_names *.vedicpanchanga.com vedicpanchanga.com;
+        if (\$invalid_referer) {
+            return 403;
+        }
+
         proxy_pass http://127.0.0.1:8001/api/;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;

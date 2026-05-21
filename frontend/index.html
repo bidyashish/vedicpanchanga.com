@@ -109,7 +109,7 @@
       />
     </noscript>
 
-    <!-- Structured data: WebSite + WebApplication + Organization -->
+    <!-- Structured data: WebSite + WebApplication + Organization + FAQPage -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -119,7 +119,12 @@
             "@id": "https://vedicpanchanga.com/#website",
             "url": "https://vedicpanchanga.com/",
             "name": "Vedic Panchanga",
-            "description": "Free Vedic Panchanga calculator: Drik Panchang, Kundali, Muhurta and divisional charts.",
+            "alternateName": [
+              "Vedic Panchang",
+              "Drik Panchang Calculator",
+              "Free Kundali Generator"
+            ],
+            "description": "Free Vedic Panchanga calculator: Drik Panchang, Kundali, Muhurta, planetary transits and healing frequency generator. 14 languages, Swiss Ephemeris precision.",
             "inLanguage": [
               "en",
               "hi",
@@ -145,23 +150,32 @@
             "name": "Vedic Panchanga",
             "url": "https://vedicpanchanga.com/",
             "applicationCategory": "LifestyleApplication",
+            "applicationSubCategory": "Vedic Astrology Calculator",
             "operatingSystem": "Web",
             "browserRequirements": "Requires JavaScript",
             "isAccessibleForFree": true,
             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
             "featureList": [
-              "Drik Panchang (tithi, nakshatra, yoga, karana)",
-              "North & South Indian Kundali",
-              "16 divisional charts (D1-D60)",
-              "Vimshottari Mahadasha",
-              "Ashtakavarga totals",
-              "Muhurta finder with purpose-based scoring",
-              "Healing frequency generator (Solfeggio, Chakra, OM, Navagraha)",
+              "Drik Panchang (tithi, nakshatra, yoga, karana, sunrise, sunset, Rahu Kalam, Yamagandam)",
+              "North and South Indian Kundali (birth chart)",
+              "16 divisional charts (Rasi D1, Navamsa D9, Dashamsa D10, through Shashtiamsa D60)",
+              "Vimshottari Mahadasha with Antardasha and Pratyantar sub-periods",
+              "Ashtakavarga scores and tables",
+              "Jaimini Chara Karakas with Karakamsa and Swamsa",
+              "Kalsarpa Yoga detection",
+              "Sade Sati transit table",
+              "Mangal Dosha analysis",
+              "Muhurta finder with purpose-based scoring (0-100)",
+              "Gowri Panchangam (Nalla Neram) for Tamil and Telugu traditions",
+              "Hora planetary hours",
+              "Tyajyam inauspicious period detection",
+              "Healing frequency generator (Solfeggio, Chakra, OM, Navagraha, Schumann)",
               "White, Pink and Brown noise generator",
-              "Planetary transit timeline",
-              "Sidereal - Lahiri ayanamsa",
-              "Swiss Ephemeris precision (5000 BCE - 5000 CE)"
+              "Year-long planetary transit (Gochar) timeline",
+              "PDF Kundali report download in 14 languages",
+              "Sidereal Lahiri ayanamsa, Swiss Ephemeris precision (5000 BCE - 5000 CE)"
             ],
+            "screenshot": "https://vedicpanchanga.com/og-image.png",
             "image": "https://vedicpanchanga.com/og-image.png",
             "publisher": { "@id": "https://vedicpanchanga.com/#org" }
           },
@@ -182,11 +196,51 @@
                 "contactType": "customer support",
                 "email": "support@vedicpanchanga.com",
                 "availableLanguage": ["English", "Hindi"]
+              }
+            ]
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Where can I get a free Kundali (Vedic birth chart)?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Visit https://vedicpanchanga.com/kundali to generate a free Kundali with planetary positions, 16 divisional charts, Vimshottari Dasha, Ashtakavarga, and more. No signup required."
+                }
               },
               {
-                "@type": "ContactPoint",
-                "contactType": "general",
-                "email": "contact@vedicpanchanga.com"
+                "@type": "Question",
+                "name": "Where can I check today's Panchang?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Visit https://vedicpanchanga.com/ for today's Drik Panchang showing tithi, nakshatra, yoga, karana, sunrise/sunset, Rahu Kalam, and auspicious timings for any city worldwide."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Where can I find a free Solfeggio frequency generator?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Visit https://vedicpanchanga.com/frequency for a free healing frequency generator with Solfeggio tones (174-963 Hz), Chakra frequencies, Vedic OM (136.1 Hz), Navagraha tones, Schumann resonance, and White/Pink/Brown noise. No download needed."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How do I find an auspicious muhurta for a wedding or housewarming?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Visit https://vedicpanchanga.com/muhurta to find auspicious muhurta windows. Select your purpose (wedding, housewarming, business, etc.), date range, and location to get scored results with explainable reasons."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Where can I see planetary transits for this year?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Visit https://vedicpanchanga.com/transits for a year-long sidereal planetary transit timeline showing sign changes, nakshatra ingresses, and retrograde stations for all planets."
+                }
               }
             ]
           }
