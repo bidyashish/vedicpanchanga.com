@@ -188,6 +188,91 @@ export function daysFromNow(days: number): string {
   return `${y}-${m}-${day}`;
 }
 
+export function computeAge(
+  birthIso: string,
+  tz: string,
+): { years: number; months: number; days: number } | null {
+  try {
+    const birthParts = new Intl.DateTimeFormat("en-CA", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: tz,
+    }).formatToParts(new Date(birthIso));
+    const nowParts = new Intl.DateTimeFormat("en-CA", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: tz,
+    }).formatToParts(new Date());
+
+    const g = (parts: Intl.DateTimeFormatPart[], t: string) =>
+      Number(parts.find((p) => p.type === t)!.value);
+
+    let by = g(birthParts, "year"),
+      bm = g(birthParts, "month"),
+      bd = g(birthParts, "day");
+    let ny = g(nowParts, "year"),
+      nm = g(nowParts, "month"),
+      nd = g(nowParts, "day");
+
+    let days = nd - bd;
+    let months = nm - bm;
+    let years = ny - by;
+
+    if (days < 0) {
+      months--;
+      const prevMonth = new Date(ny, nm - 1, 0).getDate();
+      days += prevMonth;
+    }
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+    if (years < 0) return null;
+    return { years, months, days };
+  } catch {
+    return null;
+  }
+}
+
+export function formatAge(birthIso: string, tz: string): string {
+  const age = computeAge(birthIso, tz);
+  if (!age) return "";
+  return `${age.years}Y ${age.months}M ${age.days}D`;
+}
+
+export function ageBetween(birthIso: string, targetIso: string): string {
+  try {
+    const b = new Date(birthIso);
+    const t = new Date(targetIso);
+    let by = b.getUTCFullYear(),
+      bm = b.getUTCMonth() + 1,
+      bd = b.getUTCDate();
+    let ty = t.getUTCFullYear(),
+      tm = t.getUTCMonth() + 1,
+      td = t.getUTCDate();
+
+    let days = td - bd;
+    let months = tm - bm;
+    let years = ty - by;
+
+    if (days < 0) {
+      months--;
+      const prevMonth = new Date(ty, tm - 1, 0).getDate();
+      days += prevMonth;
+    }
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+    if (years < 0) return "-";
+    return `${years}Y ${months}M ${days}D`;
+  } catch {
+    return "-";
+  }
+}
+
 export function formatBirthDate(iso: string, tz: string): string {
   return formatIntl(new Date(iso), {
     dateStyle: "full",
