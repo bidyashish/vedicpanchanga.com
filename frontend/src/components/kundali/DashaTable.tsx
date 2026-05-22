@@ -168,16 +168,21 @@ function computeBenefitBhavas(
     return result;
   };
 
+  const seen = new Set<number>();
   const parts: string[] = [];
   if (nakLord) {
-    const nlBhavas = bhavasFor(nakLord);
-    for (const b of nlBhavas) {
-      parts.push(String(b));
+    for (const b of bhavasFor(nakLord)) {
+      if (!seen.has(b)) {
+        seen.add(b);
+        parts.push(String(b));
+      }
     }
   }
-  const lordBhavas = bhavasFor(lord);
-  for (const b of lordBhavas) {
-    parts.push(String(b));
+  for (const b of bhavasFor(lord)) {
+    if (!seen.has(b)) {
+      seen.add(b);
+      parts.push(String(b));
+    }
   }
 
   return parts.length > 0 ? parts.join(" | ") : "-";

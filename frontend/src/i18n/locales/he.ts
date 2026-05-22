@@ -169,6 +169,7 @@ const he: Record<string, string> = {
   drishti_to: "אל",
   drishti_house: "בית",
   drishti_show: "הצג היבטים",
+  hide_outer: "הסתר חיצוניים",
   drishti_weak: "חלש",
   drishti_medium: "בינוני",
   drishti_strong: "חזק",

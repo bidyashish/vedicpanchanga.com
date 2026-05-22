@@ -168,6 +168,7 @@ const bn: Record<string, string> = {
   drishti_to: "প্রতি",
   drishti_house: "ভাব",
   drishti_show: "দৃষ্টি দেখান",
+  hide_outer: "বাহ্য লুকান",
   drishti_weak: "দুর্বল",
   drishti_medium: "মধ্যম",
   drishti_strong: "প্রবল",

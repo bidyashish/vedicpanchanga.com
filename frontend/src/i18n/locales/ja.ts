@@ -169,6 +169,7 @@ const ja: Record<string, string> = {
   drishti_to: "へ",
   drishti_house: "室",
   drishti_show: "相位を表示",
+  hide_outer: "外惑星を非表示",
   drishti_weak: "弱い",
   drishti_medium: "中程度",
   drishti_strong: "強い",

@@ -2,7 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { BirthForm, type BirthFormState } from "@/components/kundali/BirthForm";
 import { BirthHeader } from "@/components/kundali/BirthHeader";
-import { ChartTabs } from "@/components/kundali/ChartTabs";
+import {
+  ChartTabs,
+  HIDE_OUTER_KEY,
+  OUTER_ABBRS,
+  loadHideOuter,
+} from "@/components/kundali/ChartTabs";
 import { PlanetsTable } from "@/components/kundali/PlanetsTable";
 import { PlanetDetailModal } from "@/components/kundali/PlanetDetailModal";
 import { DashaTable } from "@/components/kundali/DashaTable";
@@ -132,7 +137,38 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   const [selectedPlanet, setSelectedPlanet] = useState<string | null>(null);
   const [detailPlanetAbbr, setDetailPlanetAbbr] = useState<string | null>(null);
   const [detailDivision, setDetailDivision] = useState(1);
+  const [hideOuter, setHideOuterState] = useState(loadHideOuter);
   const didAutoRunRef = useRef(false);
+
+  const setHideOuter = (v: boolean) => {
+    setHideOuterState(v);
+    try {
+      window.localStorage.setItem(HIDE_OUTER_KEY, v ? "1" : "0");
+    } catch {
+      /* ignore quota errors */
+    }
+  };
+
+  const filteredPlanets = useMemo(() => {
+    if (!data || !hideOuter) return data?.planets_data ?? [];
+    return data.planets_data.filter((p) => !OUTER_ABBRS.has(p.abbr));
+  }, [data, hideOuter]);
+
+  const filteredDrishti = useMemo(() => {
+    if (!data?.drishti || !hideOuter) return data?.drishti;
+    const d = data.drishti;
+    const byPlanet: typeof d.by_planet = {};
+    for (const [k, v] of Object.entries(d.by_planet)) {
+      if (!OUTER_ABBRS.has(k)) byPlanet[k] = v;
+    }
+    return {
+      aspects: d.aspects.filter((a) => !OUTER_ABBRS.has(a.planet_abbr)),
+      by_planet: byPlanet,
+      mutual: d.mutual.filter(
+        (m) => !OUTER_ABBRS.has(m.planet1.slice(0, 2)) && !OUTER_ABBRS.has(m.planet2.slice(0, 2)),
+      ),
+    };
+  }, [data, hideOuter]);
 
   const detailPlanet = useMemo(() => {
     if (!detailPlanetAbbr || !data) return null;
@@ -377,17 +413,20 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
                 selectedPlanet={selectedPlanet}
                 onSelectPlanet={setSelectedPlanet}
                 onPlanetDetail={openPlanetDetail}
+                hideOuter={hideOuter}
+                onHideOuterChange={setHideOuter}
+                filteredPlanets={filteredPlanets}
               />
               <PlanetsTable
-                planets={data.planets_data}
+                planets={filteredPlanets}
                 ascendant={data.ascendant}
-                drishti={data.drishti}
+                drishti={filteredDrishti}
                 friendships={data.friendships}
                 onSelectPlanet={openPlanetDetail}
               />
-              {data.drishti && (
+              {filteredDrishti && (
                 <DrishtiPanel
-                  drishti={data.drishti}
+                  drishti={filteredDrishti}
                   selectedPlanet={selectedPlanet}
                   onSelectPlanet={setSelectedPlanet}
                 />
@@ -395,7 +434,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
               <DashaTable
                 dasha={data.dasha}
                 dashaAntar={data.dasha_antar}
-                planets={data.planets_data}
+                planets={filteredPlanets}
                 ascendant={data.ascendant}
                 birthIso={data.birth.local_time}
               />

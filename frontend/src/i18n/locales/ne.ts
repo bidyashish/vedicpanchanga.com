@@ -168,6 +168,7 @@ const ne: Record<string, string> = {
   drishti_to: "तर्फ",
   drishti_house: "भाव",
   drishti_show: "दृष्टि देखाउनुहोस्",
+  hide_outer: "बाह्य लुकाउनुहोस्",
   drishti_weak: "दुर्बल",
   drishti_medium: "मध्यम",
   drishti_strong: "प्रबल",

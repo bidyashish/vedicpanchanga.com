@@ -8,13 +8,27 @@ import { WesternChart } from "@/components/kundali/WesternChart";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Switch } from "@/components/ui/switch";
 import { vargaName, vargaSubtitle } from "@/lib/vargas";
-import type { ChartData } from "@/types/api";
+import type { ChartData, Planet } from "@/types/api";
+
+export const OUTER_ABBRS = new Set(["Ur", "Ne", "Pl"]);
+
+export const HIDE_OUTER_KEY = "jk_hide_outer";
+
+export function loadHideOuter(): boolean {
+  if (typeof window === "undefined") return true;
+  const v = window.localStorage.getItem(HIDE_OUTER_KEY);
+  if (v === null) return true;
+  return v === "1";
+}
 
 interface Props {
   data: ChartData;
   selectedPlanet: string | null;
   onSelectPlanet: (abbr: string | null) => void;
   onPlanetDetail?: (abbr: string, division: number) => void;
+  hideOuter: boolean;
+  onHideOuterChange: (v: boolean) => void;
+  filteredPlanets: Planet[];
 }
 
 type ChartStyle = "north" | "south" | "west";
@@ -40,7 +54,15 @@ function loadShowAspects(): boolean {
   return window.localStorage.getItem(SHOW_ASPECTS_KEY) === "1";
 }
 
-export function ChartTabs({ data, selectedPlanet, onSelectPlanet, onPlanetDetail }: Props) {
+export function ChartTabs({
+  data,
+  selectedPlanet,
+  onSelectPlanet,
+  onPlanetDetail,
+  hideOuter,
+  onHideOuterChange,
+  filteredPlanets,
+}: Props) {
   const { t, lang } = useI18n();
   const a = useAstro();
   const vargaKeys = data.varga_order ?? [1, 2, 9];
@@ -104,6 +126,24 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet, onPlanetDetail
   const planetDegrees = active.planet_degrees;
   const isWest = chartStyle === "west";
   const isD1 = tab === "d1";
+
+  const filteredChart = useMemo(() => {
+    if (!hideOuter) return active.chart;
+    const out: Record<number, string[]> = {};
+    for (const [h, abbrs] of Object.entries(active.chart)) {
+      out[Number(h)] = abbrs.filter((a) => !OUTER_ABBRS.has(a));
+    }
+    return out;
+  }, [active.chart, hideOuter]);
+
+  const filteredDegrees = useMemo(() => {
+    if (!hideOuter) return planetDegrees;
+    const out: Record<string, number> = {};
+    for (const [k, v] of Object.entries(planetDegrees)) {
+      if (!OUTER_ABBRS.has(k)) out[k] = v;
+    }
+    return out;
+  }, [planetDegrees, hideOuter]);
 
   const planetStatus = useMemo(() => {
     const map: Record<string, PlanetStatus> = {};
@@ -197,12 +237,25 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet, onPlanetDetail
             />
           </label>
         )}
+
+        <label
+          data-testid="hide-outer-toggle"
+          className="inline-flex items-center gap-2 text-mini font-medium text-ink-soft cursor-pointer select-none shrink-0"
+        >
+          <span>{t("hide_outer")}</span>
+          <Switch
+            checked={hideOuter}
+            onCheckedChange={onHideOuterChange}
+            aria-label={t("hide_outer")}
+            data-testid="hide-outer-switch"
+          />
+        </label>
       </div>
 
       <div className="bg-parchment-50 p-2 rounded-sm">
         {isWest ? (
           <WesternChart
-            planets={data.planets_data}
+            planets={filteredPlanets}
             ascendant={data.ascendant}
             ascSign={data.d1_asc_sign}
             title={`Rashi Chakra · D${a.num(1)}`}
@@ -211,11 +264,11 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet, onPlanetDetail
           />
         ) : chartStyle === "south" ? (
           <SouthIndianChart
-            houseMap={active.chart}
+            houseMap={filteredChart}
             ascSign={active.asc_sign}
             title={`${activeName} · D${a.num(active.division)}`}
             testId={`chart-${tab}`}
-            planetDegrees={planetDegrees}
+            planetDegrees={filteredDegrees}
             planetStatus={isD1 ? planetStatus : undefined}
             showDegrees={showDegrees}
             selectedPlanet={isD1 && showAspects ? selectedPlanet : null}
@@ -225,11 +278,11 @@ export function ChartTabs({ data, selectedPlanet, onSelectPlanet, onPlanetDetail
           />
         ) : (
           <VedicChart
-            houseMap={active.chart}
+            houseMap={filteredChart}
             ascSign={active.asc_sign}
             title={`${activeName} · D${a.num(active.division)}`}
             testId={`chart-${tab}`}
-            planetDegrees={planetDegrees}
+            planetDegrees={filteredDegrees}
             planetStatus={isD1 ? planetStatus : undefined}
             showDegrees={showDegrees}
             selectedPlanet={isD1 && showAspects ? selectedPlanet : null}
