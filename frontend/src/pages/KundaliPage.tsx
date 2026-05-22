@@ -392,7 +392,13 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
                   onSelectPlanet={setSelectedPlanet}
                 />
               )}
-              <DashaTable dasha={data.dasha} dashaAntar={data.dasha_antar} />
+              <DashaTable
+                dasha={data.dasha}
+                dashaAntar={data.dasha_antar}
+                planets={data.planets_data}
+                ascendant={data.ascendant}
+                birthIso={data.birth.local_time}
+              />
               <JaiminiSection
                 karakas={data.karakas}
                 karakamsa={data.karakamsa}
