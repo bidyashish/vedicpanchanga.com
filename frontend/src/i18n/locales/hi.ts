@@ -178,6 +178,7 @@ const hi: Record<string, string> = {
   drishti_to: "को",
   drishti_house: "भाव",
   drishti_show: "दृष्टि दिखाएं",
+  hide_outer: "बाह्य छुपाएं",
   drishti_weak: "दुर्बल",
   drishti_medium: "मध्यम",
   drishti_strong: "प्रबल",

@@ -169,6 +169,7 @@ const ru: Record<string, string> = {
   drishti_to: "К",
   drishti_house: "Дом",
   drishti_show: "Показать аспекты",
+  hide_outer: "Скрыть внешние",
   drishti_weak: "Слабый",
   drishti_medium: "Средний",
   drishti_strong: "Сильный",

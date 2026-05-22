@@ -169,6 +169,7 @@ const ar: Record<string, string> = {
   drishti_to: "إلى",
   drishti_house: "بيت",
   drishti_show: "إظهار الجوانب",
+  hide_outer: "إخفاء الكواكب الخارجية",
   drishti_weak: "ضعيف",
   drishti_medium: "متوسط",
   drishti_strong: "قوي",

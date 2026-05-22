@@ -169,6 +169,7 @@ const zh: Record<string, string> = {
   drishti_to: "到",
   drishti_house: "宫",
   drishti_show: "显示相位",
+  hide_outer: "隐藏外行星",
   drishti_weak: "弱",
   drishti_medium: "中",
   drishti_strong: "强",

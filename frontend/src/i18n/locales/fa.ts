@@ -169,6 +169,7 @@ const fa: Record<string, string> = {
   drishti_to: "به",
   drishti_house: "خانه",
   drishti_show: "نمایش جنبه‌ها",
+  hide_outer: "پنهان سیارات بیرونی",
   drishti_weak: "ضعیف",
   drishti_medium: "متوسط",
   drishti_strong: "قوی",

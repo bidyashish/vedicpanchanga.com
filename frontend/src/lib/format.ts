@@ -209,10 +209,10 @@ export function computeAge(
     const g = (parts: Intl.DateTimeFormatPart[], t: string) =>
       Number(parts.find((p) => p.type === t)!.value);
 
-    let by = g(birthParts, "year"),
+    const by = g(birthParts, "year"),
       bm = g(birthParts, "month"),
       bd = g(birthParts, "day");
-    let ny = g(nowParts, "year"),
+    const ny = g(nowParts, "year"),
       nm = g(nowParts, "month"),
       nd = g(nowParts, "day");
 
@@ -246,10 +246,10 @@ export function ageBetween(birthIso: string, targetIso: string): string {
   try {
     const b = new Date(birthIso);
     const t = new Date(targetIso);
-    let by = b.getUTCFullYear(),
+    const by = b.getUTCFullYear(),
       bm = b.getUTCMonth() + 1,
       bd = b.getUTCDate();
-    let ty = t.getUTCFullYear(),
+    const ty = t.getUTCFullYear(),
       tm = t.getUTCMonth() + 1,
       td = t.getUTCDate();
 

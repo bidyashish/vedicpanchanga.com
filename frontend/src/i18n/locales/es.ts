@@ -169,6 +169,7 @@ const es: Record<string, string> = {
   drishti_to: "Hacia",
   drishti_house: "Casa",
   drishti_show: "Mostrar aspectos",
+  hide_outer: "Ocultar exteriores",
   drishti_weak: "Debil",
   drishti_medium: "Medio",
   drishti_strong: "Fuerte",

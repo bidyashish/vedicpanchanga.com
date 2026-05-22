@@ -15,6 +15,7 @@ import { SouthIndianChart } from "@/components/kundali/SouthIndianChart";
 import { WesternChart } from "@/components/kundali/WesternChart";
 import { PlanetsTable } from "@/components/kundali/PlanetsTable";
 import { PlanetDetailModal } from "@/components/kundali/PlanetDetailModal";
+import { HIDE_OUTER_KEY, OUTER_ABBRS, loadHideOuter } from "@/components/kundali/ChartTabs";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Switch } from "@/components/ui/switch";
 import { useAstro } from "@/i18n/astro";
@@ -165,6 +166,15 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
       /* ignore quota errors */
     }
   };
+  const [hideOuter, setHideOuterState] = useState(loadHideOuter);
+  const onHideOuter = (v: boolean) => {
+    setHideOuterState(v);
+    try {
+      window.localStorage.setItem(HIDE_OUTER_KEY, v ? "1" : "0");
+    } catch {
+      /* ignore quota errors */
+    }
+  };
   const [loading, setLoading] = useState(false);
   const [chartLoading, setChartLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -238,6 +248,46 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
     }
     return Object.keys(map).length ? map : undefined;
   }, [chart]);
+
+  const filteredPlanets = useMemo(() => {
+    if (!chart || !hideOuter) return chart?.planets_data ?? [];
+    return chart.planets_data.filter((p) => !OUTER_ABBRS.has(p.abbr));
+  }, [chart, hideOuter]);
+
+  const filteredChart = useMemo(() => {
+    if (!chart || !hideOuter) return chart?.d1_chart;
+    const out: Record<number, string[]> = {};
+    for (const [h, abbrs] of Object.entries(chart.d1_chart)) {
+      out[Number(h)] = abbrs.filter((a) => !OUTER_ABBRS.has(a));
+    }
+    return out;
+  }, [chart, hideOuter]);
+
+  const filteredDegrees = useMemo(() => {
+    const raw = chart?.vargas?.d1?.planet_degrees;
+    if (!raw || !hideOuter) return raw;
+    const out: Record<string, number> = {};
+    for (const [k, v] of Object.entries(raw)) {
+      if (!OUTER_ABBRS.has(k)) out[k] = v;
+    }
+    return out;
+  }, [chart, hideOuter]);
+
+  const filteredDrishti = useMemo(() => {
+    if (!chart?.drishti || !hideOuter) return chart?.drishti;
+    const d = chart.drishti;
+    const byPlanet: typeof d.by_planet = {};
+    for (const [k, v] of Object.entries(d.by_planet)) {
+      if (!OUTER_ABBRS.has(k)) byPlanet[k] = v;
+    }
+    return {
+      aspects: d.aspects.filter((a) => !OUTER_ABBRS.has(a.planet_abbr)),
+      by_planet: byPlanet,
+      mutual: d.mutual.filter(
+        (m) => !OUTER_ABBRS.has(m.planet1.slice(0, 2)) && !OUTER_ABBRS.has(m.planet2.slice(0, 2)),
+      ),
+    };
+  }, [chart, hideOuter]);
 
   // StrictMode in dev fires effects twice; guard so the initial fetch only
   // hits the backend once. Production builds run effects once and ignore this.
@@ -530,11 +580,23 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                             />
                           </label>
                         )}
+                        <label
+                          data-testid="lagna-hide-outer-toggle"
+                          className="inline-flex items-center gap-2 text-mini font-medium text-ink-soft cursor-pointer select-none"
+                        >
+                          <span>{t("hide_outer")}</span>
+                          <Switch
+                            checked={hideOuter}
+                            onCheckedChange={onHideOuter}
+                            aria-label={t("hide_outer")}
+                            data-testid="lagna-hide-outer-switch"
+                          />
+                        </label>
                       </div>
                       <div className="bg-parchment-50 p-2 rounded-sm">
                         {chartStyle === "west" ? (
                           <WesternChart
-                            planets={chart.planets_data}
+                            planets={filteredPlanets}
                             ascendant={chart.ascendant}
                             ascSign={chart.d1_asc_sign}
                             title={t("rashi_chart_title")}
@@ -543,22 +605,22 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                           />
                         ) : chartStyle === "south" ? (
                           <SouthIndianChart
-                            houseMap={chart.d1_chart}
+                            houseMap={filteredChart!}
                             ascSign={chart.d1_asc_sign}
                             title={t("rashi_chart_title")}
                             testId="lagna-chart-south"
-                            planetDegrees={chart.vargas?.d1?.planet_degrees}
+                            planetDegrees={filteredDegrees}
                             planetStatus={chartPlanetStatus}
                             showDegrees={showDegrees}
                             onSelectPlanet={openPlanetDetail}
                           />
                         ) : (
                           <VedicChart
-                            houseMap={chart.d1_chart}
+                            houseMap={filteredChart!}
                             ascSign={chart.d1_asc_sign}
                             title={t("rashi_chart_title")}
                             testId="lagna-chart-north"
-                            planetDegrees={chart.vargas?.d1?.planet_degrees}
+                            planetDegrees={filteredDegrees}
                             planetStatus={chartPlanetStatus}
                             showDegrees={showDegrees}
                             onSelectPlanet={openPlanetDetail}
@@ -574,9 +636,9 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     </div>
                     <div className="md:col-span-2">
                       <PlanetsTable
-                        planets={chart.planets_data}
+                        planets={filteredPlanets}
                         ascendant={chart.ascendant}
-                        drishti={chart.drishti}
+                        drishti={filteredDrishti}
                         friendships={chart.friendships}
                         onSelectPlanet={openPlanetDetail}
                       />

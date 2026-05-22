@@ -179,6 +179,7 @@ const ta: Record<string, string> = {
   drishti_to: "நோக்கி",
   drishti_house: "பாவம்",
   drishti_show: "பார்வை காட்டு",
+  hide_outer: "வெளிக்கோள் மறை",
   drishti_weak: "பலவீனம்",
   drishti_medium: "நடுத்தரம்",
   drishti_strong: "பலமான",

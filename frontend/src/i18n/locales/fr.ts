@@ -172,6 +172,7 @@ const fr: Record<string, string> = {
   drishti_to: "Vers",
   drishti_house: "Maison",
   drishti_show: "Afficher les aspects",
+  hide_outer: "Masquer extérieures",
   drishti_weak: "Faible",
   drishti_medium: "Moyen",
   drishti_strong: "Fort",
