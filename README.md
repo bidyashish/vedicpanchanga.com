@@ -235,7 +235,7 @@ vedicpanchanga.com/
 ├── infra/                   # provisioning + deploy scripts - see infra/README.md
 │   ├── setup-vps.sh         # one-shot VPS provisioning (idempotent)
 │   ├── auto-update-cron.sh  # auto-update + manual deploy (--install for cron)
-│   └── setup-monitoring.sh  # Prometheus + Grafana installer (optional)
+│   └── grafana/             # reproducible monitoring stack (Prometheus + Grafana + Blackbox)
 ├── Makefile                 # bundled workflow targets (make help)
 ├── CONTRIBUTING.md          # human onboarding doc
 ├── AGENTS.md                # canonical brief for AI coding agents

@@ -70,7 +70,7 @@ vedicpanchanga.com/
 ├── infra/                    # Deployment & infrastructure
 │   ├── setup-vps.sh          # One-command VPS provisioning (idempotent)
 │   ├── auto-update-cron.sh   # Auto-update + manual deploy (--install for cron)
-│   ├── setup-monitoring.sh   # Prometheus + Grafana + Node Exporter (optional)
+│   ├── grafana/              # Reproducible monitoring stack (Prometheus + Grafana + Blackbox)
 │   └── README.md             # Topology diagram and troubleshooting
 ├── Makefile                  # Bundled workflow targets (make help)
 ├── CONTRIBUTING.md           # Human onboarding doc

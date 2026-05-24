@@ -264,6 +264,18 @@ server {
         add_header X-Markdown-Tokens "430" always;
     }
 
+    location /health/ {
+        proxy_pass http://127.0.0.1:3002/;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_redirect / /health/;
+    }
+
     location /api/ {
         # valid_referers none server_names *.vedicpanchanga.com vedicpanchanga.com;
         # if (\$invalid_referer) {
@@ -367,6 +379,22 @@ server {
         add_header X-Markdown-Tokens "430" always;
     }
 
+    # Grafana monitoring UI, reverse-proxied under /health/. Grafana binds to
+    # 127.0.0.1:3002 (see infra/grafana/install.sh), configured with
+    # root_url=.../health/ + serve_from_sub_path so it serves correctly here.
+    # The app's own health JSON is at /api/health (proxied to the backend below).
+    location /health/ {
+        proxy_pass http://127.0.0.1:3002/;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_redirect / /health/;
+    }
+
     location /api/ {
         # valid_referers none server_names *.vedicpanchanga.com vedicpanchanga.com;
         # if (\$invalid_referer) {
@@ -404,10 +432,15 @@ echo "4. Firewall (UFW)..."
 ufw allow 22/tcp  comment 'SSH'   >/dev/null
 ufw allow 80/tcp  comment 'HTTP'  >/dev/null
 ufw allow 443/tcp comment 'HTTPS' >/dev/null
-# Monitoring (see AGENTS.md §8 — restrict to admin IP in prod).
-ufw allow 3002/tcp comment 'Grafana'       >/dev/null
-ufw allow 9090/tcp comment 'Prometheus'    >/dev/null
-ufw allow 9100/tcp comment 'Node Exporter' >/dev/null
+# Monitoring (see AGENTS.md §8). Exporters bind to 127.0.0.1 and Grafana is
+# reached via the /health/ Nginx proxy above, so NONE of these ports are exposed
+# publicly. Drop any legacy public allows left by earlier setups.
+for mon_port in 3002 9090 9100 9115; do
+    ufw delete allow "$mon_port"/tcp >/dev/null 2>&1 || true
+done
+# For direct access from a trusted admin IP instead, uncomment and set the IP:
+#   ufw allow from <ADMIN_IP> to any port 3002 proto tcp comment 'Grafana (admin)'
+#   ufw allow from <ADMIN_IP> to any port 9090 proto tcp comment 'Prometheus (admin)'
 # Backend must never be directly reachable.
 ufw deny 8000 comment 'Block direct backend (legacy)' >/dev/null
 ufw deny 8001 comment 'Block direct backend'          >/dev/null
@@ -432,7 +465,8 @@ echo
 if [ "$TLS_ENABLED" = "1" ]; then
 echo "Next steps:"
 echo "  1. Cloudflare → SSL/TLS → Overview → set mode to 'Full (strict)'"
-echo "  2. Restrict monitoring ports 3002/9090/9100 to your admin IP (ufw)"
+echo "  2. Install monitoring (optional):  sudo bash $APP_DIR/infra/grafana/install.sh"
+echo "     Grafana is then served at https://vedicpanchanga.com/health/ (ports stay localhost-only)"
 else
 echo "Next steps:"
 echo "  1. Cloudflare DNS: A record vedicpanchanga.com → this server IP (proxied)"
@@ -448,8 +482,8 @@ echo "  6. (Meanwhile) Cloudflare SSL/TLS mode 'Flexible' brings the site up imm
 fi
 echo
 if systemctl is-active --quiet grafana-server 2>/dev/null; then
-    GRAF_PASS=$(awk -F' *= *' '/^admin_password/{print $2}' /etc/grafana/grafana.ini 2>/dev/null || echo '(unknown)')
-    echo "Grafana:  http://127.0.0.1:3002  admin / $GRAF_PASS"
+    echo "Grafana:  https://vedicpanchanga.com/health/  (proxied; binds 127.0.0.1:3002)"
+    echo "  App Monitoring dashboard:  https://vedicpanchanga.com/health/d/apps-mon/application-monitoring"
     echo
 fi
 echo "Useful commands:"
