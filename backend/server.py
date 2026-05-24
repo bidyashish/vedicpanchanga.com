@@ -5,7 +5,7 @@ from typing import Literal, Optional
 
 from dotenv import load_dotenv
 from fastapi import APIRouter, FastAPI, HTTPException, Request
-from fastapi.responses import Response
+from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel, Field
 from starlette.middleware.cors import CORSMiddleware
 
@@ -36,6 +36,29 @@ class CalculateRequest(BaseModel):
 @api_router.get("/")
 async def root():
     return {"message": "Vedic Astrology API", "status": "ok"}
+
+
+@api_router.get("/health")
+def health():
+    """Liveness/readiness probe for monitoring (Prometheus blackbox, uptime checks).
+
+    Lightweight by design - no astronomical math. Returns 200 + status "ok" when
+    the process is up and the Swiss Ephemeris data directory is present. Returns
+    503 + status "degraded" if the .se1 files are missing, since calculations
+    silently fail without them (see CLAUDE.md). Reached publicly at
+    https://vedicpanchanga.com/api/health (the /api/ nginx proxy); note /health
+    itself is reverse-proxied to Grafana, so app health lives under /api.
+    """
+    ephe_dir = ROOT_DIR / "ephe"
+    ephe_ok = ephe_dir.is_dir() and next(ephe_dir.glob("*.se1"), None) is not None
+    body = {
+        "status": "ok" if ephe_ok else "degraded",
+        "service": "panchanga-backend",
+        "ephemeris": ephe_ok,
+    }
+    if not ephe_ok:
+        return JSONResponse(status_code=503, content=body)
+    return body
 
 
 @api_router.post("/calculate")

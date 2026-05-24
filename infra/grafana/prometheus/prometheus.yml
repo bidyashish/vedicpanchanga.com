@@ -1,0 +1,42 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Prometheus scraping itself.
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Host metrics (CPU, memory, disk, network).
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['localhost:9100']
+
+  # Blackbox HTTP probes - application uptime, latency, TLS expiry.
+  # Targets are probed *through* the blackbox exporter on 127.0.0.1:9115.
+  #   - the public URL exercises the full chain (Cloudflare -> Nginx -> backend)
+  #   - the origin URL isolates the FastAPI backend itself
+  - job_name: 'blackbox-http'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - https://vedicpanchanga.com/api/health
+          - https://vedicpanchanga.com/
+        labels:
+          app: vedicpanchanga
+          scope: public
+      - targets:
+          - http://127.0.0.1:8001/api/health
+        labels:
+          app: vedicpanchanga
+          scope: origin
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115

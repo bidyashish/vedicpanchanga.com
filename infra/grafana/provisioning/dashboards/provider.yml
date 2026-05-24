@@ -1,0 +1,15 @@
+apiVersion: 1
+
+providers:
+  - name: 'vedicpanchanga'
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: false
+    editable: true
+    allowUiUpdates: true
+    updateIntervalSeconds: 30
+    options:
+      # install.sh syncs infra/grafana/dashboards/*.json into here.
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false
