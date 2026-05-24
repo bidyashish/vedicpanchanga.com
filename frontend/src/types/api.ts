@@ -378,6 +378,7 @@ export interface PanchangData {
     nakshatra_tyajyam: (MuhurtaWindow & { nakshatra: string })[];
     tithi_tyajyam: (MuhurtaWindow & { tithi: string })[];
     vara_tyajyam?: MuhurtaWindow;
+    lagna_tyajyam: (MuhurtaWindow & { sign: string; position: string })[];
     amritadi_yogam: (MuhurtaWindow & { nakshatra: string; yogam: string })[];
   };
   gowri_panchang?: {
