@@ -1095,18 +1095,6 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                       refDate={refDate}
                     />
                   )}
-                  {data.tyajyam.lagna_tyajyam.map((lt, i) => (
-                    <TimeBand
-                      key={`lt-${i}`}
-                      testId={`band-lagna-tyajyam-${i}`}
-                      title={t("tyajyam_lagna")}
-                      window={lt}
-                      color="var(--danger)"
-                      desc={`${t("tyajyam_lagna_desc")} · ${a.sign(lt.sign)} (${t(`tyajyam_lagna_${lt.position}`)})`}
-                      tz={tz}
-                      refDate={refDate}
-                    />
-                  ))}
                   {data.tyajyam.amritadi_yogam.map((ay, i) => (
                     <TimeBand
                       key={`ay-${i}`}
