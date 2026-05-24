@@ -84,6 +84,13 @@ function ResultCard({ m, tz }: { m: MuhurtaResult; tz?: string }) {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
+        {m.muhurta_window && (
+          <InfoTile
+            label={t("muhurta_window")}
+            value={formatTimeRange(m.muhurta_window.start, m.muhurta_window.end, tz)}
+            valueColor="var(--success)"
+          />
+        )}
         <InfoTile
           label={t("muhurta_abhijit")}
           value={formatTimeRange(m.abhijit?.start, m.abhijit?.end, tz)}

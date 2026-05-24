@@ -8,8 +8,9 @@ We score each day (0–100) then rank. Optionally filter by the native's Chandra
 from __future__ import annotations
 
 from datetime import date as date_cls
+from datetime import datetime as dt_cls
 from datetime import timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from advanced_panchang import compute_detailed_panchang
 from constants import NAKSHATRAS
@@ -40,7 +41,7 @@ PURPOSES: Dict[str, Dict[str, Any]] = {
         },  # Ro,Mri,Ma,U.Ph,Ha,Sw,An,Mu,U.As,Shr,U.Bh,Re
         "good_weekdays": {1, 3, 4, 5},  # Mon Wed Thu Fri
         "avoid_weekdays": {2, 6, 7},  # Tue Sat Sun
-        "bad_tithis": {4, 9, 14, 19, 24, 29, 30, 15},  # Rikta, Amavasya, Purnima
+        "bad_tithis": {4, 9, 14, 19, 24, 29, 30},  # Rikta + Amavasya
     },
     "griha_pravesh": {
         "label": "Griha Pravesha (Housewarming)",
@@ -167,6 +168,59 @@ def _chandrabalam_score(current_sign_id: int, birth_sign_id: Optional[int]) -> i
     return 0
 
 
+def _best_window(
+    panch: Dict[str, Any],
+    purpose_cfg: Dict[str, Any],
+) -> Tuple[Dict, Dict, Optional[str], Optional[str]]:
+    """Find the best tithi+nakshatra overlap window during the day.
+
+    Scans every (tithi, nakshatra) pair that co-exists in the sunrise-to-next-sunrise
+    window and picks the combination with the highest raw tithi+nakshatra score.
+    Returns (tithi_entry, nak_entry, window_start_iso, window_end_iso).
+    """
+    tithi_seq = panch["panchang"]["tithi_sequence"]
+    nak_seq = panch["panchang"]["nakshatra_sequence"]
+
+    good_tithis = purpose_cfg.get("good_tithis", set())
+    bad_tithis = purpose_cfg.get("bad_tithis", set())
+    good_naks = purpose_cfg.get("good_nakshatras", set())
+    bad_naks = purpose_cfg.get("bad_nakshatras", set())
+
+    best_combo = -999
+    best: Optional[Tuple[Dict, Dict, str, str]] = None
+
+    for tithi in tithi_seq:
+        for nak in nak_seq:
+            t_start = dt_cls.fromisoformat(tithi["starts_at"])
+            t_end = dt_cls.fromisoformat(tithi["ends_at"])
+            n_start = dt_cls.fromisoformat(nak["starts_at"])
+            n_end = dt_cls.fromisoformat(nak["ends_at"])
+
+            w_start = max(t_start, n_start)
+            w_end = min(t_end, n_end)
+            if w_start >= w_end:
+                continue
+
+            combo = 0
+            if nak["index"] in good_naks:
+                combo += 20
+            elif nak["index"] in bad_naks:
+                combo -= 25
+
+            if tithi["index"] in good_tithis:
+                combo += 15
+            elif tithi["index"] in bad_tithis:
+                combo -= 25
+
+            if combo > best_combo:
+                best_combo = combo
+                best = (tithi, nak, w_start.isoformat(), w_end.isoformat())
+
+    if best is None:
+        return tithi_seq[0], nak_seq[0], None, None
+    return best
+
+
 def score_day(
     panch: Dict[str, Any],
     purpose_cfg: Dict[str, Any],
@@ -178,12 +232,13 @@ def score_day(
     reasons_bad: List[str] = []
     score = 50  # baseline
 
-    # Read the day's prevailing tithi/nakshatra/weekday (at sunrise)
-    tithi_idx = panch["panchang"]["tithi"]["index"]
-    tithi_name = panch["panchang"]["tithi"]["name"]
-    nak_idx_1 = panch["panchang"]["nakshatra"]["index"]  # 1-27
+    best_tithi, best_nak, win_start, win_end = _best_window(panch, purpose_cfg)
+
+    tithi_idx = best_tithi["index"]
+    tithi_name = best_tithi["name"]
+    nak_idx_1 = best_nak["index"]  # 1-27
     nak_idx_0 = nak_idx_1 - 1
-    nak_name = panch["panchang"]["nakshatra"]["name"]
+    nak_name = best_nak["name"]
     vara_iso = panch["vara"]["index"]
     vara_name = panch["vara"]["sanskrit"]
     moon_sign_id = panch["rashi_nakshatra"]["moonsign"]["index"]
@@ -233,14 +288,14 @@ def score_day(
     score = max(0, min(100, score))
 
     aus = panch["auspicious_timings"]
-    return {
+    result: Dict[str, Any] = {
         "score": score,
         "reasons": reasons,
         "cautions": reasons_bad,
         "tithi": tithi_name,
         "nakshatra": nak_name,
         "vara": vara_name,
-        "paksha": panch["panchang"]["paksha"],
+        "paksha": best_tithi.get("paksha", panch["panchang"]["paksha"]),
         "moon_rashi": panch["rashi_nakshatra"]["moonsign"]["rashi"],
         "abhijit": aus["abhijit"],
         "brahma_muhurta": aus.get("brahma_muhurta"),
@@ -256,6 +311,9 @@ def score_day(
         "sunrise": panch["sun_moon"]["sunrise"],
         "sunset": panch["sun_moon"]["sunset"],
     }
+    if win_start and win_end:
+        result["muhurta_window"] = {"start": win_start, "end": win_end}
+    return result
 
 
 def find_muhurtas(
