@@ -13,6 +13,13 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9100']
 
+  # Application metrics from the FastAPI backend (request rate, latency, errors).
+  # /metrics is not proxied by Nginx, so it is scraped directly and stays private.
+  - job_name: 'panchanga-backend'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['127.0.0.1:8001']
+
   # Blackbox HTTP probes - application uptime, latency, TLS expiry.
   # Targets are probed *through* the blackbox exporter on 127.0.0.1:9115.
   #   - the public URL exercises the full chain (Cloudflare -> Nginx -> backend)

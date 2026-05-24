@@ -30,7 +30,8 @@ Internet → Cloudflare → Nginx (TLS, static files) → FastAPI (:8001, localh
   build served by Nginx. Dev server on port **3121**.
 - **Reverse proxy** - Nginx handles TLS termination, security headers, serves
   the static frontend build, and proxies `/api/` to the Python backend.
-- **Monitoring** - Prometheus (9090), Grafana (3002), Node Exporter (9100). Optional.
+- **Monitoring** (optional) - Prometheus + Node Exporter + Blackbox + Grafana,
+  all bound to 127.0.0.1; Grafana served via Nginx at `/grafana/`. See `infra/grafana/`.
 
 ---
 
@@ -207,8 +208,10 @@ Manual redeploy: `git pull && sudo bash infra/setup-vps.sh`
    `127.0.0.1:8001`. Only Nginx talks to it.
 2. **Never commit secrets**, API keys, or `.env` files. Use `.env.local`
    (gitignored) for local config.
-3. **Monitoring ports** (Prometheus 9090, Grafana 3002) should be IP-restricted
-   in production via UFW - they are open by default for ease of setup.
+3. **Monitoring stays localhost-only.** Prometheus (9090), Node Exporter (9100),
+   Blackbox (9115) and Grafana (3002) all bind to `127.0.0.1`; `setup-vps.sh`
+   keeps those ports off the public firewall. Grafana is reached only through the
+   Nginx reverse proxy at `/grafana/`. See `infra/grafana/`.
 4. **Always use HTTPS** in production. The Nginx config redirects HTTP→HTTPS.
 5. **CSP headers** are set in `nginx-vedicpanchanga.conf`. If adding new
    third-party scripts/analytics, update the Content-Security-Policy header.

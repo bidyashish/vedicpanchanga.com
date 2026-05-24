@@ -19,7 +19,8 @@ Nginx :80 -> 301 -> :443 (TLS 1.2/1.3, HSTS, real-IP from CF, X-Frame-Options,
     |
     |-- /assets/   -> /apps/panchanga/frontend/dist/assets/  (1y immutable cache)
     |-- /          -> try_files $uri $uri/ /index.html       (SPA fallback)
-    |-- /health/   -> proxy -> http://127.0.0.1:3002         (Grafana UI)
+    |-- /grafana/  -> proxy -> http://127.0.0.1:3002         (Grafana UI)
+    |-- /health    -> proxy -> http://127.0.0.1:8001/api/health  (app health)
     +-- /api/      -> proxy -> http://127.0.0.1:8001/api/     (FastAPI)
                                        |     (incl. GET /api/health probe)
                                        v
@@ -28,12 +29,13 @@ Nginx :80 -> 301 -> :443 (TLS 1.2/1.3, HSTS, real-IP from CF, X-Frame-Options,
                               bound to 127.0.0.1 - never exposed
 ```
 
-> `/health/` is the **Grafana** monitoring UI, not an app health check. The
-> application's own readiness probe is `GET /api/health`
-> (<https://vedicpanchanga.com/api/health>): 200 when the Swiss Ephemeris data
-> is present, 503 otherwise. The exporters (Prometheus 9090, Node Exporter
-> 9100, Blackbox 9115) and Grafana (3002) all bind to 127.0.0.1; only Grafana
-> is reachable, and only via the `/health/` proxy. See [`grafana/`](grafana/).
+> `/grafana/` is the **Grafana** monitoring UI. The application's own readiness
+> probe is `GET /api/health`, also exposed at `/health`
+> (<https://vedicpanchanga.com/health>): 200 when the Swiss Ephemeris data is
+> present, 503 otherwise. The exporters (Prometheus
+> 9090, Node Exporter 9100, Blackbox 9115) and Grafana (3002) all bind to
+> 127.0.0.1; only Grafana is reachable, and only via the `/grafana/` proxy. See
+> [`grafana/`](grafana/).
 
 ## Scripts
 
@@ -61,7 +63,7 @@ What it does, in order:
    `/etc/ssl/cloudflare/origin.{pem,key}` exist.
 6. **Firewall (UFW)** - opens `22/80/443`; blocks `8000/8001` directly; and
    drops any public allow on the monitoring ports `3002/9090/9100/9115` (they
-   stay localhost-only; Grafana is reached through the `/health/` proxy).
+   stay localhost-only; Grafana is reached through the `/grafana/` proxy).
 7. **Systemd** - enables and restarts `panchanga-backend` + `nginx`.
 
 ### Cloudflare Origin Certificate
@@ -98,10 +100,10 @@ sudo bash infra/grafana/install.sh    # idempotent; safe to re-run
 Installs Prometheus (2.53), Node Exporter (1.8.1), Blackbox Exporter (0.25),
 and Grafana, then provisions all of them from the version-controlled files in
 [`grafana/`](grafana/). Everything binds to `127.0.0.1`. Grafana is served only
-through the Nginx `/health/` proxy; the other exporters are reachable only via
+through the Nginx `/grafana/` proxy; the other exporters are reachable only via
 an SSH tunnel. The blackbox job probes `https://vedicpanchanga.com/api/health`
 (end-to-end), the homepage, and the origin backend, surfaced on the
-**Application Monitoring** dashboard (`/health/d/apps-mon/application-monitoring`).
+**Application Monitoring** dashboard (`/grafana/d/apps-mon/application-monitoring`).
 
 ## Common operations
 

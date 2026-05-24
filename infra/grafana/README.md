@@ -19,15 +19,18 @@ this folder; the Grafana admin password is never touched.
 
 | Component         | Port | Reachable from outside? |
 |-------------------|------|-------------------------|
-| Grafana           | 3002 | Yes, via Nginx `/health/` proxy only |
+| Grafana           | 3002 | Yes, via Nginx `/grafana/` proxy only |
 | Prometheus        | 9090 | No (SSH tunnel)         |
 | Node Exporter     | 9100 | No (SSH tunnel)         |
 | Blackbox Exporter | 9115 | No (SSH tunnel)         |
 
-Grafana server settings (`root_url=https://vedicpanchanga.com/health/`,
-`serve_from_sub_path`, 127.0.0.1 bind) are applied via a systemd drop-in
-(`/etc/systemd/system/grafana-server.service.d/override.conf`) so the installer
-never rewrites `grafana.ini` and never resets the admin password.
+Grafana `[server]` settings (`root_url=https://vedicpanchanga.com/grafana/`,
+`serve_from_sub_path = true`, `http_addr = 127.0.0.1`) are set idempotently in
+`grafana.ini` by `install.sh` - only those keys are touched, so the admin
+password and everything else are preserved. The matching Nginx rule passes the
+`/grafana/` prefix through unchanged (`proxy_pass http://127.0.0.1:3002;`, no
+trailing slash, no `proxy_redirect`); a trailing slash would strip the prefix
+and Grafana's assets would 404 ("failed to load application files").
 
 ## Layout
 
@@ -48,12 +51,23 @@ grafana/
 UID `apps-mon`, served at:
 
 ```
-https://vedicpanchanga.com/health/d/apps-mon/application-monitoring
+https://vedicpanchanga.com/grafana/d/apps-mon/application-monitoring
 ```
 
-Panels: app up (end-to-end probe of `/api/health` through Cloudflare + Nginx),
-backend up (origin probe), HTTP status, TLS cert days remaining, availability /
-probe-duration / HTTP-phase timeseries, and host CPU / memory / disk.
+Detailed, grouped into rows: **Service health** (status, 24h uptime, response
+time, HTTP status, TLS expiry), **Application performance** (request rate, 5xx
+error rate, latency p50/p90/p95/p99, request rate + p95 latency by endpoint),
+**Availability & latency** (per-target timeseries + status table), **HTTP & TLS
+detail** (status code over time, HTTP phase durations, DNS lookup, redirects,
+content length, HTTPS flag), **Host utilisation** (CPU / memory / disk gauges +
+load average), **Host resources over time** (CPU, memory breakdown, network,
+disk I/O, filesystem-by-mount), and **Host info** (uptime, CPU cores, total
+memory).
+
+The application metrics come from the FastAPI backend, instrumented with
+`prometheus-fastapi-instrumentator` and exposed at `/metrics`. That path is not
+proxied by Nginx, so Prometheus scrapes it directly on `127.0.0.1:8001` and it
+never reaches the public internet.
 
 Blackbox probe targets (defined in `prometheus/prometheus.yml`):
 
@@ -63,7 +77,8 @@ Blackbox probe targets (defined in `prometheus/prometheus.yml`):
 
 > The backend readiness endpoint is `GET /api/health` (returns 200 + `status:ok`
 > when the Swiss Ephemeris data is present, 503 + `status:degraded` otherwise).
-> `/health` itself is the Grafana UI, which is why app health lives under `/api`.
+> The Grafana UI lives under `/grafana/`; the app's health is `/api/health`
+> (also exposed at `/health`).
 
 ## Editing the dashboard
 

@@ -6,6 +6,7 @@ from typing import Literal, Optional
 from dotenv import load_dotenv
 from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, Response
+from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import BaseModel, Field
 from starlette.middleware.cors import CORSMiddleware
 
@@ -46,8 +47,8 @@ def health():
     the process is up and the Swiss Ephemeris data directory is present. Returns
     503 + status "degraded" if the .se1 files are missing, since calculations
     silently fail without them (see CLAUDE.md). Reached publicly at
-    https://vedicpanchanga.com/api/health (the /api/ nginx proxy); note /health
-    itself is reverse-proxied to Grafana, so app health lives under /api.
+    https://vedicpanchanga.com/api/health (the /api/ nginx proxy). The Grafana
+    monitoring UI lives under /grafana, so app health stays under /api.
     """
     ephe_dir = ROOT_DIR / "ephe"
     ephe_ok = ephe_dir.is_dir() and next(ephe_dir.glob("*.se1"), None) is not None
@@ -459,3 +460,11 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
+
+# Prometheus application metrics. Exposed at /metrics (not under /api, so Nginx
+# does not proxy it - Prometheus scrapes it directly on 127.0.0.1:8001, keeping
+# it off the public internet). Powers the "Application performance" rows of the
+# Grafana dashboard (request rate, latency percentiles, error rate, by endpoint).
+Instrumentator(excluded_handlers=["/metrics"]).instrument(app).expose(
+    app, endpoint="/metrics", include_in_schema=False
+)
