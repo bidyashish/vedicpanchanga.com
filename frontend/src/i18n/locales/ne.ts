@@ -29,6 +29,7 @@ const ne: Record<string, string> = {
   muhurta_no_matches: "कुनै शुभ दिन फेला परेन। मिति दायरा बढाउनुहोस्।",
   muhurta_reasons: "अनुकूल",
   muhurta_cautions: "सावधानी",
+  muhurta_window: "मुहूर्त समय",
   muhurta_abhijit: "अभिजित",
   muhurta_shubh_section: "शुभ मुहूर्त",
   muhurta_rahu: "राहु काल",

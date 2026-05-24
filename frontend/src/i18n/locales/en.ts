@@ -49,6 +49,7 @@ const en: Record<string, string> = {
   muhurta_no_matches: "No auspicious days found. Try a wider date range.",
   muhurta_reasons: "Favourable",
   muhurta_cautions: "Cautions",
+  muhurta_window: "Muhurta Window",
   muhurta_abhijit: "Abhijit",
   muhurta_shubh_section: "Shubh Muhurat",
   muhurta_rahu: "Rahu Kala",

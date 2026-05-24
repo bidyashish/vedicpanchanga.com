@@ -39,6 +39,7 @@ const hi: Record<string, string> = {
   muhurta_no_matches: "कोई शुभ दिन नहीं मिला। अवधि बढ़ाएँ।",
   muhurta_reasons: "शुभ कारण",
   muhurta_cautions: "सावधानी",
+  muhurta_window: "मुहूर्त समय",
   muhurta_abhijit: "अभिजित",
   muhurta_shubh_section: "शुभ मुहूर्त",
   muhurta_rahu: "राहु काल",

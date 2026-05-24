@@ -29,6 +29,7 @@ const ar: Record<string, string> = {
   muhurta_no_matches: "لم يتم العثور على أيام ميمونة. جرّب نطاقاً أوسع.",
   muhurta_reasons: "مواتٍ",
   muhurta_cautions: "تحذيرات",
+  muhurta_window: "وقت الموهورتا",
   muhurta_abhijit: "أبهيجيت",
   muhurta_shubh_section: "شوبه موهورات",
   muhurta_rahu: "راهو كالا",

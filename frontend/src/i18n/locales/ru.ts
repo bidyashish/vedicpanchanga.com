@@ -29,6 +29,7 @@ const ru: Record<string, string> = {
   muhurta_no_matches: "Благоприятные дни не найдены. Расширьте диапазон.",
   muhurta_reasons: "Благоприятно",
   muhurta_cautions: "Предостережения",
+  muhurta_window: "Окно Мухурты",
   muhurta_abhijit: "Абхиджит",
   muhurta_shubh_section: "Шубх Мухурат",
   muhurta_rahu: "Раху Кала",

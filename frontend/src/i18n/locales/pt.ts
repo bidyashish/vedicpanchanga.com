@@ -29,6 +29,7 @@ const pt: Record<string, string> = {
   muhurta_no_matches: "Nenhum dia auspicioso encontrado. Aumenta o intervalo de datas.",
   muhurta_reasons: "Favoráveis",
   muhurta_cautions: "Cautelas",
+  muhurta_window: "Janela de Muhurta",
   muhurta_abhijit: "Abhijit",
   muhurta_shubh_section: "Shubh Muhurat",
   muhurta_rahu: "Rahu Kala",

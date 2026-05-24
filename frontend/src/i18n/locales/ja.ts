@@ -29,6 +29,7 @@ const ja: Record<string, string> = {
   muhurta_no_matches: "吉日が見つかりませんでした。期間を広げてください。",
   muhurta_reasons: "吉因",
   muhurta_cautions: "注意",
+  muhurta_window: "ムフルタ時間帯",
   muhurta_abhijit: "Abhijit",
   muhurta_shubh_section: "吉祥時 (Shubh Muhurat)",
   muhurta_rahu: "Rahu Kala",

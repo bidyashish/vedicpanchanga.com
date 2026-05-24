@@ -1000,7 +1000,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   tz={tz}
                   refDate={refDate}
                 />
-                {data.inauspicious_timings.dur_muhurtam.map((dm, i) => (
+                {(data.inauspicious_timings.dur_muhurtam ?? []).map((dm, i) => (
                   <TimeBand
                     key={i}
                     testId={`band-dur-${i}`}
@@ -1012,7 +1012,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     refDate={refDate}
                   />
                 ))}
-                {data.inauspicious_timings.bhadra.map((b, i) => (
+                {(data.inauspicious_timings.bhadra ?? []).map((b, i) => (
                   <TimeBand
                     key={`b-${i}`}
                     testId={`band-bhadra-${i}`}
@@ -1060,7 +1060,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 testId="section-tyajyam"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {data.tyajyam.nakshatra_tyajyam.map((nt, i) => (
+                  {(data.tyajyam.nakshatra_tyajyam ?? []).map((nt, i) => (
                     <TimeBand
                       key={`nt-${i}`}
                       testId={`band-nak-tyajyam-${i}`}
@@ -1072,7 +1072,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                       refDate={refDate}
                     />
                   ))}
-                  {data.tyajyam.tithi_tyajyam.map((tt, i) => (
+                  {(data.tyajyam.tithi_tyajyam ?? []).map((tt, i) => (
                     <TimeBand
                       key={`tt-${i}`}
                       testId={`band-tithi-tyajyam-${i}`}
@@ -1095,7 +1095,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                       refDate={refDate}
                     />
                   )}
-                  {data.tyajyam.lagna_tyajyam.map((lt, i) => (
+                  {(data.tyajyam.lagna_tyajyam ?? []).map((lt, i) => (
                     <TimeBand
                       key={`lt-${i}`}
                       testId={`band-lagna-tyajyam-${i}`}
@@ -1107,7 +1107,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                       refDate={refDate}
                     />
                   ))}
-                  {data.tyajyam.amritadi_yogam.map((ay, i) => (
+                  {(data.tyajyam.amritadi_yogam ?? []).map((ay, i) => (
                     <TimeBand
                       key={`ay-${i}`}
                       testId={`band-amritadi-${i}`}
@@ -1139,7 +1139,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
               testId="section-udaya"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-1">
-                {data.udaya_lagna.map((l, i) => (
+                {(data.udaya_lagna ?? []).map((l, i) => (
                   <div
                     key={i}
                     className="flex items-baseline justify-between border-b border-parchment-200/70 py-2.5 gap-3"
@@ -1164,7 +1164,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 testId="section-chandrabalam"
               >
                 <div className="flex flex-wrap gap-2">
-                  {data.chandrabalam.good_rashis.map((r, i) => (
+                  {(data.chandrabalam?.good_rashis ?? []).map((r, i) => (
                     <span key={i} className="tag font-serif">
                       {a.sign(r.rashi)}
                     </span>
@@ -1177,7 +1177,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 testId="section-tarabalam"
               >
                 <div className="flex flex-wrap gap-2">
-                  {data.tarabalam.good_nakshatras.map((n, i) => (
+                  {(data.tarabalam?.good_nakshatras ?? []).map((n, i) => (
                     <span key={i} className="tag">
                       {a.nakshatra(n.nakshatra)}
                     </span>

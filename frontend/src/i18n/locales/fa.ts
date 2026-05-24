@@ -29,6 +29,7 @@ const fa: Record<string, string> = {
   muhurta_no_matches: "هیچ روز فرخنده‌ای یافت نشد. بازه را گسترده‌تر کنید.",
   muhurta_reasons: "سعد",
   muhurta_cautions: "هشدارها",
+  muhurta_window: "زمان موهورته",
   muhurta_abhijit: "ابهی‌جیت",
   muhurta_shubh_section: "شوبه موهورات",
   muhurta_rahu: "راهو کاله",

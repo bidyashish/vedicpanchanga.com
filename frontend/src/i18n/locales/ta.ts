@@ -39,6 +39,7 @@ const ta: Record<string, string> = {
   muhurta_no_matches: "சுபமான நாட்கள் கிடைக்கவில்லை. தேதி வரம்பை அதிகரிக்கவும்.",
   muhurta_reasons: "சுபம்",
   muhurta_cautions: "எச்சரிக்கை",
+  muhurta_window: "முகூர்த்த நேரம்",
   muhurta_abhijit: "அபிஜித்",
   muhurta_shubh_section: "சுப முகூர்த்தம்",
   muhurta_rahu: "ராகு காலம்",

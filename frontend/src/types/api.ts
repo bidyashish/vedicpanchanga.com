@@ -250,6 +250,7 @@ export interface MuhurtaResult {
   moon_rashi: string;
   sunrise: string;
   sunset: string;
+  muhurta_window?: MuhurtaWindow;
   abhijit?: MuhurtaWindow;
   brahma_muhurta?: MuhurtaWindow;
   pratah_sandhya?: MuhurtaWindow;

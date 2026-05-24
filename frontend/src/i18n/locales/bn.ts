@@ -29,6 +29,7 @@ const bn: Record<string, string> = {
   muhurta_no_matches: "কোনো শুভ দিন পাওয়া যায়নি। তারিখের পরিসর বাড়ান।",
   muhurta_reasons: "অনুকূল",
   muhurta_cautions: "সতর্কতা",
+  muhurta_window: "মুহূর্ত সময়",
   muhurta_abhijit: "অভিজিৎ",
   muhurta_shubh_section: "শুভ মুহূর্ত",
   muhurta_rahu: "রাহু কাল",

@@ -29,6 +29,7 @@ const zh: Record<string, string> = {
   muhurta_no_matches: "未找到吉日。请扩大日期范围。",
   muhurta_reasons: "吉因",
   muhurta_cautions: "注意",
+  muhurta_window: "吉时窗口",
   muhurta_abhijit: "Abhijit",
   muhurta_shubh_section: "吉祥时刻 (Shubh Muhurat)",
   muhurta_rahu: "Rahu Kala",

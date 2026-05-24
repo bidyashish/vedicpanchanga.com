@@ -29,6 +29,7 @@ const he: Record<string, string> = {
   muhurta_no_matches: "לא נמצאו ימים מבורכים. נסה טווח תאריכים רחב יותר.",
   muhurta_reasons: "חיובי",
   muhurta_cautions: "אזהרות",
+  muhurta_window: "חלון מוהורטה",
   muhurta_abhijit: "אבהיג'ית",
   muhurta_shubh_section: "שובה מוהוראט",
   muhurta_rahu: "ראהו קאלא",

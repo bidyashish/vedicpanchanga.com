@@ -29,6 +29,7 @@ const fr: Record<string, string> = {
   muhurta_no_matches: "Aucun jour favorable trouvé. Élargis la plage de dates.",
   muhurta_reasons: "Favorables",
   muhurta_cautions: "Précautions",
+  muhurta_window: "Fenetre de Muhurta",
   muhurta_abhijit: "Abhijit",
   muhurta_shubh_section: "Shubh Muhurat",
   muhurta_rahu: "Rahu Kala",

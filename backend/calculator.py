@@ -548,39 +548,18 @@ def _planet_entry(name: str, abbr: str, lon: float, retro: bool) -> Dict[str, An
     }
 
 
-# Astangata (combust) orbs in degrees - traditional Parashari values. A planet
-# is combust when its longitude is within this many degrees of the Sun.
-# Mercury and Venus have separate retrograde orbs because their geometry
-# changes during retrogression.
-_COMBUST_ORBS = {
-    "Moon": 12.0,
-    "Mars": 17.0,
-    "Mercury": 14.0,
-    "Mercury_retro": 12.0,
-    "Jupiter": 11.0,
-    "Venus": 10.0,
-    "Venus_retro": 8.0,
-    "Saturn": 15.0,
-}
+_COMBUST_ORB = 5.0
+
+_COMBUST_PLANETS = {"Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"}
 
 
 def _is_combust(name: str, lon: float, sun_lon: float, retro: bool) -> bool:
-    """Return True when planet is within the traditional combust orb of the Sun.
-    Sun, Rahu and Ketu are never combust."""
-    if name in ("Sun", "Rahu", "Ketu", "Ascendant"):
-        return False
-    if name == "Mercury" and retro:
-        orb = _COMBUST_ORBS["Mercury_retro"]
-    elif name == "Venus" and retro:
-        orb = _COMBUST_ORBS["Venus_retro"]
-    else:
-        orb = _COMBUST_ORBS.get(name, 0.0)
-    if orb == 0.0:
+    if name not in _COMBUST_PLANETS:
         return False
     diff = abs(lon - sun_lon)
     if diff > 180:
         diff = 360 - diff
-    return diff < orb
+    return diff <= _COMBUST_ORB
 
 
 def _build_house_map(
