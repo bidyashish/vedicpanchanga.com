@@ -264,10 +264,10 @@ server {
     }
 
     location /api/ {
-        valid_referers none server_names *.vedicpanchanga.com vedicpanchanga.com;
-        if (\$invalid_referer) {
-            return 403;
-        }
+        # valid_referers none server_names *.vedicpanchanga.com vedicpanchanga.com;
+        # if (\$invalid_referer) {
+        #     return 403;
+        # }
 
         proxy_pass http://127.0.0.1:8001/api/;
         proxy_set_header Host \$host;
@@ -367,10 +367,10 @@ server {
     }
 
     location /api/ {
-        valid_referers none server_names *.vedicpanchanga.com vedicpanchanga.com;
-        if (\$invalid_referer) {
-            return 403;
-        }
+        # valid_referers none server_names *.vedicpanchanga.com vedicpanchanga.com;
+        # if (\$invalid_referer) {
+        #     return 403;
+        # }
 
         proxy_pass http://127.0.0.1:8001/api/;
         proxy_set_header Host \$host;
