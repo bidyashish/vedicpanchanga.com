@@ -177,6 +177,7 @@ server {
     ssl_certificate_key $CF_KEY;
     ssl_protocols       TLSv1.2 TLSv1.3;
     ssl_ciphers         HIGH:!aNULL:!MD5:!3DES;
+    ssl_ecdh_curve      X25519:prime256v1:secp384r1;
     ssl_prefer_server_ciphers on;
     ssl_session_cache   shared:SSL:10m;
     ssl_session_timeout 1d;
@@ -446,6 +447,11 @@ echo "  5. Cloudflare → SSL/TLS → Overview → set mode to 'Full (strict)'"
 echo "  6. (Meanwhile) Cloudflare SSL/TLS mode 'Flexible' brings the site up immediately."
 fi
 echo
+if systemctl is-active --quiet grafana-server 2>/dev/null; then
+    GRAF_PASS=$(awk -F' *= *' '/^admin_password/{print $2}' /etc/grafana/grafana.ini 2>/dev/null || echo '(unknown)')
+    echo "Grafana:  http://127.0.0.1:3002  admin / $GRAF_PASS"
+    echo
+fi
 echo "Useful commands:"
 echo "  sudo journalctl -u panchanga-backend -f      # backend logs"
 echo "  sudo systemctl restart panchanga-backend     # restart backend"
