@@ -217,14 +217,24 @@ export function SouthIndianChart({
                   {a.signShort(sign)}
                 </text>
                 {sign === ascSign && (
-                  <line
-                    x1={pos.x + 2}
-                    y1={pos.y + 2}
-                    x2={pos.x + 20}
-                    y2={pos.y + 20}
-                    style={{ stroke: ascCol }}
-                    strokeWidth="1.5"
-                  />
+                  <>
+                    <line
+                      x1={pos.x + 1}
+                      y1={pos.y + 12}
+                      x2={pos.x + 14}
+                      y2={pos.y}
+                      style={{ stroke: ascCol }}
+                      strokeWidth="2.5"
+                    />
+                    <line
+                      x1={pos.x + 1}
+                      y1={pos.y + 20}
+                      x2={pos.x + 24}
+                      y2={pos.y}
+                      style={{ stroke: ascCol }}
+                      strokeWidth="2.5"
+                    />
+                  </>
                 )}
                 {planets.map((abbr, idx) => {
                   const isAsc = abbr === "As";
