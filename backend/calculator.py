@@ -548,7 +548,7 @@ def _planet_entry(name: str, abbr: str, lon: float, retro: bool) -> Dict[str, An
     }
 
 
-_COMBUST_ORB = 5.0
+_COMBUST_ORB = 6.0
 
 _COMBUST_PLANETS = {"Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"}
 
