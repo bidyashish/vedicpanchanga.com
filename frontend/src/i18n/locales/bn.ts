@@ -281,7 +281,7 @@ const bn: Record<string, string> = {
   muhurta_moon_in: "চন্দ্র",
 
   tyajyam_title: "ত্যাজ্যম (বর্জনীয় সময়)",
-  tyajyam_sub: "বর্তমান নক্ষত্র, তিথি, লগ্ন ও বারে অশুভ সময়কাল",
+  tyajyam_sub: "বর্তমান নক্ষত্র, তিথি ও বারে অশুভ সময়কাল",
   tyajyam_nakshatra: "নক্ষত্র ত্যাজ্যম",
   tyajyam_nakshatra_desc: "নক্ষত্রের মধ্যে 96 মিনিট অশুভ কাল",
   tyajyam_tithi: "তিথি ত্যাজ্যম",

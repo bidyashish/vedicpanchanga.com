@@ -282,7 +282,7 @@ const ja: Record<string, string> = {
   muhurta_moon_in: "月の位置",
 
   tyajyam_title: "回避時間帯",
-  tyajyam_sub: "現在のナクシャトラ、ティティ、ラグナ、曜日における不吉な時間帯",
+  tyajyam_sub: "現在のナクシャトラ、ティティ、曜日における不吉な時間帯",
   tyajyam_nakshatra: "ナクシャトラ回避",
   tyajyam_nakshatra_desc: "ナクシャトラ内の96分不吉時間帯",
   tyajyam_tithi: "ティティ回避",

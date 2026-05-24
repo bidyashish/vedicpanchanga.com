@@ -282,7 +282,7 @@ const de: Record<string, string> = {
   muhurta_moon_in: "Mond in",
 
   tyajyam_title: "Tyajyam (Meidungszeiten)",
-  tyajyam_sub: "Unguenstige Zeitfenster im aktuellen Nakshatra, Tithi, Lagna und Wochentag",
+  tyajyam_sub: "Unguenstige Zeitfenster im aktuellen Nakshatra, Tithi und Wochentag",
   tyajyam_nakshatra: "Nakshatra Tyajyam",
   tyajyam_nakshatra_desc: "96-min unguenstiges Zeitfenster im Nakshatra",
   tyajyam_tithi: "Tithi Tyajyam",

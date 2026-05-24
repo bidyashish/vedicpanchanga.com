@@ -282,7 +282,7 @@ const zh: Record<string, string> = {
   muhurta_moon_in: "月在",
 
   tyajyam_title: "避忌时段",
-  tyajyam_sub: "当前星宿、月相、命度及星期中的不吉时段",
+  tyajyam_sub: "当前星宿、月相及星期中的不吉时段",
   tyajyam_nakshatra: "星宿避忌",
   tyajyam_nakshatra_desc: "星宿内96分钟不吉时段",
   tyajyam_tithi: "月相避忌",

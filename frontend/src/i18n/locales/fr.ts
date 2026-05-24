@@ -285,7 +285,7 @@ const fr: Record<string, string> = {
   muhurta_moon_in: "Lune en",
 
   tyajyam_title: "Tyajyam (Periodes a eviter)",
-  tyajyam_sub: "Periodes defavorables dans le nakshatra, tithi, lagna et jour actuels",
+  tyajyam_sub: "Periodes defavorables dans le nakshatra, tithi et jour actuels",
   tyajyam_nakshatra: "Nakshatra Tyajyam",
   tyajyam_nakshatra_desc: "Periode defavorable de 96 min dans le nakshatra",
   tyajyam_tithi: "Tithi Tyajyam",

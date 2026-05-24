@@ -282,7 +282,7 @@ const he: Record<string, string> = {
   muhurta_moon_in: "ירח ב",
 
   tyajyam_title: "טיאג'יאם (תקופות להימנעות)",
-  tyajyam_sub: "תקופות לא מבורכות בנקשטרה, טיתהי, לאגנה ויום השבוע הנוכחיים",
+  tyajyam_sub: "תקופות לא מבורכות בנקשטרה, טיתהי ויום השבוע הנוכחיים",
   tyajyam_nakshatra: "נקשטרה טיאג'יאם",
   tyajyam_nakshatra_desc: "תקופה לא מבורכת של 96 דקות בנקשטרה",
   tyajyam_tithi: "טיתהי טיאג'יאם",

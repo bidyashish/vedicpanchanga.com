@@ -282,7 +282,7 @@ const ar: Record<string, string> = {
   muhurta_moon_in: "القمر في",
 
   tyajyam_title: "تياجيام (فترات التجنب)",
-  tyajyam_sub: "فترات غير ميمونة ضمن الناكشاترا والتيثي واللاغنا واليوم الحاليين",
+  tyajyam_sub: "فترات غير ميمونة ضمن الناكشاترا والتيثي واليوم الحاليين",
   tyajyam_nakshatra: "ناكشاترا تياجيام",
   tyajyam_nakshatra_desc: "فترة غير ميمونة 96 دقيقة ضمن الناكشاترا",
   tyajyam_tithi: "تيثي تياجيام",

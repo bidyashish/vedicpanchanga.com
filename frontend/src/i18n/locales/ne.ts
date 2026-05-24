@@ -281,7 +281,7 @@ const ne: Record<string, string> = {
   muhurta_moon_in: "चन्द्र",
 
   tyajyam_title: "त्याज्यम् (वर्जनीय काल)",
-  tyajyam_sub: "वर्तमान नक्षत्र, तिथि, लग्न र वारमा अशुभ अवधि",
+  tyajyam_sub: "वर्तमान नक्षत्र, तिथि र वारमा अशुभ अवधि",
   tyajyam_nakshatra: "नक्षत्र त्याज्यम्",
   tyajyam_nakshatra_desc: "नक्षत्रभित्र 96 मिनेट अशुभ काल",
   tyajyam_tithi: "तिथि त्याज्यम्",

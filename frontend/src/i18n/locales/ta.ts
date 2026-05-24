@@ -292,7 +292,7 @@ const ta: Record<string, string> = {
   muhurta_moon_in: "சந்திரன்",
 
   tyajyam_title: "தியாஜ்யம் (தவிர்க்க வேண்டிய நேரம்)",
-  tyajyam_sub: "தற்போதைய நட்சத்திரம், திதி, லக்னம் மற்றும் வாரத்தில் அசுப நேரங்கள்",
+  tyajyam_sub: "தற்போதைய நட்சத்திரம், திதி மற்றும் வாரத்தில் அசுப நேரங்கள்",
   tyajyam_nakshatra: "நட்சத்திர தியாஜ்யம்",
   tyajyam_nakshatra_desc: "நட்சத்திரத்தில் 96 நிமிட அசுப காலம்",
   tyajyam_tithi: "திதி தியாஜ்யம்",

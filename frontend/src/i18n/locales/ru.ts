@@ -282,7 +282,7 @@ const ru: Record<string, string> = {
   muhurta_moon_in: "Луна в",
 
   tyajyam_title: "Тьяджьям (периоды избегания)",
-  tyajyam_sub: "Неблагоприятные периоды в текущей накшатре, титхи, лагне и дне недели",
+  tyajyam_sub: "Неблагоприятные периоды в текущей накшатре, титхи и дне недели",
   tyajyam_nakshatra: "Накшатра Тьяджьям",
   tyajyam_nakshatra_desc: "96-мин неблагоприятный период в накшатре",
   tyajyam_tithi: "Титхи Тьяджьям",

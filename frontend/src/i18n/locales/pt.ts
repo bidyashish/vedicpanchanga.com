@@ -282,7 +282,7 @@ const pt: Record<string, string> = {
   muhurta_moon_in: "Lua em",
 
   tyajyam_title: "Tyajyam (Periodos a evitar)",
-  tyajyam_sub: "Periodos desfavoraveis dentro do nakshatra, tithi, lagna e dia da semana atuais",
+  tyajyam_sub: "Periodos desfavoraveis dentro do nakshatra, tithi e dia da semana atuais",
   tyajyam_nakshatra: "Nakshatra Tyajyam",
   tyajyam_nakshatra_desc: "Periodo desfavoravel de 96 min dentro do nakshatra",
   tyajyam_tithi: "Tithi Tyajyam",

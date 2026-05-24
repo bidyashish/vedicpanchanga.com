@@ -302,7 +302,7 @@ const en: Record<string, string> = {
   muhurta_moon_in: "Moon in",
 
   tyajyam_title: "Tyajyam (Avoidance Periods)",
-  tyajyam_sub: "Inauspicious windows within the current nakshatra, tithi, lagna, and weekday",
+  tyajyam_sub: "Inauspicious windows within the current nakshatra, tithi, and weekday",
   tyajyam_nakshatra: "Nakshatra Tyajyam",
   tyajyam_nakshatra_desc: "96-min inauspicious window within nakshatra",
   tyajyam_tithi: "Tithi Tyajyam",

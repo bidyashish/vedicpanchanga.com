@@ -282,7 +282,7 @@ const fa: Record<string, string> = {
   muhurta_moon_in: "ماه در",
 
   tyajyam_title: "تیاجیام (دوره‌های پرهیز)",
-  tyajyam_sub: "دوره‌های نامبارک در نکشتره، تیتهی، لگنه و روز هفته فعلی",
+  tyajyam_sub: "دوره‌های نامبارک در نکشتره، تیتهی و روز هفته فعلی",
   tyajyam_nakshatra: "نکشتره تیاجیام",
   tyajyam_nakshatra_desc: "دوره نامبارک 96 دقیقه در نکشتره",
   tyajyam_tithi: "تیتهی تیاجیام",
