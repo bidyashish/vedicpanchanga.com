@@ -1249,6 +1249,62 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   <span className="text-ink-soft">, </span>
                   <span className="font-medium">{data.tamil_calendar.tamil_year.name_ta} ஆண்டு</span>
                 </p>
+                {(data.tamil_calendar.nokku_naal ||
+                  data.tamil_calendar.kari_naal ||
+                  data.tamil_calendar.thaniya_naal) && (
+                  <div className="mb-3" data-testid="tamil-day-badges">
+                    <p className="eyebrow mb-1.5">{t("tamil_nokku_label")}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {data.tamil_calendar.nokku_naal && (
+                        <span
+                          className="tag"
+                          data-testid="badge-nokku"
+                          title={t(`nokku_${data.tamil_calendar.nokku_naal.type}_desc`)}
+                        >
+                          <span aria-hidden="true" style={{ color: "var(--accent-sun)" }}>
+                            {data.tamil_calendar.nokku_naal.arrow}
+                          </span>
+                          {showEn
+                            ? `${data.tamil_calendar.nokku_naal.ta} · ${data.tamil_calendar.nokku_naal.en}`
+                            : data.tamil_calendar.nokku_naal.ta}
+                        </span>
+                      )}
+                      {data.tamil_calendar.kari_naal && (
+                        <span
+                          className="tag"
+                          data-testid="badge-kari-naal"
+                          style={{ color: "var(--danger)", borderColor: "var(--danger)" }}
+                          title={t("kari_naal_desc")}
+                        >
+                          {showEn ? `கரிநாள் · ${t("kari_naal_badge")}` : t("kari_naal_badge")}
+                        </span>
+                      )}
+                      {data.tamil_calendar.thaniya_naal && (
+                        <span
+                          className="tag"
+                          data-testid="badge-thaniya-naal"
+                          style={{ color: "var(--danger)", borderColor: "var(--danger)" }}
+                          title={t("thaniya_naal_desc")}
+                        >
+                          {showEn
+                            ? `தனிய நாள் · ${t("thaniya_naal_badge")}`
+                            : t("thaniya_naal_badge")}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-mini text-ink-soft mt-1.5">
+                      {[
+                        data.tamil_calendar.nokku_naal
+                          ? t(`nokku_${data.tamil_calendar.nokku_naal.type}_desc`)
+                          : null,
+                        data.tamil_calendar.kari_naal ? t("kari_naal_desc") : null,
+                        data.tamil_calendar.thaniya_naal ? t("thaniya_naal_desc") : null,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                  </div>
+                )}
                 <KV2
                   rows={[
                     {

@@ -397,6 +397,15 @@ export interface PanchangData {
     tamil_month: { id: number; en: string; ta: string; rashi: string };
     tamil_year: { id: number; name_en: string; name_ta: string; gregorian_start_year: number };
     month_start_iso: string;
+    nokku_naal?: {
+      type: "mel" | "keezh" | "sama";
+      en: string;
+      ta: string;
+      direction: string;
+      arrow: string;
+    } | null;
+    kari_naal?: boolean;
+    thaniya_naal?: boolean;
   };
   calendars: {
     kali_year: number;

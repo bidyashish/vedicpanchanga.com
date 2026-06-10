@@ -548,7 +548,11 @@ def _planet_entry(name: str, abbr: str, lon: float, retro: bool) -> Dict[str, An
     }
 
 
-_COMBUST_ORB = 6.0
+# Simplified combustion rule (issue #80): a planet within +/-5 deg of the Sun
+# is combust, beyond 5 deg it is not. This replaces the classical per-planet
+# orbs (Mercury 14, Venus 10, etc.) which flagged planets 10-15 deg away and
+# confused users scanning the chart.
+_COMBUST_ORB = 5.0
 
 _COMBUST_PLANETS = {"Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"}
 

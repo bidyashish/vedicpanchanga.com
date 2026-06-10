@@ -214,6 +214,81 @@ _YEAR_TA = [
     "அக்ஷய",
 ]
 
+# ---- Day classifications (issue #85) ----
+
+# Nokku Naal - the 27 nakshatras split into three 9-star "facing" groups.
+# Keys are 1-based nakshatra indices (Ashwini = 1 .. Revati = 27), matching
+# constants.NAKSHATRAS. Verified against the classical Urdhva / Adho /
+# Tiryang Mukha grouping used by Tamil panchangams.
+_MEL_NOKKU = {4, 6, 8, 12, 21, 22, 23, 24, 26}
+# = Rohini, Ardra, Pushya, Uttara Phalguni, Uttara Ashadha, Shravana,
+#   Dhanishta, Shatabhisha, Uttara Bhadrapada
+_KEEZH_NOKKU = {2, 3, 9, 10, 11, 16, 19, 20, 25}
+# = Bharani, Krittika, Ashlesha, Magha, Purva Phalguni, Vishakha, Mula,
+#   Purva Ashadha, Purva Bhadrapada
+_SAMA_NOKKU = {1, 5, 7, 13, 14, 15, 17, 18, 27}
+# = Ashwini, Mrigashira, Punarvasu, Hasta, Chitra, Swati, Anuradha,
+#   Jyeshtha, Revati
+
+_NOKKU_INFO = {
+    "mel": {
+        "en": "Mel Nokku Naal",
+        "ta": "மேல் நோக்கு நாள்",
+        "direction": "up",
+        "arrow": "↑",
+    },
+    "keezh": {
+        "en": "Keezh Nokku Naal",
+        "ta": "கீழ் நோக்கு நாள்",
+        "direction": "down",
+        "arrow": "↓",
+    },
+    "sama": {
+        "en": "Sama Nokku Naal",
+        "ta": "சம நோக்கு நாள்",
+        "direction": "neutral",
+        "arrow": "↔",
+    },
+}
+
+# Kari Naal - fixed inauspicious Tamil dates per month (1 = Chithirai ..
+# 12 = Panguni); the same Tamil dates apply every year. Source: Tamil
+# Wikipedia "கரிநாள் (சோதிடம்)", cross-checked with published Tamil daily
+# calendars (dailycalendartamil.com 2025/2026 lists).
+_KARI_NAAL = {
+    1: {6, 15},
+    2: {7, 16, 17},
+    3: {1, 6},
+    4: {2, 10, 20},
+    5: {2, 9, 28},
+    6: {16, 29},
+    7: {6, 20},
+    8: {1, 4, 10, 17},
+    9: {6, 9, 11},
+    10: {1, 2, 3, 11, 17},
+    11: {15, 16, 17},
+    12: {6, 15, 19},
+}
+
+# Thaniya Naal - two fixed Tamil dates per month on which, per Pancha
+# Pakshi Shastra, all pakshis are inactive so new ventures are avoided.
+# Printed-panchangam tradition (issue #85); regional variants exist for
+# Aippasi (8, 19) and Thai (8, 15) - the primary set is used here.
+_THANIYA_NAAL = {
+    1: {3, 20},
+    2: {9, 22},
+    3: {8, 22},
+    4: {7, 20},
+    5: {7, 18},
+    6: {9, 26},
+    7: {3, 20},
+    8: {8, 14},
+    9: {8, 26},
+    10: {3, 15},
+    11: {15, 24},
+    12: {18, 24},
+}
+
 # Anchor: the Tamil year that starts on the Mesha sankranti of Apr 14 1987 IST
 # is Prabhava (id 1).
 _CYCLE_ANCHOR_GREGORIAN = 1987
@@ -308,12 +383,30 @@ def _cycle_index(cycle_year: int) -> int:
     return ((cycle_year - _CYCLE_ANCHOR_GREGORIAN) % 60 + 60) % 60 + 1
 
 
+def nakshatra_nokku(nakshatra_index: Optional[int]) -> Optional[Dict[str, str]]:
+    """Nokku Naal (facing-day) classification for a 1-based nakshatra index.
+
+    Returns {type, en, ta, direction, arrow} or None when the index is
+    missing / out of range.
+    """
+    if nakshatra_index in _MEL_NOKKU:
+        kind = "mel"
+    elif nakshatra_index in _KEEZH_NOKKU:
+        kind = "keezh"
+    elif nakshatra_index in _SAMA_NOKKU:
+        kind = "sama"
+    else:
+        return None
+    return {"type": kind, **_NOKKU_INFO[kind]}
+
+
 # ---- Public entry point ---------------------------------------------------
 
 
 def compute_tamil_calendar(
     date_iso: str,
     timezone_name: str = "Asia/Kolkata",
+    nakshatra_index: Optional[int] = None,
 ) -> Dict[str, Any]:
     """Convert a Gregorian date (YYYY-MM-DD) into Tamil calendar fields.
 
@@ -321,6 +414,9 @@ def compute_tamil_calendar(
     ``date_iso``; the date is the count of local days since that sign's
     sankranti; the year is the cycle name of the Tamil year currently in
     progress (anchored to the most recent Mesha sankranti).
+
+    ``nakshatra_index`` (1-based, the day's nakshatra at sunrise) enables
+    the Nokku Naal classification; without it ``nokku_naal`` is None.
     """
     y, m, d = (int(x) for x in date_iso.split("-"))
     greg_date = date_cls(y, m, d)
@@ -364,6 +460,9 @@ def compute_tamil_calendar(
             "gregorian_start_year": cycle_year,
         },
         "month_start_iso": sankranti_date.isoformat(),
+        "nokku_naal": nakshatra_nokku(nakshatra_index),
+        "kari_naal": tamil_date in _KARI_NAAL[sign_id],
+        "thaniya_naal": tamil_date in _THANIYA_NAAL[sign_id],
     }
 
 
