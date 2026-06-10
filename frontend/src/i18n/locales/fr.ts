@@ -129,6 +129,15 @@ const fr: Record<string, string> = {
   tamil_date_label: "Date",
   tamil_month_label: "Mois",
   tamil_year_label: "Année",
+  tamil_nokku_label: "Direction du nakshatra",
+  nokku_mel_desc: "Jour ascendant - favorable à la construction, l'éducation, la croissance",
+  nokku_keezh_desc:
+    "Jour descendant - favorable au creusement, aux puits, aux plantations de racines",
+  nokku_sama_desc: "Jour neutre - favorable aux voyages, aux affaires, aux activités quotidiennes",
+  kari_naal_badge: "Kari Naal",
+  kari_naal_desc: "Kari Naal - jour défavorable, évitez les nouveaux départs",
+  thaniya_naal_badge: "Thaniya Naal",
+  thaniya_naal_desc: "Thaniya Naal - évitez de lancer de nouveaux projets",
 
   reading_heavens: "Lecture de l'horloge céleste…",
   consulting_heavens: "Consultation des cieux…",

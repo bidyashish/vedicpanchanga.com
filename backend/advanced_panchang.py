@@ -1112,8 +1112,13 @@ def compute_detailed_panchang(
     }
     nalla = compute_nalla_neram(hora["day"], inauspicious_for_nalla) if hora else []
 
-    # Tamil solar calendar (Nirayana) — month/date/year-cycle from sidereal Sun.
-    tamil_cal = compute_tamil_calendar(target_date, timezone_name)
+    # Tamil solar calendar (Nirayana) — month/date/year-cycle from sidereal Sun,
+    # plus Nokku/Kari/Thaniya day classifications (sunrise nakshatra drives Nokku).
+    tamil_cal = compute_tamil_calendar(
+        target_date,
+        timezone_name,
+        nakshatra_index=int(current_nak["index"]) if current_nak else None,
+    )
 
     return {
         "date": target_date,
