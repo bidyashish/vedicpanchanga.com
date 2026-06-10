@@ -54,7 +54,11 @@ function orderPlanets(
   });
 }
 
-const formatDegree = (deg: number) => String(Math.floor(deg)).padStart(2, "0");
+const formatDegree = (deg: number) => {
+  const d = Math.floor(deg);
+  const m = Math.floor((deg - d) * 60);
+  return `${String(d).padStart(2, "0")}°${String(m).padStart(2, "0")}'`;
+};
 
 function statusTag(status?: PlanetStatus): string {
   if (!status) return "";
@@ -247,7 +251,7 @@ export function SouthIndianChart({
                   const rowGap = showDeg ? 16 : 20;
                   const py = pos.y + (showDeg ? 62 : 70) + rowIdx * rowGap;
                   const tag = isAsc ? "" : statusTag(planetStatus?.[abbr]);
-                  const mainLabel = showDeg ? `${a.abbr(abbr)} ${formatDegree(deg)}` : a.abbr(abbr);
+                  const degLabel = showDeg ? formatDegree(deg) : "";
                   const isSelected = selectedPlanet === abbr;
                   const dimmed = showAspects && selectedPlanet && !isSelected && !isAsc ? 0.4 : 1;
                   const clickable = !isAsc && onSelectPlanet;
@@ -270,7 +274,12 @@ export function SouthIndianChart({
                         style={{ fill: isAsc ? ascCol : planetColor(abbr) }}
                         opacity={dimmed}
                       >
-                        {mainLabel}
+                        {a.abbr(abbr)}
+                        {degLabel && (
+                          <tspan fontSize={fs * 0.7} dx={3} opacity={0.85}>
+                            {degLabel}
+                          </tspan>
+                        )}
                         {tag && (
                           <tspan fontSize={fs * 0.55} dy={-fs * 0.35}>
                             {tag}
