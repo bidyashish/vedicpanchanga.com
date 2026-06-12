@@ -133,6 +133,7 @@ export interface PrintPdfRequest {
   timezone?: string | null;
   place_name?: string;
   ayanamsa?: string;
+  chart_style?: "north" | "south";
   lang:
     | "en"
     | "hi"

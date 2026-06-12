@@ -1,4 +1,6 @@
-"""North Indian style square chart (fpdf2 backend, top-left origin)."""
+"""North and South Indian style square charts (fpdf2 backend, top-left
+origin). `draw_chart` dispatches on style; Tamil reports default to the
+South Indian fixed-sign layout."""
 
 from __future__ import annotations
 
@@ -114,3 +116,127 @@ def draw_north_indian_chart(
                 text_size,
                 anchor="center",
             )
+
+
+# Fixed sign → (col, row) grid positions, matching the frontend
+# SouthIndianChart component: Aries on the second cell of the top row,
+# signs running clockwise around the 4×4 perimeter.
+SOUTH_CELLS: Dict[int, Tuple[int, int]] = {
+    12: (0, 0),
+    1: (1, 0),
+    2: (2, 0),
+    3: (3, 0),
+    4: (3, 1),
+    5: (3, 2),
+    6: (3, 3),
+    7: (2, 3),
+    8: (1, 3),
+    9: (0, 3),
+    10: (0, 2),
+    11: (0, 1),
+}
+
+
+def draw_south_indian_chart(
+    pdf: FPDF,
+    x0: float,
+    y0: float,
+    side: float,
+    chart: Dict,
+    asc_sign_id: int,
+    lang: str,
+) -> None:
+    """Draw a South Indian (fixed-sign) chart: a 4×4 grid whose perimeter
+    cells host the 12 signs in canonical positions, central 2×2 left open.
+    The ascendant cell is marked with the traditional double diagonal."""
+    W = side
+    c = W / 4
+
+    pdf.set_line_width(0.6)
+    pdf.set_draw_color(0, 0, 0)
+    pdf.rect(x0, y0, W, W)
+    # Quarter lines run edge-to-edge; half lines stop at the central box.
+    pdf.line(x0, y0 + c, x0 + W, y0 + c)
+    pdf.line(x0, y0 + 3 * c, x0 + W, y0 + 3 * c)
+    pdf.line(x0 + c, y0, x0 + c, y0 + W)
+    pdf.line(x0 + 3 * c, y0, x0 + 3 * c, y0 + W)
+    pdf.line(x0 + 2 * c, y0, x0 + 2 * c, y0 + c)
+    pdf.line(x0 + 2 * c, y0 + 3 * c, x0 + 2 * c, y0 + W)
+    pdf.line(x0, y0 + 2 * c, x0 + c, y0 + 2 * c)
+    pdf.line(x0 + 3 * c, y0 + 2 * c, x0 + W, y0 + 2 * c)
+
+    om_size = max(20.0, W / 5)
+    pdf.image(
+        str(OM_SVG),
+        x=x0 + W / 2 - om_size / 2,
+        y=y0 + W / 2 - om_size / 2,
+        w=om_size,
+        h=om_size,
+    )
+
+    text_size = max(6.5, W / 28)
+    num_size = max(6.0, W / 32)
+    line_h = text_size * 1.2
+    family = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
+
+    for h in range(1, 13):
+        sign_id = ((asc_sign_id - 1) + (h - 1)) % 12 + 1
+        col, row = SOUTH_CELLS[sign_id]
+        cx = x0 + col * c
+        cy = y0 + row * c
+
+        # House number in the top-right corner of the cell.
+        draw_text(
+            pdf,
+            cx + c - 2.5,
+            cy + num_size + 2,
+            t_num(lang, h),
+            LATIN_REGULAR,
+            REGULAR,
+            num_size,
+            anchor="right",
+        )
+
+        if sign_id == asc_sign_id:
+            # Double diagonal across the top-left corner marks the lagna.
+            f = c / 125.0
+            pdf.set_line_width(1.0)
+            pdf.line(cx + 1, cy + 12 * f, cx + 14 * f, cy)
+            pdf.line(cx + 1, cy + 20 * f, cx + 24 * f, cy)
+            pdf.set_line_width(0.6)
+
+        abbrs: List[str] = chart.get(h) or chart.get(str(h)) or []
+        if not abbrs:
+            continue
+        # Two abbreviations per row, the block vertically centred in the cell.
+        rows = [abbrs[i : i + 2] for i in range(0, len(abbrs), 2)]
+        base_y = cy + c / 2 + text_size * 0.35 - (len(rows) - 1) * line_h / 2
+        for ri, pair in enumerate(rows):
+            joined = " ".join(tr_abbr(lang, a) or a for a in pair)
+            draw_text(
+                pdf,
+                cx + c / 2,
+                base_y + ri * line_h,
+                joined,
+                family,
+                BOLD,
+                text_size,
+                anchor="center",
+            )
+
+
+def draw_chart(
+    pdf: FPDF,
+    x0: float,
+    y0: float,
+    side: float,
+    chart: Dict,
+    asc_sign_id: int,
+    lang: str,
+    style: str = "north",
+) -> None:
+    """Style dispatcher used by every page that renders a rasi-style chart."""
+    if style == "south":
+        draw_south_indian_chart(pdf, x0, y0, side, chart, asc_sign_id, lang)
+    else:
+        draw_north_indian_chart(pdf, x0, y0, side, chart, asc_sign_id, lang)

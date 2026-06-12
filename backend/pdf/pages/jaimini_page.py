@@ -7,7 +7,7 @@ from typing import Any, Dict
 
 from fpdf import FPDF
 
-from ..core.chart import draw_north_indian_chart
+from ..core.chart import draw_chart
 from ..core.layout import MARGIN, ZEBRA_RGB, page_header, section_title
 from ..core.text import BOLD, LATIN_REGULAR, REGULAR, draw_text
 
@@ -17,6 +17,7 @@ def draw_jaimini_page(
     chart_data: Dict[str, Any],
     name: str,
     lang: str,
+    chart_style: str = "north",
 ) -> None:
     karakas = chart_data.get("karakas") or []
     karakamsa = chart_data.get("karakamsa") or {}
@@ -65,7 +66,7 @@ def draw_jaimini_page(
     )
     cur_y += 12
 
-    draw_north_indian_chart(
+    draw_chart(
         pdf,
         left_x,
         cur_y,
@@ -73,8 +74,9 @@ def draw_jaimini_page(
         karakamsa["chart"],
         int(karakamsa["lagna_sign"]),
         lang,
+        chart_style,
     )
-    draw_north_indian_chart(
+    draw_chart(
         pdf,
         right_x,
         cur_y,
@@ -82,6 +84,7 @@ def draw_jaimini_page(
         swamsa["chart"],
         int(swamsa["lagna_sign"]),
         lang,
+        chart_style,
     )
     cur_y += chart_side + 16
 

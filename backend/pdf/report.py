@@ -12,7 +12,7 @@ from fpdf import FPDF
 import mangal
 import sade_sati
 
-from .core.chart import draw_north_indian_chart
+from .core.chart import draw_chart
 from .pages.dasha_detail_pages import (
     draw_antardasha_page,
     draw_pratyantar_pages,
@@ -198,9 +198,14 @@ def render_pdf(
     panchang_data: Dict[str, Any],
     place_name: str,
     lang: str = "en",
+    chart_style: str | None = None,
 ) -> bytes:
     if lang not in LOCALES:
         lang = "en"
+    # Tamil tradition reads the South Indian fixed-sign layout by default;
+    # an explicit chart_style from the caller always wins.
+    if chart_style not in ("north", "south"):
+        chart_style = "south" if lang == "ta" else "north"
 
     pdf = _ReportPDF(unit="pt", format="A4")
     pdf.set_auto_page_break(False)
@@ -249,9 +254,9 @@ def render_pdf(
     draw_text(pdf, nav_x, cur_y + 8, t(lang, "navamasa_chart"), label_family, BOLD, 10)
     cur_y += 12
     chart_side = 230
-    draw_north_indian_chart(pdf, x, cur_y, chart_side, d1, asc["sign_id"], lang)
+    draw_chart(pdf, x, cur_y, chart_side, d1, asc["sign_id"], lang, chart_style)
     d9_asc = chart_data.get("d9_asc_sign") or asc["sign_id"]
-    draw_north_indian_chart(pdf, nav_x, cur_y, chart_side, d9, d9_asc, lang)
+    draw_chart(pdf, nav_x, cur_y, chart_side, d9, d9_asc, lang, chart_style)
     cur_y += chart_side + 8
 
     # ---- bottom row ----
@@ -316,7 +321,7 @@ def render_pdf(
     )
     _track(
         "Shodashvarga (D1–D60)",
-        lambda: draw_varga_pages(pdf, chart_data, name or "", lang),
+        lambda: draw_varga_pages(pdf, chart_data, name or "", lang, chart_style),
     )
     _track(
         "Planet × Varga Matrix",
@@ -324,7 +329,7 @@ def render_pdf(
     )
     _track(
         "Jaimini - Karakamsa & Swamsa",
-        lambda: draw_jaimini_page(pdf, chart_data, name or "", lang),
+        lambda: draw_jaimini_page(pdf, chart_data, name or "", lang, chart_style),
     )
     _track(
         "Friendship Tables",
