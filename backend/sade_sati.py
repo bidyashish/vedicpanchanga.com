@@ -22,6 +22,8 @@ from typing import Any, Dict, List
 
 import swisseph as swe
 
+from ayanamsa import sidereal_context
+
 SIGN_NAMES = [
     "Aries",
     "Taurus",
@@ -38,22 +40,21 @@ SIGN_NAMES = [
 ]
 
 
-def _saturn_sid_long(jd: float) -> float:
-    flag = swe.FLG_SWIEPH | swe.FLG_SIDEREAL
-    pos, _ = swe.calc_ut(jd, swe.SATURN, flag)
+def _saturn_long(jd: float, flags: int) -> float:
+    pos, _ = swe.calc_ut(jd, swe.SATURN, flags)
     return pos[0] % 360.0
 
 
-def _sign_at(jd: float) -> int:
+def _sign_at(jd: float, flags: int) -> int:
     """1..12 sign id for Saturn at jd_ut."""
-    return int(_saturn_sid_long(jd) // 30) + 1
+    return int(_saturn_long(jd, flags) // 30) + 1
 
 
-def _refine_boundary(jd_lo: float, jd_hi: float, sign_lo: int) -> float:
+def _refine_boundary(jd_lo: float, jd_hi: float, sign_lo: int, flags: int) -> float:
     """Binary-search the moment Saturn leaves `sign_lo` between jd_lo and jd_hi."""
     for _ in range(20):
         mid = (jd_lo + jd_hi) / 2
-        if _sign_at(mid) == sign_lo:
+        if _sign_at(mid, flags) == sign_lo:
             jd_lo = mid
         else:
             jd_hi = mid
@@ -66,37 +67,20 @@ def compute_sade_sati(
     moon_sign_id: int,
     horizon_years: int = 120,
     step_days: float = 1.0,
+    ayanamsa: str = "lahiri",
 ) -> List[Dict[str, Any]]:
     """Return a list of relevant Saturn-transit segments classified as
     Sade Sati or Small Panoti.
 
+    `ayanamsa` must match the chart that produced `moon_sign_id`, otherwise
+    transit signs and the natal Moon sign sit in different zodiacs.
+
     Each entry: { kind, phase, sign, sign_id, start, end, house_from_moon }.
     `start` and `end` are ISO date strings (UTC midnight precision).
     """
-    end_jd = birth_jd_ut + horizon_years * 365.2422
-
-    segments: List[Dict[str, Any]] = []
-    jd = birth_jd_ut
-    cur_sign = _sign_at(jd)
-    seg_start = jd
-
-    while jd <= end_jd:
-        next_jd = jd + step_days
-        if next_jd > end_jd:
-            next_jd = end_jd
-        next_sign = _sign_at(next_jd)
-        if next_sign != cur_sign:
-            boundary = _refine_boundary(jd, next_jd, cur_sign)
-            segments.append(
-                {"sign_id": cur_sign, "start_jd": seg_start, "end_jd": boundary}
-            )
-            seg_start = boundary
-            cur_sign = next_sign
-        jd = next_jd
-        if jd >= end_jd:
-            break
-
-    segments.append({"sign_id": cur_sign, "start_jd": seg_start, "end_jd": end_jd})
+    with sidereal_context(ayanamsa) as (sidereal_flag, _label):
+        flags = swe.FLG_SWIEPH | sidereal_flag
+        segments = _saturn_sign_segments(birth_jd_ut, horizon_years, step_days, flags)
 
     # Classify
     out: List[Dict[str, Any]] = []
@@ -136,3 +120,34 @@ def compute_sade_sati(
             }
         )
     return out
+
+
+def _saturn_sign_segments(
+    birth_jd_ut: float, horizon_years: int, step_days: float, flags: int
+) -> List[Dict[str, Any]]:
+    """Group Saturn's daily positions into consecutive same-sign segments."""
+    end_jd = birth_jd_ut + horizon_years * 365.2422
+
+    segments: List[Dict[str, Any]] = []
+    jd = birth_jd_ut
+    cur_sign = _sign_at(jd, flags)
+    seg_start = jd
+
+    while jd <= end_jd:
+        next_jd = jd + step_days
+        if next_jd > end_jd:
+            next_jd = end_jd
+        next_sign = _sign_at(next_jd, flags)
+        if next_sign != cur_sign:
+            boundary = _refine_boundary(jd, next_jd, cur_sign, flags)
+            segments.append(
+                {"sign_id": cur_sign, "start_jd": seg_start, "end_jd": boundary}
+            )
+            seg_start = boundary
+            cur_sign = next_sign
+        jd = next_jd
+        if jd >= end_jd:
+            break
+
+    segments.append({"sign_id": cur_sign, "start_jd": seg_start, "end_jd": end_jd})
+    return segments
