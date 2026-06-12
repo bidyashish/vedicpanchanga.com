@@ -37,11 +37,22 @@ const STYLE_KEY = "jk_chart_style";
 const SHOW_DEGREE_KEY = "jk_show_degree";
 const SHOW_ASPECTS_KEY = "jk_show_aspects";
 
-function loadStyle(): ChartStyle {
-  if (typeof window === "undefined") return "north";
+function defaultStyleFor(lang: string): "north" | "south" {
+  // Tamil tradition reads the South Indian fixed-sign layout.
+  return lang === "ta" ? "south" : "north";
+}
+
+function loadStyle(lang: string): ChartStyle {
+  if (typeof window === "undefined") return defaultStyleFor(lang);
   const v = window.localStorage.getItem(STYLE_KEY);
-  if (v === "south" || v === "west") return v;
-  return "north";
+  if (v === "north" || v === "south" || v === "west") return v;
+  return defaultStyleFor(lang);
+}
+
+export function chartStyleForPdf(lang: string): "north" | "south" {
+  const s = loadStyle(lang);
+  // The PDF has no Western wheel; fall back to the language default.
+  return s === "west" ? defaultStyleFor(lang) : s;
 }
 
 function loadShowDegree(): boolean {
@@ -67,7 +78,7 @@ export function ChartTabs({
   const a = useAstro();
   const vargaKeys = data.varga_order ?? [1, 2, 9];
   const [tab, setTab] = useState<string>(`d${vargaKeys[0] ?? 1}`);
-  const [chartStyle, setChartStyleState] = useState<ChartStyle>(loadStyle);
+  const [chartStyle, setChartStyleState] = useState<ChartStyle>(() => loadStyle(lang));
   const [showDegrees, setShowDegreesState] = useState<boolean>(loadShowDegree);
   const [showAspects, setShowAspectsState] = useState<boolean>(loadShowAspects);
   const didInitAspects = useRef(false);
@@ -80,6 +91,17 @@ export function ChartTabs({
       onSelectPlanet("Ma");
     }
   }, [showAspects, selectedPlanet, data.drishti, onSelectPlanet]);
+
+  // Follow the language default until the user picks a style explicitly
+  // (an explicit pick is persisted under STYLE_KEY and always wins).
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem(STYLE_KEY)) return;
+    } catch {
+      /* ignore storage access errors */
+    }
+    setChartStyleState(defaultStyleFor(lang));
+  }, [lang]);
 
   const setChartStyle = (s: ChartStyle) => {
     setChartStyleState(s);

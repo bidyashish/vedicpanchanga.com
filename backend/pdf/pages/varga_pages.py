@@ -2,7 +2,7 @@
 
 Lays out all 16 divisional charts (D1 → D60) in a 2-col × 3-row grid,
 6 charts per page, across 3 pages. Each cell shows D-number + varga name
-+ subtitle on top of a North Indian style chart.
++ subtitle on top of a North or South Indian style chart (per chart_style).
 """
 
 from __future__ import annotations
@@ -11,7 +11,7 @@ from typing import Any, Dict, List
 
 from fpdf import FPDF
 
-from ..core.chart import draw_north_indian_chart
+from ..core.chart import draw_chart
 from ..core.i18n import t, t_num
 from ..core.text import (
     BOLD,
@@ -54,6 +54,7 @@ def draw_varga_pages(
     chart_data: Dict[str, Any],
     name: str,
     lang: str,
+    chart_style: str = "north",
 ) -> None:
     vargas: Dict[str, Dict[str, Any]] = chart_data["vargas"]
     order: List[int] = chart_data["varga_order"]  # [1, 2, 3, ...]
@@ -126,7 +127,7 @@ def draw_varga_pages(
                 )
 
             chart_y = cy + 28
-            draw_north_indian_chart(
+            draw_chart(
                 pdf,
                 cx + chart_x_offset,
                 chart_y,
@@ -134,6 +135,7 @@ def draw_varga_pages(
                 item["chart"],
                 item["asc_sign"],
                 lang,
+                chart_style,
             )
 
         # Footer

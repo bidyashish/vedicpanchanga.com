@@ -387,6 +387,8 @@ class PrintPdfRequest(BaseModel):
         "fa",
         "he",
     ] = "en"
+    # None lets the renderer pick by language (Tamil defaults to "south").
+    chart_style: Optional[Literal["north", "south"]] = None
 
 
 @api_router.post("/print-pdf")
@@ -424,6 +426,7 @@ def print_pdf(req: PrintPdfRequest):
             panchang_data=panchang_data,
             place_name=req.place_name or "",
             lang=req.lang,
+            chart_style=req.chart_style,
         )
     except HTTPException:
         raise

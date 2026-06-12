@@ -5,13 +5,21 @@ Computes multiple types of Tyajyam from panchang timing data:
 - Tithi Tyajyam: ratio-based offset within tithi span, 96 min fixed
 - Vara Tyajyam: nazhigai offset from sunrise, 90 min fixed
 - Amritadi Yogam: weekday + nakshatra lookup (Siddha/Amrita/Marana/Prabalarishta)
+- Lagna Tyajyam: defective tenth of each rising sign (begin/middle/end by sign)
+- Karana Tyajyam: spans of the inauspicious karanas (Vishti, Chatushpada, Naga)
+- Gowri Tyajyam: inauspicious Gowri Panchangam segments (Soram, Visham, Rogam)
+- Dosha Tyajyam: eclipses in the local day + Guru/Sukra Asthamanam (combustion)
+- Tamil Month Avoidables: per-Tamil-month tithi/nakshatra/lagna avoid lists
+- Tithi-Lagna Tyajyam: lagna transits unsuitable during specific tithis
 """
 
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Tuple
 
-from constants import NAKSHATRAS
+import swisseph as swe
+
+from constants import NAKSHATRAS, TITHI_BASE
 
 # ---- Nakshatra Tyajyam ----
 # Each entry is (numerator, denominator) defining the start offset ratio.
@@ -376,6 +384,347 @@ def compute_lagna_tyajyam(udaya_lagnas: List[Dict], iso_fn, tz) -> List[Dict[str
                 "position": position,
             }
         )
+    return results
+
+
+# ---- Karana Tyajyam ----
+# Vishti (Bhadra) is the classical avoid-at-all-costs karana; Chatushpada and
+# Naga (two of the four fixed karanas around Amavasya) are likewise avoided
+# for auspicious work. Shakuni and Kimstughna are mixed and not listed.
+INAUSPICIOUS_KARANAS = {"Vishti", "Chatushpada", "Naga"}
+
+
+def compute_karana_tyajyam(
+    karanas_in_window: List[Dict], iso_fn, tz
+) -> List[Dict[str, Any]]:
+    """Spans of inauspicious karanas active in the window.
+
+    Args:
+        karanas_in_window: [{name, start_jd, ends_at_jd, ...}, ...]
+        iso_fn: callable(jd, tz) -> ISO string
+        tz: pytz timezone
+    """
+    results = []
+    for k in karanas_in_window:
+        if k.get("name") not in INAUSPICIOUS_KARANAS:
+            continue
+        start_jd = k.get("start_jd")
+        end_jd = k.get("ends_at_jd")
+        if not start_jd or not end_jd or start_jd >= end_jd:
+            continue
+        results.append(
+            {
+                "start": iso_fn(start_jd, tz),
+                "end": iso_fn(end_jd, tz),
+                "karana": k["name"],
+            }
+        )
+    return results
+
+
+# ---- Gowri Tyajyam ----
+
+
+def compute_gowri_tyajyam(gowri: Optional[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Inauspicious Gowri Panchangam segments (Soram, Visham, Rogam).
+
+    Pure filter over the already-computed gowri payload; each segment is
+    {name, start, end, auspicious} so no recomputation is needed.
+    """
+    results = []
+    for period in ("day", "night"):
+        for seg in (gowri or {}).get(period) or []:
+            if seg.get("auspicious"):
+                continue
+            results.append(
+                {
+                    "start": seg["start"],
+                    "end": seg["end"],
+                    "name": seg["name"],
+                    "period": period,
+                }
+            )
+    return results
+
+
+# ---- Dosha-based Tyajyam ----
+# Eclipses use Swiss Ephemeris geometric searches (no zodiac involved, so no
+# sidereal_context needed). Asthamanam (heliacal combustion) compares planet
+# and Sun longitudes - a difference, so tropical positions suffice too.
+_GURU_ASTHAMANAM_ORB = 11.0  # classical combustion orb for Jupiter
+_SUKRA_ASTHAMANAM_ORB_DIRECT = 10.0  # Venus direct
+_SUKRA_ASTHAMANAM_ORB_RETRO = 8.0  # Venus retrograde
+
+
+def _eclipse_window(tret, begin_slots, end_slots, day_start: float, day_end: float):
+    """Clip an eclipse span to the local day window. Slot preference differs
+    by type (solar glob: 2/3 = eclipse begin/end; lunar: 6/7 = penumbral
+    begin/end, then 2/3 = partial); absent phases are 0.0 in tret, so fall
+    through to the next slot and finally to the maximum instant."""
+    peak = tret[0]
+    begin = next((tret[i] for i in begin_slots if tret[i]), peak)
+    end = next((tret[i] for i in end_slots if tret[i]), peak)
+    return max(begin, day_start), min(end, day_end)
+
+
+def compute_dosha_tyajyam(
+    sunrise_jd: Optional[float],
+    next_sunrise_jd: Optional[float],
+    iso_fn,
+    tz,
+) -> List[Dict[str, Any]]:
+    """Dosha periods active during the local day (sunrise to next sunrise):
+    solar/lunar eclipses whose maximum falls in the window, and whole-day
+    Guru/Sukra Asthamanam flags while Jupiter/Venus are combust."""
+    if not sunrise_jd:
+        return []
+    day_start = sunrise_jd
+    day_end = next_sunrise_jd or (sunrise_jd + 1.0)
+    results: List[Dict[str, Any]] = []
+
+    for finder, dosha, begin_slots, end_slots in (
+        (swe.sol_eclipse_when_glob, "solar_eclipse", (2,), (3,)),
+        (swe.lun_eclipse_when, "lunar_eclipse", (6, 2), (7, 3)),
+    ):
+        try:
+            # Search forward from just before the window; an eclipse maximum
+            # more than ~1.5 days back cannot reach into this local day.
+            _, tret = finder(day_start - 1.5, swe.FLG_SWIEPH, 0, False)
+        except Exception:
+            continue
+        if not (day_start <= tret[0] < day_end):
+            continue
+        w_start, w_end = _eclipse_window(
+            tret, begin_slots, end_slots, day_start, day_end
+        )
+        results.append(
+            {
+                "start": iso_fn(w_start, tz),
+                "end": iso_fn(w_end, tz),
+                "dosha": dosha,
+            }
+        )
+
+    mid_jd = (day_start + day_end) / 2
+    try:
+        sun_lon = swe.calc_ut(mid_jd, swe.SUN, swe.FLG_SWIEPH)[0][0]
+        for planet_id, dosha in (
+            (swe.JUPITER, "guru_asthamanam"),
+            (swe.VENUS, "sukra_asthamanam"),
+        ):
+            pos = swe.calc_ut(mid_jd, planet_id, swe.FLG_SWIEPH | swe.FLG_SPEED)[0]
+            lon, speed = pos[0], pos[3]
+            if planet_id == swe.JUPITER:
+                orb = _GURU_ASTHAMANAM_ORB
+            else:
+                orb = (
+                    _SUKRA_ASTHAMANAM_ORB_RETRO
+                    if speed < 0
+                    else _SUKRA_ASTHAMANAM_ORB_DIRECT
+                )
+            elongation = abs((lon - sun_lon + 180.0) % 360.0 - 180.0)
+            if elongation <= orb:
+                results.append(
+                    {
+                        "start": iso_fn(day_start, tz),
+                        "end": iso_fn(day_end, tz),
+                        "dosha": dosha,
+                    }
+                )
+    except Exception:
+        pass
+
+    return results
+
+
+# ---- Tamil Month Avoidables ----
+# Per Tamil solar month (1 = Chithirai .. 12 = Panguni): tithis, nakshatras
+# and lagnas traditionally avoided for muhurta in that month. Names follow
+# the repo spellings in constants.py (TITHI_BASE / NAKSHATRAS) and the
+# English sign names used by udaya_lagna.
+TAMIL_MONTH_AVOIDABLES: Dict[int, Dict[str, List[str]]] = {
+    1: {  # Chithirai
+        "tithis": ["Ashtami", "Ekadashi"],
+        "nakshatras": ["Rohini", "Ashwini"],
+        "lagnas": ["Aries"],
+    },
+    2: {  # Vaikasi
+        "tithis": ["Dwadashi"],
+        "nakshatras": ["Chitra", "Swati", "Uttara Ashadha"],
+        "lagnas": ["Gemini"],
+    },
+    3: {  # Aani
+        "tithis": ["Trayodashi"],
+        "nakshatras": ["Punarvasu"],
+        "lagnas": ["Taurus"],
+    },
+    4: {  # Aadi
+        "tithis": ["Shashthi"],
+        "nakshatras": ["Purva Phalguni", "Dhanishta"],
+        "lagnas": ["Gemini"],
+    },
+    5: {  # Avani
+        "tithis": ["Purnima"],
+        "nakshatras": ["Purva Ashadha"],
+        "lagnas": ["Aries"],
+    },
+    6: {  # Purattasi
+        "tithis": ["Saptami"],
+        "nakshatras": ["Revati", "Shatabhisha"],
+        "lagnas": ["Virgo"],
+    },
+    7: {  # Aippasi
+        "tithis": ["Navami"],
+        "nakshatras": ["Purva Bhadrapada"],
+        "lagnas": ["Scorpio"],
+    },
+    8: {  # Karthigai
+        "tithis": ["Panchami"],
+        "nakshatras": ["Magha", "Pushya", "Mrigashira", "Krittika"],
+        "lagnas": ["Libra"],
+    },
+    9: {  # Margazhi
+        "tithis": ["Dwitiya", "Navami"],
+        "nakshatras": ["Anuradha", "Purva Bhadrapada", "Vishakha"],
+        "lagnas": ["Sagittarius"],
+    },
+    10: {  # Thai
+        "tithis": ["Pratipada"],
+        "nakshatras": ["Hasta", "Ashlesha", "Ardra"],
+        "lagnas": ["Cancer"],
+    },
+    11: {  # Maasi
+        "tithis": ["Chaturthi", "Dashami"],
+        "nakshatras": ["Shravana", "Mula"],
+        "lagnas": ["Capricorn"],
+    },
+    12: {  # Panguni
+        "tithis": ["Chaturdashi"],
+        "nakshatras": ["Jyeshtha", "Bharani"],
+        "lagnas": ["Leo"],
+    },
+}
+
+
+def _tithi_base_name(index: int) -> str:
+    """Paksha-free ordinal name for tithi index 1-30."""
+    if index == 15:
+        return "Purnima"
+    if index == 30:
+        return "Amavasya"
+    return TITHI_BASE[(index - 1) % 15]
+
+
+def compute_tamil_month_avoidables(
+    tamil_month_id: Optional[int],
+    tithis_in_window: List[Dict],
+    nakshatras_with_bounds: List[Dict],
+    udaya_lagnas: List[Dict],
+    iso_fn,
+    tz,
+) -> Optional[Dict[str, Any]]:
+    """Avoid lists for the running Tamil month plus concrete windows where
+    today's tithis / nakshatras / lagna transits match those lists."""
+    info = TAMIL_MONTH_AVOIDABLES.get(tamil_month_id or 0)
+    if not info:
+        return None
+
+    windows: List[Dict[str, Any]] = []
+    for t in tithis_in_window:
+        name = _tithi_base_name(t["index"])
+        if name in info["tithis"]:
+            windows.append(
+                {
+                    "start": iso_fn(t["start_jd"], tz),
+                    "end": iso_fn(t["ends_at_jd"], tz),
+                    "kind": "tithi",
+                    "name": name,
+                }
+            )
+    for n in nakshatras_with_bounds:
+        name = NAKSHATRAS[n["nak_idx"]]
+        if name in info["nakshatras"]:
+            windows.append(
+                {
+                    "start": iso_fn(n["start_jd"], tz),
+                    "end": iso_fn(n["end_jd"], tz),
+                    "kind": "nakshatra",
+                    "name": name,
+                }
+            )
+    for lagna in udaya_lagnas:
+        sign = lagna.get("sign")
+        if sign in info["lagnas"] and lagna.get("start_jd") and lagna.get("end_jd"):
+            windows.append(
+                {
+                    "start": iso_fn(lagna["start_jd"], tz),
+                    "end": iso_fn(lagna["end_jd"], tz),
+                    "kind": "lagna",
+                    "name": sign,
+                }
+            )
+
+    return {
+        "avoid_tithis": info["tithis"],
+        "avoid_nakshatras": info["nakshatras"],
+        "avoid_lagnas": info["lagnas"],
+        "windows": windows,
+    }
+
+
+# ---- Tithi-based Avoidable Lagnas ----
+# During a given tithi, muhurta should avoid these rising signs. Keyed by the
+# paksha-free tithi ordinal; Dashami, Purnima and Amavasya carry no rule.
+TITHI_AVOIDABLE_LAGNAS: Dict[str, List[str]] = {
+    "Pratipada": ["Taurus", "Leo"],
+    "Dwitiya": ["Gemini", "Virgo"],
+    "Tritiya": ["Leo", "Scorpio"],
+    "Chaturthi": ["Aquarius", "Aries"],
+    "Panchami": ["Gemini", "Virgo"],
+    "Shashthi": ["Taurus", "Leo"],
+    "Saptami": ["Gemini", "Capricorn"],
+    "Ashtami": ["Virgo", "Gemini"],
+    "Navami": ["Scorpio", "Sagittarius"],
+    "Ekadashi": ["Gemini", "Virgo"],
+    "Dwadashi": ["Taurus", "Leo"],
+    "Trayodashi": ["Aries", "Scorpio"],
+    "Chaturdashi": ["Virgo", "Gemini", "Taurus", "Leo"],
+}
+
+
+def compute_tithi_lagna_tyajyam(
+    tithis_in_window: List[Dict],
+    udaya_lagnas: List[Dict],
+    iso_fn,
+    tz,
+) -> List[Dict[str, Any]]:
+    """Windows where an avoidable lagna for the running tithi is rising:
+    the intersection of each tithi span with the day's lagna transits."""
+    results = []
+    for t in tithis_in_window:
+        base = _tithi_base_name(t["index"])
+        avoid = TITHI_AVOIDABLE_LAGNAS.get(base)
+        if not avoid:
+            continue
+        for lagna in udaya_lagnas:
+            if lagna.get("sign") not in avoid:
+                continue
+            start_jd = lagna.get("start_jd")
+            end_jd = lagna.get("end_jd")
+            if not start_jd or not end_jd:
+                continue
+            seg_start = max(t["start_jd"], start_jd)
+            seg_end = min(t["ends_at_jd"], end_jd)
+            if seg_start >= seg_end:
+                continue
+            results.append(
+                {
+                    "start": iso_fn(seg_start, tz),
+                    "end": iso_fn(seg_end, tz),
+                    "tithi": base,
+                    "sign": lagna["sign"],
+                }
+            )
     return results
 
 

@@ -89,6 +89,72 @@ def test_index_lists_every_section_with_a_page_number(rendered):
         assert re.search(rf"{re.escape(label)}.{{0,20}}\d+", last, re.DOTALL), label
 
 
+def test_text_width_is_harfbuzz_shaped():
+    """draw_text/text_width must measure HarfBuzz-shaped runs. Devanagari
+    conjuncts merge glyphs, so the shaped width is well below the naive
+    per-character sum that FPDF.get_string_width returns; if this assert
+    fails the renderer has regressed to the unshaped FPDF.text() path
+    (Tamil matras out of order, no conjuncts, no Arabic joining)."""
+    from fpdf import FPDF
+
+    from pdf.core.text import DEV_REGULAR, REGULAR, register_fonts, text_width
+
+    pdf = FPDF(unit="pt", format="A4")
+    register_fonts(pdf)
+    pdf.add_page()
+    s = "विम्शोत्तरी क्षेत्र ज्योतिष"
+    shaped = text_width(pdf, s, DEV_REGULAR, REGULAR, 18)
+    pdf.set_font(DEV_REGULAR, REGULAR, 18)
+    # Passing no shaping params yields the naive per-character advance sum.
+    _, unshaped = pdf.current_font.get_text_width(s, 18, None)
+    assert 0 < shaped < unshaped * 0.9
+
+
+def test_render_pdf_tamil_uses_south_indian_chart(delhi_chart, panchang_module):
+    """Tamil defaults to the South Indian chart style (issue #86); the
+    render must succeed and produce a full report."""
+    from pdf import render_pdf
+
+    panch = panchang_module.compute_detailed_panchang(
+        target_date="1990-01-01",
+        latitude=28.6139,
+        longitude=77.2090,
+        timezone_name="Asia/Kolkata",
+    )
+    out = render_pdf(
+        name="Smoke",
+        sex="Male",
+        chart_data=delhi_chart,
+        panchang_data=panch,
+        place_name="New Delhi",
+        lang="ta",
+    )
+    assert out[:4] == b"%PDF"
+    assert len(out) > 50_000
+
+
+def test_render_pdf_explicit_chart_style_override(delhi_chart, panchang_module):
+    """chart_style='south' must work for any language, e.g. English."""
+    from pdf import render_pdf
+
+    panch = panchang_module.compute_detailed_panchang(
+        target_date="1990-01-01",
+        latitude=28.6139,
+        longitude=77.2090,
+        timezone_name="Asia/Kolkata",
+    )
+    out = render_pdf(
+        name="Smoke",
+        sex="Male",
+        chart_data=delhi_chart,
+        panchang_data=panch,
+        place_name="New Delhi",
+        lang="en",
+        chart_style="south",
+    )
+    assert out[:4] == b"%PDF"
+
+
 def test_render_pdf_handles_hindi_lang(delhi_chart, panchang_module):
     """The Hindi pass must not crash even though most labels in panchang
     are still English; the renderer falls back per-glyph to NotoSans for

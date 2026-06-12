@@ -6,6 +6,7 @@ import {
   ChartTabs,
   HIDE_OUTER_KEY,
   OUTER_ABBRS,
+  chartStyleForPdf,
   loadHideOuter,
 } from "@/components/kundali/ChartTabs";
 import { PlanetsTable } from "@/components/kundali/PlanetsTable";
@@ -296,6 +297,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
         timezone: form.timezone,
         place_name: form.place_name,
         ayanamsa: form.ayanamsa,
+        chart_style: chartStyleForPdf(lang),
         lang: pdfLangFor(lang),
       });
       const url = URL.createObjectURL(blob);

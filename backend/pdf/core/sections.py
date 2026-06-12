@@ -22,6 +22,7 @@ from .text import (
     REGULAR,
     draw_text,
     is_devanagari,
+    text_width,
 )
 
 
@@ -109,12 +110,29 @@ def draw_basic_details(
         row = idx % rows_per_col
         cx = x + col * col_w + pad
         cy = y + 12 + row * row_h
+        inner_right = cx + col_w - 2 * pad  # right edge inside this column
         label = t(lang, lkey)
         l_family = DEV_REGULAR if lang == "hi" else LATIN_REGULAR
-        draw_text(pdf, cx, cy, label, l_family, BOLD, label_size)
+        # Long localized labels (Tamil especially) overrun the fixed value
+        # column; shrink the label a little, then push the value right
+        # rather than draw it over the label.
+        l_size = label_size
+        lw = text_width(pdf, label, l_family, BOLD, l_size)
+        max_label_w = (col_w - 2 * pad) * 0.58
+        if lw > max_label_w:
+            l_size = max(6.0, l_size * max_label_w / lw)
+        label_w = draw_text(pdf, cx, cy, label, l_family, BOLD, l_size)
+
         val_str = "" if val is None else str(val)
+        if not val_str:
+            continue
         v_family = DEV_REGULAR if is_devanagari(val_str) else LATIN_REGULAR
-        draw_text(pdf, cx + col_w * 0.42, cy, val_str, v_family, REGULAR, value_size)
+        val_x = max(cx + col_w * 0.42, cx + label_w + 4)
+        v_size = value_size
+        vw = text_width(pdf, val_str, v_family, REGULAR, v_size)
+        if vw > inner_right - val_x:
+            v_size = max(6.0, v_size * (inner_right - val_x) / vw)
+        draw_text(pdf, val_x, cy, val_str, v_family, REGULAR, v_size)
 
 
 # ---------------------------------------------------- Vimshottari Dasha --

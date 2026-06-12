@@ -150,10 +150,29 @@ def font_for(text: str, lang: str, bold: bool = False) -> Tuple[str, str]:
     return _family_for(text, lang), BOLD if bold else REGULAR
 
 
+def _run_width(pdf: FPDF, seg: str, size: float) -> float:
+    """Width of `seg` in the current font at `size`, HarfBuzz-shaped.
+
+    `FPDF.get_string_width` sums per-character advances without shaping;
+    for scripts where shaping merges glyphs (Devanagari conjuncts shrink a
+    string by ~20%) that overestimates badly, so anchors drift. The font's
+    own `get_text_width` shapes when given the shaping params. The whole
+    package renders with unit="pt", so user units == font points here."""
+    _, w = pdf.current_font.get_text_width(
+        seg, size, getattr(pdf, "text_shaping", None)
+    )
+    return w
+
+
 def text_width(pdf: FPDF, text: str, family: str, style: str, size: float) -> float:
-    """Width of `text` at the given font/size, in PDF user units (we use pt)."""
-    pdf.set_font(family, style, size)
-    return pdf.get_string_width(text)
+    """Width of `text` at the given font/size, in PDF user units (we use pt).
+    Splits into per-script runs and measures each shaped, mirroring how
+    draw_text will actually render the string."""
+    total = 0.0
+    for fam, seg in _split_runs(text, "en"):
+        pdf.set_font(fam, style, size)
+        total += _run_width(pdf, seg, size)
+    return total
 
 
 def _split_runs(text: str, lang: str):
@@ -192,8 +211,17 @@ def draw_text(
 
     Splits `text` into per-script runs and renders each with the appropriate
     Noto family — so a mixed string like "Rāśi 主星" picks NotoSans for the
-    Latin/IAST head and NotoSC for the Han tail, and Devanagari conjuncts
-    still get HarfBuzz-shaped within their own run.
+    Latin/IAST head and NotoSC for the Han tail.
+
+    Each run is rendered through `FPDF.cell()`, NOT `FPDF.text()`: text()
+    bypasses the HarfBuzz shaping engine entirely (its own docstring says
+    so), which broke every complex-script run — Tamil pre-base matras came
+    out after their consonant (நேரம் read as நரேம்), Devanagari conjuncts
+    never formed, Arabic letters never joined. cell() goes through the
+    shaping path; we zero `c_margin` so the run starts exactly at the
+    cursor and offset the cell top so the baseline lands on `y` (cell puts
+    the baseline 0.8 × font-size below its top, the same coefficient as
+    fpdf2's _render_styled_text_line).
 
     The `family` argument is advisory and is overridden by the per-run
     dispatch. `lang` disambiguates pure-Han runs (zh→SC, ja→JP)."""
@@ -201,20 +229,30 @@ def draw_text(
         return 0.0
     runs = list(_split_runs(text, lang))
 
-    total_width = 0.0
+    widths = []
     for fam, seg in runs:
         pdf.set_font(fam, style, size)
-        total_width += pdf.get_string_width(seg)
+        widths.append(_run_width(pdf, seg, size))
+    total_width = sum(widths)
 
     if anchor == "center":
         x -= total_width / 2
     elif anchor == "right":
         x -= total_width
 
+    prev_margin = pdf.c_margin
+    prev_xy = (pdf.x, pdf.y)
+    pdf.c_margin = 0
     cursor = x
-    for fam, seg in runs:
-        pdf.set_font(fam, style, size)
-        seg_width = pdf.get_string_width(seg)
-        pdf.text(cursor, y, seg)
-        cursor += seg_width
+    try:
+        for (fam, seg), seg_width in zip(runs, widths):
+            pdf.set_font(fam, style, size)
+            pdf.set_xy(cursor, y - 0.8 * size)
+            # w=0 would mean "extend to the right margin" to cell(); None
+            # makes it size the cell to the (shaped) text itself.
+            pdf.cell(w=seg_width or None, h=size, text=seg)
+            cursor += seg_width
+    finally:
+        pdf.c_margin = prev_margin
+        pdf.set_xy(*prev_xy)
     return total_width
