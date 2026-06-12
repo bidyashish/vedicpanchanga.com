@@ -381,6 +381,16 @@ export interface PanchangData {
     vara_tyajyam?: MuhurtaWindow;
     lagna_tyajyam: (MuhurtaWindow & { sign: string; position: string })[];
     amritadi_yogam: (MuhurtaWindow & { nakshatra: string; yogam: string })[];
+    karana_tyajyam?: (MuhurtaWindow & { karana: string })[];
+    gowri_tyajyam?: (MuhurtaWindow & { name: string; period: "day" | "night" })[];
+    dosha_tyajyam?: (MuhurtaWindow & { dosha: string })[];
+    tamil_month_avoidables?: {
+      avoid_tithis: string[];
+      avoid_nakshatras: string[];
+      avoid_lagnas: string[];
+      windows: (MuhurtaWindow & { kind: "tithi" | "nakshatra" | "lagna"; name: string })[];
+    } | null;
+    tithi_lagna_tyajyam?: (MuhurtaWindow & { tithi: string; sign: string })[];
   };
   gowri_panchang?: {
     day: LabelledSegment[];

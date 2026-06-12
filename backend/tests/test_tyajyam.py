@@ -3,14 +3,23 @@
 import pytz
 
 from tyajyam import (
+    INAUSPICIOUS_KARANAS,
     NAKSHATRA_TYAJYAM_RATIO,
+    TAMIL_MONTH_AVOIDABLES,
+    TITHI_AVOIDABLE_LAGNAS,
     VARA_TYAJYAM_NAZHIGAI,
     _AMRITADI_TABLE,
+    _tithi_base_name,
     _tithi_ratio,
-    compute_nakshatra_tyajyam,
-    compute_vara_tyajyam,
     compute_amritadi_yogam,
+    compute_dosha_tyajyam,
+    compute_gowri_tyajyam,
+    compute_karana_tyajyam,
+    compute_nakshatra_tyajyam,
+    compute_tamil_month_avoidables,
+    compute_tithi_lagna_tyajyam,
     compute_tyajyam,
+    compute_vara_tyajyam,
 )
 
 TZ = pytz.timezone("Asia/Kolkata")
@@ -141,6 +150,163 @@ def test_amritadi_bharani_sunday_is_prabalarishta():
     assert results[0]["yogam"] == "Prabalarishta"
 
 
+# ---- Karana Tyajyam ----
+
+
+def test_karana_tyajyam_filters_inauspicious_only():
+    base_jd = 2460000.0
+    karanas = [
+        {"name": "Bava", "start_jd": base_jd, "ends_at_jd": base_jd + 0.2},
+        {"name": "Vishti", "start_jd": base_jd + 0.2, "ends_at_jd": base_jd + 0.4},
+        {"name": "Naga", "start_jd": base_jd + 0.4, "ends_at_jd": base_jd + 0.6},
+    ]
+    results = compute_karana_tyajyam(karanas, _iso, TZ)
+    assert [r["karana"] for r in results] == ["Vishti", "Naga"]
+
+
+def test_inauspicious_karana_set():
+    assert INAUSPICIOUS_KARANAS == {"Vishti", "Chatushpada", "Naga"}
+
+
+# ---- Gowri Tyajyam ----
+
+
+def test_gowri_tyajyam_filters_inauspicious_segments():
+    gowri = {
+        "day": [
+            {"name": "Soram", "start": "a", "end": "b", "auspicious": False},
+            {"name": "Uthi", "start": "b", "end": "c", "auspicious": True},
+        ],
+        "night": [
+            {"name": "Visham", "start": "d", "end": "e", "auspicious": False},
+        ],
+    }
+    results = compute_gowri_tyajyam(gowri)
+    assert [(r["name"], r["period"]) for r in results] == [
+        ("Soram", "day"),
+        ("Visham", "night"),
+    ]
+
+
+def test_gowri_tyajyam_handles_missing_payload():
+    assert compute_gowri_tyajyam(None) == []
+    assert compute_gowri_tyajyam({}) == []
+
+
+# ---- Dosha Tyajyam ----
+
+
+def test_dosha_tyajyam_finds_2024_solar_eclipse():
+    """2024-04-08 total solar eclipse: the Dallas local day must carry a
+    solar_eclipse dosha window."""
+    import swisseph as swe
+
+    sunrise_jd = swe.julday(2024, 4, 8, 12.0)  # ~07:00 CDT
+    next_sunrise_jd = sunrise_jd + 1.0
+    results = compute_dosha_tyajyam(
+        sunrise_jd, next_sunrise_jd, _iso, pytz.timezone("America/Chicago")
+    )
+    doshas = [r["dosha"] for r in results]
+    assert "solar_eclipse" in doshas
+
+
+def test_dosha_tyajyam_none_without_sunrise():
+    assert compute_dosha_tyajyam(None, None, _iso, TZ) == []
+
+
+# ---- Tamil Month Avoidables ----
+
+
+def test_tamil_month_table_covers_all_12_months():
+    from constants import NAKSHATRAS, TITHI_BASE
+
+    valid_tithis = set(TITHI_BASE) | {"Purnima", "Amavasya"}
+    for m in range(1, 13):
+        info = TAMIL_MONTH_AVOIDABLES[m]
+        for t in info["tithis"]:
+            assert t in valid_tithis, f"month {m}: bad tithi {t}"
+        for n in info["nakshatras"]:
+            assert n in NAKSHATRAS, f"month {m}: bad nakshatra {n}"
+        assert info["lagnas"], f"month {m}: empty lagna list"
+
+
+def test_tamil_month_avoidables_matches_today():
+    base_jd = 2460000.0
+    # Month 4 (Aadi) avoids Shashthi tithi, Purva Phalguni nak, Gemini lagna.
+    tithis = [
+        {"index": 6, "start_jd": base_jd, "ends_at_jd": base_jd + 0.5},
+        {"index": 7, "start_jd": base_jd + 0.5, "ends_at_jd": base_jd + 1.0},
+    ]
+    naks = [{"nak_idx": 10, "start_jd": base_jd, "end_jd": base_jd + 0.8}]
+    lagnas = [
+        {"sign": "Gemini", "start_jd": base_jd, "end_jd": base_jd + 0.08},
+        {"sign": "Cancer", "start_jd": base_jd + 0.08, "end_jd": base_jd + 0.16},
+    ]
+    result = compute_tamil_month_avoidables(4, tithis, naks, lagnas, _iso, TZ)
+    kinds = sorted((w["kind"], w["name"]) for w in result["windows"])
+    assert kinds == [
+        ("lagna", "Gemini"),
+        ("nakshatra", "Purva Phalguni"),
+        ("tithi", "Shashthi"),
+    ]
+    assert result["avoid_tithis"] == ["Shashthi"]
+
+
+def test_tamil_month_avoidables_none_for_unknown_month():
+    assert compute_tamil_month_avoidables(None, [], [], [], _iso, TZ) is None
+
+
+# ---- Tithi-based Avoidable Lagnas ----
+
+
+def test_tithi_lagna_table_uses_valid_names():
+    from constants import TITHI_BASE
+
+    signs = {
+        "Aries",
+        "Taurus",
+        "Gemini",
+        "Cancer",
+        "Leo",
+        "Virgo",
+        "Libra",
+        "Scorpio",
+        "Sagittarius",
+        "Capricorn",
+        "Aquarius",
+        "Pisces",
+    }
+    for tithi, lagnas in TITHI_AVOIDABLE_LAGNAS.items():
+        assert tithi in TITHI_BASE
+        for s in lagnas:
+            assert s in signs, f"{tithi}: bad sign {s}"
+
+
+def test_tithi_base_name():
+    assert _tithi_base_name(1) == "Pratipada"
+    assert _tithi_base_name(16) == "Pratipada"  # Krishna paksha same base
+    assert _tithi_base_name(15) == "Purnima"
+    assert _tithi_base_name(30) == "Amavasya"
+
+
+def test_tithi_lagna_tyajyam_intersects_windows():
+    base_jd = 2460000.0
+    # Pratipada avoids Taurus and Leo.
+    tithis = [{"index": 1, "start_jd": base_jd, "ends_at_jd": base_jd + 0.5}]
+    lagnas = [
+        # Taurus rises inside the tithi -> flagged.
+        {"sign": "Taurus", "start_jd": base_jd + 0.1, "end_jd": base_jd + 0.18},
+        # Leo rises after the tithi ends -> no overlap, not flagged.
+        {"sign": "Leo", "start_jd": base_jd + 0.6, "end_jd": base_jd + 0.68},
+        # Gemini is not avoidable on Pratipada.
+        {"sign": "Gemini", "start_jd": base_jd + 0.2, "end_jd": base_jd + 0.28},
+    ]
+    results = compute_tithi_lagna_tyajyam(tithis, lagnas, _iso, TZ)
+    assert len(results) == 1
+    assert results[0]["sign"] == "Taurus"
+    assert results[0]["tithi"] == "Pratipada"
+
+
 # ---- Integration test ----
 
 
@@ -179,10 +345,24 @@ def test_full_panchang_includes_tyajyam():
     )
     assert "tyajyam" in result
     tyajyam = result["tyajyam"]
-    assert "nakshatra_tyajyam" in tyajyam
-    assert "tithi_tyajyam" in tyajyam
-    assert "vara_tyajyam" in tyajyam
-    assert "amritadi_yogam" in tyajyam
+    for key in (
+        "nakshatra_tyajyam",
+        "tithi_tyajyam",
+        "vara_tyajyam",
+        "amritadi_yogam",
+        "lagna_tyajyam",
+        "karana_tyajyam",
+        "gowri_tyajyam",
+        "dosha_tyajyam",
+        "tamil_month_avoidables",
+        "tithi_lagna_tyajyam",
+    ):
+        assert key in tyajyam, f"missing {key}"
     # Should have at least one entry in most categories
     assert len(tyajyam["nakshatra_tyajyam"]) >= 1
     assert len(tyajyam["amritadi_yogam"]) >= 1
+    # Gowri always yields inauspicious segments when rise/set exist.
+    assert len(tyajyam["gowri_tyajyam"]) >= 1
+    # Tamil month is always known, so the avoid lists must be present.
+    assert tyajyam["tamil_month_avoidables"] is not None
+    assert tyajyam["tamil_month_avoidables"]["avoid_tithis"]

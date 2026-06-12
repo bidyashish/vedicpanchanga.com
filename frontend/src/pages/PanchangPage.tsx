@@ -1129,7 +1129,99 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                       refDate={refDate}
                     />
                   ))}
+                  {(data.tyajyam.karana_tyajyam ?? []).map((kt, i) => (
+                    <TimeBand
+                      key={`kt-${i}`}
+                      testId={`band-karana-tyajyam-${i}`}
+                      title={t("tyajyam_karana")}
+                      window={kt}
+                      color="var(--danger)"
+                      desc={`${t("tyajyam_karana_desc")} · ${a.karana(kt.karana)}`}
+                      tz={tz}
+                      refDate={refDate}
+                    />
+                  ))}
+                  {(data.tyajyam.gowri_tyajyam ?? []).map((gt, i) => (
+                    <TimeBand
+                      key={`gt-${i}`}
+                      testId={`band-gowri-tyajyam-${i}`}
+                      title={t("tyajyam_gowri")}
+                      window={gt}
+                      color="var(--danger)"
+                      desc={`${a.gowri(gt.name)} · ${t(gt.period === "day" ? "gowri_day" : "gowri_night")}`}
+                      tz={tz}
+                      refDate={refDate}
+                    />
+                  ))}
+                  {(data.tyajyam.dosha_tyajyam ?? []).map((dt, i) => (
+                    <TimeBand
+                      key={`dt-${i}`}
+                      testId={`band-dosha-tyajyam-${i}`}
+                      title={t("tyajyam_dosha")}
+                      window={dt}
+                      color="var(--danger)"
+                      desc={t(`dosha_${dt.dosha}`)}
+                      tz={tz}
+                      refDate={refDate}
+                    />
+                  ))}
+                  {(data.tyajyam.tithi_lagna_tyajyam ?? []).map((tl, i) => (
+                    <TimeBand
+                      key={`tl-${i}`}
+                      testId={`band-tithi-lagna-tyajyam-${i}`}
+                      title={t("tyajyam_tithi_lagna")}
+                      window={tl}
+                      color="var(--danger)"
+                      desc={`${t("tyajyam_tithi_lagna_desc")} · ${a.tithi(tl.tithi)} · ${a.sign(tl.sign)}`}
+                      tz={tz}
+                      refDate={refDate}
+                    />
+                  ))}
+                  {(data.tyajyam.tamil_month_avoidables?.windows ?? []).map((tm, i) => (
+                    <TimeBand
+                      key={`tm-${i}`}
+                      testId={`band-tamil-month-tyajyam-${i}`}
+                      title={t("tyajyam_tamil_month")}
+                      window={tm}
+                      color="var(--danger)"
+                      desc={
+                        tm.kind === "tithi"
+                          ? a.tithi(tm.name)
+                          : tm.kind === "nakshatra"
+                            ? a.nakshatra(tm.name)
+                            : a.sign(tm.name)
+                      }
+                      tz={tz}
+                      refDate={refDate}
+                    />
+                  ))}
                 </div>
+                {data.tyajyam.tamil_month_avoidables && data.tamil_calendar && (
+                  <p
+                    className="mt-3 text-sm text-ink-soft leading-relaxed"
+                    data-testid="tamil-month-avoidables"
+                  >
+                    <span className="font-medium text-ink">
+                      {t("tyajyam_tamil_month")} ·{" "}
+                      {lang === "ta"
+                        ? data.tamil_calendar.tamil_month.ta
+                        : data.tamil_calendar.tamil_month.en}
+                      :
+                    </span>{" "}
+                    {t("tyajyam_tamil_month_tithis")}:{" "}
+                    {data.tyajyam.tamil_month_avoidables.avoid_tithis
+                      .map((n) => a.tithi(n))
+                      .join(", ")}{" "}
+                    · {t("tyajyam_tamil_month_naks")}:{" "}
+                    {data.tyajyam.tamil_month_avoidables.avoid_nakshatras
+                      .map((n) => a.nakshatra(n))
+                      .join(", ")}{" "}
+                    · {t("tyajyam_tamil_month_lagnas")}:{" "}
+                    {data.tyajyam.tamil_month_avoidables.avoid_lagnas
+                      .map((n) => a.sign(n))
+                      .join(", ")}
+                  </p>
+                )}
               </Section>
             )}
 

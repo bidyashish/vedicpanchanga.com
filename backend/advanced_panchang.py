@@ -28,7 +28,15 @@ from gowri_panchang import compute_gowri_panchang
 from hora import compute_hora
 from nalla_neram import compute_nalla_neram
 from tamil_calendar import compute_tamil_calendar
-from tyajyam import compute_lagna_tyajyam, compute_tyajyam
+from tyajyam import (
+    compute_dosha_tyajyam,
+    compute_gowri_tyajyam,
+    compute_karana_tyajyam,
+    compute_lagna_tyajyam,
+    compute_tamil_month_avoidables,
+    compute_tithi_lagna_tyajyam,
+    compute_tyajyam,
+)
 from panchang_constants import (
     CHANDRA_MASA,
     CHANDRA_VASA,
@@ -1013,6 +1021,13 @@ def _compute_detailed_panchang_locked(
         tz=tz,
     )
     tyajyam["lagna_tyajyam"] = compute_lagna_tyajyam(udaya_lagnas, _iso, tz)
+    tyajyam["karana_tyajyam"] = compute_karana_tyajyam(karanas, _iso, tz)
+    tyajyam["tithi_lagna_tyajyam"] = compute_tithi_lagna_tyajyam(
+        tithis, udaya_lagnas, _iso, tz
+    )
+    tyajyam["dosha_tyajyam"] = compute_dosha_tyajyam(
+        sunrise_jd, next_sunrise_jd, _iso, tz
+    )
 
     # Bhadra (any Vishti karana period in window) - compute start/end
     bhadra = []
@@ -1114,6 +1129,8 @@ def _compute_detailed_panchang_locked(
         timezone_name=timezone_name,
     )
 
+    tyajyam["gowri_tyajyam"] = compute_gowri_tyajyam(gowri)
+
     # Hora — 12 day-horas + 12 night-horas, planetary cycle.
     hora = compute_hora(
         sunrise_iso=_iso(sunrise_jd, tz),
@@ -1137,6 +1154,15 @@ def _compute_detailed_panchang_locked(
         target_date,
         timezone_name,
         nakshatra_index=int(current_nak["index"]) if current_nak else None,
+    )
+
+    tyajyam["tamil_month_avoidables"] = compute_tamil_month_avoidables(
+        tamil_cal["tamil_month"]["id"] if tamil_cal else None,
+        tithis,
+        naks_with_bounds,
+        udaya_lagnas,
+        _iso,
+        tz,
     )
 
     return {
