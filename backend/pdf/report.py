@@ -344,6 +344,9 @@ def render_pdf(
                 moon_sign_id=moon["sign_id"],
                 horizon_years=120,
                 step_days=2.0,
+                # Transit signs must live in the same zodiac as the natal
+                # Moon sign they are compared against.
+                ayanamsa=chart_data["birth"].get("ayanamsa_id", "lahiri"),
             )
             draw_sade_sati_page(
                 pdf,

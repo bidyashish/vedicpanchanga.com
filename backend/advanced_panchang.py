@@ -23,6 +23,7 @@ from constants import (
     karana_name,
     tithi_name,
 )
+from ayanamsa import sidereal_context
 from gowri_panchang import compute_gowri_panchang
 from hora import compute_hora
 from nalla_neram import compute_nalla_neram
@@ -186,7 +187,8 @@ def _rise_trans(jd_start: float, body: int, geopos, which: int) -> Optional[floa
 
 
 def _sun_moon_sid(jd: float):
-    swe.set_sid_mode(swe.SIDM_LAHIRI)
+    # Sidereal mode is pinned to Lahiri by the sidereal_context in
+    # compute_detailed_panchang; helpers must only run inside it.
     flags = swe.FLG_SIDEREAL | swe.FLG_SWIEPH
     s = swe.calc_ut(jd, swe.SUN, flags)[0][0] % 360
     m = swe.calc_ut(jd, swe.MOON, flags)[0][0] % 360
@@ -297,7 +299,6 @@ def _nirayana_solar_date(sun_sid: float, jd: float):
     sign_id = int(sun_sid // 30) + 1  # 1-12
     # Find the JD when Sun entered this sign (sankranti)
     start_deg = (sign_id - 1) * 30
-    swe.set_sid_mode(swe.SIDM_LAHIRI)
     flags = swe.FLG_SIDEREAL | swe.FLG_SWIEPH
     # Sun moves ~1°/day, search back up to 40 days
     lo, hi = jd - 40, jd
@@ -865,7 +866,25 @@ def compute_detailed_panchang(
     longitude: float,
     timezone_name: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Compute Drik-style comprehensive Panchang for given local date."""
+    """Compute Drik-style comprehensive Panchang for given local date.
+
+    Panchang is always computed with the Lahiri (Chitrapaksha) ayanamsa - the
+    Drik Panchang standard. The sidereal_context pins that mode for the whole
+    computation so a concurrent /calculate with another ayanamsa can never
+    shift tithi/nakshatra boundaries or the udaya lagna mid-request.
+    """
+    with sidereal_context("lahiri"):
+        return _compute_detailed_panchang_locked(
+            target_date, latitude, longitude, timezone_name
+        )
+
+
+def _compute_detailed_panchang_locked(
+    target_date: str,
+    latitude: float,
+    longitude: float,
+    timezone_name: Optional[str] = None,
+) -> Dict[str, Any]:
     if not timezone_name:
         timezone_name = _TF.timezone_at(lat=latitude, lng=longitude) or "UTC"
     tz = pytz.timezone(timezone_name)

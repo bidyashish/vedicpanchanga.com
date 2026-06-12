@@ -1,4 +1,4 @@
-"""Vedic Astrology Calculator using Swiss Ephemeris (Lahiri Ayanamsa)."""
+"""Vedic Astrology Calculator using Swiss Ephemeris (selectable ayanamsa)."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ import pytz
 import swisseph as swe
 from timezonefinder import TimezoneFinder
 
-from ayanamsa import set_ayanamsa
+from ayanamsa import sidereal_context
 from vargas import (
     VARGA_NAMES,
     VARGA_ORDER,
@@ -374,37 +374,40 @@ def compute_chart(
         utc_dt.hour + utc_dt.minute / 60 + utc_dt.second / 3600,
     )
 
-    # Apply chosen ayanamsa
-    sidereal_flag, ayanamsa_label = set_ayanamsa(ayanamsa)
-    flags = sidereal_flag | swe.FLG_SWIEPH | swe.FLG_SPEED
+    # All position math runs inside sidereal_context: it pins the chosen
+    # ayanamsa for this request and locks out concurrent mode flips.
+    with sidereal_context(ayanamsa) as (sidereal_flag, ayanamsa_label):
+        flags = sidereal_flag | swe.FLG_SWIEPH | swe.FLG_SPEED
 
-    # Compute planets
-    planets: Dict[str, Dict[str, Any]] = {}
-    for name, pid, abbr in PLANET_ORDER:
-        xx, _ret = swe.calc_ut(jd_ut, pid, flags)
-        lon = xx[0] % 360
-        speed = xx[3]
-        retro = speed < 0 and name not in ("Sun", "Moon", "Rahu", "Ketu")
-        planets[name] = _planet_entry(name, abbr, lon, retro)
+        # Compute planets
+        planets: Dict[str, Dict[str, Any]] = {}
+        for name, pid, abbr in PLANET_ORDER:
+            xx, _ret = swe.calc_ut(jd_ut, pid, flags)
+            lon = xx[0] % 360
+            speed = xx[3]
+            retro = speed < 0 and name not in ("Sun", "Moon", "Rahu", "Ketu")
+            planets[name] = _planet_entry(name, abbr, lon, retro)
 
-    # Ketu = Rahu + 180
-    rahu_lon = planets["Rahu"]["longitude"]
-    ketu_lon = (rahu_lon + 180) % 360
-    planets["Ketu"] = _planet_entry("Ketu", "Ke", ketu_lon, False)
+        # Ketu = Rahu + 180
+        rahu_lon = planets["Rahu"]["longitude"]
+        ketu_lon = (rahu_lon + 180) % 360
+        planets["Ketu"] = _planet_entry("Ketu", "Ke", ketu_lon, False)
 
-    # Combust (astangata): set after Sun's longitude is known. Sun itself,
-    # Rahu, Ketu are skipped inside _is_combust.
-    sun_lon = planets["Sun"]["longitude"]
-    for pname, pdata in planets.items():
-        pdata["combust"] = _is_combust(
-            pname, pdata["longitude"], sun_lon, pdata["retrograde"]
-        )
+        # Combust (astangata): set after Sun's longitude is known. Sun itself,
+        # Rahu, Ketu are skipped inside _is_combust.
+        sun_lon = planets["Sun"]["longitude"]
+        for pname, pdata in planets.items():
+            pdata["combust"] = _is_combust(
+                pname, pdata["longitude"], sun_lon, pdata["retrograde"]
+            )
 
-    # Ascendant
-    cusps, ascmc = swe.houses_ex(jd_ut, latitude, longitude, b"P", sidereal_flag)
-    asc_lon = ascmc[0] % 360
-    asc_sign = sign_index_from_longitude(asc_lon)
-    asc_entry = _planet_entry("Ascendant", "As", asc_lon, False)
+        # Ascendant
+        cusps, ascmc = swe.houses_ex(jd_ut, latitude, longitude, b"P", sidereal_flag)
+        asc_lon = ascmc[0] % 360
+        asc_sign = sign_index_from_longitude(asc_lon)
+        asc_entry = _planet_entry("Ascendant", "As", asc_lon, False)
+
+        ayanamsa_value = swe.get_ayanamsa_ut(jd_ut) if sidereal_flag else 0.0
 
     # Assign house (D1) based on Ascendant sign (whole sign houses)
     for p in planets.values():
@@ -501,7 +504,7 @@ def compute_chart(
             "latitude": latitude,
             "longitude": longitude,
             "julian_day": jd_ut,
-            "ayanamsa": swe.get_ayanamsa_ut(jd_ut) if sidereal_flag else 0.0,
+            "ayanamsa": ayanamsa_value,
             "ayanamsa_id": ayanamsa,
             "ayanamsa_label": ayanamsa_label,
         },

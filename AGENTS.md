@@ -231,6 +231,12 @@ Manual redeploy: `git pull && sudo bash infra/setup-vps.sh`
 ### Ayanamsa
 Supported systems (configured in `ayanamsa.py`):
 - NC Lahiri (default), KP New, KP Old, BV Raman, KP Khullar, Sayana Tropical, Manoj.
+- swisseph's sidereal mode is process-global C state and endpoints run in a
+  threadpool. Any code that calls `swe.calc_ut` / `swe.houses_ex` with
+  `FLG_SIDEREAL` must run inside `ayanamsa.sidereal_context(ayanamsa_id)` -
+  it locks swisseph access and pins the mode for the block. Never call
+  `swe.set_sid_mode` directly. Panchang, muhurta and transits are pinned to
+  Lahiri (Drik standard); kundali and Sade Sati follow the user's choice.
 
 ### Divisional Charts
 16 vargas implemented: D1, D2, D3, D4, D7, D9, D10, D12, D16, D20, D24, D27, D30, D40, D45, D60.

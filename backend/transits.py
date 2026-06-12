@@ -30,6 +30,7 @@ import pytz
 import swisseph as swe
 from timezonefinder import TimezoneFinder
 
+from ayanamsa import sidereal_context
 from constants import NAKSHATRAS, SIGNS
 
 # Swiss Ephemeris is a process-global - if `transits` is imported before any
@@ -179,6 +180,9 @@ def compute_transits(
 ) -> Dict[str, Any]:
     """Compute transit events for the given date range.
 
+    Always Lahiri - sidereal_context pins the mode for the whole scan so a
+    concurrent /calculate with another ayanamsa cannot shift ingress times.
+
     Parameters
     ----------
     start_date, end_date : YYYY-MM-DD inclusive bounds (local timezone).
@@ -193,14 +197,37 @@ def compute_transits(
     moon_nakshatras      : only honoured when include_moon=True; gates the
                            Moon-only nakshatra events (about one per day).
     """
+    with sidereal_context("lahiri"):
+        return _compute_transits_locked(
+            start_date=start_date,
+            end_date=end_date,
+            latitude=latitude,
+            longitude=longitude,
+            timezone_name=timezone_name,
+            include_signs=include_signs,
+            include_nakshatras=include_nakshatras,
+            include_retrograde=include_retrograde,
+            include_moon=include_moon,
+            moon_nakshatras=moon_nakshatras,
+        )
+
+
+def _compute_transits_locked(
+    *,
+    start_date: str,
+    end_date: str,
+    latitude: float,
+    longitude: float,
+    timezone_name: Optional[str],
+    include_signs: bool,
+    include_nakshatras: bool,
+    include_retrograde: bool,
+    include_moon: bool,
+    moon_nakshatras: bool,
+) -> Dict[str, Any]:
     if not timezone_name:
         timezone_name = _TF.timezone_at(lat=latitude, lng=longitude) or "UTC"
     tz = pytz.timezone(timezone_name)
-
-    # swisseph carries a process-global sidereal mode. Other modules
-    # (advanced_panchang, ayanamsa.set_ayanamsa) flip it to other ayanamsas at
-    # call time, so we must re-assert Lahiri here for deterministic transits.
-    swe.set_sid_mode(swe.SIDM_LAHIRI)
 
     start_local = tz.localize(_parse_date(start_date))
     end_local = tz.localize(_parse_date(end_date)) + timedelta(days=1)

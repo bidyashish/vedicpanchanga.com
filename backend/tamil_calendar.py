@@ -21,6 +21,8 @@ from typing import Any, Dict, Optional
 import pytz
 import swisseph as swe
 
+from ayanamsa import sidereal_context
+
 
 # ---- Tables ---------------------------------------------------------------
 
@@ -300,8 +302,8 @@ _SIDEREAL_FLAGS = swe.FLG_SIDEREAL | swe.FLG_SWIEPH
 
 
 def _sun_sid(jd: float) -> float:
-    """Sun's sidereal (Lahiri) longitude in [0, 360)."""
-    swe.set_sid_mode(swe.SIDM_LAHIRI)
+    """Sun's sidereal (Lahiri) longitude in [0, 360). Helpers in this module
+    must run inside the sidereal_context taken by compute_tamil_calendar."""
     return swe.calc_ut(jd, swe.SUN, _SIDEREAL_FLAGS)[0][0] % 360
 
 
@@ -340,7 +342,6 @@ def _jd_to_local_date(jd: float, tz: pytz.BaseTzInfo) -> date_cls:
 def _find_sankranti_jd(jd: float, sign_id: int) -> float:
     """JD at which the Sun most recently entered `sign_id` (1..12) on or
     before `jd`. Binary search on the 30° span starting at (sign_id-1)*30."""
-    swe.set_sid_mode(swe.SIDM_LAHIRI)
     target_deg = (sign_id - 1) * 30
     sun_now = swe.calc_ut(jd, swe.SUN, _SIDEREAL_FLAGS)[0][0] % 360
     # Distance the Sun has travelled since entering this sign — at ~360°/yr.
@@ -363,7 +364,6 @@ def _find_sankranti_jd(jd: float, sign_id: int) -> float:
 def _mesha_sankranti_jd(gregorian_year: int) -> float:
     """JD when the Sun crosses 0° sidereal Aries in `gregorian_year`
     (Tamil New Year — around April 13–15)."""
-    swe.set_sid_mode(swe.SIDM_LAHIRI)
     lo = swe.julday(gregorian_year, 4, 9, 0.0)  # Sun deep in Meena
     hi = swe.julday(gregorian_year, 4, 19, 0.0)  # Sun safely in Mesha
     for _ in range(80):
@@ -422,18 +422,21 @@ def compute_tamil_calendar(
     greg_date = date_cls(y, m, d)
     tz = pytz.timezone(timezone_name)
 
-    jd = _local_end_of_day_jd(greg_date, tz)
-    sun_lon = _sun_sid(jd)
-    sign_id = int(sun_lon // 30) + 1  # 1..12 (Mesha=1)
+    # Tamil months follow sidereal (Lahiri) sankrantis. Pin the mode for the
+    # whole computation; re-entrant when called from compute_detailed_panchang.
+    with sidereal_context("lahiri"):
+        jd = _local_end_of_day_jd(greg_date, tz)
+        sun_lon = _sun_sid(jd)
+        sign_id = int(sun_lon // 30) + 1  # 1..12 (Mesha=1)
 
-    sankranti_jd = _find_sankranti_jd(jd, sign_id)
-    sankranti_date = _jd_to_local_date(sankranti_jd, tz)
-    tamil_date = (greg_date - sankranti_date).days + 1
+        sankranti_jd = _find_sankranti_jd(jd, sign_id)
+        sankranti_date = _jd_to_local_date(sankranti_jd, tz)
+        tamil_date = (greg_date - sankranti_date).days + 1
 
-    # Tamil-year cycle: compare local dates so the Apr-14-ish boundary is
-    # treated consistently regardless of what time of day Mesha sankranti
-    # happens to fall on.
-    ms_date_this_year = _jd_to_local_date(_mesha_sankranti_jd(y), tz)
+        # Tamil-year cycle: compare local dates so the Apr-14-ish boundary is
+        # treated consistently regardless of what time of day Mesha sankranti
+        # happens to fall on.
+        ms_date_this_year = _jd_to_local_date(_mesha_sankranti_jd(y), tz)
     cycle_year = y if greg_date >= ms_date_this_year else y - 1
     cycle_id = _cycle_index(cycle_year)
 
