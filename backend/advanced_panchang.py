@@ -5,6 +5,7 @@ from __future__ import annotations
 import calendar as _cal
 from datetime import date as date_cls
 from datetime import datetime, timedelta
+from functools import lru_cache
 from typing import Any, Dict, List, Optional
 
 import pytz
@@ -194,9 +195,13 @@ def _rise_trans(jd_start: float, body: int, geopos, which: int) -> Optional[floa
     return None
 
 
+@lru_cache(maxsize=4096)
 def _sun_moon_sid(jd: float):
     # Sidereal mode is pinned to Lahiri by the sidereal_context in
-    # compute_detailed_panchang; helpers must only run inside it.
+    # compute_detailed_panchang; helpers must only run inside it. That pin is
+    # also what makes the lru_cache sound: results for a JD never vary. The
+    # overlapping bisection searches re-query the same midpoints constantly,
+    # so memoizing here removes a large share of the ephemeris calls.
     flags = swe.FLG_SIDEREAL | swe.FLG_SWIEPH
     s = swe.calc_ut(jd, swe.SUN, flags)[0][0] % 360
     m = swe.calc_ut(jd, swe.MOON, flags)[0][0] % 360
@@ -236,6 +241,10 @@ def _find_angle_time(
             hi = mid
         else:
             lo = mid
+        if hi - lo < 1e-8:
+            # ~0.9 ms in JD: far beyond the minute-level display precision,
+            # and reached in roughly half the fixed 40 iterations.
+            break
     return (lo + hi) / 2
 
 

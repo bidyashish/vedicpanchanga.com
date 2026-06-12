@@ -19,6 +19,8 @@ Standard Parashara rules:
   D60 Shashtiamsha - 60 parts of 0.5°, starts from same sign, sequential
 """
 
+from functools import lru_cache
+
 # Varga order we render
 VARGA_ORDER = [1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60]
 
@@ -99,8 +101,13 @@ def _add_sign(sign: int, offset: int) -> int:
     return ((sign - 1 + offset) % 12) + 1
 
 
+@lru_cache(maxsize=1024)
 def varga_sign(longitude: float, n: int) -> int:
-    """Return 1-12 sign id for the given longitude in divisional chart D<n>."""
+    """Return 1-12 sign id for the given longitude in divisional chart D<n>.
+
+    Pure function of its arguments, called 12 planets × 16 vargas per chart
+    (plus per-varga ascendant lookups), so the process-level cache is safe
+    and saves most of the repeat work across requests for the same chart."""
     longitude = longitude % 360
     sign = int(longitude // 30) + 1  # 1-12
     deg_in_sign = longitude - (sign - 1) * 30  # 0-30
@@ -229,6 +236,7 @@ _D30_BREAKS_ODD = (0.0, 5.0, 10.0, 18.0, 25.0, 30.0)
 _D30_BREAKS_EVEN = (0.0, 5.0, 12.0, 20.0, 25.0, 30.0)
 
 
+@lru_cache(maxsize=1024)
 def varga_degree_in_sign(longitude: float, n: int) -> float:
     """Return the planet's position within its divisional D<n> sign (0-30°).
 

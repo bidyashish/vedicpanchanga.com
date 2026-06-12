@@ -1,11 +1,13 @@
 import logging
 import os
+from functools import lru_cache
 from pathlib import Path
 from typing import Literal, Optional
 
 from dotenv import load_dotenv
 from fastapi import APIRouter, FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse, Response
+from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.responses import JSONResponse, ORJSONResponse, Response
 from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import BaseModel, Field
 from starlette.middleware.cors import CORSMiddleware
@@ -20,7 +22,9 @@ from transits import compute_transits
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
 
-app = FastAPI(title="Vedic Astrology API")
+# ORJSONResponse serializes the ~100 KB panchang payloads several times
+# faster than the stdlib json encoder FastAPI defaults to.
+app = FastAPI(title="Vedic Astrology API", default_response_class=ORJSONResponse)
 api_router = APIRouter(prefix="/api")
 
 
@@ -88,8 +92,10 @@ def calculate(req: CalculateRequest):
 
 
 @api_router.get("/ayanamsa-options")
-async def get_ayanamsa_options():
+async def get_ayanamsa_options(response: Response):
     """List available ayanamsa choices."""
+    # Static between deployments - let browsers/CDN hold it for a day.
+    response.headers["Cache-Control"] = "public, max-age=86400"
     return [{"id": k, "label": v[1]} for k, v in AYANAMSA_OPTIONS.items()]
 
 
@@ -241,6 +247,20 @@ def geo_ip(request: Request, response: Response):
     return {"latitude": lat, "longitude": lon, "place_name": place_name}
 
 
+# Panchang for (date, location) is deterministic, and traffic concentrates on
+# "today" for popular cities, so a small in-process cache absorbs most repeat
+# computation (~200-400 ms of CPU each on the VPS). Coordinates are rounded
+# to 4 decimals (~11 m) - far below anything that shifts a panchang time.
+@lru_cache(maxsize=128)
+def _cached_panchang(date: str, lat: float, lon: float, tz: Optional[str]):
+    return compute_detailed_panchang(
+        target_date=date,
+        latitude=lat,
+        longitude=lon,
+        timezone_name=tz,
+    )
+
+
 @api_router.get("/get-panchang")
 def get_panchang(
     latitude: float,
@@ -258,12 +278,7 @@ def get_panchang(
     if not date:
         date = date_cls.today().isoformat()
     try:
-        return compute_detailed_panchang(
-            target_date=date,
-            latitude=latitude,
-            longitude=longitude,
-            timezone_name=timezone,
-        )
+        return _cached_panchang(date, round(latitude, 4), round(longitude, 4), timezone)
     except Exception as e:
         logging.exception("Panchang computation failed")
         raise HTTPException(status_code=500, detail=f"Panchang error: {e}")
@@ -283,8 +298,9 @@ class MuhurtaRequest(BaseModel):
 
 
 @api_router.get("/muhurta-purposes")
-async def get_muhurta_purposes():
+async def get_muhurta_purposes(response: Response):
     """List available Muhurta purposes (marriage, griha-pravesha, business, etc.)."""
+    response.headers["Cache-Control"] = "public, max-age=86400"
     return list_purposes()
 
 
@@ -457,6 +473,10 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type"],
 )
+
+# Nginx gzips in production; this covers the dev server and any path that
+# bypasses Nginx. Skips small responses where compression is not worth it.
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 logging.basicConfig(
     level=logging.INFO,
