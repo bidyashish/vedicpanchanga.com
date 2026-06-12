@@ -89,6 +89,27 @@ def test_index_lists_every_section_with_a_page_number(rendered):
         assert re.search(rf"{re.escape(label)}.{{0,20}}\d+", last, re.DOTALL), label
 
 
+def test_text_width_is_harfbuzz_shaped():
+    """draw_text/text_width must measure HarfBuzz-shaped runs. Devanagari
+    conjuncts merge glyphs, so the shaped width is well below the naive
+    per-character sum that FPDF.get_string_width returns; if this assert
+    fails the renderer has regressed to the unshaped FPDF.text() path
+    (Tamil matras out of order, no conjuncts, no Arabic joining)."""
+    from fpdf import FPDF
+
+    from pdf.core.text import DEV_REGULAR, REGULAR, register_fonts, text_width
+
+    pdf = FPDF(unit="pt", format="A4")
+    register_fonts(pdf)
+    pdf.add_page()
+    s = "विम्शोत्तरी क्षेत्र ज्योतिष"
+    shaped = text_width(pdf, s, DEV_REGULAR, REGULAR, 18)
+    pdf.set_font(DEV_REGULAR, REGULAR, 18)
+    # Passing no shaping params yields the naive per-character advance sum.
+    _, unshaped = pdf.current_font.get_text_width(s, 18, None)
+    assert 0 < shaped < unshaped * 0.9
+
+
 def test_render_pdf_tamil_uses_south_indian_chart(delhi_chart, panchang_module):
     """Tamil defaults to the South Indian chart style (issue #86); the
     render must succeed and produce a full report."""
