@@ -43,6 +43,9 @@ function defaultStyleFor(lang: string): "north" | "south" {
 }
 
 function loadStyle(lang: string): ChartStyle {
+  // Tamil always starts on the South Indian layout regardless of any stored
+  // preference; an explicit toggle still works for the session.
+  if (lang === "ta") return "south";
   if (typeof window === "undefined") return defaultStyleFor(lang);
   const v = window.localStorage.getItem(STYLE_KEY);
   if (v === "north" || v === "south" || v === "west") return v;
@@ -50,6 +53,11 @@ function loadStyle(lang: string): ChartStyle {
 }
 
 export function chartStyleForPdf(lang: string): "north" | "south" {
+  // Tamil always exports the South Indian layout - a stored UI preference
+  // (possibly stale, from before the style existed) must not override the
+  // language rule (issue #86). The API's chart_style field remains the
+  // escape hatch for callers who explicitly want otherwise.
+  if (lang === "ta") return "south";
   const s = loadStyle(lang);
   // The PDF has no Western wheel; fall back to the language default.
   return s === "west" ? defaultStyleFor(lang) : s;
@@ -92,9 +100,15 @@ export function ChartTabs({
     }
   }, [showAspects, selectedPlanet, data.drishti, onSelectPlanet]);
 
-  // Follow the language default until the user picks a style explicitly
-  // (an explicit pick is persisted under STYLE_KEY and always wins).
+  // Selecting Tamil always switches the displayed chart to the South Indian
+  // layout (issue #86) - even over a stored preference, which may predate
+  // the style and be stale. The user can still toggle away for the session.
+  // Other languages follow their default only until a style is stored.
   useEffect(() => {
+    if (lang === "ta") {
+      setChartStyleState("south");
+      return;
+    }
     try {
       if (window.localStorage.getItem(STYLE_KEY)) return;
     } catch {
