@@ -403,7 +403,8 @@ class PrintPdfRequest(BaseModel):
         "fa",
         "he",
     ] = "en"
-    # None lets the renderer pick by language (Tamil defaults to "south").
+    # None lets the renderer pick by language. Tamil always renders the
+    # South Indian layout regardless of this field (issue #86).
     chart_style: Optional[Literal["north", "south"]] = None
 
 

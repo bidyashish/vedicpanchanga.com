@@ -155,6 +155,39 @@ def test_render_pdf_explicit_chart_style_override(delhi_chart, panchang_module):
     assert out[:4] == b"%PDF"
 
 
+def test_render_pdf_tamil_ignores_north_override(delhi_chart, panchang_module):
+    """Tamil always renders South Indian charts - a caller-supplied
+    chart_style='north' must not override the language rule (issue #86).
+    Page 1 of the override render must be pixel-identical to the default
+    Tamil render (raw PDF bytes differ by creation timestamp, so compare
+    rasterized output instead)."""
+    pdfium = pytest.importorskip("pypdfium2")
+    from pdf import render_pdf
+
+    panch = panchang_module.compute_detailed_panchang(
+        target_date="1990-01-01",
+        latitude=28.6139,
+        longitude=77.2090,
+        timezone_name="Asia/Kolkata",
+    )
+    kwargs = dict(
+        name="Smoke",
+        sex="Male",
+        chart_data=delhi_chart,
+        panchang_data=panch,
+        place_name="New Delhi",
+        lang="ta",
+    )
+
+    def page1_pixels(pdf_bytes):
+        page = pdfium.PdfDocument(pdf_bytes)[0]
+        return bytes(page.render(scale=1.0).buffer)
+
+    defaulted = page1_pixels(render_pdf(**kwargs))
+    overridden = page1_pixels(render_pdf(**kwargs, chart_style="north"))
+    assert overridden == defaulted
+
+
 def test_render_pdf_handles_hindi_lang(delhi_chart, panchang_module):
     """The Hindi pass must not crash even though most labels in panchang
     are still English; the renderer falls back per-glyph to NotoSans for

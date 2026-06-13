@@ -202,10 +202,13 @@ def render_pdf(
 ) -> bytes:
     if lang not in LOCALES:
         lang = "en"
-    # Tamil tradition reads the South Indian fixed-sign layout by default;
-    # an explicit chart_style from the caller always wins.
-    if chart_style not in ("north", "south"):
-        chart_style = "south" if lang == "ta" else "north"
+    # Tamil reports always use the South Indian fixed-sign layout - the
+    # language rule beats any caller-supplied chart_style (issue #86).
+    # Other languages honor an explicit chart_style, defaulting to north.
+    if lang == "ta":
+        chart_style = "south"
+    elif chart_style not in ("north", "south"):
+        chart_style = "north"
 
     pdf = _ReportPDF(unit="pt", format="A4")
     pdf.set_auto_page_break(False)
