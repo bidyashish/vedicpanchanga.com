@@ -1,0 +1,49 @@
+# Per-application process groups for process-exporter (port 9256).
+# Deployed by install.sh to /etc/process-exporter/process-exporter.yml.
+# Each entry becomes a `groupname` label - keep names stable, the
+# apps-containers dashboard filters on them.
+process_names:
+  # Node.js processes (grouped by executable name, e.g. node, next-server).
+  - name: "{{.Comm}}"
+    cmdline:
+    - 'node'
+
+  # Python processes (catch-all; named groups below take precedence).
+  - name: "{{.Matches}}"
+    cmdline:
+    - 'python|python3'
+
+  # VS Code Server
+  - name: "vscode-server"
+    cmdline:
+    - '.vscode-server'
+
+  # Panchanga FastAPI backend (uvicorn server:app on :8001)
+  - name: "panchanga-backend"
+    cmdline:
+    - 'uvicorn.*server:app'
+
+  # ExportAI Chat (Next.js via npm start)
+  - name: "exportaichat"
+    cmdline:
+    - 'npm.*start'
+
+  # Anyrouter API gateway (backs fizgpt.com)
+  - name: "anyrouter"
+    cmdline:
+    - 'anyrouter'
+
+  # Nginx web server
+  - name: "nginx"
+    cmdline:
+    - 'nginx'
+
+  # Claude Code sessions
+  - name: "claude"
+    cmdline:
+    - 'claude'
+
+  # Monitoring stack itself
+  - name: "{{.Comm}}"
+    cmdline:
+    - 'prometheus|grafana|node_exporter'

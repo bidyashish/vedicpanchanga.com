@@ -23,7 +23,7 @@ scrape_configs:
   # Blackbox HTTP probes - application uptime, latency, TLS expiry.
   # Targets are probed *through* the blackbox exporter on 127.0.0.1:9115.
   #   - the public URL exercises the full chain (Cloudflare -> Nginx -> backend)
-  #   - the origin URL isolates the FastAPI backend itself
+  #   - the origin URL isolates the app server itself
   - job_name: 'blackbox-http'
     metrics_path: /probe
     params:
@@ -40,6 +40,26 @@ scrape_configs:
         labels:
           app: vedicpanchanga
           scope: origin
+      - targets:
+          - https://fizgpt.com/
+        labels:
+          app: fizgpt
+          scope: public
+      - targets:
+          - http://127.0.0.1:3000/
+        labels:
+          app: fizgpt
+          scope: origin
+      - targets:
+          - https://exportaichat.com/
+        labels:
+          app: exportaichat
+          scope: public
+      - targets:
+          - http://127.0.0.1:3003/
+        labels:
+          app: exportaichat
+          scope: origin
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
@@ -47,3 +67,18 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: 127.0.0.1:9115
+
+  # Nginx aggregate connection/request metrics (stub_status exporter).
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['127.0.0.1:9113']
+
+  # Per-process CPU/memory/fd metrics for every app on the box.
+  - job_name: 'process-exporter'
+    static_configs:
+      - targets: ['127.0.0.1:9256']
+
+  # Docker containers + systemd services resource usage (cadvisor).
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['127.0.0.1:8080']
