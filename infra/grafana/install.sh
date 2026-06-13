@@ -1,19 +1,31 @@
 #!/bin/bash
 
-# Reproducible monitoring installer for vedicpanchanga.com
-# ---------------------------------------------------------
-# Installs / refreshes the observability stack and provisions it from the
+# Reproducible monitoring installer for vedicpanchanga.com (and clones)
+# ---------------------------------------------------------------------
+# Installs / refreshes the full observability stack and provisions it from the
 # version-controlled files in this folder:
 #
-#   prometheus/prometheus.yml               -> /etc/prometheus/prometheus.yml
-#   blackbox/blackbox.yml                   -> /etc/blackbox_exporter/blackbox.yml
-#   provisioning/datasources/prometheus.yml -> /etc/grafana/provisioning/datasources/
-#   provisioning/dashboards/provider.yml    -> /etc/grafana/provisioning/dashboards/
-#   dashboards/*.json                       -> /var/lib/grafana/dashboards/
+#   prometheus/prometheus.yml                 -> /etc/prometheus/prometheus.yml
+#   blackbox/blackbox.yml                     -> /etc/blackbox_exporter/blackbox.yml
+#   process-exporter/process-exporter.yml     -> /etc/process-exporter/process-exporter.yml
+#   nginx/stub_status.conf                    -> /etc/nginx/conf.d/stub_status.conf
+#   provisioning/datasources/prometheus.yml   -> /etc/grafana/provisioning/datasources/
+#   provisioning/dashboards/provider.yml      -> /etc/grafana/provisioning/dashboards/
+#   dashboards/*.json                         -> /var/lib/grafana/dashboards/
 #
-# Stack: Prometheus + Node Exporter + Blackbox Exporter + Grafana, all bound to
-# 127.0.0.1. Grafana is reachable only through the Nginx /grafana/ proxy (set up
-# by infra/setup-vps.sh); the exporters are localhost-only (SSH-tunnel to view).
+# Stack (everything bound to 127.0.0.1):
+#   Prometheus 9090 | Grafana 3002 (via Nginx /grafana/ proxy)
+#   node_exporter 9100 | blackbox_exporter 9115 | nginx-exporter 9113
+#   process-exporter 9256 | cadvisor 8080 (Docker container, optional)
+#
+# Replicating on a NEW server - edit before running:
+#   - prometheus/prometheus.yml: blackbox targets + app scrape jobs for the
+#     sites that actually run there
+#   - process-exporter/process-exporter.yml: the per-app process groups
+#   - GRAFANA_ROOT_URL below
+#   Then: sudo bash infra/grafana/install.sh
+#   Finally point Nginx at /grafana/ (see infra/setup-vps.sh) and set the
+#   admin password: sudo -u grafana grafana cli admin reset-admin-password ...
 #
 # IDEMPOTENT: safe to re-run. Binaries are re-downloaded only when missing or a
 # pinned version changes; configs/dashboards are always re-synced; Grafana's
@@ -26,6 +38,11 @@ set -euo pipefail
 PROM_VERSION="2.53.0"
 NODE_EXP_VERSION="1.8.1"
 BLACKBOX_VERSION="0.25.0"
+PROC_EXP_VERSION="0.7.10"
+NGINX_EXP_VERSION="1.1.0"
+CADVISOR_TAG="v0.52.1"      # >= v0.52 required: older Docker clients (API 1.41)
+                            # are rejected by current Docker daemons (min 1.44)
+                            # and container name labels silently disappear.
 GRAFANA_ROOT_URL="https://vedicpanchanga.com/grafana/"
 GRAFANA_PORT="3002"
 ARCH="linux-amd64"
@@ -63,14 +80,15 @@ WantedBy=multi-user.target
 EOF
 }
 
-# install_exporter <project> <version> <user>: download+install a single-binary
-# prometheus exporter from GitHub into /usr/local/bin (project == binary name).
+# install_exporter <github-org> <project> <version> <user>: download+install a
+# single-binary exporter packaged as <project>-<version>.<arch>.tar.gz with the
+# binary at <dir>/<project> (the prometheus/ncabatoff release convention).
 install_exporter() {
-    local proj=$1 ver=$2 user=$3 tgz="$1-$2.${ARCH}"
+    local org=$1 proj=$2 ver=$3 user=$4 tgz="$2-$3.${ARCH}"
     useradd --no-create-home --shell /bin/false "$user" 2>/dev/null || true
     if need "/usr/local/bin/$proj" "$ver"; then
         cd /tmp
-        wget -q "https://github.com/prometheus/${proj}/releases/download/v${ver}/${tgz}.tar.gz"
+        wget -q "https://github.com/${org}/${proj}/releases/download/v${ver}/${tgz}.tar.gz"
         tar xzf "${tgz}.tar.gz"
         install -m 0755 "${tgz}/${proj}" "/usr/local/bin/${proj}"
         rm -rf "${tgz}" "${tgz}.tar.gz"
@@ -101,32 +119,90 @@ write_unit prometheus "Prometheus" prometheus \
 
 # ── Node Exporter ─────────────────────────────────────────────────────────────
 echo "2. Node Exporter ${NODE_EXP_VERSION}..."
-install_exporter node_exporter "$NODE_EXP_VERSION" node_exporter
+install_exporter prometheus node_exporter "$NODE_EXP_VERSION" node_exporter
 write_unit node_exporter "Node Exporter" node_exporter \
     "/usr/local/bin/node_exporter --web.listen-address=127.0.0.1:9100"
 
 # ── Blackbox Exporter ─────────────────────────────────────────────────────────
 echo "3. Blackbox Exporter ${BLACKBOX_VERSION}..."
-install_exporter blackbox_exporter "$BLACKBOX_VERSION" blackbox
+install_exporter prometheus blackbox_exporter "$BLACKBOX_VERSION" blackbox
 mkdir -p /etc/blackbox_exporter
 install -m 0644 "$SCRIPT_DIR/blackbox/blackbox.yml" /etc/blackbox_exporter/blackbox.yml
 chown -R blackbox:blackbox /etc/blackbox_exporter
 write_unit blackbox_exporter "Blackbox Exporter" blackbox \
     "/usr/local/bin/blackbox_exporter --config.file=/etc/blackbox_exporter/blackbox.yml --web.listen-address=127.0.0.1:9115"
 
+# ── Process Exporter (per-app CPU/memory/fds) ────────────────────────────────
+echo "4. Process Exporter ${PROC_EXP_VERSION}..."
+install_exporter ncabatoff process-exporter "$PROC_EXP_VERSION" process_exporter
+mkdir -p /etc/process-exporter
+install -m 0644 "$SCRIPT_DIR/process-exporter/process-exporter.yml" /etc/process-exporter/process-exporter.yml
+write_unit process-exporter "Process Exporter" process_exporter \
+    "/usr/local/bin/process-exporter --config.path=/etc/process-exporter/process-exporter.yml --web.listen-address=127.0.0.1:9256"
+
+# ── Nginx Exporter (stub_status) ──────────────────────────────────────────────
+echo "5. Nginx Prometheus Exporter ${NGINX_EXP_VERSION}..."
+useradd --no-create-home --shell /bin/false nginx_exporter 2>/dev/null || true
+if need /usr/local/bin/nginx-prometheus-exporter "$NGINX_EXP_VERSION"; then
+    cd /tmp
+    tgz="nginx-prometheus-exporter_${NGINX_EXP_VERSION}_linux_amd64"
+    wget -q "https://github.com/nginx/nginx-prometheus-exporter/releases/download/v${NGINX_EXP_VERSION}/${tgz}.tar.gz"
+    mkdir -p "$tgz" && tar xzf "${tgz}.tar.gz" -C "$tgz"
+    install -m 0755 "${tgz}/nginx-prometheus-exporter" /usr/local/bin/nginx-prometheus-exporter
+    rm -rf "${tgz}" "${tgz}.tar.gz"
+    echo "   installed /usr/local/bin/nginx-prometheus-exporter"
+else
+    echo "   already current"
+fi
+if [ -d /etc/nginx/conf.d ]; then
+    install -m 0644 "$SCRIPT_DIR/nginx/stub_status.conf" /etc/nginx/conf.d/stub_status.conf
+    nginx -t >/dev/null 2>&1 && systemctl reload nginx && echo "   stub_status on 127.0.0.1:8081"
+else
+    echo "   nginx not present - skipping stub_status.conf"
+fi
+write_unit nginx-exporter "Nginx Prometheus Exporter" nginx_exporter \
+    "/usr/local/bin/nginx-prometheus-exporter --nginx.scrape-uri=http://127.0.0.1:8081/nginx_status --web.listen-address=127.0.0.1:9113"
+
+# ── cAdvisor (Docker containers + systemd service cgroups) ────────────────────
+echo "6. cAdvisor ${CADVISOR_TAG}..."
+if command -v docker >/dev/null 2>&1; then
+    docker rm -f cadvisor >/dev/null 2>&1 || true
+    docker run -d --name cadvisor --restart unless-stopped \
+        -p 127.0.0.1:8080:8080 \
+        -v /:/rootfs:ro \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -v /sys:/sys:ro \
+        -v /var/lib/docker/:/var/lib/docker:ro \
+        -v /dev/disk/:/dev/disk:ro \
+        --device=/dev/kmsg \
+        "gcr.io/cadvisor/cadvisor:${CADVISOR_TAG}" -logtostderr >/dev/null
+    echo "   cadvisor running on 127.0.0.1:8080"
+else
+    echo "   docker not present - skipped (also remove the cadvisor job from prometheus.yml)"
+fi
+
 # ── Grafana ─────────────────────────────────────────────────────────────────
-echo "4. Grafana..."
-if ! command -v grafana-server >/dev/null 2>&1 && [ ! -x /usr/sbin/grafana-server ]; then
+echo "7. Grafana..."
+# Detect an existing install first: a manual /opt build ships its own
+# 'grafana' unit, the apt package ships 'grafana-server'. Never install a
+# second copy next to a running one. (No `grep -q` on systemctl output: under
+# pipefail the early-exit SIGPIPEs systemctl and the condition silently fails.)
+if [ -x /opt/grafana/bin/grafana ] || systemctl list-unit-files grafana.service 2>/dev/null | grep -E '^grafana\.service' >/dev/null; then
+    GRAFANA_UNIT="grafana"
+    echo "   already installed (manual /opt build, unit: grafana)"
+elif command -v grafana-server >/dev/null 2>&1 || [ -x /usr/sbin/grafana-server ]; then
+    GRAFANA_UNIT="grafana-server"
+    echo "   already installed (apt package)"
+else
     apt-get install -y apt-transport-https gnupg >/dev/null
     mkdir -p /etc/apt/keyrings
-    wget -qO- https://apt.grafana.com/gpg.key | gpg --dearmor -o /etc/apt/keyrings/grafana.gpg
+    wget -qO- https://apt.grafana.com/gpg.key | gpg --batch --yes --dearmor -o /etc/apt/keyrings/grafana.gpg
     echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" \
         > /etc/apt/sources.list.d/grafana.list
     apt-get update >/dev/null
     apt-get install -y grafana
+    GRAFANA_UNIT="grafana-server"
     echo "   installed grafana"
-else
-    echo "   already installed"
 fi
 
 # Provisioning + dashboards, always re-synced from this folder.
@@ -172,19 +248,26 @@ chown root:grafana /etc/grafana/grafana.ini 2>/dev/null || true
 
 # ── Start / restart ───────────────────────────────────────────────────────────
 echo
-echo "5. (Re)starting services..."
+echo "8. (Re)starting services..."
+SERVICES="prometheus node_exporter blackbox_exporter process-exporter nginx-exporter $GRAFANA_UNIT"
 systemctl daemon-reload
-systemctl enable prometheus node_exporter blackbox_exporter grafana-server >/dev/null 2>&1 || true
-systemctl restart prometheus node_exporter blackbox_exporter grafana-server
+# shellcheck disable=SC2086
+systemctl enable $SERVICES >/dev/null 2>&1 || true
+# shellcheck disable=SC2086
+systemctl restart $SERVICES
 sleep 4
 
 echo
-echo "  Done. Exporters bound to 127.0.0.1; Grafana via the Nginx /grafana/ proxy."
-for svc in prometheus node_exporter blackbox_exporter grafana-server; do
+echo "  Done. Everything bound to 127.0.0.1; Grafana via the Nginx /grafana/ proxy."
+for svc in $SERVICES; do
     printf '  %-20s %s\n' "$svc" "$(systemctl is-active "$svc")"
 done
+command -v docker >/dev/null 2>&1 && printf '  %-20s %s\n' "cadvisor (docker)" "$(docker inspect -f '{{.State.Status}}' cadvisor 2>/dev/null || echo absent)"
 echo
-echo "  Grafana:    ${GRAFANA_ROOT_URL%/}"
-echo "  Dashboard:  ${GRAFANA_ROOT_URL%/}/d/apps-mon/application-monitoring"
+echo "  Grafana:     ${GRAFANA_ROOT_URL%/}"
+echo "  Dashboards:  ${GRAFANA_ROOT_URL%/}/d/server-overview   (host and system)"
+echo "               ${GRAFANA_ROOT_URL%/}/d/web-traffic       (all sites, nginx, uptime)"
+echo "               ${GRAFANA_ROOT_URL%/}/d/apps-containers   (per app and container)"
+echo "               ${GRAFANA_ROOT_URL%/}/d/apps-mon          (vedicpanchanga app)"
 echo "  NOTE: run infra/setup-vps.sh so Nginx proxies /grafana/ and UFW keeps"
-echo "        3002/9090/9100/9115 off the public internet."
+echo "        the exporter ports off the public internet."
