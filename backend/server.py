@@ -1,5 +1,8 @@
 import logging
+import multiprocessing
 import os
+from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures.process import BrokenProcessPool
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal, Optional
@@ -407,6 +410,36 @@ class PrintPdfRequest(BaseModel):
     chart_style: Optional[Literal["north", "south"]] = None
 
 
+# PDF rendering runs in a single-worker process pool, NOT the request
+# threadpool: CPython's specializing interpreter only optimizes bytecode on
+# the main thread, and fpdf2's attribute-heavy render is exactly the code
+# that benefits - the same render measures ~0.5s on a main thread vs ~1.1s
+# on a FastAPI threadpool thread. The pool child renders on its own main
+# thread. "spawn" (not fork) keeps the child clean of the parent's event
+# loop; it imports pdf.report lazily on first use (~1s warmup, once).
+_pdf_pool: Optional[ProcessPoolExecutor] = None
+
+
+def _get_pdf_pool() -> ProcessPoolExecutor:
+    global _pdf_pool
+    if _pdf_pool is None:
+        _pdf_pool = ProcessPoolExecutor(
+            max_workers=1, mp_context=multiprocessing.get_context("spawn")
+        )
+    return _pdf_pool
+
+
+def _render_pdf_in_pool(**kwargs) -> bytes:
+    global _pdf_pool
+    try:
+        return _get_pdf_pool().submit(render_pdf, **kwargs).result(timeout=60)
+    except BrokenProcessPool:
+        # Pool child died (OOM kill, etc.) - replace it and retry once.
+        logging.warning("PDF process pool broken, restarting it")
+        _pdf_pool = None
+        return _get_pdf_pool().submit(render_pdf, **kwargs).result(timeout=60)
+
+
 @api_router.post("/print-pdf")
 def print_pdf(req: PrintPdfRequest):
     """Render the Traditional one-page PDF for the given birth details and
@@ -435,7 +468,7 @@ def print_pdf(req: PrintPdfRequest):
             longitude=req.longitude,
             timezone_name=req.timezone,
         )
-        pdf_bytes = render_pdf(
+        pdf_bytes = _render_pdf_in_pool(
             name=req.name or "",
             sex=req.sex or "Male",
             chart_data=chart_data,
@@ -482,6 +515,9 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
+# fontTools emits ~200 INFO lines per PDF font subset; at INFO level that
+# floods the journal and adds ~0.6s of log formatting per /api/print-pdf.
+logging.getLogger("fontTools").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 # Prometheus application metrics. Exposed at /metrics (not under /api, so Nginx
