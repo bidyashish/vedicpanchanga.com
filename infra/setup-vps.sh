@@ -96,7 +96,11 @@ User=$RUN_USER
 Group=$RUN_GROUP
 WorkingDirectory=$APP_DIR/backend
 Environment=PATH=$APP_DIR/backend/venv/bin:/usr/bin:/bin
-ExecStart=$APP_DIR/backend/venv/bin/uvicorn server:app --host 127.0.0.1 --port 8001
+# Two workers so one CPU-bound request (PDF render, muhurta scan) cannot
+# starve quick panchang/chart requests behind the GIL of a single process.
+# All endpoints are stateless and per-process caches are independent, so
+# scaling workers is safe; raise alongside vCPU count if the VPS grows.
+ExecStart=$APP_DIR/backend/venv/bin/uvicorn server:app --host 127.0.0.1 --port 8001 --workers 2
 Restart=always
 RestartSec=10
 
