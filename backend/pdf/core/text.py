@@ -42,43 +42,81 @@ REGULAR = ""  # fpdf2 style codes
 BOLD = "B"
 
 
-def register_fonts(pdf: FPDF) -> None:
-    """Add all script TTF/OTFs and turn on text shaping. Idempotent.
-
-    For CJK we ship Regular only and alias it under both REGULAR and BOLD
-    style keys — bold weight isn't critical for the few CJK headings we
-    draw, and skipping the bold .otf saves ~13 MB of binary on disk.
-    """
-    if "noto-registered" in getattr(pdf, "_panchanga_flags", set()):
-        return
+# Per-family TTF/OTF sources for lazy registration. Parsing a face with
+# fontTools inside add_font is the single most expensive part of a render
+# (~150ms each, >1s for all eight), so faces are only added the first time
+# a text run actually needs their script.
+# For CJK we ship Regular only and alias it under both REGULAR and BOLD
+# style keys - bold weight isn't critical for the few CJK headings we
+# draw, and skipping the bold .otf saves ~13 MB of binary on disk.
+FONT_FILES = {
     # Latin + IAST diacritics + Cyrillic (covers ru without an extra font)
-    pdf.add_font(LATIN_REGULAR, REGULAR, str(FONT_DIR / "NotoSans-Regular.ttf"))
-    pdf.add_font(LATIN_REGULAR, BOLD, str(FONT_DIR / "NotoSans-Bold.ttf"))
+    LATIN_REGULAR: {REGULAR: "NotoSans-Regular.ttf", BOLD: "NotoSans-Bold.ttf"},
     # Devanagari (Hindi, Nepali)
-    pdf.add_font(DEV_REGULAR, REGULAR, str(FONT_DIR / "NotoSansDevanagari-Regular.ttf"))
-    pdf.add_font(DEV_REGULAR, BOLD, str(FONT_DIR / "NotoSansDevanagari-Bold.ttf"))
-    # Tamil
-    pdf.add_font(TAMIL_REGULAR, REGULAR, str(FONT_DIR / "NotoSansTamil-Regular.ttf"))
-    pdf.add_font(TAMIL_REGULAR, BOLD, str(FONT_DIR / "NotoSansTamil-Bold.ttf"))
-    # Bengali
-    pdf.add_font(
-        BENGALI_REGULAR, REGULAR, str(FONT_DIR / "NotoSansBengali-Regular.ttf")
-    )
-    pdf.add_font(BENGALI_REGULAR, BOLD, str(FONT_DIR / "NotoSansBengali-Bold.ttf"))
-    # Arabic (covers ar + fa — Persian uses the Arabic script)
-    pdf.add_font(ARABIC_REGULAR, REGULAR, str(FONT_DIR / "NotoSansArabic-Regular.ttf"))
-    pdf.add_font(ARABIC_REGULAR, BOLD, str(FONT_DIR / "NotoSansArabic-Bold.ttf"))
-    # Hebrew
-    pdf.add_font(HEBREW_REGULAR, REGULAR, str(FONT_DIR / "NotoSansHebrew-Regular.ttf"))
-    pdf.add_font(HEBREW_REGULAR, BOLD, str(FONT_DIR / "NotoSansHebrew-Bold.ttf"))
-    # Simplified Chinese — alias Regular under both keys (no bold .otf shipped)
-    pdf.add_font(SC_REGULAR, REGULAR, str(FONT_DIR / "NotoSansSC-Regular.otf"))
-    pdf.add_font(SC_REGULAR, BOLD, str(FONT_DIR / "NotoSansSC-Regular.otf"))
-    # Japanese — same single-weight pattern
-    pdf.add_font(JP_REGULAR, REGULAR, str(FONT_DIR / "NotoSansJP-Regular.otf"))
-    pdf.add_font(JP_REGULAR, BOLD, str(FONT_DIR / "NotoSansJP-Regular.otf"))
-    pdf.set_text_shaping(use_shaping_engine=True)
-    pdf._panchanga_flags = getattr(pdf, "_panchanga_flags", set()) | {"noto-registered"}
+    DEV_REGULAR: {
+        REGULAR: "NotoSansDevanagari-Regular.ttf",
+        BOLD: "NotoSansDevanagari-Bold.ttf",
+    },
+    TAMIL_REGULAR: {
+        REGULAR: "NotoSansTamil-Regular.ttf",
+        BOLD: "NotoSansTamil-Bold.ttf",
+    },
+    BENGALI_REGULAR: {
+        REGULAR: "NotoSansBengali-Regular.ttf",
+        BOLD: "NotoSansBengali-Bold.ttf",
+    },
+    # Arabic (covers ar + fa - Persian uses the Arabic script)
+    ARABIC_REGULAR: {
+        REGULAR: "NotoSansArabic-Regular.ttf",
+        BOLD: "NotoSansArabic-Bold.ttf",
+    },
+    HEBREW_REGULAR: {
+        REGULAR: "NotoSansHebrew-Regular.ttf",
+        BOLD: "NotoSansHebrew-Bold.ttf",
+    },
+    SC_REGULAR: {REGULAR: "NotoSansSC-Regular.otf", BOLD: "NotoSansSC-Regular.otf"},
+    JP_REGULAR: {REGULAR: "NotoSansJP-Regular.otf", BOLD: "NotoSansJP-Regular.otf"},
+}
+
+# Scripts that render wrongly without HarfBuzz (conjunct formation, matra
+# reordering, cursive joining, bidi). Latin/Cyrillic/CJK are correct without
+# the shaping engine, and skipping it saves ~1s on a Latin-only report.
+_SHAPED_FAMILIES = {
+    DEV_REGULAR,
+    TAMIL_REGULAR,
+    BENGALI_REGULAR,
+    ARABIC_REGULAR,
+    HEBREW_REGULAR,
+}
+
+
+def ensure_family(pdf: FPDF, family: str) -> None:
+    """Register `family`'s faces on `pdf` if not already done (lazy add_font)."""
+    flags = getattr(pdf, "_panchanga_flags", set())
+    key = f"font:{family}"
+    if key in flags:
+        return
+    for style, fname in FONT_FILES[family].items():
+        pdf.add_font(family, style, str(FONT_DIR / fname))
+    pdf._panchanga_flags = flags | {key}
+
+
+def _set_run_font(pdf: FPDF, family: str, style: str, size: float) -> None:
+    """set_font plus lazy registration plus per-script shaping toggle."""
+    ensure_family(pdf, family)
+    pdf.set_text_shaping(use_shaping_engine=family in _SHAPED_FAMILIES)
+    pdf.set_font(family, style, size)
+
+
+def register_fonts(pdf: FPDF) -> None:
+    """Prepare `pdf` for script-aware text. Idempotent.
+
+    Only NotoSans (Latin + Cyrillic) is registered eagerly - it appears on
+    every page. The other seven families are parsed lazily by draw_text /
+    text_width the first time a run of their script shows up, so an
+    English-only report never pays for Devanagari/CJK font parsing.
+    """
+    ensure_family(pdf, LATIN_REGULAR)
 
 
 def is_devanagari(text: str) -> bool:
@@ -170,7 +208,7 @@ def text_width(pdf: FPDF, text: str, family: str, style: str, size: float) -> fl
     draw_text will actually render the string."""
     total = 0.0
     for fam, seg in _split_runs(text, "en"):
-        pdf.set_font(fam, style, size)
+        _set_run_font(pdf, fam, style, size)
         total += _run_width(pdf, seg, size)
     return total
 
@@ -231,7 +269,7 @@ def draw_text(
 
     widths = []
     for fam, seg in runs:
-        pdf.set_font(fam, style, size)
+        _set_run_font(pdf, fam, style, size)
         widths.append(_run_width(pdf, seg, size))
     total_width = sum(widths)
 
@@ -246,7 +284,7 @@ def draw_text(
     cursor = x
     try:
         for (fam, seg), seg_width in zip(runs, widths):
-            pdf.set_font(fam, style, size)
+            _set_run_font(pdf, fam, style, size)
             pdf.set_xy(cursor, y - 0.8 * size)
             # w=0 would mean "extend to the right margin" to cell(); None
             # makes it size the cell to the (shaped) text itself.
