@@ -13,7 +13,8 @@ multi-page PDF report. Stateless - there is no database.
 
 ```bash
 python3 -m venv venv
-source venv/bin/activate
+source venv/bin/activate         # bash/zsh
+# source venv/bin/activate.fish  # fish
 pip install -r requirements.txt
 uvicorn server:app --host 127.0.0.1 --port 8001 --reload
 ```
@@ -65,7 +66,7 @@ All endpoints are under `/api`. Field shapes live in
 | POST   | `/api/calculate`        | Full chart: planets, 16 vargas (D1–D60), Vimshottari (with Antardaśā nested), Aṣṭakavarga, Karakas, Karakamsa/Swamsa, Friendships, Kalsarpa |
 | GET    | `/api/get-panchang`     | Detailed Drik Pañcāṅga (sun/moon timings, all 5 limbs with `_sequence`, samvats, ritu/ayana, all muhūrta windows, udaya lagna, chandrabalam, tarabalam, calendars, Ganda Mūla + Ravi Yoga) |
 | GET    | `/api/ayanamsa-options` | List the 7 supported ayanāṁśa systems                                 |
-| GET    | `/api/muhurta-purposes` | 8 purpose categories (marriage, griha-pravesh, business, …)            |
+| GET    | `/api/muhurta-purposes` | 14 purpose categories (marriage, engagement, griha-pravesh, property purchase, business, ...) |
 | POST   | `/api/find-muhurta`     | Scan a date range, score 0–100 with explainable reasons               |
 | POST   | `/api/print-pdf`        | Render the full multi-page PDF report (en/hi)                         |
 

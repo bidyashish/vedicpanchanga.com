@@ -1,8 +1,21 @@
-"""Muhurta Finder — classical auspicious-timing search for a purpose over a date range.
+"""Muhurta Finder - classical auspicious-timing search for a purpose over a date range.
 
-Each purpose has preferred Tithis, Nakshatras, Weekdays, Yogas and specific caveats.
-We score each day (0–100) then rank. Optionally filter by the native's Chandrabalam
-(Moon sign compatibility) and Tarabalam (birth nakshatra compatibility).
+Each purpose has preferred Tithis, Nakshatras and Weekdays per the conventions
+of Muhurta Chintamani as published by mainstream panchangas (regional
+traditions vary; these tables encode the most widely published lists). On top
+of the per-purpose tables, universal rules apply to every purpose:
+
+- Rikta tithis (Chaturthi, Navami, Chaturdashi of BOTH pakshas) and Amavasya
+  are penalized via each purpose's `bad_tithis`.
+- Bhadra (Vishti karana) is avoided: the best tithi+nakshatra window is
+  trimmed around Vishti spans, and the day is penalized when no usable
+  Bhadra-free portion remains.
+- Optional Chandrabalam (Moon-sign compatibility) and Tarabalam (birth
+  nakshatra compatibility) for the native.
+
+We score each day 0-100 then rank. Deliberately out of scope at day-level
+granularity: lagna selection within the window, Guru/Shukra combustion
+blackout periods, Adhik Maas, and solar-month rules for specific samskaras.
 """
 
 from __future__ import annotations
@@ -10,162 +23,421 @@ from __future__ import annotations
 from datetime import date as date_cls
 from datetime import datetime as dt_cls
 from datetime import timedelta
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 from advanced_panchang import compute_detailed_panchang
 from constants import NAKSHATRAS
 from panchang_constants import GOOD_CHANDRA_OFFSETS, RASHI_NAMES
 
+# ---- Rule-table building blocks ----
+# Tithi ids 1-30 (1-15 Shukla, 15=Purnima, 16-30 Krishna, 30=Amavasya).
+# Nakshatra ids 1-27 (Ashwini..Revati). Weekdays are isoweekday 1=Mon..7=Sun.
+
+MON, TUE, WED, THU, FRI, SAT, SUN = 1, 2, 3, 4, 5, 6, 7
+
+_NAK_ID: Dict[str, int] = {name: i + 1 for i, name in enumerate(NAKSHATRAS)}
+
+
+def _naks(*names: str) -> Set[int]:
+    """1-based nakshatra ids for the given names. Raises on a typo, so the
+    rule tables below are checked against constants.NAKSHATRAS at import."""
+    return {_NAK_ID[n] for n in names}
+
+
+def _both_pakshas(*tithi_nums: int) -> Set[int]:
+    """Tithi ids for the given 1-14 numbers in both Shukla and Krishna paksha."""
+    return {n for t in tithi_nums for n in (t, t + 15)}
+
+
+PURNIMA, AMAVASYA = 15, 30
+# Rikta ("empty") tithis are barren for auspicious starts - in BOTH pakshas.
+RIKTA_TITHIS = _both_pakshas(4, 9, 14)
+
+# Scoring weights (baseline 50, clamped to 0-100).
+_W_GOOD_TITHI, _W_BAD_TITHI = 15, -25
+_W_GOOD_NAK, _W_BAD_NAK = 20, -25
+_W_GOOD_VARA, _W_BAD_VARA = 10, -20
+_W_BHADRA = -15
+# A trimmed Bhadra-free window shorter than this is treated as unusable.
+_MIN_WINDOW_MINUTES = 30
+
 # ---- Purpose rules ----
-# All indices: Tithi 1-30 (1-15 Shukla, 15=Purnima, 16-30 Krishna, 30=Amavasya)
-# Nakshatras 1-27 (Ashwini..Revati)
-# Weekdays (isoweekday): 1=Mon..7=Sun
 
 PURPOSES: Dict[str, Dict[str, Any]] = {
     "marriage": {
         "label": "Marriage (Vivaha)",
-        "good_tithis": {2, 3, 5, 7, 10, 11, 12, 13, 17, 18, 20, 22, 25, 26, 27, 28},
-        "good_nakshatras": {
-            4,
-            5,
-            10,
-            12,
-            13,
-            15,
-            17,
-            19,
-            21,
-            22,
-            26,
-            27,
-        },  # Ro,Mri,Ma,U.Ph,Ha,Sw,An,Mu,U.As,Shr,U.Bh,Re
-        "good_weekdays": {1, 3, 4, 5},  # Mon Wed Thu Fri
-        "avoid_weekdays": {2, 6, 7},  # Tue Sat Sun
-        "bad_tithis": {4, 9, 14, 19, 24, 29, 30},  # Rikta + Amavasya
+        "good_tithis": _both_pakshas(2, 3, 5, 7, 10, 11, 12, 13),
+        "good_nakshatras": _naks(
+            "Rohini",
+            "Mrigashira",
+            "Magha",
+            "Uttara Phalguni",
+            "Hasta",
+            "Swati",
+            "Anuradha",
+            "Mula",
+            "Uttara Ashadha",
+            "Shravana",
+            "Uttara Bhadrapada",
+            "Revati",
+        ),
+        "good_weekdays": {MON, WED, THU, FRI},
+        "avoid_weekdays": {TUE, SAT, SUN},
+        "bad_tithis": RIKTA_TITHIS | {AMAVASYA},
+    },
+    "engagement": {
+        "label": "Engagement (Sagai / Vagdana)",
+        # Same star set as Vivaha - betrothal shares the marriage tables.
+        "good_tithis": _both_pakshas(2, 3, 5, 7, 10, 11, 12, 13),
+        "good_nakshatras": _naks(
+            "Rohini",
+            "Mrigashira",
+            "Magha",
+            "Uttara Phalguni",
+            "Hasta",
+            "Swati",
+            "Anuradha",
+            "Mula",
+            "Uttara Ashadha",
+            "Shravana",
+            "Uttara Bhadrapada",
+            "Revati",
+        ),
+        "good_weekdays": {MON, WED, THU, FRI},
+        "avoid_weekdays": {TUE, SAT, SUN},
+        "bad_tithis": RIKTA_TITHIS | {AMAVASYA},
     },
     "griha_pravesh": {
         "label": "Griha Pravesha (Housewarming)",
-        "good_tithis": {2, 3, 5, 7, 10, 11, 12, 13, 17, 18, 20, 22, 25, 26, 27, 28},
-        "good_nakshatras": {
-            4,
-            5,
-            12,
-            14,
-            17,
-            21,
-            22,
-            25,
-            26,
-        },  # Ro,Mri,Ha,Ch,An,U.As,Shr,P.Bh,U.Bh
-        "good_weekdays": {1, 3, 4, 5},
-        "avoid_weekdays": {2, 7},
-        "bad_tithis": {4, 9, 14, 30, 15, 19, 24, 29},
+        "good_tithis": _both_pakshas(2, 3, 5, 7, 10, 11, 12, 13),
+        # Sthira (fixed) stars for permanence + the standard mridu/kshipra picks.
+        # Purva Bhadrapada is an Ugra star - NOT good for house entry.
+        "good_nakshatras": _naks(
+            "Rohini",
+            "Mrigashira",
+            "Pushya",
+            "Uttara Phalguni",
+            "Hasta",
+            "Chitra",
+            "Anuradha",
+            "Uttara Ashadha",
+            "Shravana",
+            "Shatabhisha",
+            "Uttara Bhadrapada",
+            "Revati",
+        ),
+        "good_weekdays": {MON, WED, THU, FRI},
+        "avoid_weekdays": {TUE, SUN},
+        "bad_tithis": RIKTA_TITHIS | {PURNIMA, AMAVASYA},
     },
-    "business": {
-        "label": "Business / Venture (Vyapara)",
-        "good_tithis": {1, 2, 3, 5, 7, 10, 11, 13, 16, 17, 18, 20, 22, 25, 26, 28},
-        "good_nakshatras": {
-            1,
-            4,
-            5,
-            8,
-            12,
-            13,
-            14,
-            17,
-            21,
-            22,
-            23,
-            27,
-        },  # Asw,Ro,Mri,Pu,Ha,Ch,Sw,An,Shr,Dha,Re
-        "good_weekdays": {3, 4},  # Wed Thu (best)
-        "avoid_weekdays": {7},  # Sunday
-        "bad_tithis": {4, 9, 14, 30},
+    "bhoomi_pujan": {
+        "label": "Bhoomi Pujan (Foundation / Griharambha)",
+        "good_tithis": _both_pakshas(2, 3, 5, 7, 10, 11, 13) | {PURNIMA},
+        "good_nakshatras": _naks(
+            "Rohini",
+            "Mrigashira",
+            "Pushya",
+            "Uttara Phalguni",
+            "Hasta",
+            "Chitra",
+            "Swati",
+            "Anuradha",
+            "Uttara Ashadha",
+            "Shravana",
+            "Dhanishta",
+            "Shatabhisha",
+            "Uttara Bhadrapada",
+            "Revati",
+        ),
+        "good_weekdays": {MON, WED, THU, FRI},
+        "avoid_weekdays": {TUE, SAT, SUN},
+        "bad_tithis": RIKTA_TITHIS | {AMAVASYA},
     },
-    "travel": {
-        "label": "Travel (Yatra)",
-        "good_tithis": {1, 2, 3, 5, 7, 10, 11, 13, 16, 17, 18, 20, 22, 25, 26, 28},
-        "good_nakshatras": {1, 8, 13, 17, 19, 21, 22, 23, 27},
-        "good_weekdays": {1, 3, 5},  # Mon Wed Fri
-        "avoid_weekdays": {2, 6, 7},
-        "bad_tithis": {4, 9, 14, 30, 15},
-    },
-    "education": {
-        "label": "Vidyarambha (Learning)",
-        "good_tithis": {2, 3, 5, 7, 10, 11, 12, 13, 17, 18, 20, 22, 25, 26, 27, 28},
-        "good_nakshatras": {
-            1,
-            7,
-            8,
-            13,
-            14,
-            15,
-            17,
-            22,
-            27,
-        },  # Asw,Pun,Pu,Ha,Ch,Sw,An,Shr,Re
-        "good_weekdays": {1, 3, 4, 5},
-        "avoid_weekdays": {2, 7},
-        "bad_tithis": {4, 9, 14, 30},
+    "property_purchase": {
+        "label": "Property Purchase (Land / House)",
+        "good_tithis": _both_pakshas(2, 3, 5, 7, 10, 11, 12, 13) | {PURNIMA},
+        # The four Sthira stars anchor permanence in property matters.
+        "good_nakshatras": _naks(
+            "Rohini",
+            "Uttara Phalguni",
+            "Uttara Ashadha",
+            "Uttara Bhadrapada",
+            "Mrigashira",
+            "Pushya",
+            "Hasta",
+            "Chitra",
+            "Swati",
+            "Anuradha",
+            "Shravana",
+            "Revati",
+        ),
+        "good_weekdays": {MON, WED, THU, FRI},
+        "avoid_weekdays": {TUE, SUN},
+        "bad_tithis": RIKTA_TITHIS | {AMAVASYA},
     },
     "vehicle": {
         "label": "Vehicle Purchase",
-        "good_tithis": {2, 3, 5, 7, 10, 11, 13, 17, 18, 20, 22, 25, 26, 28},
-        "good_nakshatras": {1, 7, 8, 13, 14, 15, 17, 22, 23, 27},
-        "good_weekdays": {1, 3, 4, 5},
-        "avoid_weekdays": {2, 7},
-        "bad_tithis": {4, 9, 14, 30, 15},
+        "good_tithis": _both_pakshas(2, 3, 5, 7, 10, 11, 13),
+        "good_nakshatras": _naks(
+            "Ashwini",
+            "Punarvasu",
+            "Pushya",
+            "Hasta",
+            "Chitra",
+            "Swati",
+            "Anuradha",
+            "Shravana",
+            "Dhanishta",
+            "Revati",
+        ),
+        "good_weekdays": {MON, WED, THU, FRI},
+        "avoid_weekdays": {TUE, SUN},
+        "bad_tithis": RIKTA_TITHIS | {PURNIMA, AMAVASYA},
+    },
+    "gold_purchase": {
+        "label": "Gold / Jewellery Purchase",
+        "good_tithis": _both_pakshas(2, 3, 5, 7, 10, 11, 13) | {PURNIMA},
+        "good_nakshatras": _naks(
+            "Ashwini",
+            "Rohini",
+            "Punarvasu",
+            "Pushya",
+            "Hasta",
+            "Swati",
+            "Vishakha",
+            "Anuradha",
+            "Shravana",
+            "Dhanishta",
+            "Shatabhisha",
+            "Revati",
+        ),
+        # Gold is the Sun's metal - Sunday is traditionally acceptable here.
+        "good_weekdays": {SUN, MON, WED, THU, FRI},
+        "avoid_weekdays": {TUE, SAT},
+        "bad_tithis": RIKTA_TITHIS | {AMAVASYA},
+    },
+    "business": {
+        "label": "Business / Venture (Vyapara)",
+        "good_tithis": _both_pakshas(1, 2, 3, 5, 7, 10, 11, 13),
+        "good_nakshatras": _naks(
+            "Ashwini",
+            "Rohini",
+            "Mrigashira",
+            "Pushya",
+            "Uttara Phalguni",
+            "Hasta",
+            "Chitra",
+            "Anuradha",
+            "Uttara Ashadha",
+            "Shravana",
+            "Dhanishta",
+            "Revati",
+        ),
+        "good_weekdays": {WED, THU},  # Mercury and Jupiter days are best
+        "avoid_weekdays": {SUN},
+        "bad_tithis": RIKTA_TITHIS | {AMAVASYA},
+    },
+    "travel": {
+        "label": "Travel (Yatra)",
+        "good_tithis": _both_pakshas(1, 2, 3, 5, 7, 10, 11, 13),
+        "good_nakshatras": _naks(
+            "Ashwini",
+            "Pushya",
+            "Hasta",
+            "Anuradha",
+            "Mula",
+            "Uttara Ashadha",
+            "Shravana",
+            "Dhanishta",
+            "Revati",
+        ),
+        "good_weekdays": {MON, WED, FRI},
+        "avoid_weekdays": {TUE, SAT, SUN},
+        "bad_tithis": RIKTA_TITHIS | {PURNIMA, AMAVASYA},
+    },
+    "education": {
+        "label": "Vidyarambha (Learning)",
+        "good_tithis": _both_pakshas(2, 3, 5, 7, 10, 11, 12, 13),
+        "good_nakshatras": _naks(
+            "Ashwini",
+            "Punarvasu",
+            "Pushya",
+            "Hasta",
+            "Chitra",
+            "Swati",
+            "Anuradha",
+            "Shravana",
+            "Revati",
+        ),
+        "good_weekdays": {MON, WED, THU, FRI},
+        "avoid_weekdays": {TUE, SUN},
+        "bad_tithis": RIKTA_TITHIS | {AMAVASYA},
     },
     "namakarana": {
         "label": "Name Ceremony (Namakarana)",
+        # Bright half preferred for naming - Shukla tithis only.
         "good_tithis": {1, 2, 3, 5, 7, 10, 11, 12, 13},
-        # Avoid: Bharani(2), Krittika(3), Ashlesha(9), Magha(10), Jyeshtha(18), Mula(19), P.Ash(20)
-        "bad_nakshatras": {2, 3, 9, 10, 18, 19, 20},
-        "good_weekdays": {1, 3, 4, 5},
-        "avoid_weekdays": {2, 7},
-        "bad_tithis": {4, 9, 14, 30},
+        "good_nakshatras": _naks(
+            "Ashwini",
+            "Rohini",
+            "Mrigashira",
+            "Punarvasu",
+            "Pushya",
+            "Uttara Phalguni",
+            "Hasta",
+            "Chitra",
+            "Swati",
+            "Anuradha",
+            "Uttara Ashadha",
+            "Shravana",
+            "Dhanishta",
+            "Shatabhisha",
+            "Uttara Bhadrapada",
+            "Revati",
+        ),
+        # Ugra/Tikshna stars and the Purvas are avoided for naming.
+        "bad_nakshatras": _naks(
+            "Bharani",
+            "Krittika",
+            "Ardra",
+            "Ashlesha",
+            "Magha",
+            "Purva Phalguni",
+            "Jyeshtha",
+            "Mula",
+            "Purva Ashadha",
+            "Purva Bhadrapada",
+        ),
+        "good_weekdays": {MON, WED, THU, FRI},
+        "avoid_weekdays": {TUE, SUN},
+        "bad_tithis": RIKTA_TITHIS | {AMAVASYA},
+    },
+    "mundan": {
+        "label": "Mundan (Chudakarana)",
+        "good_tithis": _both_pakshas(2, 3, 5, 7, 10, 11, 13),
+        "good_nakshatras": _naks(
+            "Ashwini",
+            "Mrigashira",
+            "Punarvasu",
+            "Pushya",
+            "Hasta",
+            "Chitra",
+            "Swati",
+            "Jyeshtha",
+            "Shravana",
+            "Dhanishta",
+            "Shatabhisha",
+            "Revati",
+        ),
+        "good_weekdays": {MON, WED, THU, FRI},
+        "avoid_weekdays": {TUE, SAT, SUN},
+        # Pratipada, Purnima and Amavasya are also avoided for mundan.
+        "bad_tithis": RIKTA_TITHIS | _both_pakshas(1) | {PURNIMA, AMAVASYA},
+    },
+    "annaprashana": {
+        "label": "Annaprashana (First Feeding)",
+        "good_tithis": _both_pakshas(2, 3, 5, 7, 10, 11, 13),
+        "good_nakshatras": _naks(
+            "Ashwini",
+            "Rohini",
+            "Mrigashira",
+            "Punarvasu",
+            "Pushya",
+            "Uttara Phalguni",
+            "Hasta",
+            "Chitra",
+            "Swati",
+            "Anuradha",
+            "Uttara Ashadha",
+            "Shravana",
+            "Dhanishta",
+            "Shatabhisha",
+            "Uttara Bhadrapada",
+            "Revati",
+        ),
+        "good_weekdays": {MON, WED, THU, FRI},
+        "avoid_weekdays": {TUE, SAT},
+        "bad_tithis": RIKTA_TITHIS | {AMAVASYA},
     },
     "medical": {
         "label": "Medical / Surgery",
-        "good_tithis": {2, 3, 5, 7, 11, 12, 13, 17, 18, 20, 22, 25, 26},
-        "good_nakshatras": {
-            1,
-            5,
-            8,
-            22,
-            27,
-        },  # Ashwini, Mrigashira, Pushya, Shravana, Revati
-        "good_weekdays": {1, 3, 4, 5},
-        "avoid_weekdays": {7},
-        "bad_tithis": {4, 9, 14, 30, 15},
+        "good_tithis": _both_pakshas(2, 3, 5, 7, 10, 11, 12, 13),
+        "good_nakshatras": _naks(
+            "Ashwini",
+            "Mrigashira",
+            "Pushya",
+            "Shravana",
+            "Revati",
+        ),
+        "good_weekdays": {MON, WED, THU, FRI},
+        "avoid_weekdays": {SUN},
+        "bad_tithis": RIKTA_TITHIS | {PURNIMA, AMAVASYA},
     },
 }
 
 
 def _taraba_score(current_nak_idx: int, birth_nak_idx: Optional[int]) -> int:
-    """Return 0-20 score. birth_nak_idx is 0-26 of native."""
+    """Return 0-20 score. Indices are 0-26. Counting from the birth star,
+    taras cycle in 9: Janma(1), Sampat(2), Vipat(3), Kshema(4), Pratyari(5),
+    Sadhaka(6), Vadha(7), Mitra(8), Param Mitra(9)."""
     if birth_nak_idx is None:
         return 10  # neutral
     offset = (current_nak_idx - birth_nak_idx) % 27
     star_sub = (offset % 9) + 1  # 1-9
-    # Good stars: Janma(1), Sampat(2), Kshema(4), Sadhaka(6), Mitra(8), Param Mitra(9)
-    if star_sub in {2, 4, 6, 8, 9}:
+    if star_sub in {2, 4, 6, 8, 9}:  # Sampat, Kshema, Sadhaka, Mitra, Param Mitra
         return 20
-    if star_sub == 1:
+    if star_sub == 1:  # Janma - mixed; acceptable for most purposes
         return 12
-    return 0
+    return 0  # Vipat, Pratyari, Vadha
 
 
 def _chandrabalam_score(current_sign_id: int, birth_sign_id: Optional[int]) -> int:
-    """0-20 score."""
+    """0-20 score. Transit Moon in houses 1,3,6,7,10,11 from the natal rashi
+    is strong; 2,5,9 neutral; 4,8,12 weak."""
     if birth_sign_id is None:
         return 10
     offset = (current_sign_id - birth_sign_id) % 12
     if offset in GOOD_CHANDRA_OFFSETS:
         return 20
-    if offset in {1, 4, 8}:  # 2nd/5th/9th — neutral
+    if offset in {1, 4, 8}:  # houses 2/5/9 - neutral
         return 10
     return 0
+
+
+def _bhadra_spans(panch: Dict[str, Any]) -> List[Tuple[dt_cls, dt_cls]]:
+    """Vishti (Bhadra) karana intervals during the panchang day."""
+    spans = []
+    for k in panch["panchang"].get("karana_sequence", []):
+        if k.get("is_bhadra") and k.get("starts_at") and k.get("ends_at"):
+            spans.append(
+                (
+                    dt_cls.fromisoformat(k["starts_at"]),
+                    dt_cls.fromisoformat(k["ends_at"]),
+                )
+            )
+    return spans
+
+
+def _subtract_spans(
+    start: dt_cls, end: dt_cls, spans: List[Tuple[dt_cls, dt_cls]]
+) -> Optional[Tuple[dt_cls, dt_cls]]:
+    """Longest sub-interval of [start, end] not covered by any span,
+    or None when the spans cover the whole interval."""
+    pieces = [(start, end)]
+    for s0, s1 in spans:
+        nxt = []
+        for p0, p1 in pieces:
+            if s1 <= p0 or s0 >= p1:
+                nxt.append((p0, p1))
+                continue
+            if p0 < s0:
+                nxt.append((p0, s0))
+            if s1 < p1:
+                nxt.append((s1, p1))
+        pieces = nxt
+        if not pieces:
+            return None
+    return max(pieces, key=lambda p: p[1] - p[0])
 
 
 def _best_window(
@@ -202,15 +474,15 @@ def _best_window(
                 continue
 
             combo = 0
-            if nak["index"] in good_naks:
-                combo += 20
-            elif nak["index"] in bad_naks:
-                combo -= 25
+            if nak["index"] in bad_naks:
+                combo += _W_BAD_NAK
+            elif nak["index"] in good_naks:
+                combo += _W_GOOD_NAK
 
-            if tithi["index"] in good_tithis:
-                combo += 15
-            elif tithi["index"] in bad_tithis:
-                combo -= 25
+            if tithi["index"] in bad_tithis:
+                combo += _W_BAD_TITHI
+            elif tithi["index"] in good_tithis:
+                combo += _W_GOOD_TITHI
 
             if combo > best_combo:
                 best_combo = combo
@@ -245,27 +517,46 @@ def score_day(
 
     # Tithi
     if tithi_idx in purpose_cfg.get("bad_tithis", set()):
-        score -= 25
+        score += _W_BAD_TITHI
         reasons_bad.append(f"Tithi {tithi_name} is inauspicious")
     elif tithi_idx in purpose_cfg.get("good_tithis", set()):
-        score += 15
+        score += _W_GOOD_TITHI
         reasons.append(f"Tithi {tithi_name} favourable")
 
     # Nakshatra
     if nak_idx_1 in purpose_cfg.get("bad_nakshatras", set()):
-        score -= 25
+        score += _W_BAD_NAK
         reasons_bad.append(f"Nakshatra {nak_name} inauspicious for this purpose")
     elif nak_idx_1 in purpose_cfg.get("good_nakshatras", set()):
-        score += 20
+        score += _W_GOOD_NAK
         reasons.append(f"Nakshatra {nak_name} favourable")
 
     # Weekday
     if vara_iso in purpose_cfg.get("avoid_weekdays", set()):
-        score -= 20
+        score += _W_BAD_VARA
         reasons_bad.append(f"{vara_name} (weekday) to be avoided")
     elif vara_iso in purpose_cfg.get("good_weekdays", set()):
-        score += 10
+        score += _W_GOOD_VARA
         reasons.append(f"{vara_name} (weekday) favourable")
+
+    # Bhadra (Vishti karana): trim the window around Vishti spans when
+    # possible; penalize the day when no usable portion remains.
+    if win_start and win_end:
+        bhadra = _bhadra_spans(panch)
+        if bhadra:
+            ws = dt_cls.fromisoformat(win_start)
+            we = dt_cls.fromisoformat(win_end)
+            piece = _subtract_spans(ws, we, bhadra)
+            if piece is None or (piece[1] - piece[0]) < timedelta(
+                minutes=_MIN_WINDOW_MINUTES
+            ):
+                score += _W_BHADRA
+                reasons_bad.append(
+                    "Bhadra (Vishti karana) prevails over the muhurta window"
+                )
+            elif (piece[0], piece[1]) != (ws, we):
+                win_start, win_end = piece[0].isoformat(), piece[1].isoformat()
+                reasons.append("Window trimmed to avoid Bhadra (Vishti karana)")
 
     # Chandrabalam
     cbal = _chandrabalam_score(moon_sign_id, birth_sign_id)

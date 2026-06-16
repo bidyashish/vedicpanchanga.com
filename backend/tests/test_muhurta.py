@@ -160,3 +160,118 @@ def test_score_capped_0_100():
         if "error" in d:
             continue
         assert 0 <= d["score"] <= 100
+
+
+def test_new_purposes_listed():
+    """The six purposes added for shaadi/house/ceremony coverage must be exposed."""
+    ids = {x["id"] for x in list_purposes()}
+    assert {
+        "engagement",
+        "property_purchase",
+        "bhoomi_pujan",
+        "mundan",
+        "annaprashana",
+        "gold_purchase",
+    }.issubset(ids)
+    assert len(ids) == 14
+
+
+def test_rule_tables_consistent():
+    """Good/bad sets must be disjoint, ids in range, and Rikta tithis of BOTH
+    pakshas penalized for every purpose (classical universal rule)."""
+    from muhurta import PURPOSES, RIKTA_TITHIS
+
+    assert RIKTA_TITHIS == {4, 9, 14, 19, 24, 29}
+    for pid, cfg in PURPOSES.items():
+        good_t = cfg.get("good_tithis", set())
+        bad_t = cfg.get("bad_tithis", set())
+        good_n = cfg.get("good_nakshatras", set())
+        bad_n = cfg.get("bad_nakshatras", set())
+        assert not (good_t & bad_t), f"{pid}: tithi overlap"
+        assert not (good_n & bad_n), f"{pid}: nakshatra overlap"
+        assert not (
+            cfg.get("good_weekdays", set()) & cfg.get("avoid_weekdays", set())
+        ), f"{pid}: weekday overlap"
+        assert all(1 <= t <= 30 for t in good_t | bad_t), f"{pid}: tithi id range"
+        assert all(1 <= n <= 27 for n in good_n | bad_n), f"{pid}: nakshatra id range"
+        assert RIKTA_TITHIS <= bad_t, f"{pid}: missing rikta tithis in bad_tithis"
+
+
+def test_griha_pravesh_excludes_ugra_purva_bhadrapada():
+    """Purva Bhadrapada (25) is an Ugra star - never good for house entry."""
+    from muhurta import PURPOSES
+
+    assert 25 not in PURPOSES["griha_pravesh"]["good_nakshatras"]
+
+
+def test_subtract_spans():
+    """Bhadra interval subtraction: trim, split (keep longest), full cover."""
+    from datetime import datetime
+
+    from muhurta import _subtract_spans
+
+    t = lambda h, m=0: datetime(2026, 6, 1, h, m)  # noqa: E731
+
+    # No overlap: window unchanged
+    assert _subtract_spans(t(6), t(12), [(t(13), t(15))]) == (t(6), t(12))
+    # Vishti covers the head: trimmed to the tail
+    assert _subtract_spans(t(6), t(12), [(t(5), t(8))]) == (t(8), t(12))
+    # Vishti in the middle: longest remaining piece wins
+    assert _subtract_spans(t(6), t(12), [(t(7), t(11))]) == (t(11), t(12)) or (
+        _subtract_spans(t(6), t(12), [(t(7), t(11))]) == (t(6), t(7))
+    )
+    piece = _subtract_spans(t(6), t(12), [(t(7), t(8))])
+    assert piece == (t(8), t(12))  # 4h tail beats 1h head
+    # Fully covered: None
+    assert _subtract_spans(t(6), t(12), [(t(5), t(13))]) is None
+
+
+def test_property_purchase_scan():
+    """New purpose end-to-end: scored days with the standard fields."""
+    r = find_muhurtas(
+        "property_purchase",
+        "2026-04-20",
+        "2026-04-26",
+        latitude=28.6139,
+        longitude=77.2090,
+        timezone_name="Asia/Kolkata",
+        min_score=0,
+        limit=30,
+    )
+    assert r["purpose_label"] == "Property Purchase (Land / House)"
+    assert len(r["all_days"]) == 7
+    for d in r["all_days"]:
+        if "error" in d:
+            continue
+        assert 0 <= d["score"] <= 100
+        assert "tithi" in d and "nakshatra" in d and "vara" in d
+
+
+def test_muhurta_window_avoids_bhadra():
+    """Returned windows must not overlap Vishti spans unless flagged."""
+    from datetime import datetime
+
+    from advanced_panchang import compute_detailed_panchang
+    from muhurta import _bhadra_spans
+
+    r = find_muhurtas(
+        "marriage",
+        "2026-06-01",
+        "2026-06-10",
+        latitude=28.6139,
+        longitude=77.2090,
+        timezone_name="Asia/Kolkata",
+        min_score=0,
+        limit=100,
+    )
+    for d in r["all_days"]:
+        if "error" in d or "muhurta_window" not in d:
+            continue
+        if any("Bhadra" in c for c in d.get("cautions", [])):
+            continue  # explicitly flagged as Bhadra-afflicted
+        panch = compute_detailed_panchang(d["date"], 28.6139, 77.2090, "Asia/Kolkata")
+        ws = datetime.fromisoformat(d["muhurta_window"]["start"])
+        we = datetime.fromisoformat(d["muhurta_window"]["end"])
+        for s0, s1 in _bhadra_spans(panch):
+            overlap = (min(we, s1) - max(ws, s0)).total_seconds()
+            assert overlap <= 0, f"{d['date']}: window overlaps Vishti"
