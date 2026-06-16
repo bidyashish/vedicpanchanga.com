@@ -28,6 +28,17 @@ const PrivacyPage = lazy(() =>
   import("@/pages/PrivacyPage").then((m) => ({ default: m.PrivacyPage })),
 );
 const TermsPage = lazy(() => import("@/pages/TermsPage").then((m) => ({ default: m.TermsPage })));
+const WhatIsKundali = lazy(() =>
+  import("@/pages/articles/WhatIsKundali").then((m) => ({ default: m.WhatIsKundali })),
+);
+const NinePlanets = lazy(() =>
+  import("@/pages/articles/NinePlanets").then((m) => ({ default: m.NinePlanets })),
+);
+const UnderstandingPanchang = lazy(() =>
+  import("@/pages/articles/UnderstandingPanchang").then((m) => ({
+    default: m.UnderstandingPanchang,
+  })),
+);
 
 export type View =
   | "kundali"
@@ -36,9 +47,21 @@ export type View =
   | "transits"
   | "frequency"
   | "privacy"
-  | "terms";
+  | "terms"
+  | "learn-kundali"
+  | "learn-planets"
+  | "learn-panchang";
 
-const MONETIZED_VIEWS = new Set<View>(["panchang", "kundali", "muhurta", "transits", "frequency"]);
+const MONETIZED_VIEWS = new Set<View>([
+  "panchang",
+  "kundali",
+  "muhurta",
+  "transits",
+  "frequency",
+  "learn-kundali",
+  "learn-planets",
+  "learn-panchang",
+]);
 
 const SITE = "https://vedicpanchanga.com";
 
@@ -50,6 +73,9 @@ const VIEW_PATH: Record<View, string> = {
   frequency: "/frequency",
   privacy: "/privacy",
   terms: "/terms",
+  "learn-kundali": "/learn/kundali",
+  "learn-planets": "/learn/planets",
+  "learn-panchang": "/learn/panchang",
 };
 
 const SEO_BY_VIEW: Record<
@@ -107,6 +133,30 @@ const SEO_BY_VIEW: Record<
     description: "Terms governing the use of vedicpanchanga.com.",
     canonical: `${SITE}/terms`,
   },
+  "learn-kundali": {
+    title: "What Is a Kundali? Beginner's Guide to the Vedic Birth Chart · Vedic Panchanga",
+    description:
+      "A clear beginner's guide to the kundali (Vedic birth chart): what it is, how the ascendant, houses, signs and planets fit together, and how to read a janam kundali step by step.",
+    canonical: `${SITE}/learn/kundali`,
+    keywords:
+      "what is a kundali, janam kundali, vedic birth chart, lagna, ascendant, rashi, houses in astrology, how to read kundali",
+  },
+  "learn-planets": {
+    title: "The 9 Planets (Navagraha) in Vedic Astrology · Vedic Panchanga",
+    description:
+      "A complete beginner's guide to the nine planets (navagraha) in Vedic astrology: what the Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu and Ketu signify in a kundali.",
+    canonical: `${SITE}/learn/planets`,
+    keywords:
+      "navagraha, nine planets vedic astrology, grahas, planet significations, karaka, benefic malefic planets",
+  },
+  "learn-panchang": {
+    title: "Understanding Panchang: Tithi, Nakshatra, Yoga, Karana, Vara · Vedic Panchanga",
+    description:
+      "A beginner's guide to the panchang (Hindu almanac): what tithi, nakshatra, yoga, karana and vara mean, how they are calculated, and how to read the daily panchang.",
+    canonical: `${SITE}/learn/panchang`,
+    keywords:
+      "what is panchang, panchanga, tithi, nakshatra, yoga, karana, vara, hindu calendar, drik panchang",
+  },
 };
 
 const DEFAULT_LOCATION: LocationChoice = {
@@ -131,6 +181,12 @@ function viewFromPath(): View {
       return "privacy";
     case "/terms":
       return "terms";
+    case "/learn/kundali":
+      return "learn-kundali";
+    case "/learn/planets":
+      return "learn-planets";
+    case "/learn/panchang":
+      return "learn-panchang";
     case "/panchang":
       return "panchang";
     case "/":
@@ -251,6 +307,9 @@ export default function App() {
           {view === "frequency" && <FrequencyPage />}
           {view === "privacy" && <PrivacyPage />}
           {view === "terms" && <TermsPage />}
+          {view === "learn-kundali" && <WhatIsKundali />}
+          {view === "learn-planets" && <NinePlanets />}
+          {view === "learn-panchang" && <UnderstandingPanchang />}
         </Suspense>
       </main>
 

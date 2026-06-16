@@ -13,6 +13,7 @@ import { PlanetsTable } from "@/components/kundali/PlanetsTable";
 import { PlanetDetailModal } from "@/components/kundali/PlanetDetailModal";
 import { DashaTable } from "@/components/kundali/DashaTable";
 import { AshtakavargaTable } from "@/components/kundali/AshtakavargaTable";
+import { PlanetGuide } from "@/components/kundali/PlanetGuide";
 import { DrishtiPanel } from "@/components/kundali/DrishtiPanel";
 import { JaiminiSection } from "@/components/kundali/JaiminiSection";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
@@ -446,6 +447,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
                 swamsa={data.swamsa}
               />
               <AshtakavargaTable ashtakavarga={data.ashtakavarga} />
+              <PlanetGuide />
               <PlanetDetailModal
                 planet={detailPlanet}
                 data={data}

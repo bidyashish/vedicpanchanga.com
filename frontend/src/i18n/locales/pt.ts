@@ -438,6 +438,173 @@ const pt: Record<string, string> = {
   freq_black_hole: "Buraco negro (Perseus)",
   freq_cosmic_dna: "Reparo cosmico de DNA",
   freq_cosmic_unity: "Unidade cosmica",
+
+  // === Learn content & planet guide ===========================================
+  learn_menu: "Aprender",
+  learn_kundali_title: "O que é um Kundali?",
+  learn_planets_title: "Os 9 planetas",
+  learn_panchang_title: "Entender o Panchang",
+
+  link_kundali_calc: "calculadora de Kundali",
+  link_free_kundali_calc: "calculadora de Kundali gratuita",
+  link_kundali_page: "página do Kundali",
+  link_panchang_page: "página do panchang",
+  link_muhurta_finder: "localizador de Muhurta",
+  link_nine_planets: "os nove planetas",
+  link_nine_planets_guide: "o guia dos nove planetas",
+  link_what_kundali: "o que é um kundali",
+  link_kundali_beginner: "guia do kundali para iniciantes",
+
+  pg_title: "Como ler o seu Kundali: os 9 planetas",
+  pg_intro:
+    "Um mapa natal védico mostra onde cada um dos nove grahas (planetas) estava no céu no momento do seu nascimento. Cada planeta é um karaka, um significador natural de certos temas da vida. Leia o mapa planeta a planeta com os passos abaixo e depois veja onde cada um está na tabela acima.",
+  pg_step: "Passo",
+  pg_footnote:
+    "Este guia é um ponto de partida para iniciantes. Uma leitura completa também pondera em conjunto o signo, a casa, os aspectos (drishti), a dignidade e o período de dasha de cada planeta, não isoladamente. Para aprofundar, leia nossos guias sobre {0} e {1}.",
+  pg_su_sig: "Alma, vitalidade, o pai e o seu senso de identidade",
+  pg_su_body:
+    "O Sol é o karaka (significador) do atma, sua identidade central e força de vontade. Seu signo e casa mostram onde você busca reconhecimento e como sua individualidade se expressa. Um Sol bem posicionado traz confiança, liderança e saúde estável; um Sol fraco ou afligido pode indicar uma luta com a autoridade ou a autoestima.",
+  pg_mo_sig: "Mente, emoções, a mãe e o conforto cotidiano",
+  pg_mo_body:
+    "A Lua rege o manas, sua natureza emocional e a forma como você processa os sentimentos. Na astrologia védica o signo lunar (Chandra Rashi) costuma ser considerado mais importante que o signo solar para ler o temperamento, e ancora a linha do tempo do Vimshottari Dasha. Uma Lua forte traz equilíbrio emocional, popularidade e instinto protetor.",
+  pg_ma_sig: "Energia, coragem, impulso e irmãos",
+  pg_ma_body:
+    "Marte é o guerreiro do mapa, o karaka da energia física, da ambição e da coragem para agir. Rege a competição, a disciplina e como você se afirma sob pressão. Bem posicionado dá resistência e iniciativa; afligido pode surgir como impaciência, conflito ou propensão a acidentes.",
+  pg_me_sig: "Intelecto, fala, aprendizado e comércio",
+  pg_me_body:
+    "Mercúrio é o significador do buddhi, a mente analítica, a comunicação e o raciocínio lógico. Rege como você aprende, escreve, fala e lida com cálculo, comércio e tecnologia. Um Mercúrio forte aguça a perspicácia e a adaptabilidade; um fraco pode dispersar o foco ou confundir a comunicação.",
+  pg_ju_sig: "Sabedoria, crescimento, fortuna e o mestre",
+  pg_ju_body:
+    "Júpiter, o grande benéfico, é o karaka da sabedoria, do conhecimento superior, da ética e da expansão. Mostra onde você encontra orientação, otimismo e boa sorte, e influencia fortemente os filhos, a prosperidade e o crescimento espiritual. Onde quer que Júpiter esteja, tende a proteger e ampliar os assuntos daquela casa.",
+  pg_ve_sig: "Amor, beleza, conforto e relacionamentos",
+  pg_ve_body:
+    "Vênus é o karaka do amor, da harmonia, do gosto artístico e dos confortos materiais. Rege o casamento, a parceria, os prazeres sensuais e a apreciação da beleza em todas as formas. Uma Vênus bem posicionada traz charme, refinamento e relacionamentos felizes; uma afligida pode complicar os assuntos do coração ou a indulgência.",
+  pg_sa_sig: "Disciplina, karma, paciência e longevidade",
+  pg_sa_body:
+    "Saturno é o mestre rigoroso do zodíaco, o karaka da disciplina, do trabalho árduo, do atraso e da recompensa de longo prazo. Rege a responsabilidade, a estrutura, a perseverança e as lições que chegam com o tempo e a limitação. Saturno raramente dá rápido, mas o que concede após o esforço tende a durar; seus trânsitos (como Sade Sati) são grandes períodos de amadurecimento.",
+  pg_ra_sig: "Desejo, ambição, obsessão e ganho mundano",
+  pg_ra_body:
+    "Rahu é um ponto sombrio (não um planeta físico) que marca o nodo norte da Lua. Amplifica a casa que ocupa, impulsionando desejo intenso, ambição e uma fome de experiência mundana e do não convencional. Rahu pode trazer ascensão repentina e fascínio pelo novo, mas seu apetite é difícil de saciar e precisa de direção consciente.",
+  pg_ke_sig: "Desapego, espiritualidade, karma passado e libertação",
+  pg_ke_body:
+    "Ketu é o nodo sul da Lua, o contraponto de Rahu. Significa desapego, intuição, percepção espiritual e o resíduo do domínio de vidas passadas, muitas vezes retirando a atenção da casa que ocupa. Ketu pode parecer perda ou desinteresse pelos assuntos mundanos daquela área, enquanto aprofunda em silêncio a sabedoria e a atração pelo moksha (libertação).",
+
+  art_kundali_title: "O que é um Kundali? Guia para iniciantes do mapa natal védico",
+  art_kundali_intro:
+    "Um kundali é um instantâneo do céu no momento e local exatos do seu nascimento. Este guia explica o que ele mostra, como é construído e como começar a lê-lo.",
+  art_kundali_h1: "A resposta curta",
+  art_kundali_p1:
+    "Um kundali (também chamado de janam kundali, janam patrika ou mapa natal) é um diagrama de onde os planetas estavam posicionados no céu na data, hora e local exatos do seu nascimento. Na astrologia védica (Jyotisha) é a base de toda leitura. Como o céu está sempre em movimento, o mapa é único para um único instante, por isso uma hora e um local de nascimento precisos importam tanto.",
+  art_kundali_p2:
+    "Você pode gerar um gratuitamente com a nossa {0}, que usa o Swiss Ephemeris e o zodíaco sideral (Lahiri) para posições planetárias precisas.",
+  art_kundali_h2: "Os componentes de um mapa",
+  art_kundali_p3:
+    "Todo kundali é montado a partir de quatro camadas que interagem. Entendê-las em ordem torna o mapa muito menos intimidante.",
+  art_kundali_li1:
+    "Os doze signos (rashis). O zodíaco é dividido em doze signos de 30 graus, de Áries (Mesha) a Peixes (Meena). Cada signo tem um planeta regente, um elemento e uma qualidade que matizam como um planeta se comporta enquanto está nele.",
+  art_kundali_li2:
+    "O ascendente (lagna). É o signo que sobe no horizonte oriental no seu momento de nascimento. Ancora todo o mapa e define a primeira casa. O lagna é a parte mais sensível ao tempo de um kundali, por isso mesmo alguns minutos de erro na hora de nascimento podem deslocar uma leitura.",
+  art_kundali_li3:
+    "As doze casas (bhavas). A partir do ascendente, o mapa é dividido em doze casas. Cada casa rege uma área da vida: a primeira o eu e o corpo, a sétima a parceria, a décima a carreira e o prestígio público, e assim por diante. Onde um planeta cai indica qual área da vida ele mais influencia.",
+  art_kundali_li4:
+    "Os nove planetas (grahas). O Sol, a Lua, Marte, Mercúrio, Júpiter, Vênus e Saturno, mais os dois nodos lunares Rahu e Ketu, são colocados nos signos e nas casas. Cada planeta é um karaka, um significador natural de temas específicos.",
+  art_kundali_h3: "Estilo do norte da Índia vs. do sul",
+  art_kundali_p4:
+    "Você verá kundalis desenhados em formatos diferentes conforme a tradição regional. Todos contêm a mesma informação, apenas organizada de outra maneira.",
+  art_kundali_li5:
+    "O mapa do norte da Índia tem um layout de losango dentro de um quadrado. As casas ficam fixas e os signos giram, de modo que a primeira casa é sempre o losango central superior.",
+  art_kundali_li6:
+    "O mapa do sul da Índia é uma grade fixa de doze quadros onde os signos ficam no lugar e o ascendente é marcado. As casas são contadas a partir de onde o lagna cai.",
+  art_kundali_p5:
+    "Nossa calculadora pode gerar ambos, então você pode usar o estilo com o qual aprendeu. A interpretação não muda.",
+  art_kundali_h4: "Como começar a ler um kundali",
+  art_kundali_p6:
+    "Uma ordem simples e repetível ajuda os iniciantes a não se sentirem sobrecarregados:",
+  art_kundali_ol1:
+    "Encontre o ascendente. Anote o signo ascendente e seu planeta regente. É a lente pela qual o restante do mapa é lido.",
+  art_kundali_ol2:
+    "Localize a Lua. Na astrologia védica o signo lunar (Chandra Rashi) descreve sua natureza emocional e é usado para iniciar o Vimshottari Dasha, a linha do tempo dos períodos da vida.",
+  art_kundali_ol3:
+    "Vá planeta a planeta. Para cada graha, faça três perguntas: em que signo está, que casa ocupa e se está forte ou fraco ali. Nosso guia de planetas no rodapé da página do mapa explica o que cada um significa.",
+  art_kundali_ol4:
+    "Observe as relações. Os planetas se aspectam (drishti) entre si e formam combinações (yogas). É nessas interações que o mapa deixa de ser uma lista e vira uma história.",
+  art_kundali_p7:
+    "Pronto para experimentar? Gere seu próprio mapa com a {0} e depois leia {1} para interpretar o que vê.",
+  art_kundali_h5: "Perguntas frequentes",
+  art_kundali_faq1_q: "Preciso da minha hora exata de nascimento?",
+  art_kundali_faq1_a:
+    "Para o ascendente e as casas, sim, quanto mais exata melhor. Se você só sabe a data, os signos planetários ainda são significativos, mas as casas e o lagna podem ficar incertos.",
+  art_kundali_faq2_q: "Por que meu mapa védico difere do ocidental?",
+  art_kundali_faq2_a:
+    "A astrologia védica usa o zodíaco sideral, ligado às posições reais das constelações, enquanto a maior parte da astrologia ocidental usa o zodíaco tropical. A diferença (o ayanamsa) gira hoje em torno de 24 graus, então seu signo solar pode mudar um signo.",
+  art_kundali_faq3_q: "Um kundali é uma previsão fixa da minha vida?",
+  art_kundali_faq3_a:
+    "É melhor entendê-lo como um mapa de tendências e tempos, não como um roteiro. Ele destaca forças, desafios e períodos favoráveis, e deixa a seu cargo como você responde.",
+
+  art_planets_title: "Os 9 planetas (Navagraha) na astrologia védica",
+  art_planets_intro:
+    "Os nove grahas são o coração de todo kundali. Aqui está o que cada planeta significa, o que rege em um mapa natal e como ponderá-lo ao ler o seu.",
+  art_planets_h1: "O que são os navagraha",
+  art_planets_p1:
+    "Navagraha significa os nove grahas, os corpos e pontos celestes que a astrologia védica acompanha pelo céu. Sete deles são os planetas visíveis conhecidos pelos antigos: o Sol, a Lua, Marte, Mercúrio, Júpiter, Vênus e Saturno. Os outros dois, Rahu e Ketu, não são planetas físicos, mas os dois pontos onde a órbita da Lua cruza a eclíptica, chamados de nodos lunares.",
+  art_planets_p2:
+    "Cada graha é um karaka, um significador natural de certos temas. Ao ler um mapa, você na verdade pergunta, para cada planeta, três coisas: em que signo está, que casa ocupa e quão forte ou fraco está ali. As descrições abaixo dão o significado essencial de cada planeta como base. Os nove planetas, um a um, estão detalhados no guia no rodapé da {0}.",
+  art_planets_h2_list: "Os nove planetas, um a um",
+  art_planets_h2: "Planetas benéficos e maléficos",
+  art_planets_p3:
+    "Os textos clássicos agrupam os grahas, em linhas gerais, em benéficos naturais e maléficos naturais. Júpiter, Vênus, uma Lua forte e um Mercúrio não afligido são considerados benéficos e tendem a apoiar as casas que tocam. O Sol, Marte, Saturno, Rahu e Ketu são considerados maléficos, de influência mais exigente. Mas isso é apenas um rótulo inicial. Um maléfico bem posicionado pode fazer muito bem, e um benéfico fraco ou mal posicionado pode render pouco. O contexto sempre prevalece.",
+  art_planets_h3: "Força, dignidade e aspectos",
+  art_planets_p4:
+    "O efeito de um planeta depende muito de sua condição. Alguns fatores que elevam ou reduzem a força de um graha:",
+  art_planets_li1:
+    "Dignidade. Um planeta no próprio signo ou em exaltação age com confiança; no signo de queda enfrenta dificuldades.",
+  art_planets_li2:
+    "Aspectos (drishti). Os planetas lançam sua influência sobre outras casas e planetas. Um aspecto benéfico pode proteger um planeta, enquanto um maléfico pode pressioná-lo.",
+  art_planets_li3:
+    "Combustão e retrogradação. Um planeta perto demais do Sol é dito combusto e enfraquecido, enquanto um planeta retrógrado expressa sua energia de forma mais interna e intensificada.",
+  art_planets_li4:
+    "Período de dasha. O sistema Vimshottari Dasha dá a cada planeta um intervalo de anos para dominar o mapa. A promessa de um planeta costuma se desdobrar com mais força durante seu próprio período.",
+  art_planets_p5:
+    "Nossa {0} mostra a dignidade, os aspectos e a dasha atual de cada planeta para que você aplique tudo isso ao seu próprio mapa em um só lugar.",
+  art_planets_h4: "Juntando tudo",
+  art_planets_p6:
+    "Nenhum planeta age sozinho. Uma leitura habilidosa pondera os grahas como um sistema: quais se apoiam, quais entram em conflito, quais regem as casas mais importantes para a pergunta em questão. Se tudo isso é novo para você, comece pelo básico em nosso {0} e depois volte a esses significados planetários ao ler seu mapa linha a linha.",
+
+  art_panchang_title: "Entender o Panchang: tithi, nakshatra, yoga, karana e vara",
+  art_panchang_intro:
+    "O panchang é o almanaque hindu tradicional. Seu nome significa cinco membros, os cinco elementos do tempo que ele registra a cada dia. Aqui está o que cada um significa e como usá-los.",
+  art_panchang_h1: "O que é o panchang",
+  art_panchang_p1:
+    "Panchang (ou panchanga) vem de duas palavras sânscritas: pancha, cinco, e anga, membro. É o almanaque hindu clássico que descreve a qualidade de um dia por meio de cinco elementos do tempo. Por séculos foi usado para escolher momentos auspiciosos, observar festivais e jejuns e alinhar a vida diária aos ritmos naturais e astronômicos.",
+  art_panchang_p2:
+    "Um panchang Drik, como o deste site, é calculado a partir das posições astronômicas precisas do Sol e da Lua, em vez de antigas aproximações tabuladas, de modo que os valores coincidem com o céu real do seu local exato. Você pode ver o de hoje na {0}.",
+  art_panchang_h2: "Os cinco membros",
+  art_panchang_p3:
+    "Tithi (dia lunar). Um tithi é o tempo que a Lua leva para avançar 12 graus à frente do Sol. Há 30 tithis em um mês lunar, divididos na quinzena crescente (Shukla Paksha) até a lua cheia e na minguante (Krishna Paksha) até a lua nova. O tithi é central para programar festivais, jejuns e cerimônias.",
+  art_panchang_p4:
+    "Nakshatra (mansão lunar). A eclíptica é dividida em 27 nakshatras, ou mansões lunares, cada uma com pouco mais de 13 graus. O nakshatra indica que mansão a Lua ocupa naquele dia. Está profundamente ligado à personalidade em um mapa natal e é um dos fatores mais importantes ao escolher um momento auspicioso.",
+  art_panchang_p5:
+    "Yoga. Aqui yoga é um cálculo específico: a longitude combinada do Sol e da Lua, dividida em 27 segmentos nomeados. Cada yoga carrega uma qualidade favorável ou desfavorável e acrescenta nuance ao caráter geral do dia. Não o confunda com a prática física do yoga, que não tem relação.",
+  art_panchang_p6:
+    "Karana (meio tithi). Um karana é a metade de um tithi, então há dois karanas em cada dia lunar e sessenta em um mês lunar. Há onze karanas no total, que se alternam ao longo do mês. Os karanas são tradicionalmente consultados para o momento de atividades e empreendimentos específicos.",
+  art_panchang_p7:
+    "Vara (dia da semana). Vara é simplesmente o dia da semana, cada um regido por um planeta: domingo pelo Sol, segunda pela Lua, terça por Marte, e assim por diante. O planeta regente dá seu caráter ao dia e é a base de práticas como o sistema da hora (hora) planetária.",
+  art_panchang_h3: "Outras informações que um panchang diário mostra",
+  art_panchang_p8:
+    "Além dos cinco membros principais, um panchang completo costuma listar vários detalhes de apoio que moldam o dia:",
+  art_panchang_li1:
+    "O nascer e o pôr do sol, junto com o nascer e o pôr da Lua, que definem o quadro da maioria dos outros tempos.",
+  art_panchang_li2:
+    "Períodos inauspiciosos como Rahu Kalam, Yamagandam e Gulika Kalam, janelas tradicionalmente evitadas para trabalhos importantes.",
+  art_panchang_li3:
+    "Janelas auspiciosas como Abhijit Muhurta e outros intervalos favoráveis para iniciar novos empreendimentos.",
+  art_panchang_li4:
+    "Os samvats e o ritu (estação), que situam o dia dentro do calendário hindu maior e do ciclo anual.",
+  art_panchang_h4: "Como usar o panchang",
+  art_panchang_p9:
+    "No dia a dia, dê uma olhada no tithi e no nakshatra para captar o caráter do dia, e verifique os períodos inauspiciosos se estiver planejando algo importante. Para escolher um momento realmente auspicioso, como uma cerimônia, uma viagem ou um novo começo, os cinco membros são ponderados em conjunto. É exatamente isso que uma ferramenta eletiva faz.",
+  art_panchang_p10:
+    "Você pode explorar o almanaque completo de hoje na {0} e encontrar tempos favoráveis para um propósito específico com o nosso {1}.",
 };
 
 export default pt;

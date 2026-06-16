@@ -15,6 +15,23 @@ export function Footer() {
             vedicpanchanga.com
           </a>
         </p>
+        <nav
+          aria-label="Learn"
+          className="mt-3 text-center text-mini text-ink-soft flex flex-wrap justify-center items-center gap-x-3 gap-y-1"
+        >
+          <span className="font-semibold text-ink">{t("learn_menu")}:</span>
+          <a href="/learn/kundali" className="hover:text-saffron-dark hover:underline">
+            {t("learn_kundali_title")}
+          </a>
+          <span aria-hidden="true">·</span>
+          <a href="/learn/planets" className="hover:text-saffron-dark hover:underline">
+            {t("learn_planets_title")}
+          </a>
+          <span aria-hidden="true">·</span>
+          <a href="/learn/panchang" className="hover:text-saffron-dark hover:underline">
+            {t("learn_panchang_title")}
+          </a>
+        </nav>
         <p className="mt-2 text-center text-mini text-ink-soft flex flex-wrap justify-center items-center gap-x-3 gap-y-1">
           <a href="/privacy" className="hover:text-saffron-dark hover:underline">
             {t("footer_privacy")}
