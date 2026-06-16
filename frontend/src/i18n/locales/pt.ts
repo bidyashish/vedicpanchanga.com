@@ -372,6 +372,8 @@ const pt: Record<string, string> = {
 
   heat_title: "Mapa de calor de horarios auspiciosos",
   heat_sub: "Blocos de 15 min, do nascer ao proximo nascer do sol",
+  heat_help:
+    "Cada bloco de 15 minutos e pontuado combinando os horarios auspiciosos do dia (Abhijit, Amrit Kalam, Nalla Neram, Hora benefica) com os inauspiciosos (Rahu Kalam, Yamagandam, Gulika, Durmuhurtam, Tyajyam). Azul e o melhor, vermelho escuro o pior. Toque num bloco para ver o que afeta aquele horario.",
   heat_period_day: "Dia (do nascer ao por do sol)",
   heat_period_night: "Noite (do por ao nascer do sol)",
   heat_best_window: "Melhor janela de hoje",

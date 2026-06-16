@@ -372,6 +372,8 @@ const es: Record<string, string> = {
 
   heat_title: "Mapa de calor de tiempos auspiciosos",
   heat_sub: "Bloques de 15 min, del amanecer al siguiente amanecer",
+  heat_help:
+    "Cada bloque de 15 minutos se puntua combinando los tiempos auspiciosos del dia (Abhijit, Amrit Kalam, Nalla Neram, Hora benefica) frente a los inauspiciosos (Rahu Kalam, Yamagandam, Gulika, Durmuhurtam, Tyajyam). El azul es el mejor, el rojo oscuro el peor. Toca un bloque para ver que afecta a esa hora.",
   heat_period_day: "Dia (del amanecer al atardecer)",
   heat_period_night: "Noche (del atardecer al amanecer)",
   heat_best_window: "Mejor franja de hoy",

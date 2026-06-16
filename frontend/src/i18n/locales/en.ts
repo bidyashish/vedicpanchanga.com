@@ -393,6 +393,8 @@ const en: Record<string, string> = {
 
   heat_title: "Auspicious Time Heatmap",
   heat_sub: "15-min blocks, sunrise to next sunrise",
+  heat_help:
+    "Each 15-minute block is scored by combining the day's auspicious windows (Abhijit, Amrit Kalam, Nalla Neram, benefic Hora) against the inauspicious ones (Rahu Kalam, Yamagandam, Gulika, Durmuhurtam, Tyajyam). Blue is best, dark red is worst. Tap a block to see what affects that time.",
   heat_period_day: "Day (sunrise to sunset)",
   heat_period_night: "Night (sunset to sunrise)",
   heat_best_window: "Best window today",

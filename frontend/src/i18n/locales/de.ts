@@ -372,6 +372,8 @@ const de: Record<string, string> = {
 
   heat_title: "Heatmap guenstiger Zeiten",
   heat_sub: "15-Minuten-Bloecke, Sonnenaufgang bis naechster Sonnenaufgang",
+  heat_help:
+    "Jeder 15-Minuten-Block wird bewertet, indem die guenstigen Zeiten des Tages (Abhijit, Amrit Kalam, Nalla Neram, guenstige Hora) gegen die unguenstigen (Rahu Kalam, Yamagandam, Gulika, Durmuhurtam, Tyajyam) verrechnet werden. Blau ist am besten, dunkelrot am schlechtesten. Tippe auf einen Block, um zu sehen, was diese Zeit beeinflusst.",
   heat_period_day: "Tag (Sonnenaufgang bis Sonnenuntergang)",
   heat_period_night: "Nacht (Sonnenuntergang bis Sonnenaufgang)",
   heat_best_window: "Bestes Zeitfenster heute",

@@ -376,6 +376,8 @@ const fr: Record<string, string> = {
 
   heat_title: "Carte thermique des temps auspicieux",
   heat_sub: "Blocs de 15 min, du lever au prochain lever du soleil",
+  heat_help:
+    "Chaque bloc de 15 minutes est note en combinant les temps auspicieux du jour (Abhijit, Amrit Kalam, Nalla Neram, Hora benefique) avec les inauspicieux (Rahu Kalam, Yamagandam, Gulika, Durmuhurtam, Tyajyam). Le bleu est le meilleur, le rouge fonce le pire. Touchez un bloc pour voir ce qui influence ce moment.",
   heat_period_day: "Jour (du lever au coucher du soleil)",
   heat_period_night: "Nuit (du coucher au lever du soleil)",
   heat_best_window: "Meilleur creneau du jour",

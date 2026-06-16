@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/i18n";
 import { CitySearch } from "@/components/common/CitySearch";
+import { InfoTooltip } from "@/components/common/InfoTooltip";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { ShareLinkButton } from "@/components/common/ShareLinkButton";
 import { DatePicker } from "@/components/ui/date-picker";
@@ -857,7 +858,18 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
               />
             </Section>
 
-            <Section title={t("heat_title")} subtitle={t("heat_sub")} testId="section-heatmap">
+            <Section
+              title={
+                <span className="inline-flex items-center gap-1.5">
+                  {t("heat_title")}
+                  <InfoTooltip label={t("heat_title")} testId="heatmap-info">
+                    {t("heat_help")}
+                  </InfoTooltip>
+                </span>
+              }
+              subtitle={t("heat_sub")}
+              testId="section-heatmap"
+            >
               <AuspiciousHeatmap data={data} tz={tz} />
             </Section>
 

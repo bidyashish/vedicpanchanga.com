@@ -371,6 +371,8 @@ const zh: Record<string, string> = {
 
   heat_title: "吉时热力图",
   heat_sub: "15 分钟一格，日出至次日日出",
+  heat_help:
+    "每个 15 分钟时段会综合当日的吉时 (阿毗吉特、甘露时、纳拉内拉姆、吉星时辰) 与凶时 (罗睺时、阎摩时、古力时、凶时、舍弃时) 进行评分。蓝色最佳，深红最差。点击任一时段，查看影响该时段的因素。",
   heat_period_day: "白昼 (日出至日落)",
   heat_period_night: "夜间 (日落至日出)",
   heat_best_window: "今日最佳时段",
