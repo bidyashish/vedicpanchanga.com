@@ -464,6 +464,181 @@ const en: Record<string, string> = {
   freq_black_hole: "Black Hole (Perseus)",
   freq_cosmic_dna: "Cosmic DNA Repair",
   freq_cosmic_unity: "Cosmic Unity",
+
+  // === Learn content & planet guide ===========================================
+  // Inline links inside paragraphs use {0}/{1} placeholders resolved by
+  // src/lib/richText.tsx. Link labels are the separate link_* keys below.
+
+  // Learn menu / nav / footer
+  learn_menu: "Learn",
+  learn_kundali_title: "What Is a Kundali?",
+  learn_planets_title: "The 9 Planets",
+  learn_panchang_title: "Understanding Panchang",
+
+  // Shared link labels reused across articles and the planet guide
+  link_kundali_calc: "Kundali calculator",
+  link_free_kundali_calc: "free Kundali calculator",
+  link_kundali_page: "Kundali page",
+  link_panchang_page: "panchang page",
+  link_muhurta_finder: "Muhurta finder",
+  link_nine_planets: "the nine planets",
+  link_nine_planets_guide: "the nine planets guide",
+  link_what_kundali: "what a kundali is",
+  link_kundali_beginner: "beginner's guide to the kundali",
+
+  // Planet guide (bottom of Kundali page)
+  pg_title: "How to Read Your Kundali: The 9 Planets",
+  pg_intro:
+    "A Vedic birth chart maps where each of the nine grahas (planets) sat at the moment you were born. Each planet is a karaka, a natural significator of certain themes in life. Read the chart one planet at a time using the steps below, then look up where each sits in the table above.",
+  pg_step: "Step",
+  pg_footnote:
+    "This guide is a starting point for beginners. A full reading also weighs each planet's sign, house, aspects (drishti), dignity and dasha period together rather than in isolation. To go deeper, read our guides on {0} and {1}.",
+  pg_su_sig: "Soul, vitality, the father and your sense of self",
+  pg_su_body:
+    "The Sun is the karaka (significator) of the atma, your core identity and willpower. Its sign and house show where you seek recognition and how your individuality expresses itself. A well-placed Sun lends confidence, leadership and steady health; a weak or afflicted Sun can point to a struggle with authority or self-worth.",
+  pg_mo_sig: "Mind, emotions, the mother and daily comfort",
+  pg_mo_body:
+    "The Moon governs the manas, your emotional nature and the way you process feelings. In Vedic astrology the Moon sign (Chandra Rashi) is often considered more important than the Sun sign for reading temperament, and it anchors the Vimshottari Dasha timeline. A strong Moon brings emotional balance, popularity and a nurturing instinct.",
+  pg_ma_sig: "Energy, courage, drive and siblings",
+  pg_ma_body:
+    "Mars is the warrior of the chart, the karaka of physical energy, ambition and the courage to act. It rules competition, discipline and how you assert yourself under pressure. Constructively placed it gives stamina and initiative; when afflicted it can show up as impatience, conflict or accident-proneness.",
+  pg_me_sig: "Intellect, speech, learning and commerce",
+  pg_me_body:
+    "Mercury is the significator of buddhi, the analytical mind, communication and logical reasoning. It governs how you learn, write, speak and handle calculation, trade and technology. A strong Mercury sharpens wit and adaptability; a weak one can scatter focus or muddle communication.",
+  pg_ju_sig: "Wisdom, growth, fortune and the teacher",
+  pg_ju_body:
+    "Jupiter, the great benefic, is the karaka of wisdom, higher knowledge, ethics and expansion. It shows where you find guidance, optimism and good fortune, and it strongly influences children, prosperity and spiritual growth. Wherever Jupiter sits, it tends to protect and enlarge the affairs of that house.",
+  pg_ve_sig: "Love, beauty, comfort and relationships",
+  pg_ve_body:
+    "Venus is the karaka of love, harmony, artistic taste and material comforts. It governs marriage, partnership, sensual pleasures and the appreciation of beauty in all forms. A well-placed Venus brings charm, refinement and happy relationships; an afflicted one can complicate matters of the heart or indulgence.",
+  pg_sa_sig: "Discipline, karma, patience and longevity",
+  pg_sa_body:
+    "Saturn is the strict teacher of the zodiac, the karaka of discipline, hard work, delay and long-term reward. It governs responsibility, structure, perseverance and the lessons that come through time and limitation. Saturn rarely gives quickly, but what it grants after effort tends to last; its transits (like Sade Sati) are major periods of maturing.",
+  pg_ra_sig: "Desire, ambition, obsession and worldly gain",
+  pg_ra_body:
+    "Rahu is a shadow point (not a physical planet) marking the Moon's north node. It amplifies whatever house it occupies, driving intense desire, ambition and a hunger for worldly experience and the unconventional. Rahu can bring sudden rise and fascination with the new, but its appetite is hard to satisfy and needs conscious direction.",
+  pg_ke_sig: "Detachment, spirituality, past karma and liberation",
+  pg_ke_body:
+    "Ketu is the Moon's south node, the counterpoint to Rahu. It signifies detachment, intuition, spiritual insight and the residue of past-life mastery, often by withdrawing attention from the house it sits in. Ketu can feel like loss or disinterest in worldly matters of that area, while quietly deepening wisdom and the pull toward moksha (liberation).",
+
+  // Article: What Is a Kundali?
+  art_kundali_title: "What Is a Kundali? A Beginner's Guide to the Vedic Birth Chart",
+  art_kundali_intro:
+    "A kundali is a snapshot of the sky at the exact moment and place of your birth. This guide explains what it shows, how it is built, and how to start reading one.",
+  art_kundali_h1: "The short answer",
+  art_kundali_p1:
+    "A kundali (also called a janam kundali, janam patrika or birth chart) is a diagram of where the planets were positioned in the sky at the precise date, time and place of your birth. In Vedic astrology (Jyotisha) it is the foundation of every reading. Because the heavens are always moving, the chart is unique to a single moment, which is why an accurate birth time and location matter so much.",
+  art_kundali_p2:
+    "You can generate one for free with our {0}, which uses the Swiss Ephemeris and the sidereal (Lahiri) zodiac for precise planetary positions.",
+  art_kundali_h2: "The building blocks of a chart",
+  art_kundali_p3:
+    "Every kundali is assembled from four interacting layers. Understanding them in order makes the chart far less intimidating.",
+  art_kundali_li1:
+    "The twelve signs (rashis). The zodiac is divided into twelve 30-degree signs, from Aries (Mesha) to Pisces (Meena). Each sign has a ruling planet, an element and a quality that colour how a planet behaves while sitting in it.",
+  art_kundali_li2:
+    "The ascendant (lagna). This is the sign rising on the eastern horizon at your birth moment. It anchors the whole chart and sets the first house. The lagna is the single most time-sensitive part of a kundali, which is why even a few minutes of error in birth time can shift a reading.",
+  art_kundali_li3:
+    "The twelve houses (bhavas). Starting from the ascendant, the chart is split into twelve houses. Each house governs an area of life: the first for the self and body, the seventh for partnership, the tenth for career and public standing, and so on. Where a planet falls tells you which department of life it most influences.",
+  art_kundali_li4:
+    "The nine planets (grahas). The Sun, Moon, Mars, Mercury, Jupiter, Venus and Saturn, plus the two lunar nodes Rahu and Ketu, are placed into the signs and houses. Each planet is a karaka, a natural significator of particular themes.",
+  art_kundali_h3: "North Indian vs South Indian style",
+  art_kundali_p4:
+    "You will see kundalis drawn in different shapes depending on regional tradition. They all contain the same information, just arranged differently.",
+  art_kundali_li5:
+    "North Indian chart is a diamond-in-a-square layout. The houses stay fixed in position and the signs rotate, so the first house is always the top-centre diamond.",
+  art_kundali_li6:
+    "South Indian chart is a fixed grid of twelve boxes where the signs stay in place and the ascendant is marked. The houses are counted from wherever the lagna falls.",
+  art_kundali_p5:
+    "Our calculator can render both, so you can use whichever style you learned with. The interpretation does not change.",
+  art_kundali_h4: "How to start reading a kundali",
+  art_kundali_p6: "A simple, repeatable order helps beginners avoid feeling overwhelmed:",
+  art_kundali_ol1:
+    "Find the ascendant. Note the rising sign and its ruling planet. This is the lens through which the rest of the chart is read.",
+  art_kundali_ol2:
+    "Locate the Moon. In Vedic astrology the Moon sign (Chandra Rashi) describes your emotional nature and is used to start the Vimshottari Dasha, the timeline of life periods.",
+  art_kundali_ol3:
+    "Go planet by planet. For each graha, ask three questions: which sign is it in, which house does it occupy, and is it strong or weak there? Our planet guide at the bottom of the chart page walks through what each one signifies.",
+  art_kundali_ol4:
+    "Look at the relationships. Planets aspect (drishti) one another and form combinations (yogas). These interactions are where a chart becomes a story rather than a list.",
+  art_kundali_p7:
+    "Ready to try it? Generate your own chart with the {0} and then read {1} to interpret what you see.",
+  art_kundali_h5: "Frequently asked questions",
+  art_kundali_faq1_q: "Do I need my exact birth time?",
+  art_kundali_faq1_a:
+    "For the ascendant and house placements, yes, the more accurate the better. If you only know the date, the planetary signs are still meaningful, but the houses and lagna may be uncertain.",
+  art_kundali_faq2_q: "Why does my Vedic chart differ from my Western one?",
+  art_kundali_faq2_a:
+    "Vedic astrology uses the sidereal zodiac, which is tied to the actual positions of the constellations, while most Western astrology uses the tropical zodiac. The difference (the ayanamsa) is currently around 24 degrees, so your Sun sign can shift by one sign.",
+  art_kundali_faq3_q: "Is a kundali a fixed prediction of my life?",
+  art_kundali_faq3_a:
+    "It is best understood as a map of tendencies and timing, not a script. It highlights strengths, challenges and favourable periods, leaving how you respond to you.",
+
+  // Article: The 9 Planets (Navagraha)
+  art_planets_title: "The 9 Planets (Navagraha) in Vedic Astrology",
+  art_planets_intro:
+    "The nine grahas are the heart of every kundali. Here is what each planet signifies, what it governs in a birth chart, and how to weigh it when reading your own.",
+  art_planets_h1: "What the navagraha are",
+  art_planets_p1:
+    "Navagraha means the nine grahas, the celestial bodies and points that Vedic astrology tracks across the sky. Seven of them are the visible planets known to the ancients: the Sun, Moon, Mars, Mercury, Jupiter, Venus and Saturn. The remaining two, Rahu and Ketu, are not physical planets at all but the two points where the Moon's orbit crosses the ecliptic, known as the lunar nodes.",
+  art_planets_p2:
+    "Each graha is a karaka, a natural significator of certain themes. When you read a chart you are really asking, for each planet, three things: which sign it sits in, which house it occupies, and how strong or weak it is there. The descriptions below give you the core meaning of each planet to build on. The nine planets, one by one, are detailed in the guide at the bottom of the {0}.",
+  art_planets_h2_list: "The nine planets, one by one",
+  art_planets_h2: "Benefic and malefic planets",
+  art_planets_p3:
+    "Classical texts group the grahas loosely into natural benefics and natural malefics. Jupiter, Venus, a strong Moon and an unafflicted Mercury are considered benefic, tending to support the houses they touch. The Sun, Mars, Saturn, Rahu and Ketu are considered malefic, more demanding in their influence. This is only a starting label, though. A malefic in a strong position can do great good, and a benefic that is weak or badly placed may underperform. Context always wins.",
+  art_planets_h3: "Strength, dignity and aspects",
+  art_planets_p4:
+    "A planet's effect depends heavily on its condition. A few factors that raise or lower a graha's strength:",
+  art_planets_li1:
+    "Dignity. A planet in its own sign or sign of exaltation acts with confidence; in its sign of debilitation it struggles.",
+  art_planets_li2:
+    "Aspects (drishti). Planets cast their influence onto other houses and planets. A benefic aspect can protect a planet, while a malefic one can pressure it.",
+  art_planets_li3:
+    "Combustion and retrograde. A planet too close to the Sun is said to be combust and weakened, while a retrograde planet expresses its energy in a more internal, intensified way.",
+  art_planets_li4:
+    "Dasha period. The Vimshottari Dasha system gives each planet a span of years to dominate the chart. A planet's promise often unfolds most strongly during its own period.",
+  art_planets_p5:
+    "Our {0} shows each planet's dignity, aspects and current dasha so you can apply all of this to your own chart in one place.",
+  art_planets_h4: "Putting it together",
+  art_planets_p6:
+    "No planet acts alone. A skilled reading weighs the grahas as a system: which support each other, which are in conflict, which rule the most important houses for the question at hand. If you are new to all this, start with the basics in our {0}, then come back to these planet meanings as you read your chart line by line.",
+
+  // Article: Understanding Panchang
+  art_panchang_title: "Understanding Panchang: Tithi, Nakshatra, Yoga, Karana and Vara",
+  art_panchang_intro:
+    "The panchang is the traditional Hindu almanac. Its name means five limbs, the five elements of time it tracks each day. Here is what each one means and how to use them.",
+  art_panchang_h1: "What the panchang is",
+  art_panchang_p1:
+    "Panchang (or panchanga) comes from two Sanskrit words: pancha, meaning five, and anga, meaning limb. It is the classical Hindu almanac that describes the quality of a given day through five elements of time. For centuries it has been used to choose auspicious moments, observe festivals and fasts, and align daily life with natural and astronomical rhythms.",
+  art_panchang_p2:
+    "A Drik panchang, like the one on this site, is computed from precise astronomical positions of the Sun and Moon rather than older tabular approximations, so the values match the real sky for your exact location. You can see today's at the {0}.",
+  art_panchang_h2: "The five limbs",
+  art_panchang_p3:
+    "Tithi (lunar day). A tithi is the time it takes the Moon to move 12 degrees ahead of the Sun. There are 30 tithis in a lunar month, split into the waxing fortnight (Shukla Paksha) leading to the full moon and the waning fortnight (Krishna Paksha) leading to the new moon. The tithi is central to scheduling festivals, fasts and ceremonies.",
+  art_panchang_p4:
+    "Nakshatra (lunar mansion). The ecliptic is divided into 27 nakshatras, or lunar mansions, each spanning a little over 13 degrees. The nakshatra tells you which mansion the Moon occupies that day. It is deeply tied to personality in a birth chart and is one of the most important factors when selecting an auspicious time.",
+  art_panchang_p5:
+    "Yoga. Yoga here is a specific calculation: the combined longitude of the Sun and Moon, divided into 27 named segments. Each yoga carries a favourable or unfavourable quality and adds nuance to the day's overall character. Do not confuse it with the physical practice of yoga, which is unrelated.",
+  art_panchang_p6:
+    "Karana (half tithi). A karana is half of a tithi, so there are two karanas in each lunar day and sixty in a lunar month. There are eleven karanas in total that cycle through the month. Karanas are traditionally consulted for the timing of specific activities and undertakings.",
+  art_panchang_p7:
+    "Vara (weekday). Vara is simply the day of the week, each ruled by a planet: Sunday by the Sun, Monday by the Moon, Tuesday by Mars, and so on. The ruling planet lends its character to the day and is the basis of practices like the planetary hora (hour) system.",
+  art_panchang_h3: "Other things a daily panchang shows",
+  art_panchang_p8:
+    "Beyond the five core limbs, a full panchang usually lists several supporting details that shape the day:",
+  art_panchang_li1:
+    "Sunrise and sunset, along with moonrise and moonset, which set the frame for most other timings.",
+  art_panchang_li2:
+    "Inauspicious periods such as Rahu Kalam, Yamagandam and Gulika Kalam, windows traditionally avoided for important work.",
+  art_panchang_li3:
+    "Auspicious windows like Abhijit Muhurta and other favourable spans good for starting new ventures.",
+  art_panchang_li4:
+    "Samvats and the ritu (season), placing the day within the larger Hindu calendar and year cycle.",
+  art_panchang_h4: "How to use the panchang",
+  art_panchang_p9:
+    "For everyday use, glance at the tithi and nakshatra to understand the texture of the day, and check the inauspicious periods if you are planning something important. For choosing a genuinely auspicious moment, such as for a ceremony, journey or new beginning, the five limbs are weighed together. That is exactly what an electional tool does.",
+  art_panchang_p10:
+    "You can explore today's full almanac on the {0}, and find favourable timings for a specific purpose with our {1}.",
 };
 
 export default en;

@@ -438,6 +438,173 @@ const de: Record<string, string> = {
   freq_black_hole: "Schwarzes Loch (Perseus)",
   freq_cosmic_dna: "Kosmische DNA-Reparatur",
   freq_cosmic_unity: "Kosmische Einheit",
+
+  // === Learn content & planet guide ===========================================
+  learn_menu: "Lernen",
+  learn_kundali_title: "Was ist ein Kundali?",
+  learn_planets_title: "Die 9 Planeten",
+  learn_panchang_title: "Panchang verstehen",
+
+  link_kundali_calc: "Kundali-Rechner",
+  link_free_kundali_calc: "kostenlosen Kundali-Rechner",
+  link_kundali_page: "Kundali-Seite",
+  link_panchang_page: "Panchang-Seite",
+  link_muhurta_finder: "Muhurta-Finder",
+  link_nine_planets: "die neun Planeten",
+  link_nine_planets_guide: "den Leitfaden zu den neun Planeten",
+  link_what_kundali: "was ein Kundali ist",
+  link_kundali_beginner: "Einsteiger-Leitfaden zum Kundali",
+
+  pg_title: "So liest du dein Kundali: die 9 Planeten",
+  pg_intro:
+    "Ein vedisches Geburtshoroskop zeigt, wo jeder der neun Grahas (Planeten) im Moment deiner Geburt am Himmel stand. Jeder Planet ist ein Karaka, ein natürlicher Anzeiger bestimmter Lebensthemen. Lies das Horoskop Planet für Planet anhand der Schritte unten und sieh dann in der Tabelle oben nach, wo jeder steht.",
+  pg_step: "Schritt",
+  pg_footnote:
+    "Dieser Leitfaden ist ein Ausgangspunkt für Einsteiger. Eine vollständige Deutung wägt Zeichen, Haus, Aspekte (Drishti), Würde und Dasha-Periode jedes Planeten gemeinsam ab, nicht einzeln. Mehr dazu in unseren Leitfäden über {0} und {1}.",
+  pg_su_sig: "Seele, Vitalität, der Vater und dein Selbstgefühl",
+  pg_su_body:
+    "Die Sonne ist der Karaka (Anzeiger) des Atma, deiner Kernidentität und Willenskraft. Ihr Zeichen und Haus zeigen, wo du Anerkennung suchst und wie sich deine Individualität ausdrückt. Eine gut platzierte Sonne verleiht Selbstvertrauen, Führungskraft und stabile Gesundheit; eine schwache oder bedrängte Sonne kann auf einen Kampf mit Autorität oder Selbstwert hinweisen.",
+  pg_mo_sig: "Geist, Gefühle, die Mutter und alltägliches Wohl",
+  pg_mo_body:
+    "Der Mond regiert das Manas, deine emotionale Natur und die Art, wie du Gefühle verarbeitest. In der vedischen Astrologie gilt das Mondzeichen (Chandra Rashi) oft als wichtiger als das Sonnenzeichen, um das Temperament zu lesen, und es verankert die Vimshottari-Dasha-Zeitlinie. Ein starker Mond bringt emotionales Gleichgewicht, Beliebtheit und einen fürsorglichen Instinkt.",
+  pg_ma_sig: "Energie, Mut, Antrieb und Geschwister",
+  pg_ma_body:
+    "Mars ist der Krieger des Horoskops, der Karaka körperlicher Energie, Ehrgeiz und des Muts zu handeln. Er regiert Wettbewerb, Disziplin und wie du dich unter Druck behauptest. Konstruktiv platziert gibt er Ausdauer und Initiative; bedrängt zeigt er sich als Ungeduld, Konflikt oder Unfallneigung.",
+  pg_me_sig: "Intellekt, Sprache, Lernen und Handel",
+  pg_me_body:
+    "Merkur ist der Anzeiger des Buddhi, des analytischen Geistes, der Kommunikation und des logischen Denkens. Er regiert, wie du lernst, schreibst, sprichst und mit Rechnen, Handel und Technik umgehst. Ein starker Merkur schärft Witz und Anpassungsfähigkeit; ein schwacher kann den Fokus zerstreuen oder die Kommunikation verwirren.",
+  pg_ju_sig: "Weisheit, Wachstum, Glück und der Lehrer",
+  pg_ju_body:
+    "Jupiter, der große Wohltäter, ist der Karaka von Weisheit, höherem Wissen, Ethik und Ausdehnung. Er zeigt, wo du Führung, Optimismus und Glück findest, und beeinflusst stark Kinder, Wohlstand und spirituelles Wachstum. Wo Jupiter steht, schützt und vergrößert er meist die Angelegenheiten dieses Hauses.",
+  pg_ve_sig: "Liebe, Schönheit, Wohlbehagen und Beziehungen",
+  pg_ve_body:
+    "Venus ist der Karaka von Liebe, Harmonie, künstlerischem Geschmack und materiellem Komfort. Sie regiert Ehe, Partnerschaft, sinnliche Freuden und die Wertschätzung von Schönheit in allen Formen. Eine gut platzierte Venus bringt Charme, Verfeinerung und glückliche Beziehungen; eine bedrängte kann Herzensangelegenheiten oder Genuss erschweren.",
+  pg_sa_sig: "Disziplin, Karma, Geduld und Langlebigkeit",
+  pg_sa_body:
+    "Saturn ist der strenge Lehrer des Tierkreises, der Karaka von Disziplin, harter Arbeit, Verzögerung und langfristigem Lohn. Er regiert Verantwortung, Struktur, Ausdauer und die Lektionen, die durch Zeit und Begrenzung kommen. Saturn gibt selten schnell, doch was er nach Mühe gewährt, hält meist an; seine Transite (wie Sade Sati) sind große Reifezeiten.",
+  pg_ra_sig: "Verlangen, Ehrgeiz, Besessenheit und weltlicher Gewinn",
+  pg_ra_body:
+    "Rahu ist ein Schattenpunkt (kein physischer Planet), der den aufsteigenden Mondknoten markiert. Er verstärkt das Haus, das er besetzt, und treibt intensives Verlangen, Ehrgeiz und einen Hunger nach weltlicher Erfahrung und dem Unkonventionellen an. Rahu kann plötzlichen Aufstieg und Faszination für Neues bringen, doch sein Appetit ist schwer zu stillen und braucht bewusste Lenkung.",
+  pg_ke_sig: "Loslösung, Spiritualität, vergangenes Karma und Befreiung",
+  pg_ke_body:
+    "Ketu ist der absteigende Mondknoten, das Gegenstück zu Rahu. Er steht für Loslösung, Intuition, spirituelle Einsicht und den Rest früherer Meisterschaft, oft indem er die Aufmerksamkeit von dem Haus abzieht, das er besetzt. Ketu kann sich wie Verlust oder Desinteresse an den weltlichen Belangen dieses Bereichs anfühlen, während er still Weisheit und den Zug zum Moksha (Befreiung) vertieft.",
+
+  art_kundali_title: "Was ist ein Kundali? Einsteiger-Leitfaden zum vedischen Geburtshoroskop",
+  art_kundali_intro:
+    "Ein Kundali ist eine Momentaufnahme des Himmels zum genauen Zeitpunkt und Ort deiner Geburt. Dieser Leitfaden erklärt, was es zeigt, wie es aufgebaut ist und wie man es zu lesen beginnt.",
+  art_kundali_h1: "Die kurze Antwort",
+  art_kundali_p1:
+    "Ein Kundali (auch Janam Kundali, Janam Patrika oder Geburtshoroskop genannt) ist ein Diagramm davon, wo die Planeten zum genauen Datum, Zeitpunkt und Ort deiner Geburt am Himmel standen. In der vedischen Astrologie (Jyotisha) ist es die Grundlage jeder Deutung. Da der Himmel ständig in Bewegung ist, ist das Horoskop für einen einzigen Moment einzigartig, weshalb eine genaue Geburtszeit und ein genauer Ort so wichtig sind.",
+  art_kundali_p2:
+    "Du kannst eines kostenlos mit unserem {0} erstellen, der das Swiss Ephemeris und den siderischen (Lahiri) Tierkreis für genaue Planetenpositionen verwendet.",
+  art_kundali_h2: "Die Bausteine eines Horoskops",
+  art_kundali_p3:
+    "Jedes Kundali setzt sich aus vier zusammenwirkenden Schichten zusammen. Sie der Reihe nach zu verstehen, macht das Horoskop weit weniger einschüchternd.",
+  art_kundali_li1:
+    "Die zwölf Zeichen (Rashis). Der Tierkreis ist in zwölf 30-Grad-Zeichen geteilt, von Widder (Mesha) bis Fische (Meena). Jedes Zeichen hat einen Herrscherplaneten, ein Element und eine Qualität, die färben, wie sich ein Planet darin verhält.",
+  art_kundali_li2:
+    "Der Aszendent (Lagna). Das ist das Zeichen, das zum Geburtsmoment am östlichen Horizont aufsteigt. Es verankert das ganze Horoskop und legt das erste Haus fest. Das Lagna ist der zeitempfindlichste Teil eines Kundali, weshalb schon wenige Minuten Fehler bei der Geburtszeit eine Deutung verschieben können.",
+  art_kundali_li3:
+    "Die zwölf Häuser (Bhavas). Vom Aszendenten ausgehend wird das Horoskop in zwölf Häuser geteilt. Jedes Haus regiert einen Lebensbereich: das erste das Selbst und den Körper, das siebte die Partnerschaft, das zehnte Beruf und öffentliches Ansehen und so weiter. Wo ein Planet fällt, zeigt, welchen Lebensbereich er am stärksten beeinflusst.",
+  art_kundali_li4:
+    "Die neun Planeten (Grahas). Sonne, Mond, Mars, Merkur, Jupiter, Venus und Saturn sowie die beiden Mondknoten Rahu und Ketu werden in die Zeichen und Häuser gesetzt. Jeder Planet ist ein Karaka, ein natürlicher Anzeiger bestimmter Themen.",
+  art_kundali_h3: "Nordindischer vs. südindischer Stil",
+  art_kundali_p4:
+    "Je nach regionaler Tradition siehst du Kundalis in verschiedenen Formen gezeichnet. Alle enthalten dieselben Informationen, nur anders angeordnet.",
+  art_kundali_li5:
+    "Das nordindische Horoskop ist ein Raute-im-Quadrat-Layout. Die Häuser bleiben fest, die Zeichen rotieren, sodass das erste Haus immer die obere mittlere Raute ist.",
+  art_kundali_li6:
+    "Das südindische Horoskop ist ein festes Raster aus zwölf Feldern, in dem die Zeichen an ihrem Platz bleiben und der Aszendent markiert ist. Die Häuser werden von dort gezählt, wo das Lagna fällt.",
+  art_kundali_p5:
+    "Unser Rechner kann beide darstellen, du kannst also den Stil verwenden, mit dem du gelernt hast. Die Deutung ändert sich nicht.",
+  art_kundali_h4: "Wie man ein Kundali zu lesen beginnt",
+  art_kundali_p6:
+    "Eine einfache, wiederholbare Reihenfolge hilft Einsteigern, sich nicht überfordert zu fühlen:",
+  art_kundali_ol1:
+    "Finde den Aszendenten. Notiere das aufsteigende Zeichen und seinen Herrscherplaneten. Das ist die Linse, durch die der Rest des Horoskops gelesen wird.",
+  art_kundali_ol2:
+    "Finde den Mond. In der vedischen Astrologie beschreibt das Mondzeichen (Chandra Rashi) deine emotionale Natur und wird verwendet, um die Vimshottari Dasha zu beginnen, die Zeitlinie der Lebensperioden.",
+  art_kundali_ol3:
+    "Gehe Planet für Planet vor. Stelle für jeden Graha drei Fragen: In welchem Zeichen steht er, welches Haus besetzt er und ist er dort stark oder schwach? Unser Planetenleitfaden am Fuß der Horoskopseite erklärt, was jeder anzeigt.",
+  art_kundali_ol4:
+    "Sieh dir die Beziehungen an. Planeten aspektieren (Drishti) einander und bilden Kombinationen (Yogas). In diesen Wechselwirkungen wird aus einem Horoskop eine Geschichte statt einer Liste.",
+  art_kundali_p7:
+    "Bereit, es auszuprobieren? Erstelle dein eigenes Horoskop mit dem {0} und lies dann {1}, um zu deuten, was du siehst.",
+  art_kundali_h5: "Häufig gestellte Fragen",
+  art_kundali_faq1_q: "Brauche ich meine genaue Geburtszeit?",
+  art_kundali_faq1_a:
+    "Für den Aszendenten und die Häuser ja, je genauer, desto besser. Wenn du nur das Datum kennst, sind die Planetenzeichen weiterhin aussagekräftig, doch die Häuser und das Lagna können unsicher bleiben.",
+  art_kundali_faq2_q: "Warum unterscheidet sich mein vedisches Horoskop vom westlichen?",
+  art_kundali_faq2_a:
+    "Die vedische Astrologie nutzt den siderischen Tierkreis, der an die tatsächlichen Positionen der Sternbilder gebunden ist, während die meiste westliche Astrologie den tropischen Tierkreis nutzt. Der Unterschied (das Ayanamsa) beträgt derzeit etwa 24 Grad, sodass sich dein Sonnenzeichen um ein Zeichen verschieben kann.",
+  art_kundali_faq3_q: "Ist ein Kundali eine feste Vorhersage meines Lebens?",
+  art_kundali_faq3_a:
+    "Man versteht es am besten als Landkarte von Tendenzen und Zeitpunkten, nicht als Drehbuch. Es hebt Stärken, Herausforderungen und günstige Phasen hervor und überlässt dir, wie du reagierst.",
+
+  art_planets_title: "Die 9 Planeten (Navagraha) in der vedischen Astrologie",
+  art_planets_intro:
+    "Die neun Grahas sind das Herz jedes Kundali. Hier erfährst du, was jeder Planet anzeigt, was er in einem Geburtshoroskop regiert und wie du ihn beim Lesen deines eigenen abwägst.",
+  art_planets_h1: "Was die Navagraha sind",
+  art_planets_p1:
+    "Navagraha bedeutet die neun Grahas, die Himmelskörper und -punkte, die die vedische Astrologie am Himmel verfolgt. Sieben davon sind die sichtbaren Planeten, die den Alten bekannt waren: Sonne, Mond, Mars, Merkur, Jupiter, Venus und Saturn. Die übrigen zwei, Rahu und Ketu, sind gar keine physischen Planeten, sondern die beiden Punkte, an denen die Mondbahn die Ekliptik kreuzt, die Mondknoten.",
+  art_planets_p2:
+    "Jeder Graha ist ein Karaka, ein natürlicher Anzeiger bestimmter Themen. Beim Lesen eines Horoskops fragst du in Wahrheit für jeden Planeten drei Dinge: In welchem Zeichen steht er, welches Haus besetzt er und wie stark oder schwach ist er dort. Die Beschreibungen unten geben dir die Kernbedeutung jedes Planeten als Grundlage. Die neun Planeten, einer nach dem anderen, sind im Leitfaden am Fuß der {0} ausgeführt.",
+  art_planets_h2_list: "Die neun Planeten, einer nach dem anderen",
+  art_planets_h2: "Wohltätige und übeltätige Planeten",
+  art_planets_p3:
+    "Klassische Texte gruppieren die Grahas grob in natürliche Wohltäter und natürliche Übeltäter. Jupiter, Venus, ein starker Mond und ein unbedrängter Merkur gelten als wohltätig und stützen meist die Häuser, die sie berühren. Sonne, Mars, Saturn, Rahu und Ketu gelten als übeltätig mit fordernderem Einfluss. Das ist aber nur eine erste Einordnung. Ein Übeltäter in starker Stellung kann viel Gutes bewirken, und ein schwacher oder schlecht platzierter Wohltäter kann zu wenig leisten. Der Kontext entscheidet immer.",
+  art_planets_h3: "Stärke, Würde und Aspekte",
+  art_planets_p4:
+    "Die Wirkung eines Planeten hängt stark von seinem Zustand ab. Einige Faktoren, die die Stärke eines Graha heben oder senken:",
+  art_planets_li1:
+    "Würde. Ein Planet im eigenen Zeichen oder in Erhöhung handelt mit Selbstvertrauen; in seinem Fallzeichen hat er es schwer.",
+  art_planets_li2:
+    "Aspekte (Drishti). Planeten werfen ihren Einfluss auf andere Häuser und Planeten. Ein wohltätiger Aspekt kann einen Planeten schützen, ein übeltätiger ihn unter Druck setzen.",
+  art_planets_li3:
+    "Verbrennung und Rückläufigkeit. Ein Planet zu nahe an der Sonne gilt als verbrannt und geschwächt, während ein rückläufiger Planet seine Energie innerlicher und verstärkt ausdrückt.",
+  art_planets_li4:
+    "Dasha-Periode. Das Vimshottari-Dasha-System gibt jedem Planeten eine Spanne von Jahren, das Horoskop zu beherrschen. Das Versprechen eines Planeten entfaltet sich oft am stärksten in seiner eigenen Periode.",
+  art_planets_p5:
+    "Unser {0} zeigt Würde, Aspekte und aktuelle Dasha jedes Planeten, damit du all dies an einem Ort auf dein eigenes Horoskop anwenden kannst.",
+  art_planets_h4: "Alles zusammenfügen",
+  art_planets_p6:
+    "Kein Planet wirkt allein. Eine kundige Deutung wägt die Grahas als System ab: welche einander stützen, welche in Konflikt stehen, welche die für die Frage wichtigsten Häuser regieren. Wenn das alles neu für dich ist, beginne mit den Grundlagen in unserem {0} und kehre dann zu diesen Planetenbedeutungen zurück, während du dein Horoskop Zeile für Zeile liest.",
+
+  art_panchang_title: "Panchang verstehen: Tithi, Nakshatra, Yoga, Karana und Vara",
+  art_panchang_intro:
+    "Das Panchang ist der traditionelle hinduistische Almanach. Sein Name bedeutet fünf Glieder, die fünf Zeitelemente, die es täglich erfasst. Hier erfährst du, was jedes bedeutet und wie man sie nutzt.",
+  art_panchang_h1: "Was das Panchang ist",
+  art_panchang_p1:
+    "Panchang (oder Panchanga) kommt von zwei Sanskrit-Wörtern: pancha, fünf, und anga, Glied. Es ist der klassische hinduistische Almanach, der die Qualität eines Tages über fünf Zeitelemente beschreibt. Seit Jahrhunderten dient er dazu, günstige Momente zu wählen, Feste und Fasten zu begehen und den Alltag mit natürlichen und astronomischen Rhythmen in Einklang zu bringen.",
+  art_panchang_p2:
+    "Ein Drik-Panchang wie das auf dieser Seite wird aus den genauen astronomischen Positionen von Sonne und Mond berechnet statt aus älteren tabellarischen Näherungen, sodass die Werte zum echten Himmel deines genauen Orts passen. Das heutige siehst du auf der {0}.",
+  art_panchang_h2: "Die fünf Glieder",
+  art_panchang_p3:
+    "Tithi (Mondtag). Ein Tithi ist die Zeit, die der Mond braucht, um sich 12 Grad vor die Sonne zu bewegen. Es gibt 30 Tithis in einem Mondmonat, geteilt in die zunehmende Hälfte (Shukla Paksha) bis zum Vollmond und die abnehmende (Krishna Paksha) bis zum Neumond. Das Tithi ist zentral für die Planung von Festen, Fasten und Zeremonien.",
+  art_panchang_p4:
+    "Nakshatra (Mondhaus). Die Ekliptik ist in 27 Nakshatras oder Mondhäuser geteilt, jedes etwas mehr als 13 Grad. Das Nakshatra sagt, welches Haus der Mond an dem Tag besetzt. Es ist eng mit der Persönlichkeit in einem Geburtshoroskop verbunden und einer der wichtigsten Faktoren bei der Wahl eines günstigen Zeitpunkts.",
+  art_panchang_p5:
+    "Yoga. Yoga ist hier eine bestimmte Berechnung: die kombinierte Länge von Sonne und Mond, geteilt in 27 benannte Abschnitte. Jedes Yoga trägt eine günstige oder ungünstige Qualität und verleiht dem Gesamtcharakter des Tages Nuancen. Verwechsle es nicht mit der körperlichen Yoga-Praxis, die nichts damit zu tun hat.",
+  art_panchang_p6:
+    "Karana (halbes Tithi). Ein Karana ist die Hälfte eines Tithi, es gibt also zwei Karanas pro Mondtag und sechzig pro Mondmonat. Insgesamt gibt es elf Karanas, die im Monat zyklisch wechseln. Karanas werden traditionell für den Zeitpunkt bestimmter Tätigkeiten und Vorhaben herangezogen.",
+  art_panchang_p7:
+    "Vara (Wochentag). Vara ist schlicht der Wochentag, jeder von einem Planeten regiert: Sonntag von der Sonne, Montag vom Mond, Dienstag vom Mars und so weiter. Der Herrscherplanet verleiht dem Tag seinen Charakter und ist die Grundlage von Praktiken wie dem planetaren Hora-System (Stunden).",
+  art_panchang_h3: "Was ein tägliches Panchang sonst zeigt",
+  art_panchang_p8:
+    "Über die fünf Kernglieder hinaus listet ein vollständiges Panchang meist mehrere unterstützende Angaben, die den Tag prägen:",
+  art_panchang_li1:
+    "Sonnenaufgang und -untergang sowie Mondaufgang und -untergang, die den Rahmen für die meisten anderen Zeiten setzen.",
+  art_panchang_li2:
+    "Ungünstige Phasen wie Rahu Kalam, Yamagandam und Gulika Kalam, Fenster, die man für wichtige Arbeiten traditionell meidet.",
+  art_panchang_li3:
+    "Günstige Fenster wie Abhijit Muhurta und andere förderliche Spannen, gut für den Beginn neuer Vorhaben.",
+  art_panchang_li4:
+    "Die Samvats und das Ritu (Jahreszeit), die den Tag in den größeren hinduistischen Kalender und Jahreszyklus einordnen.",
+  art_panchang_h4: "Wie man das Panchang nutzt",
+  art_panchang_p9:
+    "Im Alltag wirf einen Blick auf Tithi und Nakshatra, um den Charakter des Tages zu erfassen, und prüfe die ungünstigen Phasen, wenn du etwas Wichtiges planst. Um einen wirklich günstigen Moment zu wählen, etwa für eine Zeremonie, eine Reise oder einen Neuanfang, werden die fünf Glieder gemeinsam abgewogen. Genau das tut ein Wahl-Werkzeug.",
+  art_panchang_p10:
+    "Den vollständigen Almanach von heute findest du auf der {0}, und günstige Zeiten für einen bestimmten Zweck mit unserem {1}.",
 };
 
 export default de;
