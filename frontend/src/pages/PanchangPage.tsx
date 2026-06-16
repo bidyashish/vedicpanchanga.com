@@ -4,6 +4,7 @@ import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { ShareLinkButton } from "@/components/common/ShareLinkButton";
 import { DatePicker } from "@/components/ui/date-picker";
+import { AuspiciousHeatmap } from "@/components/panchang/AuspiciousHeatmap";
 import { GowriPanchangam } from "@/components/panchang/GowriPanchangam";
 import { HoraPanchangam } from "@/components/panchang/HoraPanchangam";
 import { NallaNeram } from "@/components/panchang/NallaNeram";
@@ -854,6 +855,10 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                   { label: t("ritu_madhyahna"), value: formatTime(data.sun_moon.madhyahna, tz) },
                 ]}
               />
+            </Section>
+
+            <Section title={t("heat_title")} subtitle={t("heat_sub")} testId="section-heatmap">
+              <AuspiciousHeatmap data={data} tz={tz} />
             </Section>
 
             <Section title={t("auspicious_title")} testId="section-auspicious">
