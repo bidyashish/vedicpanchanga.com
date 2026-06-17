@@ -158,30 +158,36 @@ def _build_basic_rows(
     sunrise_disp = fmt_hms_local(sun_moon.get("sunrise", ""))
     sunset_disp = fmt_hms_local(sun_moon.get("sunset", ""))
 
+    # Gregorian dates, clock times, coordinates, Julian day, ayanamsa and
+    # sidereal time are technical/universal data: they stay in Latin digits for
+    # every language (matching the web UI). Converting them to native digits
+    # glued Tamil/Hindi numerals onto Latin direction letters (E/N/W/S) and
+    # produced garbled values - see issue #86. Native digits are reserved for
+    # genuine panchang readings (nakshatra pada, sign/house numbers, etc.).
     return [
         # Column 1
         ("name", name or ""),
         ("sex", sex_label),
-        ("date", t_num(lang, fmt_date_dmy(birth["local_time"]))),
+        ("date", fmt_date_dmy(birth["local_time"])),
         ("day", weekday_label),
-        ("time_of_birth", t_num(lang, birth_local.strftime("%H.%M.%S"))),
-        ("sid", t_num(lang, sid_str)),
+        ("time_of_birth", birth_local.strftime("%H.%M.%S")),
+        ("sid", sid_str),
         # Column 2
-        ("julian_day", t_num(lang, julian_int)),
+        ("julian_day", str(julian_int)),
         ("ayan_type", ayan_label),
-        ("ayan", t_num(lang, ayan_str)),
+        ("ayan", ayan_str),
         ("place", place_name or ""),
-        ("longitude", t_num(lang, fmt_lon(birth["longitude"]))),
-        ("latitude", t_num(lang, fmt_lat(birth["latitude"]))),
+        ("longitude", fmt_lon(birth["longitude"])),
+        ("latitude", fmt_lat(birth["latitude"])),
         # Column 3
         ("asc_lord", asc_lord_disp),
         ("asc", asc_sign_disp),
         ("yoga", yoga_disp),
         ("tithi", tithi_disp),
-        ("sunset", t_num(lang, sunset_disp)),
-        ("sunrise", t_num(lang, sunrise_disp)),
+        ("sunset", sunset_disp),
+        ("sunrise", sunrise_disp),
         # Column 4
-        ("bal_dasa", t_num(lang, bal_dasa)),
+        ("bal_dasa", bal_dasa),
         ("karan", karana_disp),
         ("star_lord", nak_lord_disp),
         ("star_pada", nak_pada_str),
