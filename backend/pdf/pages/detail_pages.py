@@ -67,8 +67,9 @@ def draw_planet_varga_matrix(
     name: str,
     lang: str,
 ) -> None:
-    """One landscape-feeling table on a portrait page: planet rows × 16 varga
-    columns, each cell = sign id 1..12 the planet falls in that varga.
+    """One landscape-feeling table on a portrait page: planet rows × varga
+    columns (one per entry in varga_order), each cell = sign id 1..12 the
+    planet falls in that varga.
     """
     pdf.add_page()
     _draw_page_header(pdf, name, lang, "Shodashvarga - Planet Matrix")

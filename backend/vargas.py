@@ -8,6 +8,8 @@ Standard Parashara rules:
   D7  Saptamamsha - 7 parts of ~4.29°: odd starts from same sign; even from 7th
   D9  Navamsha - (lon * 9) % 360 / 30
   D10 Dashamamsha - odd starts from same, even from 9th
+  D11 Rudramsha (Ekadasamsha) - 11 parts of 30/11°; start sign found by
+      counting the rasi's number anti-zodiacally from Aries, parts run forward
   D12 Dwadashamsha - 12 parts of 2.5°, starts from same sign, sequential
   D16 Shodashamsha - movable from Aries, fixed from Leo, dual from Sagittarius
   D20 Vimshamsha - movable from Aries, fixed from Sagittarius, dual from Leo
@@ -22,7 +24,7 @@ Standard Parashara rules:
 from functools import lru_cache
 
 # Varga order we render
-VARGA_ORDER = [1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60]
+VARGA_ORDER = [1, 2, 3, 4, 7, 9, 10, 11, 12, 16, 20, 24, 27, 30, 40, 45, 60]
 
 VARGA_NAMES = {
     1: "Rashi",
@@ -32,6 +34,7 @@ VARGA_NAMES = {
     7: "Saptamsa",
     9: "Navamsa",
     10: "Dashamsa",
+    11: "Rudramsa",
     12: "Dvadashamsa",
     16: "Shodashamsa",
     20: "Vimshamsa",
@@ -51,6 +54,7 @@ VARGA_SUBTITLE = {
     7: "Children",
     9: "Spouse / Dharma",
     10: "Career / Achievement",
+    11: "Gains / Income",
     12: "Parents",
     16: "Vehicles / Comforts",
     20: "Spiritual Progress",
@@ -105,7 +109,7 @@ def _add_sign(sign: int, offset: int) -> int:
 def varga_sign(longitude: float, n: int) -> int:
     """Return 1-12 sign id for the given longitude in divisional chart D<n>.
 
-    Pure function of its arguments, called 12 planets × 16 vargas per chart
+    Pure function of its arguments, called 12 planets × 17 vargas per chart
     (plus per-varga ascendant lookups), so the process-level cache is safe
     and saves most of the repeat work across requests for the same chart."""
     longitude = longitude % 360
@@ -147,6 +151,16 @@ def varga_sign(longitude: float, n: int) -> int:
         # Dashamamsha: odd starts from same; even from 9th
         part = int(deg_in_sign // 3)  # 0..9
         start = sign if is_odd else _add_sign(sign, 8)
+        return _add_sign(start, part)
+
+    if n == 11:
+        # Rudramsha (Ekadasamsha): 11 parts of 30/11°. The start sign is found
+        # by counting the rasi's number anti-zodiacally (reverse) from Aries
+        # (1-based, Aries inclusive); parts then run forward from there. No
+        # odd/even distinction. e.g. Gemini (3rd) -> Aquarius; Scorpio (8th)
+        # -> Virgo.
+        part = int(deg_in_sign // (30 / 11))  # 0..10
+        start = _add_sign(1, -(sign - 1))
         return _add_sign(start, part)
 
     if n == 12:
