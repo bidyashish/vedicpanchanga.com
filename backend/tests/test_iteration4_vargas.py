@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import pytest
 
-EXPECTED_VARGA_ORDER = [1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60]
+EXPECTED_VARGA_ORDER = [1, 2, 3, 4, 7, 9, 10, 11, 12, 16, 20, 24, 27, 30, 40, 45, 60]
 EXPECTED_VARGA_KEYS = {f"d{n}" for n in EXPECTED_VARGA_ORDER}
 
 
@@ -47,6 +47,12 @@ class TestVargasStructure:
 
     def test_d1_subtitle(self, chart):
         assert chart["vargas"]["d1"]["subtitle"] == "Physical Self / Body"
+
+    def test_d11_subtitle(self, chart):
+        assert chart["vargas"]["d11"]["subtitle"] == "Gains / Income"
+
+    def test_d11_name(self, chart):
+        assert chart["vargas"]["d11"]["name"] == "Rudramsa"
 
     def test_d30_subtitle(self, chart):
         assert chart["vargas"]["d30"]["subtitle"] == "Misfortunes"
@@ -127,6 +133,48 @@ class TestD30Trimshamsha:
         assert varga_sign(280.0, 30) == 6
 
 
+# ── D11 Rudramsha (Ekadasamsha) direct unit tests (no HTTP) ──────────────
+class TestD11Rudramsha:
+    """Start sign is found by counting the rasi's number anti-zodiacally from
+    Aries; the 11 parts (30/11° each) then run forward. No odd/even split.
+    Worked examples are from PVR Narasimha Rao's method (Jagannatha Hora)."""
+
+    @pytest.fixture
+    def varga_sign(self):
+        from vargas import varga_sign as vs  # noqa: WPS433
+
+        return vs
+
+    def test_mercury_11deg_gemini_stays_in_gemini(self, varga_sign):
+        # 11° Gemini = 71°. 11° is the 5th part; Gemini (3rd from Aries) →
+        # start Aquarius (3rd anti-zodiacally); 5th from Aquarius = Gemini(3).
+        assert varga_sign(71.0, 11) == 3
+
+    def test_jupiter_19deg_scorpio_goes_to_pisces(self, varga_sign):
+        # 19° Scorpio = 229°. 19° is the 7th part; Scorpio (8th from Aries) →
+        # start Virgo (8th anti-zodiacally); 7th from Virgo = Pisces(12).
+        assert varga_sign(229.0, 11) == 12
+
+    def test_aries_first_part_is_aries(self, varga_sign):
+        # Aries (1st from Aries) → start Aries; 1st part stays in Aries(1).
+        assert varga_sign(0.0, 11) == 1
+
+    def test_aries_last_part_is_aquarius(self, varga_sign):
+        # Aries 29° = 11th part (0-indexed 10) counted forward from Aries → Aquarius(11).
+        assert varga_sign(29.0, 11) == 11
+
+    def test_taurus_first_part_is_pisces(self, varga_sign):
+        # Taurus (2nd from Aries) → start Pisces (2nd anti-zodiacally);
+        # 1st part stays in Pisces(12). Confirms no odd/even distinction.
+        assert varga_sign(30.0, 11) == 12
+
+    def test_part_width_boundary(self, varga_sign):
+        # Each part spans 30/11 ≈ 2.7273°. Just under the first boundary stays
+        # in part 1 (Aries→Aries); just over moves to part 2 (Taurus from Aries).
+        assert varga_sign(30 / 11 - 1e-6, 11) == 1
+        assert varga_sign(30 / 11 + 1e-6, 11) == 2
+
+
 # ── varga_degree_in_sign direct unit tests ────────────────────────────────
 class TestVargaDegreeInSign:
     @pytest.fixture
@@ -163,6 +211,14 @@ class TestVargaDegreeInSign:
         assert fn(0.25, 60) == pytest.approx(15.0, abs=1e-9)
         assert fn(0.5, 60) == pytest.approx(0.0, abs=1e-9)
 
+    def test_d11_rudramsha(self, fn):
+        # 11 uniform parts of 30/11°. Halfway into the first part → 15°.
+        assert fn(30 / 11 / 2, 11) == pytest.approx(15.0, abs=1e-9)
+        # A hair into the second part → near the start of that part → ~0°.
+        assert fn(30 / 11 + 1e-9, 11) == pytest.approx(0.0, abs=1e-6)
+        # A quarter into the third part → 7.5° within the D11 sign.
+        assert fn(30 / 11 * 2 + (30 / 11) / 4, 11) == pytest.approx(7.5, abs=1e-9)
+
     def test_d30_odd_sign_segments(self, fn):
         # Aries (odd) breaks: 0-5 (Mars), 5-10 (Sat), 10-18 (Jup), 18-25 (Mer), 25-30 (Ven).
         # 2° → 2/5 of Mars segment → 12° within Aries (Mars varga sign).
@@ -180,7 +236,7 @@ class TestVargaDegreeInSign:
     def test_range_is_within_0_30(self, fn):
         # No matter the longitude, the result must be in [0, 30) for every varga.
         for lon in (0.0, 12.34, 30.0, 89.99, 180.5, 359.999):
-            for n in (1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60):
+            for n in (1, 2, 3, 4, 7, 9, 10, 11, 12, 16, 20, 24, 27, 30, 40, 45, 60):
                 d = fn(lon, n)
                 assert 0.0 <= d <= 30.0, f"out of range for lon={lon}, n={n}: {d}"
 

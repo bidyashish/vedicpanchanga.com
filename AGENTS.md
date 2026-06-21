@@ -115,10 +115,20 @@ The frontend calls these directly via same-origin `/api/` (Nginx proxy in prod, 
 - **Styling**: Tailwind CSS v4 + Shadcn/ui components. No custom CSS unless necessary.
 - **i18n**: 15 languages - en, hi, ta, bn, ne, zh, ja, es, de, pt, fr, ru, ar, fa, he.
   All user-facing strings go through `src/i18n/locales/{lang}.ts`. Astronomical
-  names (planet/sign/nakshatra) and native-digit tables live in `src/i18n/astro.ts`.
+  names (planet/sign/nakshatra) and native-digit tables live in `src/i18n/astro.ts`;
+  varga (divisional-chart) names + subtitles live in `src/lib/vargas.ts`.
   `src/i18n/index.tsx` registers `LANGUAGES` and exposes `useI18n()`. RTL languages
   (`ar`, `fa`, `he`) get `dir="rtl"` set on `<html>` automatically.
-  All non-English locales must use their native script (no transliteration).
+  **Every non-English locale must be native AND written for a native speaker** -
+  this is stronger than "use the right script". Use each language's native script
+  throughout (no transliteration of UI text into Latin), and translate astrology/
+  technical terms (Rashi, Nakshatra, Mahadasha, Ashtakavarga, Hora, ...) into the
+  target language rather than leaving them as bare English words inside a CJK/RTL/
+  Indic string. Acceptable Latin is minimal: scientific catalog names in parens
+  (Sirius/Vega), units (`Hz`), acronyms (`DNA`); numbers stay Latin digits. Never
+  leave one script's letters inside another script's word. Before finishing an i18n
+  change, scan the non-Latin locales for ASCII Latin runs in values and translate
+  them (a known ~306-string backlog exists, worst in `zh`/`ja` - don't grow it).
 - **State**: Keep state as local as possible; lift only when needed.
 - **API calls**: Use same-origin `/api/` routes (Nginx proxy), never call `:8001` directly from the browser.
 - **Lint / format**: [oxlint](https://github.com/oxc-project/oxc) and

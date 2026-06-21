@@ -124,9 +124,13 @@ Cloudflare → Nginx (TLS, CSP, returns 444 for direct-IP) → static Vite build
 ## Style rules
 
 - **No em dashes (`—`)** anywhere in the codebase - not in UI text, i18n strings, SEO titles, meta descriptions, or new code. Use a plain hyphen (`-`) instead. Existing code comments are exempt but new ones should also use hyphens.
-- **Hindi text must use native Devanagari script** in the `hi` i18n dictionary. No transliteration.
-- **Tamil text must use native Tamil script** in the `ta` i18n dictionary. No transliteration.
-- **All non-English locales use their native script.** Bengali → Bangla, Nepali → Devanagari, Arabic → Arabic, Persian (`fa`) → Perso-Arabic, Hebrew → Hebrew, Russian → Cyrillic, etc. No transliteration in any locale dictionary.
+- **Every non-English locale must be native AND written for a native speaker.** This is the headline i18n rule and it is stronger than "use the right script":
+  - **Native script everywhere.** `hi`/`ne` → Devanagari, `ta` → Tamil, `bn` → Bangla, `zh` → Chinese, `ja` → Japanese (kana/kanji), `ru` → Cyrillic, `ar` → Arabic, `fa` → Perso-Arabic, `he` → Hebrew. `es`/`de`/`pt`/`fr` use their own Latin orthography. No transliteration of UI text into Latin in any locale.
+  - **No bare Latin terms left untranslated.** Astrology/technical terms (Rashi, Nakshatra, Mahadasha, Ashtakavarga, Hora, Panchang, Rahu Kala, Chandrabalam, Pushkara Bhaga, Neecha Bhanga, Graha Yuddha, ...) must be rendered in the target language - a native-script transliteration of a Sanskrit proper noun is fine; an English word sitting inside a CJK/RTL/Indic string is not. The text has to actually read naturally to a native speaker, not be a "Latin terms with native filler" half-translation.
+  - **Acceptable Latin (keep minimal):** scientific catalog names in parens (Sirius/Vega/Perseus), unit symbols (`Hz`), well-known acronyms (`DNA`). Numeric values stay Latin digits 0-9 (see locale-digit rule).
+  - **Watch cross-script contamination:** never leave one script's letters inside another script's word (e.g. an Arabic letter inside a Hebrew string). Validate RTL/Indic/CJK blocks are script-pure before finishing.
+  - **Where it lives:** UI strings in `frontend/src/i18n/locales/{lang}.ts`; astronomical proper-noun names in `frontend/src/i18n/astro.ts`; varga (divisional-chart) names + subtitles in `frontend/src/lib/vargas.ts` (full per-locale `VargaDict` registry, native names for every script); backend PDF labels in `backend/pdf/core/i18n/locales/{lang}.py`.
+  - **Automated guardrail:** `npm run i18n:check` (script at `frontend/scripts/check-i18n.mjs`, wired into `make check-frontend` and CI) enforces (1) key parity - every locale has exactly `en.ts`'s keys - and (2) native script - no bare Latin outside the allow-list in the 10 non-Latin locales. Run it before finishing any i18n change; if you add a UI string, add the key to `en.ts` first then translate it in all 15 locales or the check fails. Keep the script's allow-list in sync with this rule.
 
 ## Gotchas specific to this repo
 

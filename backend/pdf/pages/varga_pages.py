@@ -1,8 +1,9 @@
-"""Render the Shodashvarga (sixteen-fold varga) chart pages.
+"""Render the divisional (varga) chart pages.
 
-Lays out all 16 divisional charts (D1 → D60) in a 2-col × 3-row grid,
-6 charts per page, across 3 pages. Each cell shows D-number + varga name
-+ subtitle on top of a North or South Indian style chart (per chart_style).
+Lays out every chart in varga_order (D1 → D60) in a 2-col × 3-row grid,
+6 charts per page. Each cell shows D-number + varga name + subtitle on top
+of a North or South Indian style chart (per chart_style). Page count follows
+the number of vargas (ceil(len/6)).
 """
 
 from __future__ import annotations
