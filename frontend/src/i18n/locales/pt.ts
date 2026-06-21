@@ -665,6 +665,147 @@ const pt: Record<string, string> = {
     "No dia a dia, dê uma olhada no tithi e no nakshatra para captar o caráter do dia, e verifique os períodos inauspiciosos se estiver planejando algo importante. Para escolher um momento realmente auspicioso, como uma cerimônia, uma viagem ou um novo começo, os cinco membros são ponderados em conjunto. É exatamente isso que uma ferramenta eletiva faz.",
   art_panchang_p10:
     "Você pode explorar o almanaque completo de hoje na {0} e encontrar tempos favoráveis para um propósito específico com o nosso {1}.",
+  learn_dasha_title: "Dasha Vimshottari",
+  learn_nakshatras_title: "Os 27 Nakshatras",
+  learn_rashi_title: "Signo lunar vs signo solar",
+  learn_vargas_title: "Mapas divisionais",
+  link_dasha_guide: "guia da Dasha Vimshottari",
+  link_nakshatras_guide: "os 27 nakshatras",
+  link_rashi_guide: "guia do signo lunar",
+  link_vargas_guide: "guia dos mapas divisionais",
+  link_panchang_guide: "guia do Panchang",
+  link_transits_page: "transitos planetarios",
+  art_dasha_title: "Dasha Vimshottari: a linha do tempo vedica da sua vida",
+  art_dasha_intro:
+    "A Dasha Vimshottari e o sistema de tempos mais usado na astrologia vedica. Divide a sua vida em periodos planetarios que mostram quando a promessa do seu mapa natal tem mais probabilidade de se manifestar.",
+  art_dasha_h1: "O que e uma dasha?",
+  art_dasha_p1:
+    "Uma dasha e um periodo de tempo regido por um planeta especifico. Enquanto o seu mapa natal mostra o que e possivel, a sequencia de dashas mostra quando. Durante a dasha de um planeta, os temas, casas e relacoes que esse planeta rege no seu mapa passam ao primeiro plano, para o bem ou para o mal conforme a posicao do planeta.",
+  art_dasha_p2:
+    "Vimshottari e a mais conhecida de varios sistemas de dasha. O seu ciclo completo dura 120 anos e esta ligado ao nakshatra da Lua ao nascer, por isso uma hora de nascimento exata e {0} importam tanto.",
+  art_dasha_h2: "Os nove periodos planetarios",
+  art_dasha_p3:
+    "O ciclo completo de 120 anos reparte-se pelos nove planetas, cada um com um numero fixo de anos:",
+  art_dasha_li1: "Ketu - 7 anos",
+  art_dasha_li2: "Venus - 20 anos",
+  art_dasha_li3: "Sol - 6 anos",
+  art_dasha_li4: "Lua - 10 anos",
+  art_dasha_li5: "Marte - 7 anos",
+  art_dasha_li6: "Rahu - 18 anos",
+  art_dasha_li7: "Jupiter - 16 anos",
+  art_dasha_li8: "Saturno - 19 anos",
+  art_dasha_li9: "Mercurio - 17 anos",
+  art_dasha_p4:
+    "O planeta em cujo periodo voce nasce, e em que ponto desse periodo comeca, dependem do seu nakshatra natal. A partir dai os periodos seguem sempre a mesma ordem.",
+  art_dasha_h3: "Mahadasha, antardasha e pratyantar",
+  art_dasha_p5:
+    "Cada periodo maior (mahadasha) divide-se em nove subperiodos (antardasha), um por planeta, na mesma ordem Vimshottari e em proporcao aos anos de cada planeta. Cada antardasha divide-se de novo em periodos pratyantar. Esse aninhamento permite ao astrologo estreitar uma previsao de anos para poucas semanas.",
+  art_dasha_p6:
+    "Uma forma simples de ler: a mahadasha define o grande capitulo da vida, a antardasha o enredo atual e o pratyantar afina o tempo dentro dele.",
+  art_dasha_h4: "Como usar a sua linha do tempo de dashas",
+  art_dasha_p7:
+    "Veja qual planeta rege a sua mahadasha e antardasha atuais e depois como esses planetas estao no seu mapa: signo, casa e dignidade. Um planeta forte e bem posicionado tende a dar bons resultados no seu periodo; um fraco ou afligido pode trazer desafios que pedem paciencia. O nosso {0} calcula a sequencia completa de 120 anos com subperiodos a partir dos seus dados de nascimento.",
+  art_dasha_h5: "Perguntas frequentes",
+  art_dasha_faq1_q: "Por que o ciclo e de 120 anos?",
+  art_dasha_faq1_a:
+    "Os nove periodos planetarios somam 120 anos (7+20+6+10+7+18+16+19+17). Na tradicao e considerado uma vida humana completa, apos a qual o ciclo se repetiria.",
+  art_dasha_faq2_q: "Toda a gente comeca com o mesmo planeta?",
+  art_dasha_faq2_a:
+    "Nao. A sua primeira dasha e decidida pelo nakshatra que a Lua ocupa ao nascer, e normalmente voce comeca a meio do periodo desse planeta, nao no inicio.",
+  art_dasha_faq3_q: "Uma dasha 'ma' e mesmo ma?",
+  art_dasha_faq3_a:
+    "Nao necessariamente. Um periodo reflete como o seu planeta regente esta no seu mapa. Ate um planeta dificil pode dar crescimento e disciplina, e os resultados sao sempre lidos junto com a forca do planeta, os seus aspetos e as casas que rege.",
+  art_naks_title: "Os 27 Nakshatras: a sua estrela natal vedica",
+  art_naks_intro:
+    "Os nakshatras sao as 27 mansoes lunares da astrologia vedica. O nakshatra que a Lua ocupa ao nascer, o seu janma nakshatra ou estrela natal, diz muito sobre o seu temperamento e e central para os tempos e a compatibilidade.",
+  art_naks_h1: "O que e um nakshatra?",
+  art_naks_p1:
+    "O zodiaco de 360 graus divide-se em 27 nakshatras de 13 graus 20 minutos cada. Enquanto os doze rashis (signos) dao uma imagem ampla, os nakshatras acrescentam uma camada de significado mais fina. A Lua leva cerca de um dia a cruzar um nakshatra, por isso cada dia tem uma estrela regente.",
+  art_naks_p2:
+    "Cada nakshatra tem um planeta regente, uma divindade presidente, um simbolo e uma natureza propria. Juntos matizam como se expressa um planeta nesse nakshatra, por isso os nakshatras importam para muito mais do que a Lua.",
+  art_naks_h2: "Padas: os quatro quartos",
+  art_naks_p3:
+    "Cada nakshatra divide-se em quatro padas (quartos) de 3 graus 20 minutos cada. Os quatro padas de um nakshatra correspondem ao mapa Navamsa (D9), de modo que o seu pada refina a sua estrela natal e liga-a ao seu nono {0}. Conhecer o seu nakshatra e o seu pada juntos da uma leitura muito mais precisa do que o signo sozinho.",
+  art_naks_h3: "Por que a sua estrela natal importa",
+  art_naks_p4: "O janma nakshatra e usado na astrologia vedica de formas praticas:",
+  art_naks_li1:
+    "Define a sua Dasha Vimshottari inicial, a linha do tempo planetaria da sua vida. ({0})",
+  art_naks_li2:
+    "E a base do tarabalam, a forca diaria das estrelas usada ao escolher tempos auspiciosos.",
+  art_naks_li3: "E central na compatibilidade (o sistema kuta ou porutham) para o casamento.",
+  art_naks_li4: "Orienta a escolha do primeiro som do nome de um bebe na tradicao namakarana.",
+  art_naks_h4: "Encontrar o seu nakshatra",
+  art_naks_p5:
+    "A sua estrela natal e simplesmente o nakshatra em que a Lua estava no momento do nascimento, por isso precisa de hora e local de nascimento exatos. O nosso {0} mostra o nakshatra e o pada da sua Lua, e o nosso {1} indica o nakshatra regente de qualquer data.",
+  art_naks_h5: "Perguntas frequentes",
+  art_naks_faq1_q: "O nakshatra baseia-se no Sol ou na Lua?",
+  art_naks_faq1_a:
+    "A sua estrela natal baseia-se na posicao da Lua. A astrologia vedica apoia-se na Lua para o temperamento e os tempos, por isso o nakshatra lunar e tao importante.",
+  art_naks_faq2_q: "Qual e a diferenca entre um rashi e um nakshatra?",
+  art_naks_faq2_a:
+    "Um rashi e um dos 12 signos de 30 graus cada; um nakshatra e uma das 27 mansoes de cerca de 13 graus cada. Os nakshatras dao uma leitura mais fina e cada signo contem partes de mais de dois nakshatras.",
+  art_naks_faq3_q: "Por que se fala por vezes em 28 nakshatras?",
+  art_naks_faq3_a:
+    "Alguns sistemas antigos acrescentam um 28, Abhijit, entre Uttara Ashadha e Shravana. A maior parte da astrologia vedica moderna, e este site, usa os 27 padrao para os calculos de mapa e dasha.",
+  art_rashi_title: "Signo lunar vs signo solar: por que a astrologia vedica usa a Lua",
+  art_rashi_intro:
+    "Se o seu signo lunar vedico parece diferente do signo que conhece das revistas, nao esta sozinho. A astrologia vedica e a ocidental usam pontos de referencia diferentes, e a vedica apoia-se na Lua mais do que no Sol.",
+  art_rashi_h1: "O que e um rashi?",
+  art_rashi_p1:
+    "Rashi e a palavra sanscrita para um signo do zodiaco, uma das doze divisoes de 30 graus de Carneiro a Peixes. Cada planeta esta num rashi, mas dois sao lidos com mais frequencia: o signo em que estava o Sol (o seu Surya Rashi ou signo solar) e o signo em que estava a Lua (o seu Chandra Rashi ou signo lunar).",
+  art_rashi_h2: "Por que o signo lunar lidera na astrologia vedica",
+  art_rashi_p2:
+    "A astrologia ocidental destaca o signo solar, que reflete identidade e ego. A astrologia vedica da mais peso ao Chandra Rashi, o signo lunar, porque a Lua rege a mente, as emocoes e a vida diaria. O signo lunar e tambem a ancora da linha do tempo da Dasha Vimshottari e da leitura do panchang diario, por isso tem muito peso pratico. ({0})",
+  art_rashi_h3: "Sideral vs tropical: a verdadeira razao da diferenca",
+  art_rashi_p3:
+    "A maior diferenca e o proprio zodiaco. A astrologia ocidental usa o zodiaco tropical, ligado as estacoes e ao equinocio da primavera. A vedica usa o zodiaco sideral, ligado as posicoes reais das estrelas. Os dois afastaram-se ao longo dos seculos por uma quantidade chamada ayanamsa, hoje cerca de 24 graus.",
+  art_rashi_p4:
+    "Por causa dessa diferenca, o seu signo solar sideral fica muitas vezes um signo antes do tropical. Quem se chama Carneiro ocidental e muitas vezes Peixes vedico. E normal e apenas reflete que os dois sistemas medem a partir de pontos de partida diferentes.",
+  art_rashi_h4: "Que signo deve ler?",
+  art_rashi_p5:
+    "Para a astrologia vedica, comece pelo seu signo lunar para o temperamento e os tempos, o seu ascendente (lagna) para o mapa global e o seu signo solar para a vitalidade e o papel do pai. Nenhum esta errado; cada um descreve uma camada diferente. Pode ve-los todos, calculados com o zodiaco sideral, no nosso {0}.",
+  art_rashi_h5: "Perguntas frequentes",
+  art_rashi_faq1_q: "Por que o meu signo vedico difere do meu signo ocidental?",
+  art_rashi_faq1_a:
+    "A astrologia vedica usa o zodiaco sideral, deslocado em relacao ao tropical ocidental pelo ayanamsa (cerca de 24 graus). Esse desvio recua um signo o signo solar de muitas pessoas.",
+  art_rashi_faq2_q: "O signo lunar e mais importante que o solar?",
+  art_rashi_faq2_a:
+    "Na astrologia vedica o signo lunar costuma ter mais peso para a personalidade e os tempos, mas uma leitura completa usa o signo lunar, o solar e o ascendente em conjunto.",
+  art_rashi_faq3_q: "Como encontro o meu signo lunar?",
+  art_rashi_faq3_a:
+    "Precisa da data, hora exata e local de nascimento, porque a Lua muda de signo cerca de cada dois dias e um quarto. Uma calculadora de mapa natal mostra-o diretamente.",
+  art_vargas_title: "Mapas divisionais (vargas): um nascimento, muitos mapas",
+  art_vargas_intro:
+    "Os mapas divisionais, ou vargas, sao uma caracteristica marcante da astrologia vedica. De um unico nascimento produzem uma familia de mapas, cada um focado numa area da vida como casamento, carreira ou fortuna.",
+  art_vargas_h1: "O que e um mapa divisional?",
+  art_vargas_p1:
+    "Um mapa divisional constroi-se dividindo cada signo de 30 graus em partes iguais menores e projetando-as num novo mapa. O mapa natal principal e o Rashi ou D1. Dividir cada signo em nove da o Navamsa ou D9, em dez o Dashamsa ou D10, e assim por diante ate ao D60. Cada divisao e calculada a partir das mesmas longitudes planetarias, apenas fatiada com mais detalhe.",
+  art_vargas_p2:
+    "A ideia e que o D1 mostra a promessa ampla de um assunto, enquanto o mapa divisional relevante mostra o seu detalhe e forca. Um planeta que parece forte no D1 mas fraco nas divisoes pode nao entregar tanto quanto aparenta.",
+  art_vargas_h2: "As vargas mais usadas",
+  art_vargas_p3: "Dezesseis vargas sao classicas, mas algumas sao consultadas com mais frequencia:",
+  art_vargas_li1: "D1 (Rashi) - o mapa natal e a base de tudo o resto.",
+  art_vargas_li2: "D9 (Navamsa) - casamento, dharma e a forca subjacente de cada planeta.",
+  art_vargas_li3: "D10 (Dashamsa) - carreira, profissao e realizacao publica.",
+  art_vargas_li4: "D7 (Saptamsa) - filhos e descendencia.",
+  art_vargas_li5: "D12 (Dwadashamsa) - pais e ascendencia.",
+  art_vargas_li6: "D27 (Nakshatramsa) - forcas e fraquezas gerais.",
+  art_vargas_h3: "Por que o Navamsa e especial",
+  art_vargas_p4:
+    "De todas as vargas, o D9 Navamsa e o mais importante depois do mapa natal. E lido para casamento e parceria, mas tambem como teste de forca de todo o mapa: um planeta bem posicionado tanto no D1 como no D9 e considerado realmente forte, uma qualidade chamada vargottama quando esta no mesmo signo em ambos.",
+  art_vargas_h4: "Como usar os mapas divisionais",
+  art_vargas_p5:
+    "Escolha o mapa que corresponde a sua pergunta - o D10 para a carreira, o D9 para o casamento - e leia ali a casa relevante e o seu regente, depois compare com o D1. E uma tecnica avancada, por isso os iniciantes podem comecar por notar se um planeta mantem boa posicao em varios mapas. O nosso {0} gera os dezesseis mapas divisionais a partir dos seus dados de nascimento.",
+  art_vargas_h5: "Perguntas frequentes",
+  art_vargas_faq1_q: "Os mapas divisionais sao horoscopos separados?",
+  art_vargas_faq1_a:
+    "Nao. Todos derivam do mesmo momento de nascimento e posicoes planetarias. Cada um e uma ampliacao diferente do mesmo mapa, focada numa area da vida.",
+  art_vargas_faq2_q: "Que mapa divisional um iniciante deve aprender primeiro?",
+  art_vargas_faq2_a:
+    "O D9 Navamsa. E usado tanto para relacoes como para verificar a forca geral de todo o mapa, por isso traz o maior valor no inicio.",
+  art_vargas_faq3_q: "Preciso de uma hora de nascimento muito exata para as vargas?",
+  art_vargas_faq3_a:
+    "Sim, mais do que para o D1. Como cada signo se divide em muitas partes, um pequeno erro na hora pode mover um planeta para outra divisao, por isso uma hora exata importa.",
 };
 
 export default pt;

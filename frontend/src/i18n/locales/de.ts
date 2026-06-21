@@ -665,6 +665,149 @@ const de: Record<string, string> = {
     "Im Alltag wirf einen Blick auf Tithi und Nakshatra, um den Charakter des Tages zu erfassen, und prüfe die ungünstigen Phasen, wenn du etwas Wichtiges planst. Um einen wirklich günstigen Moment zu wählen, etwa für eine Zeremonie, eine Reise oder einen Neuanfang, werden die fünf Glieder gemeinsam abgewogen. Genau das tut ein Wahl-Werkzeug.",
   art_panchang_p10:
     "Den vollständigen Almanach von heute findest du auf der {0}, und günstige Zeiten für einen bestimmten Zweck mit unserem {1}.",
+  learn_dasha_title: "Vimshottari Dasha",
+  learn_nakshatras_title: "Die 27 Nakshatras",
+  learn_rashi_title: "Mondzeichen vs Sonnenzeichen",
+  learn_vargas_title: "Teilungshoroskope",
+  link_dasha_guide: "Vimshottari-Dasha-Leitfaden",
+  link_nakshatras_guide: "die 27 Nakshatras",
+  link_rashi_guide: "Mondzeichen-Leitfaden",
+  link_vargas_guide: "Leitfaden zu Teilungshoroskopen",
+  link_panchang_guide: "Panchang-Leitfaden",
+  link_transits_page: "Planetentransite",
+  art_dasha_title: "Vimshottari Dasha: der vedische Zeitstrahl deines Lebens",
+  art_dasha_intro:
+    "Die Vimshottari Dasha ist das meistgenutzte Zeitsystem der vedischen Astrologie. Sie teilt dein Leben in Planetenperioden und zeigt, wann sich das Versprechen deines Geburtshoroskops am ehesten entfaltet.",
+  art_dasha_h1: "Was ist eine Dasha?",
+  art_dasha_p1:
+    "Eine Dasha ist ein Zeitabschnitt, der von einem bestimmten Planeten beherrscht wird. Wahrend dein Geburtshoroskop zeigt, was moglich ist, zeigt die Dasha-Folge, wann. Wahrend der Dasha eines Planeten treten die Themen, Hauser und Beziehungen in den Vordergrund, die dieser Planet in deinem Horoskop regiert, im Guten wie im Schlechten, je nach Stellung des Planeten.",
+  art_dasha_p2:
+    "Vimshottari ist die bekannteste von mehreren Dasha-Systemen. Ihr voller Zyklus dauert 120 Jahre und ist an das Nakshatra des Mondes bei der Geburt gebunden, weshalb eine genaue Geburtszeit und {0} so wichtig sind.",
+  art_dasha_h2: "Die neun Planetenperioden",
+  art_dasha_p3:
+    "Der volle 120-Jahres-Zyklus verteilt sich auf die neun Planeten, jeder mit einer festen Zahl an Jahren:",
+  art_dasha_li1: "Ketu - 7 Jahre",
+  art_dasha_li2: "Venus - 20 Jahre",
+  art_dasha_li3: "Sonne - 6 Jahre",
+  art_dasha_li4: "Mond - 10 Jahre",
+  art_dasha_li5: "Mars - 7 Jahre",
+  art_dasha_li6: "Rahu - 18 Jahre",
+  art_dasha_li7: "Jupiter - 16 Jahre",
+  art_dasha_li8: "Saturn - 19 Jahre",
+  art_dasha_li9: "Merkur - 17 Jahre",
+  art_dasha_p4:
+    "Der Planet, in dessen Periode du geboren wirst, und wo in dieser Periode du beginnst, hangen von deinem Geburts-Nakshatra ab. Danach laufen die Perioden immer in derselben Reihenfolge.",
+  art_dasha_h3: "Mahadasha, Antardasha und Pratyantar",
+  art_dasha_p5:
+    "Jede Hauptperiode (Mahadasha) ist in neun Unterperioden (Antardasha) unterteilt, eine je Planet, in derselben Vimshottari-Reihenfolge und proportional zu den Jahren jedes Planeten. Jede Antardasha wird wiederum in Pratyantar-Perioden geteilt. Diese Verschachtelung erlaubt es, eine Vorhersage von Jahren auf wenige Wochen einzugrenzen.",
+  art_dasha_p6:
+    "Einfach gelesen: Die Mahadasha setzt das grosse Lebenskapitel, die Antardasha den aktuellen Handlungsstrang, und das Pratyantar verfeinert die Zeitpunkte darin.",
+  art_dasha_h4: "So nutzt du deinen Dasha-Zeitstrahl",
+  art_dasha_p7:
+    "Sieh nach, welcher Planet deine aktuelle Mahadasha und Antardasha regiert, und dann, wie diese Planeten in deinem Horoskop stehen: Zeichen, Haus und Wurde. Ein starker, gut gestellter Planet gibt in seiner Periode meist gute Ergebnisse; ein schwacher oder bedrangter kann Herausforderungen bringen, die Geduld verlangen. Unser {0} berechnet die volle 120-Jahres-Folge mit Unterperioden aus deinen Geburtsdaten.",
+  art_dasha_h5: "Haufige Fragen",
+  art_dasha_faq1_q: "Warum dauert der Zyklus 120 Jahre?",
+  art_dasha_faq1_a:
+    "Die neun Planetenperioden ergeben zusammen 120 Jahre (7+20+6+10+7+18+16+19+17). In der Tradition gilt das als volle menschliche Lebensspanne, nach der sich der Zyklus wiederholen wurde.",
+  art_dasha_faq2_q: "Beginnt jeder mit demselben Planeten?",
+  art_dasha_faq2_a:
+    "Nein. Deine erste Dasha bestimmt das Nakshatra, in dem der Mond bei der Geburt steht, und du beginnst meist mitten in der Periode dieses Planeten, nicht am Anfang.",
+  art_dasha_faq3_q: "Ist eine 'schlechte' Dasha wirklich schlecht?",
+  art_dasha_faq3_a:
+    "Nicht unbedingt. Eine Periode spiegelt, wie ihr Herrscherplanet in deinem Horoskop steht. Auch ein schwieriger Planet kann Wachstum und Disziplin bringen, und Ergebnisse werden stets zusammen mit Starke, Aspekten und beherrschten Hausern des Planeten gelesen.",
+  art_naks_title: "Die 27 Nakshatras: dein vedischer Geburtsstern",
+  art_naks_intro:
+    "Nakshatras sind die 27 Mondhauser der vedischen Astrologie. Das Nakshatra, in dem der Mond bei deiner Geburt steht, dein Janma-Nakshatra oder Geburtsstern, sagt viel uber dein Wesen aus und ist zentral fur Zeitwahl und Partnerschaftsvergleich.",
+  art_naks_h1: "Was ist ein Nakshatra?",
+  art_naks_p1:
+    "Der Tierkreis von 360 Grad ist in 27 Nakshatras zu je 13 Grad 20 Minuten geteilt. Wahrend die zwolf Rashis (Zeichen) ein grobes Bild geben, fugen die Nakshatras eine feinere Bedeutungsebene hinzu. Der Mond braucht etwa einen Tag, um ein Nakshatra zu durchqueren, sodass jeder Tag einen herrschenden Geburtsstern hat.",
+  art_naks_p2:
+    "Jedes Nakshatra hat einen Herrscherplaneten, eine prasidierende Gottheit, ein Symbol und eine eigene Natur. Zusammen pragen sie, wie sich ein Planet in diesem Nakshatra ausdruckt, weshalb Nakshatras fur weit mehr als nur den Mond wichtig sind.",
+  art_naks_h2: "Padas: die vier Viertel",
+  art_naks_p3:
+    "Jedes Nakshatra ist in vier Padas (Viertel) zu je 3 Grad 20 Minuten geteilt. Die vier Padas eines Nakshatras entsprechen dem Navamsa (D9), sodass dein Pada deinen Geburtsstern verfeinert und ihn mit deinem neunten {0} verknupft. Nakshatra und Pada zusammen zu kennen, ergibt eine viel scharfere Deutung als das Zeichen allein.",
+  art_naks_h3: "Warum dein Geburtsstern wichtig ist",
+  art_naks_p4: "Das Janma-Nakshatra wird in der vedischen Astrologie auf praktische Weise genutzt:",
+  art_naks_li1:
+    "Es bestimmt deine erste Vimshottari Dasha, den Planetenzeitstrahl deines Lebens. ({0})",
+  art_naks_li2:
+    "Es ist die Grundlage des Tarabalam, der taglichen Sternenstarke bei der Wahl guenstiger Zeiten.",
+  art_naks_li3:
+    "Es ist zentral fur den Partnerschaftsvergleich (das Kuta- oder Porutham-System) zur Heirat.",
+  art_naks_li4:
+    "Es leitet die Wahl des ersten Lautes eines Babynamens in der Namakarana-Tradition.",
+  art_naks_h4: "Dein Nakshatra finden",
+  art_naks_p5:
+    "Dein Geburtsstern ist einfach das Nakshatra, in dem der Mond im Moment deiner Geburt stand, daher brauchst du eine genaue Geburtszeit und einen genauen Ort. Unser {0} zeigt Nakshatra und Pada deines Mondes, und unser {1} nennt das herrschende Nakshatra fur jedes Datum.",
+  art_naks_h5: "Haufige Fragen",
+  art_naks_faq1_q: "Beruht das Nakshatra auf der Sonne oder dem Mond?",
+  art_naks_faq1_a:
+    "Dein Geburtsstern beruht auf der Mondposition. Die vedische Astrologie stutzt sich fur Wesen und Zeitwahl auf den Mond, weshalb das Mond-Nakshatra so wichtig ist.",
+  art_naks_faq2_q: "Was ist der Unterschied zwischen Rashi und Nakshatra?",
+  art_naks_faq2_a:
+    "Ein Rashi ist eines von 12 Zeichen zu je 30 Grad; ein Nakshatra ist eines von 27 Hausern zu je etwa 13 Grad. Nakshatras geben eine feinere Deutung, und jedes Zeichen enthalt Teile von mehr als zwei Nakshatras.",
+  art_naks_faq3_q: "Warum spricht man manchmal von 28 Nakshatras?",
+  art_naks_faq3_a:
+    "Manche alteren Systeme fugen ein 28., Abhijit, zwischen Uttara Ashadha und Shravana ein. Die meiste moderne vedische Astrologie, und diese Seite, nutzt die ublichen 27 fur Horoskop- und Dasha-Berechnungen.",
+  art_rashi_title: "Mondzeichen vs Sonnenzeichen: warum die vedische Astrologie den Mond nutzt",
+  art_rashi_intro:
+    "Wenn dein vedisches Mondzeichen anders aussieht als das Sternzeichen aus den Zeitschriften, bist du nicht allein. Vedische und westliche Astrologie nutzen verschiedene Bezugspunkte, und die vedische stutzt sich auf den Mond statt auf die Sonne.",
+  art_rashi_h1: "Was ist ein Rashi?",
+  art_rashi_p1:
+    "Rashi ist das Sanskrit-Wort fur ein Tierkreiszeichen, eine der zwolf 30-Grad-Teilungen von Widder bis Fische. Jeder Planet steht in einem Rashi, aber zwei werden am haufigsten gelesen: das Zeichen, in dem die Sonne stand (dein Surya Rashi oder Sonnenzeichen) und das, in dem der Mond stand (dein Chandra Rashi oder Mondzeichen).",
+  art_rashi_h2: "Warum das Mondzeichen in der vedischen Astrologie fuhrt",
+  art_rashi_p2:
+    "Die westliche Astrologie betont das Sonnenzeichen, das Identitat und Ego spiegelt. Die vedische Astrologie gewichtet das Chandra Rashi, das Mondzeichen, starker, weil der Mond Geist, Gefuhle und Alltag regiert. Das Mondzeichen ist auch der Anker des Vimshottari-Dasha-Zeitstrahls und der taglichen Panchang-Lesung, daher hat es viel praktisches Gewicht. ({0})",
+  art_rashi_h3: "Siderisch vs tropisch: der wahre Grund des Unterschieds",
+  art_rashi_p3:
+    "Der grossere Unterschied ist der Tierkreis selbst. Die westliche Astrologie nutzt den tropischen Tierkreis, an Jahreszeiten und Fruhlingsaquinoktium gebunden. Die vedische nutzt den siderischen Tierkreis, an die tatsachlichen Sternpositionen gebunden. Beide haben sich uber die Jahrhunderte um einen Betrag namens Ayanamsa entfernt, derzeit etwa 24 Grad.",
+  art_rashi_p4:
+    "Wegen dieser Lucke liegt dein siderisches Sonnenzeichen oft ein Zeichen vor dem tropischen. Wer sich westlich Widder nennt, ist oft vedisch Fische. Das ist normal und spiegelt nur, dass beide Systeme von verschiedenen Ausgangspunkten messen.",
+  art_rashi_h4: "Welches Zeichen solltest du lesen?",
+  art_rashi_p5:
+    "Fur die vedische Astrologie beginne mit deinem Mondzeichen fur Wesen und Zeitwahl, deinem Aszendenten (Lagna) fur das Gesamthoroskop und deinem Sonnenzeichen fur Vitalitat und die Rolle des Vaters. Keines ist falsch; jedes beschreibt eine andere Ebene. Du siehst sie alle, mit dem siderischen Tierkreis berechnet, in unserem {0}.",
+  art_rashi_h5: "Haufige Fragen",
+  art_rashi_faq1_q: "Warum unterscheidet sich mein vedisches Zeichen von meinem westlichen?",
+  art_rashi_faq1_a:
+    "Die vedische Astrologie nutzt den siderischen Tierkreis, der gegen den westlichen tropischen um das Ayanamsa (etwa 24 Grad) verschoben ist. Diese Verschiebung ruckt das Sonnenzeichen vieler Menschen um ein Zeichen zuruck.",
+  art_rashi_faq2_q: "Ist das Mondzeichen wichtiger als das Sonnenzeichen?",
+  art_rashi_faq2_a:
+    "In der vedischen Astrologie hat das Mondzeichen fur Personlichkeit und Zeitwahl meist mehr Gewicht, aber eine vollstandige Deutung nutzt Mondzeichen, Sonnenzeichen und Aszendent zusammen.",
+  art_rashi_faq3_q: "Wie finde ich mein Mondzeichen?",
+  art_rashi_faq3_a:
+    "Du brauchst Datum, genaue Zeit und Ort der Geburt, denn der Mond wechselt etwa alle zweieinviertel Tage das Zeichen. Ein Geburtshoroskop-Rechner zeigt es direkt.",
+  art_vargas_title: "Teilungshoroskope (Vargas): eine Geburt, viele Horoskope",
+  art_vargas_intro:
+    "Teilungshoroskope, oder Vargas, sind ein Kennzeichen der vedischen Astrologie. Aus einer einzigen Geburt erzeugen sie eine Familie von Horoskopen, jedes auf einen Lebensbereich wie Ehe, Beruf oder Gluck fokussiert.",
+  art_vargas_h1: "Was ist ein Teilungshoroskop?",
+  art_vargas_p1:
+    "Ein Teilungshoroskop entsteht, indem jedes 30-Grad-Zeichen in kleinere gleiche Teile geteilt und diese auf ein neues Horoskop abgebildet werden. Das Hauptgeburtshoroskop ist das Rashi oder D1. Jedes Zeichen in neun zu teilen ergibt das Navamsa oder D9, in zehn das Dashamsa oder D10, und so weiter bis D60. Jede Teilung wird aus denselben Planetenlangen berechnet, nur feiner geschnitten.",
+  art_vargas_p2:
+    "Die Idee: Das D1 zeigt das grobe Versprechen einer Sache, wahrend das passende Teilungshoroskop ihr Detail und ihre Starke zeigt. Ein Planet, der im D1 stark wirkt, aber in den Teilungen schwach, liefert vielleicht nicht so viel wie zunachst scheint.",
+  art_vargas_h2: "Die meistgenutzten Vargas",
+  art_vargas_p3: "Sechzehn Vargas sind klassisch, aber einige werden am haufigsten herangezogen:",
+  art_vargas_li1: "D1 (Rashi) - das Geburtshoroskop und die Grundlage fur alles andere.",
+  art_vargas_li2: "D9 (Navamsa) - Ehe, Dharma und die zugrundeliegende Starke jedes Planeten.",
+  art_vargas_li3: "D10 (Dashamsa) - Beruf, Profession und offentlicher Erfolg.",
+  art_vargas_li4: "D7 (Saptamsa) - Kinder und Nachkommen.",
+  art_vargas_li5: "D12 (Dwadashamsa) - Eltern und Abstammung.",
+  art_vargas_li6: "D27 (Nakshatramsa) - allgemeine Starken und Schwachen.",
+  art_vargas_h3: "Warum das Navamsa besonders ist",
+  art_vargas_p4:
+    "Von allen Vargas ist das D9 Navamsa nach dem Geburtshoroskop das wichtigste. Es wird fur Ehe und Partnerschaft gelesen, aber auch als Starketest fur das ganze Horoskop: Ein Planet, der sowohl im D1 als auch im D9 gut steht, gilt als wirklich stark, eine Eigenschaft namens Vargottama, wenn er in beiden im selben Zeichen steht.",
+  art_vargas_h4: "So nutzt du Teilungshoroskope",
+  art_vargas_p5:
+    "Wahle das Horoskop, das zu deiner Frage passt - das D10 fur den Beruf, das D9 fur die Ehe - und lies dort das passende Haus und seinen Herrscher, dann vergleiche mit dem D1. Es ist eine fortgeschrittene Technik, daher koennen Anfanger einfach darauf achten, ob ein Planet uber mehrere Horoskope gut platziert bleibt. Unser {0} erzeugt alle sechzehn Teilungshoroskope aus deinen Geburtsdaten.",
+  art_vargas_h5: "Haufige Fragen",
+  art_vargas_faq1_q: "Sind Teilungshoroskope eigene Horoskope?",
+  art_vargas_faq1_a:
+    "Nein. Sie leiten sich alle aus demselben Geburtsmoment und denselben Planetenpositionen ab. Jedes ist eine andere Vergrosserung desselben Horoskops, auf einen Lebensbereich fokussiert.",
+  art_vargas_faq2_q: "Welches Teilungshoroskop sollte ein Anfanger zuerst lernen?",
+  art_vargas_faq2_a:
+    "Das D9 Navamsa. Es wird sowohl fur Beziehungen als auch zur allgemeinen Starkeprufung des ganzen Horoskops genutzt und bietet daher fruh den groessten Nutzen.",
+  art_vargas_faq3_q: "Brauche ich fur Vargas eine sehr genaue Geburtszeit?",
+  art_vargas_faq3_a:
+    "Ja, mehr als fur das D1. Da jedes Zeichen in viele Teile geteilt wird, kann ein kleiner Zeitfehler einen Planeten in eine andere Teilung verschieben, daher ist eine genaue Zeit wichtig.",
 };
 
 export default de;

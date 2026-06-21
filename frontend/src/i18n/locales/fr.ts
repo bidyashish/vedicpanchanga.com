@@ -669,6 +669,150 @@ const fr: Record<string, string> = {
     "Au quotidien, jetez un œil au tithi et au nakshatra pour saisir le caractère du jour, et vérifiez les périodes défavorables si vous planifiez quelque chose d'important. Pour choisir un moment vraiment propice, comme pour une cérémonie, un voyage ou un nouveau départ, les cinq membres sont pondérés ensemble. C'est exactement ce que fait un outil électionnel.",
   art_panchang_p10:
     "Vous pouvez explorer l'almanach complet du jour sur la {0}, et trouver des moments favorables pour un objectif précis avec notre {1}.",
+  learn_dasha_title: "Dasha Vimshottari",
+  learn_nakshatras_title: "Les 27 Nakshatras",
+  learn_rashi_title: "Signe lunaire vs signe solaire",
+  learn_vargas_title: "Cartes divisionnelles",
+  link_dasha_guide: "guide de la Dasha Vimshottari",
+  link_nakshatras_guide: "les 27 nakshatras",
+  link_rashi_guide: "guide du signe lunaire",
+  link_vargas_guide: "guide des cartes divisionnelles",
+  link_panchang_guide: "guide du Panchang",
+  link_transits_page: "transits planetaires",
+  art_dasha_title: "Dasha Vimshottari : la chronologie vedique de votre vie",
+  art_dasha_intro:
+    "La Dasha Vimshottari est le systeme de temps le plus utilise en astrologie vedique. Elle divise votre vie en periodes planetaires qui montrent quand la promesse de votre theme natal a le plus de chances de se realiser.",
+  art_dasha_h1: "Qu'est-ce qu'une dasha ?",
+  art_dasha_p1:
+    "Une dasha est une periode regie par une planete donnee. Alors que votre theme natal montre ce qui est possible, la sequence des dashas montre quand. Pendant la dasha d'une planete, les themes, maisons et relations que cette planete gouverne dans votre theme passent au premier plan, en bien ou en mal selon la position de la planete.",
+  art_dasha_p2:
+    "Vimshottari est la plus connue de plusieurs systemes de dasha. Son cycle complet dure 120 ans et est lie au nakshatra de la Lune a la naissance, c'est pourquoi une heure de naissance exacte et {0} comptent tant.",
+  art_dasha_h2: "Les neuf periodes planetaires",
+  art_dasha_p3:
+    "Le cycle complet de 120 ans se repartit entre les neuf planetes, chacune avec un nombre fixe d'annees :",
+  art_dasha_li1: "Ketu - 7 ans",
+  art_dasha_li2: "Venus - 20 ans",
+  art_dasha_li3: "Soleil - 6 ans",
+  art_dasha_li4: "Lune - 10 ans",
+  art_dasha_li5: "Mars - 7 ans",
+  art_dasha_li6: "Rahu - 18 ans",
+  art_dasha_li7: "Jupiter - 16 ans",
+  art_dasha_li8: "Saturne - 19 ans",
+  art_dasha_li9: "Mercure - 17 ans",
+  art_dasha_p4:
+    "La planete dans la periode de laquelle vous naissez, et l'endroit ou vous commencez dans cette periode, dependent de votre nakshatra natal. Ensuite les periodes se suivent toujours dans le meme ordre.",
+  art_dasha_h3: "Mahadasha, antardasha et pratyantar",
+  art_dasha_p5:
+    "Chaque periode majeure (mahadasha) se divise en neuf sous-periodes (antardasha), une par planete, dans le meme ordre Vimshottari et proportionnelles aux annees de chaque planete. Chaque antardasha se divise a son tour en periodes pratyantar. Cet emboitement permet a l'astrologue de reduire une prevision d'une plage d'annees a quelques semaines.",
+  art_dasha_p6:
+    "Une lecture simple : la mahadasha pose le grand chapitre de la vie, l'antardasha l'intrigue en cours, et le pratyantar affine le moment a l'interieur.",
+  art_dasha_h4: "Comment utiliser votre chronologie de dashas",
+  art_dasha_p7:
+    "Regardez quelle planete gouverne votre mahadasha et antardasha actuelles, puis comment ces planetes sont placees dans votre theme : signe, maison et dignite. Une planete forte et bien placee tend a donner de bons resultats pendant sa periode ; une planete faible ou affligee peut amener des defis qui demandent de la patience. Notre {0} calcule la sequence complete de 120 ans avec les sous-periodes a partir de vos donnees de naissance.",
+  art_dasha_h5: "Questions frequentes",
+  art_dasha_faq1_q: "Pourquoi le cycle dure-t-il 120 ans ?",
+  art_dasha_faq1_a:
+    "Les neuf periodes planetaires totalisent 120 ans (7+20+6+10+7+18+16+19+17). La tradition y voit une vie humaine complete, apres quoi le cycle se repeterait.",
+  art_dasha_faq2_q: "Tout le monde commence-t-il avec la meme planete ?",
+  art_dasha_faq2_a:
+    "Non. Votre premiere dasha est decidee par le nakshatra qu'occupe la Lune a la naissance, et vous commencez generalement au milieu de la periode de cette planete, pas au debut.",
+  art_dasha_faq3_q: "Une 'mauvaise' dasha est-elle vraiment mauvaise ?",
+  art_dasha_faq3_a:
+    "Pas forcement. Une periode reflete la maniere dont sa planete maitresse est placee dans votre theme. Meme une planete difficile peut apporter croissance et discipline, et les resultats se lisent toujours avec la force de la planete, ses aspects et les maisons qu'elle gouverne.",
+  art_naks_title: "Les 27 Nakshatras : votre etoile de naissance vedique",
+  art_naks_intro:
+    "Les nakshatras sont les 27 demeures lunaires de l'astrologie vedique. Le nakshatra qu'occupe la Lune a votre naissance, votre janma nakshatra ou etoile de naissance, en dit long sur votre temperament et est central pour le timing et la compatibilite.",
+  art_naks_h1: "Qu'est-ce qu'un nakshatra ?",
+  art_naks_p1:
+    "Le zodiaque de 360 degres se divise en 27 nakshatras de 13 degres 20 minutes chacun. Alors que les douze rashis (signes) donnent une image large, les nakshatras ajoutent une couche de sens plus fine. La Lune met environ un jour a traverser un nakshatra, si bien que chaque jour a une etoile regente.",
+  art_naks_p2:
+    "Chaque nakshatra a une planete maitresse, une divinite presidente, un symbole et une nature propre. Ensemble, ils nuancent la facon dont une planete placee dans ce nakshatra s'exprime, c'est pourquoi les nakshatras comptent pour bien plus que la Lune.",
+  art_naks_h2: "Padas : les quatre quarts",
+  art_naks_p3:
+    "Chaque nakshatra se divise en quatre padas (quarts) de 3 degres 20 minutes chacun. Les quatre padas d'un nakshatra correspondent a la carte Navamsa (D9), de sorte que votre pada affine votre etoile de naissance et la relie a votre neuvieme {0}. Connaitre votre nakshatra et votre pada ensemble donne une lecture bien plus precise que le signe seul.",
+  art_naks_h3: "Pourquoi votre etoile de naissance compte",
+  art_naks_p4: "Le janma nakshatra s'utilise en astrologie vedique de facons concretes :",
+  art_naks_li1:
+    "Il fixe votre Dasha Vimshottari initiale, la chronologie planetaire de votre vie. ({0})",
+  art_naks_li2:
+    "Il est la base du tarabalam, la force quotidienne des etoiles utilisee pour choisir des moments propices.",
+  art_naks_li3:
+    "Il est central pour la compatibilite (le systeme kuta ou porutham) en vue du mariage.",
+  art_naks_li4:
+    "Il guide le choix du premier son du prenom d'un bebe dans la tradition namakarana.",
+  art_naks_h4: "Trouver votre nakshatra",
+  art_naks_p5:
+    "Votre etoile de naissance est simplement le nakshatra ou se trouvait la Lune au moment de votre naissance, il vous faut donc une heure et un lieu de naissance exacts. Notre {0} montre le nakshatra et le pada de votre Lune, et notre {1} indique le nakshatra regent de n'importe quelle date.",
+  art_naks_h5: "Questions frequentes",
+  art_naks_faq1_q: "Le nakshatra repose-t-il sur le Soleil ou la Lune ?",
+  art_naks_faq1_a:
+    "Votre etoile de naissance repose sur la position de la Lune. L'astrologie vedique s'appuie sur la Lune pour le temperament et le timing, c'est pourquoi le nakshatra lunaire est si important.",
+  art_naks_faq2_q: "Quelle difference entre un rashi et un nakshatra ?",
+  art_naks_faq2_a:
+    "Un rashi est l'un des 12 signes de 30 degres chacun ; un nakshatra est l'une des 27 demeures d'environ 13 degres chacune. Les nakshatras donnent une lecture plus fine et chaque signe contient des parties de plus de deux nakshatras.",
+  art_naks_faq3_q: "Pourquoi parle-t-on parfois de 28 nakshatras ?",
+  art_naks_faq3_a:
+    "Certains anciens systemes ajoutent un 28e, Abhijit, entre Uttara Ashadha et Shravana. La plupart de l'astrologie vedique moderne, et ce site, utilise les 27 standards pour les calculs de theme et de dasha.",
+  art_rashi_title: "Signe lunaire vs signe solaire : pourquoi l'astrologie vedique utilise la Lune",
+  art_rashi_intro:
+    "Si votre signe lunaire vedique parait different du signe que vous connaissez par les magazines, vous n'etes pas seul. L'astrologie vedique et l'astrologie occidentale utilisent des points de reference differents, et la vedique s'appuie sur la Lune plutot que sur le Soleil.",
+  art_rashi_h1: "Qu'est-ce qu'un rashi ?",
+  art_rashi_p1:
+    "Rashi est le mot sanskrit pour un signe du zodiaque, l'une des douze divisions de 30 degres du Belier aux Poissons. Chaque planete est dans un rashi, mais deux sont lus le plus souvent : le signe ou se trouvait le Soleil (votre Surya Rashi ou signe solaire) et le signe ou se trouvait la Lune (votre Chandra Rashi ou signe lunaire).",
+  art_rashi_h2: "Pourquoi le signe lunaire prime en astrologie vedique",
+  art_rashi_p2:
+    "L'astrologie occidentale met en avant le signe solaire, qui reflete l'identite et l'ego. L'astrologie vedique accorde plus de poids au Chandra Rashi, le signe lunaire, car la Lune gouverne le mental, les emotions et la vie quotidienne. Le signe lunaire est aussi l'ancre de la chronologie de la Dasha Vimshottari et de la lecture du panchang quotidien, il a donc un grand poids pratique. ({0})",
+  art_rashi_h3: "Sideral vs tropical : la vraie raison de la difference",
+  art_rashi_p3:
+    "La plus grande difference est le zodiaque lui-meme. L'astrologie occidentale utilise le zodiaque tropical, lie aux saisons et a l'equinoxe de printemps. La vedique utilise le zodiaque sideral, lie aux positions reelles des etoiles. Les deux se sont ecartes au fil des siecles d'une quantite appelee ayanamsa, aujourd'hui d'environ 24 degres.",
+  art_rashi_p4:
+    "A cause de cet ecart, votre signe solaire sideral est souvent un signe avant le tropical. Qui se dit Belier occidental est souvent Poissons vedique. C'est normal et reflete simplement que les deux systemes mesurent depuis des points de depart differents.",
+  art_rashi_h4: "Quel signe devriez-vous lire ?",
+  art_rashi_p5:
+    "Pour l'astrologie vedique, commencez par votre signe lunaire pour le temperament et le timing, votre ascendant (lagna) pour le theme global, et votre signe solaire pour la vitalite et le role du pere. Aucun n'est faux ; chacun decrit une couche differente. Vous pouvez tous les voir, calcules avec le zodiaque sideral, dans notre {0}.",
+  art_rashi_h5: "Questions frequentes",
+  art_rashi_faq1_q: "Pourquoi mon signe vedique differe-t-il de mon signe occidental ?",
+  art_rashi_faq1_a:
+    "L'astrologie vedique utilise le zodiaque sideral, decale par rapport au tropical occidental par l'ayanamsa (environ 24 degres). Ce decalage recule d'un signe le signe solaire de beaucoup de gens.",
+  art_rashi_faq2_q: "Le signe lunaire est-il plus important que le signe solaire ?",
+  art_rashi_faq2_a:
+    "En astrologie vedique, le signe lunaire a souvent plus de poids pour la personnalite et le timing, mais une lecture complete utilise le signe lunaire, le signe solaire et l'ascendant ensemble.",
+  art_rashi_faq3_q: "Comment trouver mon signe lunaire ?",
+  art_rashi_faq3_a:
+    "Il vous faut la date, l'heure exacte et le lieu de naissance, car la Lune change de signe environ tous les deux jours et quart. Un calculateur de theme natal l'affiche directement.",
+  art_vargas_title: "Cartes divisionnelles (vargas) : une naissance, plusieurs cartes",
+  art_vargas_intro:
+    "Les cartes divisionnelles, ou vargas, sont une caracteristique majeure de l'astrologie vedique. A partir d'une seule naissance, elles produisent une famille de cartes, chacune centree sur un domaine de la vie comme le mariage, la carriere ou la fortune.",
+  art_vargas_h1: "Qu'est-ce qu'une carte divisionnelle ?",
+  art_vargas_p1:
+    "Une carte divisionnelle se construit en divisant chaque signe de 30 degres en parties egales plus petites et en les reportant sur une nouvelle carte. La carte natale principale est le Rashi ou D1. Diviser chaque signe en neuf donne le Navamsa ou D9, en dix le Dashamsa ou D10, et ainsi de suite jusqu'au D60. Chaque division se calcule a partir des memes longitudes planetaires, simplement decoupees plus finement.",
+  art_vargas_p2:
+    "L'idee est que le D1 montre la promesse large d'un sujet, tandis que la carte divisionnelle pertinente montre son detail et sa force. Une planete qui parait forte dans le D1 mais faible dans les divisions peut ne pas donner autant qu'il y parait.",
+  art_vargas_h2: "Les vargas les plus utilisees",
+  art_vargas_p3:
+    "Seize vargas sont classiques, mais quelques-unes sont consultees le plus souvent :",
+  art_vargas_li1: "D1 (Rashi) - la carte natale et la base de tout le reste.",
+  art_vargas_li2: "D9 (Navamsa) - mariage, dharma et la force sous-jacente de chaque planete.",
+  art_vargas_li3: "D10 (Dashamsa) - carriere, profession et reussite publique.",
+  art_vargas_li4: "D7 (Saptamsa) - enfants et descendance.",
+  art_vargas_li5: "D12 (Dwadashamsa) - parents et ascendance.",
+  art_vargas_li6: "D27 (Nakshatramsa) - forces et faiblesses generales.",
+  art_vargas_h3: "Pourquoi le Navamsa est special",
+  art_vargas_p4:
+    "De toutes les vargas, le D9 Navamsa est la plus importante apres la carte natale. On la lit pour le mariage et le partenariat, mais aussi comme test de force de toute la carte : une planete bien placee a la fois dans le D1 et le D9 est consideree comme vraiment forte, une qualite appelee vargottama lorsqu'elle est dans le meme signe dans les deux.",
+  art_vargas_h4: "Comment utiliser les cartes divisionnelles",
+  art_vargas_p5:
+    "Choisissez la carte qui correspond a votre question - le D10 pour la carriere, le D9 pour le mariage - et lisez-y la maison pertinente et son maitre, puis comparez avec le D1. C'est une technique avancee, les debutants peuvent donc commencer en remarquant simplement si une planete garde une bonne position sur plusieurs cartes. Notre {0} genere les seize cartes divisionnelles a partir de vos donnees de naissance.",
+  art_vargas_h5: "Questions frequentes",
+  art_vargas_faq1_q: "Les cartes divisionnelles sont-elles des horoscopes separes ?",
+  art_vargas_faq1_a:
+    "Non. Elles derivent toutes du meme moment de naissance et des memes positions planetaires. Chacune est un agrandissement different de la meme carte, centre sur un domaine de la vie.",
+  art_vargas_faq2_q: "Quelle carte divisionnelle un debutant devrait-il apprendre en premier ?",
+  art_vargas_faq2_a:
+    "Le D9 Navamsa. Il sert a la fois pour les relations et pour verifier la force generale de toute la carte, il apporte donc le plus de valeur au debut.",
+  art_vargas_faq3_q: "Faut-il une heure de naissance tres exacte pour les vargas ?",
+  art_vargas_faq3_a:
+    "Oui, plus que pour le D1. Comme chaque signe se divise en de nombreuses parties, une petite erreur d'heure peut deplacer une planete dans une autre division, une heure exacte compte donc.",
 };
 
 export default fr;

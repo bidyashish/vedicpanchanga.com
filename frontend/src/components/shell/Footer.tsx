@@ -31,6 +31,22 @@ export function Footer() {
           <a href="/learn/panchang" className="hover:text-saffron-dark hover:underline">
             {t("learn_panchang_title")}
           </a>
+          <span aria-hidden="true">·</span>
+          <a href="/learn/dasha" className="hover:text-saffron-dark hover:underline">
+            {t("learn_dasha_title")}
+          </a>
+          <span aria-hidden="true">·</span>
+          <a href="/learn/nakshatras" className="hover:text-saffron-dark hover:underline">
+            {t("learn_nakshatras_title")}
+          </a>
+          <span aria-hidden="true">·</span>
+          <a href="/learn/rashi" className="hover:text-saffron-dark hover:underline">
+            {t("learn_rashi_title")}
+          </a>
+          <span aria-hidden="true">·</span>
+          <a href="/learn/vargas" className="hover:text-saffron-dark hover:underline">
+            {t("learn_vargas_title")}
+          </a>
         </nav>
         <p className="mt-2 text-center text-mini text-ink-soft flex flex-wrap justify-center items-center gap-x-3 gap-y-1">
           <a href="/privacy" className="hover:text-saffron-dark hover:underline">

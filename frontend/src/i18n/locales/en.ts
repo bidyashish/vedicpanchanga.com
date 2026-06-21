@@ -515,6 +515,10 @@ const en: Record<string, string> = {
   learn_kundali_title: "What Is a Kundali?",
   learn_planets_title: "The 9 Planets",
   learn_panchang_title: "Understanding Panchang",
+  learn_dasha_title: "Vimshottari Dasha",
+  learn_nakshatras_title: "The 27 Nakshatras",
+  learn_rashi_title: "Moon Sign vs Sun Sign",
+  learn_vargas_title: "Divisional Charts",
 
   // Shared link labels reused across articles and the planet guide
   link_kundali_calc: "Kundali calculator",
@@ -526,6 +530,12 @@ const en: Record<string, string> = {
   link_nine_planets_guide: "the nine planets guide",
   link_what_kundali: "what a kundali is",
   link_kundali_beginner: "beginner's guide to the kundali",
+  link_dasha_guide: "Vimshottari Dasha guide",
+  link_nakshatras_guide: "the 27 nakshatras",
+  link_rashi_guide: "Moon sign guide",
+  link_vargas_guide: "divisional charts guide",
+  link_panchang_guide: "Panchang guide",
+  link_transits_page: "planetary transits",
 
   // Planet guide (bottom of Kundali page)
   pg_title: "How to Read Your Kundali: The 9 Planets",
@@ -680,6 +690,145 @@ const en: Record<string, string> = {
     "For everyday use, glance at the tithi and nakshatra to understand the texture of the day, and check the inauspicious periods if you are planning something important. For choosing a genuinely auspicious moment, such as for a ceremony, journey or new beginning, the five limbs are weighed together. That is exactly what an electional tool does.",
   art_panchang_p10:
     "You can explore today's full almanac on the {0}, and find favourable timings for a specific purpose with our {1}.",
+
+  // Article: Vimshottari Dasha
+  art_dasha_title: "Vimshottari Dasha: The Vedic Timeline of Your Life",
+  art_dasha_intro:
+    "Vimshottari Dasha is the most widely used timing system in Vedic astrology. It divides your life into planetary periods that show when the promise of your birth chart is most likely to unfold.",
+  art_dasha_h1: "What is a dasha?",
+  art_dasha_p1:
+    "A dasha is a stretch of time ruled by a particular planet. While your birth chart shows what is possible, the dasha sequence shows when. During a planet's dasha, the themes, houses and relationships that planet governs in your chart come to the foreground - for better or worse, depending on how the planet is placed.",
+  art_dasha_p2:
+    "Vimshottari is the best known of several dasha systems. Its full cycle lasts 120 years and is tied to the Moon's nakshatra at birth, which is why an accurate birth time and the {0} matter so much.",
+  art_dasha_h2: "The nine planetary periods",
+  art_dasha_p3:
+    "The full 120-year cycle is shared among the nine planets, each with a fixed number of years:",
+  art_dasha_li1: "Ketu - 7 years",
+  art_dasha_li2: "Venus - 20 years",
+  art_dasha_li3: "Sun - 6 years",
+  art_dasha_li4: "Moon - 10 years",
+  art_dasha_li5: "Mars - 7 years",
+  art_dasha_li6: "Rahu - 18 years",
+  art_dasha_li7: "Jupiter - 16 years",
+  art_dasha_li8: "Saturn - 19 years",
+  art_dasha_li9: "Mercury - 17 years",
+  art_dasha_p4:
+    "The planet whose period you are born into, and where in that period you start, depend on your birth nakshatra. From there the periods always run in the same order.",
+  art_dasha_h3: "Mahadasha, antardasha and pratyantar",
+  art_dasha_p5:
+    "Each major period (mahadasha) is divided into nine sub-periods (antardasha), one for each planet, in the same Vimshottari order and proportional to each planet's years. Each antardasha is divided again into pratyantar periods. This nesting lets an astrologer narrow a prediction from a span of years down to a few weeks.",
+  art_dasha_p6:
+    "A simple way to read it: the mahadasha sets the broad chapter of life, the antardasha sets the current sub-plot, and the pratyantar fine-tunes the timing within it.",
+  art_dasha_h4: "How to use your dasha timeline",
+  art_dasha_p7:
+    "Look at which planet rules your current mahadasha and antardasha, then see how those planets are placed in your chart - their sign, house and dignity. A strong, well-placed planet tends to give good results during its period; a weak or afflicted one can bring challenges that ask for patience. Our {0} computes the full 120-year sequence with sub-periods from your birth details.",
+  art_dasha_h5: "Common questions",
+  art_dasha_faq1_q: "Why is the cycle 120 years?",
+  art_dasha_faq1_a:
+    "The nine planetary periods add up to 120 years (7+20+6+10+7+18+16+19+17). It is treated as a full human lifespan in the tradition, after which the cycle would repeat.",
+  art_dasha_faq2_q: "Does everyone start with the same planet?",
+  art_dasha_faq2_a:
+    "No. Your first dasha is decided by the nakshatra the Moon occupies at birth, and you usually start partway through that planet's period, not at its beginning.",
+  art_dasha_faq3_q: "Is a 'bad' dasha really bad?",
+  art_dasha_faq3_a:
+    "Not necessarily. A period reflects how its ruling planet sits in your chart. Even a difficult planet can give growth and discipline, and results are always read alongside the planet's strength, aspects and the houses it rules.",
+
+  // Article: The 27 Nakshatras
+  art_naks_title: "The 27 Nakshatras: Your Vedic Birth Star",
+  art_naks_intro:
+    "Nakshatras are the 27 lunar mansions of Vedic astrology. The nakshatra the Moon occupies at your birth - your janma nakshatra or birth star - says a great deal about your temperament and is central to timing and matching.",
+  art_naks_h1: "What is a nakshatra?",
+  art_naks_p1:
+    "The zodiac of 360 degrees is divided into 27 nakshatras of 13 degrees 20 minutes each. While the twelve rashis (signs) give a broad picture, the nakshatras add a finer layer of meaning. The Moon takes about a day to cross one nakshatra, so each day has a ruling birth star.",
+  art_naks_p2:
+    "Each nakshatra has a ruling planet, a presiding deity, a symbol and a distinct nature. Together these colour how a planet sitting in that nakshatra expresses itself, which is why nakshatras matter for far more than just the Moon.",
+  art_naks_h2: "Padas: the four quarters",
+  art_naks_p3:
+    "Every nakshatra is divided into four padas (quarters) of 3 degrees 20 minutes each. The four padas of a nakshatra map onto the Navamsa (D9) chart, so your pada refines your birth star and links it to your ninth divisional chart. Knowing your nakshatra and pada together gives a much sharper reading than the sign alone.",
+  art_naks_h3: "Why your birth star matters",
+  art_naks_p4: "The janma nakshatra is used across Vedic astrology in practical ways:",
+  art_naks_li1: "It sets your starting Vimshottari dasha, the planetary timeline of your life.",
+  art_naks_li2:
+    "It is the basis of tarabalam, the day-to-day strength of the stars used when choosing auspicious timings.",
+  art_naks_li3:
+    "It is central to compatibility matching (the kuta or porutham system) for marriage.",
+  art_naks_li4: "It guides the choice of a baby's first sound in the namakarana naming tradition.",
+  art_naks_h4: "Finding your nakshatra",
+  art_naks_p5:
+    "Your birth star is simply the nakshatra the Moon was in at the moment you were born, so you need an accurate birth time and place. Our {0} shows your Moon's nakshatra and pada, and our {1} lists the ruling nakshatra for any date.",
+  art_naks_h5: "Common questions",
+  art_naks_faq1_q: "Is the nakshatra based on the Sun or the Moon?",
+  art_naks_faq1_a:
+    "Your birth star is based on the Moon's position. Vedic astrology leans on the Moon for temperament and timing, which is why the lunar nakshatra is so important.",
+  art_naks_faq2_q: "What is the difference between a rashi and a nakshatra?",
+  art_naks_faq2_a:
+    "A rashi is one of 12 signs spanning 30 degrees each; a nakshatra is one of 27 mansions spanning about 13 degrees each. Nakshatras give a finer-grained reading and each sign contains parts of more than two nakshatras.",
+  art_naks_faq3_q: "Why are there sometimes said to be 28 nakshatras?",
+  art_naks_faq3_a:
+    "Some older systems add a 28th, Abhijit, between Uttara Ashadha and Shravana. Most modern Vedic astrology, and this site, use the standard 27 for chart and dasha calculations.",
+
+  // Article: Moon sign vs Sun sign (Rashi)
+  art_rashi_title: "Moon Sign vs Sun Sign: Why Vedic Astrology Uses the Moon",
+  art_rashi_intro:
+    "If your Vedic Moon sign looks different from the star sign you know from magazines, you are not alone. Vedic and Western astrology use different reference points, and Vedic astrology leans on the Moon rather than the Sun.",
+  art_rashi_h1: "What is a rashi?",
+  art_rashi_p1:
+    "Rashi is the Sanskrit word for a zodiac sign - one of the twelve 30-degree divisions from Aries to Pisces. Every planet sits in a rashi, but two are read most often: the sign the Sun was in (your Surya Rashi or Sun sign) and the sign the Moon was in (your Chandra Rashi or Moon sign).",
+  art_rashi_h2: "Why the Moon sign leads in Vedic astrology",
+  art_rashi_p2:
+    "Western astrology highlights the Sun sign, which reflects identity and ego. Vedic astrology gives more weight to the Chandra Rashi, the Moon sign, because the Moon governs the mind, emotions and daily life. The Moon sign is also the anchor for the Vimshottari dasha timeline and for reading the daily panchang, so it carries a lot of practical weight.",
+  art_rashi_h3: "Sidereal vs tropical: the real reason they differ",
+  art_rashi_p3:
+    "The bigger difference is the zodiac itself. Western astrology uses the tropical zodiac, tied to the seasons and the spring equinox. Vedic astrology uses the sidereal zodiac, tied to the actual positions of the stars. The two have drifted apart over the centuries by an amount called the ayanamsa, currently about 24 degrees.",
+  art_rashi_p4:
+    "Because of that gap, your sidereal Sun sign is often one sign earlier than your tropical one. Someone who calls themselves a Western Aries is frequently a Vedic Pisces. This is normal and simply reflects the two systems measuring from different starting points.",
+  art_rashi_h4: "Which sign should you read?",
+  art_rashi_p5:
+    "For Vedic astrology, start with your Moon sign for temperament and timing, your ascendant (lagna) for the overall chart, and your Sun sign for vitality and the role of the father. None of them is wrong; each describes a different layer. You can see all of them, computed with the sidereal zodiac, in our {0}.",
+  art_rashi_h5: "Common questions",
+  art_rashi_faq1_q: "Why is my Vedic sign different from my Western sign?",
+  art_rashi_faq1_a:
+    "Vedic astrology uses the sidereal zodiac, which is offset from the tropical zodiac used in the West by the ayanamsa (about 24 degrees). That offset shifts many people's Sun sign back by one sign.",
+  art_rashi_faq2_q: "Is the Moon sign more important than the Sun sign?",
+  art_rashi_faq2_a:
+    "In Vedic astrology the Moon sign is usually given more weight for personality and timing, but a complete reading uses the Moon sign, the Sun sign and the ascendant together.",
+  art_rashi_faq3_q: "How do I find my Moon sign?",
+  art_rashi_faq3_a:
+    "You need your date, exact time and place of birth, because the Moon changes sign roughly every two and a quarter days. A birth chart calculator will show it directly.",
+
+  // Article: Divisional charts (Vargas)
+  art_vargas_title: "Divisional Charts (Vargas): One Birth, Many Charts",
+  art_vargas_intro:
+    "Divisional charts, or vargas, are a defining feature of Vedic astrology. From a single birth they produce a family of charts, each zooming in on one area of life such as marriage, career or fortune.",
+  art_vargas_h1: "What is a divisional chart?",
+  art_vargas_p1:
+    "A divisional chart is built by dividing each 30-degree sign into smaller equal parts and mapping those parts onto a new chart. The main birth chart is the Rashi or D1. Splitting each sign into nine gives the Navamsa or D9, into ten the Dashamsa or D10, and so on up to D60. Each division is calculated from the same planetary longitudes, just sliced more finely.",
+  art_vargas_p2:
+    "The idea is that the D1 shows the broad promise of a matter, while the relevant divisional chart shows its detail and strength. A planet that looks strong in the D1 but weak across the divisions may not deliver as much as it first appears.",
+  art_vargas_h2: "The most-used vargas",
+  art_vargas_p3: "Sixteen vargas are classical, but a few are consulted most often:",
+  art_vargas_li1: "D1 (Rashi) - the birth chart and the foundation for everything else.",
+  art_vargas_li2: "D9 (Navamsa) - marriage, dharma and the underlying strength of every planet.",
+  art_vargas_li3: "D10 (Dashamsa) - career, profession and public achievement.",
+  art_vargas_li4: "D7 (Saptamsa) - children and progeny.",
+  art_vargas_li5: "D12 (Dwadashamsa) - parents and ancestry.",
+  art_vargas_li6: "D27 (Nakshatramsa) - overall strengths and weaknesses.",
+  art_vargas_h3: "Why the Navamsa is special",
+  art_vargas_p4:
+    "Of all the vargas, the D9 Navamsa is the most important after the birth chart. It is read for marriage and partnership, but also as a strength test for the whole chart: a planet that is well placed in both the D1 and the D9 is considered genuinely strong, a quality called vargottama when it sits in the same sign in both.",
+  art_vargas_h4: "How to use divisional charts",
+  art_vargas_p5:
+    "Pick the chart that matches your question - the D10 for career, the D9 for marriage - and read the relevant house and its lord there, then compare with the D1. It is an advanced technique, so beginners can start by simply noticing whether a planet keeps good placement across charts. Our {0} generates all sixteen divisional charts from your birth details.",
+  art_vargas_h5: "Common questions",
+  art_vargas_faq1_q: "Are divisional charts separate horoscopes?",
+  art_vargas_faq1_a:
+    "No. They are all derived from the same birth moment and planetary positions. Each is a different magnification of the same chart, focused on one area of life.",
+  art_vargas_faq2_q: "Which divisional chart should a beginner learn first?",
+  art_vargas_faq2_a:
+    "The D9 Navamsa. It is used both for relationships and as a general strength check on the whole chart, so it gives the most value early on.",
+  art_vargas_faq3_q: "Do I need a very accurate birth time for vargas?",
+  art_vargas_faq3_a:
+    "Yes, more so than for the D1. Because each sign is divided into many parts, a small error in birth time can move a planet into a different division, so an accurate time matters.",
 };
 
 export default en;
