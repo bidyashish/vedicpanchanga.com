@@ -42,3 +42,5 @@ jobs:
         run: npm run lint
       - name: Format check (oxfmt)
         run: npm run format:check
+      - name: i18n check (key parity + native script)
+        run: npm run i18n:check

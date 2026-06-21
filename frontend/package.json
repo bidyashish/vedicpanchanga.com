@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "lint": "oxlint",
     "format": "oxfmt",
-    "format:check": "oxfmt --check"
+    "format:check": "oxfmt --check",
+    "i18n:check": "node scripts/check-i18n.mjs"
   },
   "dependencies": {
     "@radix-ui/react-popover": "^1.1.15",

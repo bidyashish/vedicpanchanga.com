@@ -94,10 +94,11 @@ check-backend:  ## Mirror CI's backend job: ruff lint + ruff format --check.
 	$(RUFF) format --check backend
 
 .PHONY: check-frontend
-check-frontend:  ## Mirror CI's frontend job: tsc + oxlint + oxfmt --check.
+check-frontend:  ## Mirror CI's frontend job: tsc + oxlint + oxfmt --check + i18n parity/native-script.
 	cd frontend && npx tsc --noEmit
 	$(NPM) run lint
 	$(NPM) run format:check
+	$(NPM) run i18n:check
 
 # ---- Convenience composites ----------------------------------------------
 

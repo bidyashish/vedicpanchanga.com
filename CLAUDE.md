@@ -130,7 +130,7 @@ Cloudflare → Nginx (TLS, CSP, returns 444 for direct-IP) → static Vite build
   - **Acceptable Latin (keep minimal):** scientific catalog names in parens (Sirius/Vega/Perseus), unit symbols (`Hz`), well-known acronyms (`DNA`). Numeric values stay Latin digits 0-9 (see locale-digit rule).
   - **Watch cross-script contamination:** never leave one script's letters inside another script's word (e.g. an Arabic letter inside a Hebrew string). Validate RTL/Indic/CJK blocks are script-pure before finishing.
   - **Where it lives:** UI strings in `frontend/src/i18n/locales/{lang}.ts`; astronomical proper-noun names in `frontend/src/i18n/astro.ts`; varga (divisional-chart) names + subtitles in `frontend/src/lib/vargas.ts` (full per-locale `VargaDict` registry, native names for every script); backend PDF labels in `backend/pdf/core/i18n/locales/{lang}.py`.
-  - **Before finishing any i18n change**, scan the non-Latin locales (hi, ne, ta, bn, zh, ja, ru, ar, fa, he) for ASCII Latin letter-runs in string values and translate them. NOTE: there is a known pre-existing backlog of ~306 such strings (worst in `zh`/`ja`) - do not silently expand it.
+  - **Automated guardrail:** `npm run i18n:check` (script at `frontend/scripts/check-i18n.mjs`, wired into `make check-frontend` and CI) enforces (1) key parity - every locale has exactly `en.ts`'s keys - and (2) native script - no bare Latin outside the allow-list in the 10 non-Latin locales. Run it before finishing any i18n change; if you add a UI string, add the key to `en.ts` first then translate it in all 15 locales or the check fails. Keep the script's allow-list in sync with this rule.
 
 ## Gotchas specific to this repo
 
