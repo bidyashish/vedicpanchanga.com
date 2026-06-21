@@ -184,16 +184,24 @@ CHANDRA_VASA = {
     12: "South",  # Meena
 }
 
-# Dur Muhurtam: muhurta index (1..15) of the day, keyed by isoweekday (1=Mon..7=Sun)
+# Dur Muhurtam: muhurta index (1..15) of the day, keyed by isoweekday (1=Mon..7=Sun).
+# Verified against drikpanchang.com daily panchang (New Delhi, Jun 2026). Note that
+# Wednesday's Dur Muhurtam is the 8th muhurta, which is the same slot as Abhijit -
+# by classical rule Abhijit is therefore unavailable on Wednesday (handled in
+# advanced_panchang._auspicious_times via ABHIJIT_MUHURTA_INDEX).
 DUR_MUHURTA = {
     1: [9, 12],  # Mon
-    2: [4, 9],  # Tue
-    3: [5],  # Wed
-    4: [8],  # Thu
-    5: [4, 9],  # Fri
-    6: [1, 11],  # Sat
+    2: [4],  # Tue
+    3: [8],  # Wed (coincides with Abhijit -> Abhijit suppressed)
+    4: [6],  # Thu
+    5: [4],  # Fri
+    6: [1, 2],  # Sat
     7: [14],  # Sun
 }
+
+# Abhijit is always the middle (8th) of the 15 daytime muhurtas. When a weekday's
+# Dur Muhurtam falls on this same index, Abhijit is not observed (e.g. Wednesday).
+ABHIJIT_MUHURTA_INDEX = 8
 
 # Tarabalam — when current nakshatra is (N_birth + k) % 27 + 1, k of {0,1,2,..26}:
 # Good (auspicious) stars are: Janma (1), Sampat (2), Kshema (4), Sadhaka (6), Mitra (8), Param Mitra (9)

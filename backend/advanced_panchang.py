@@ -39,6 +39,7 @@ from tyajyam import (
     compute_tyajyam,
 )
 from panchang_constants import (
+    ABHIJIT_MUHURTA_INDEX,
     CHANDRA_MASA,
     CHANDRA_VASA,
     DISHA_SHOOL,
@@ -724,8 +725,14 @@ def _udaya_lagna_in_window(
 # ---- Muhurta Timings ----
 
 
-def _muhurta_timings(sunrise_jd, sunset_jd, next_sunrise_jd, tz):
-    """Auspicious muhurtas."""
+def _muhurta_timings(sunrise_jd, sunset_jd, next_sunrise_jd, tz, vara_iso=None):
+    """Auspicious muhurtas.
+
+    Abhijit is the middle (8th) of the 15 daytime muhurtas. On weekdays whose
+    Dur Muhurtam also falls on the 8th muhurta (Wednesday), Abhijit is not
+    observed - the inauspicious Dur Muhurtam overrides it - so we return it as
+    None rather than reporting the same window as both auspicious and not.
+    """
     if not (sunrise_jd and sunset_jd):
         return {}
     dinaman = sunset_jd - sunrise_jd
@@ -741,10 +748,14 @@ def _muhurta_timings(sunrise_jd, sunset_jd, next_sunrise_jd, tz):
     pratah_start = sunrise_jd - 1.0 / 24
     pratah_end = sunrise_jd
 
-    # Abhijit: middle of day, 1 muhurta centered on madhyahna
+    # Abhijit: middle of day, 1 muhurta centered on madhyahna. Suppressed on
+    # weekdays where Dur Muhurtam occupies the same (8th) muhurta - e.g. Wed.
     madhyahna_jd = (sunrise_jd + sunset_jd) / 2
     abhijit_start = madhyahna_jd - muhurta_day / 2
     abhijit_end = madhyahna_jd + muhurta_day / 2
+    abhijit_suppressed = (
+        vara_iso is not None and ABHIJIT_MUHURTA_INDEX in DUR_MUHURTA.get(vara_iso, [])
+    )
 
     # Vijay Muhurta: 11th muhurta of day (start = sunrise + 10*muhurta_day)
     vijay_start = sunrise_jd + 10 * muhurta_day
@@ -772,7 +783,9 @@ def _muhurta_timings(sunrise_jd, sunset_jd, next_sunrise_jd, tz):
             "start": _iso(pratah_start, tz),
             "end": _iso(pratah_end, tz),
         },
-        "abhijit": {"start": _iso(abhijit_start, tz), "end": _iso(abhijit_end, tz)},
+        "abhijit": None
+        if abhijit_suppressed
+        else {"start": _iso(abhijit_start, tz), "end": _iso(abhijit_end, tz)},
         "vijay_muhurta": {"start": _iso(vijay_start, tz), "end": _iso(vijay_end, tz)},
         "godhuli_muhurta": {
             "start": _iso(godhuli_start, tz),
@@ -1013,7 +1026,7 @@ def _compute_detailed_panchang_locked(
     gulika = segs[GULIKA_SEGMENT[vara_iso] - 1] if segs else None
     dur_muhurtas = _dur_muhurtam(sunrise_jd, sunset_jd, vara_iso, tz)
 
-    aus = _muhurta_timings(sunrise_jd, sunset_jd, next_sunrise_jd, tz)
+    aus = _muhurta_timings(sunrise_jd, sunset_jd, next_sunrise_jd, tz, vara_iso)
 
     # Varjyam + Amrit Kalam + Sarvartha/Amrita Siddhi Yoga
     va = _compute_varjyam_amrit(naks_with_bounds, tz)
