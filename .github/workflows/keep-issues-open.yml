@@ -1,0 +1,37 @@
+name: Keep issues open
+
+# GitHub auto-closes issues when a merged PR or a default-branch commit
+# carries a closing keyword ("fixes #12", "closes #12"). Issues here are
+# verified by the reporter before closing, so anything closed by a commit
+# or PR merge is reopened automatically. Manual closes (via the UI or
+# `gh issue close`) have no commit attached and are left alone.
+on:
+  issues:
+    types: [closed]
+
+permissions:
+  issues: write
+
+jobs:
+  reopen:
+    name: Reopen if closed by a PR merge
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect close event and reopen when commit-driven
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+        run: |
+          # Each "closed" event prints its commit SHA, or "manual" when the
+          # close did not come from a commit. The last line is the close
+          # that just happened.
+          last_close=$(gh api "repos/$REPO/issues/$NUMBER/events" --paginate \
+            --jq '.[] | select(.event == "closed") | .commit_id // "manual"' | tail -n 1)
+          echo "Last close source: $last_close"
+          if [ -n "$last_close" ] && [ "$last_close" != "manual" ]; then
+            gh issue reopen "$NUMBER" --repo "$REPO" --comment \
+              "Reopened automatically: this issue was closed by a merged PR/commit. It will be closed manually once the fix is verified."
+          else
+            echo "Closed manually - leaving it closed."
+          fi

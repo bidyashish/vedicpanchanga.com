@@ -133,6 +133,7 @@ Cloudflare → Nginx (TLS, CSP, returns 444 for direct-IP) → static Vite build
 
 ## Style rules
 
+- **No GitHub closing keywords in commits or PR descriptions.** Never write `fixes #N` / `closes #N` / `resolves #N` - reference issues as plain `(#N)` instead. Issues are closed manually after the reporter verifies the fix; the `keep-issues-open.yml` workflow reopens anything a PR merge auto-closes.
 - **No em dashes (`—`)** anywhere in the codebase - not in UI text, i18n strings, SEO titles, meta descriptions, or new code. Use a plain hyphen (`-`) instead. Existing code comments are exempt but new ones should also use hyphens.
 - **Every non-English locale must be native AND written for a native speaker.** This is the headline i18n rule and it is stronger than "use the right script":
   - **Native script everywhere.** `hi`/`ne` → Devanagari, `ta` → Tamil, `bn` → Bangla, `zh` → Chinese, `ja` → Japanese (kana/kanji), `ru` → Cyrillic, `ar` → Arabic, `fa` → Perso-Arabic, `he` → Hebrew. `es`/`de`/`pt`/`fr` use their own Latin orthography. No transliteration of UI text into Latin in any locale.
