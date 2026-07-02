@@ -227,36 +227,37 @@ _YOGAM_CODE = {
     "P": "Prabalarishta",
 }
 
-# [Sun(7), Mon(1), Tue(2), Wed(3), Thu(4), Fri(5), Sat(6)]
-# Reordered to ISO weekday order: Mon(1)..Sun(7)
+# Source table (issue #48) is ordered Sun..Sat; rows here are reordered to
+# ISO weekday order Mon(1)..Sun(7). Keep in sync with the regression test in
+# tests/test_tyajyam.py, which encodes the source table verbatim.
 _AMRITADI_TABLE: List[str] = [
     # Mon  Tue  Wed  Thu  Fri  Sat  Sun   - Nakshatra
-    "SSMASSA",  # 0  Ashwini
+    "SSMAASS",  # 0  Ashwini
     "SSSSSSP",  # 1  Bharani
-    "MSSAMSM",  # 2  Krittika (removed extra S)
-    "AASSMMA",  # 3  Rohini
-    "SSSSMSS",  # 4  Mrigashira
-    "SSMSMSS",  # 5  Ardra
+    "MSAMSSS",  # 2  Krittika
+    "AASMMAS",  # 3  Rohini
+    "SSSMSSS",  # 4  Mrigashira
+    "SMSMSSS",  # 5  Ardra
     "ASSASSS",  # 6  Punarvasu
-    "SSSSSMS",  # 7  Pushya
-    "SSSSSMM",  # 8  Ashlesha
-    "MMSAMMA",  # 9  Magha
+    "SSSSMSS",  # 7  Pushya
+    "SSSSMMS",  # 8  Ashlesha
+    "MSSAMAM",  # 9  Magha
     "SSASSSS",  # 10 Purva Phalguni
-    "SAASMMS",  # 11 Uttara Phalguni (removed extra A)
-    "SSMSAMS",  # 12 Hasta (removed extra M)
-    "PSSSSSM",  # 13 Chitra
+    "SAAMSMA",  # 11 Uttara Phalguni
+    "SSMSAMS",  # 12 Hasta
+    "PSSSSMS",  # 13 Chitra
     "ASSASSS",  # 14 Swati
-    "MMMSSSM",  # 15 Vishakha
-    "SMSSSSM",  # 16 Anuradha
-    "SMSPMSM",  # 17 Jyeshtha (removed extra M)
-    "SAMSSAS",  # 18 Mula (removed extra A)
+    "MMSSSSM",  # 15 Vishakha
+    "SSSSSSM",  # 16 Anuradha
+    "SMSPMSM",  # 17 Jyeshtha
+    "SAMSASA",  # 18 Mula
     "MSASPSS",  # 19 Purva Ashadha
-    "MPAAASS",  # 20 Uttara Ashadha (removed extra A)
-    "ASSSSMA",  # 21 Shravana
-    "SSSPSSM",  # 22 Dhanishta
-    "SSMSMSA",  # 23 Shatabhisha
-    "MMASSMM",  # 24 Purva Bhadrapada (removed extra S)
-    "SASSSSS",  # 25 Uttara Bhadrapada (removed extra A)
+    "MPASSSA",  # 20 Uttara Ashadha
+    "ASSSMSA",  # 21 Shravana
+    "SSPSSSM",  # 22 Dhanishta
+    "SMSMSAS",  # 23 Shatabhisha
+    "MMASSMS",  # 24 Purva Bhadrapada
+    "SASSSSA",  # 25 Uttara Bhadrapada
     "SSMSSPA",  # 26 Revati
 ]
 

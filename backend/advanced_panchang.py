@@ -539,7 +539,9 @@ def _nakshatras_in_window(start_jd: float, end_jd: float) -> List[Dict]:
         if seg_start is None:
             seg_start = _segment_start(cursor, nak_idx * NAK_SPAN, "moon", max_back=2.0)
         end = _find_angle_time(cursor, nak_end_deg, "moon", max_days=2.0)
-        ends = min(end, end_jd) if end else end_jd
+        # True end, not clipped to the window - keeps the displayed sequence
+        # consistent with Nakshatra Tyajyam, which uses unclipped bounds.
+        ends = end if end else end_jd
         out.append(
             {
                 "name": NAKSHATRAS[nak_idx],
@@ -572,7 +574,10 @@ def _tithis_in_window(start_jd: float, end_jd: float) -> List[Dict]:
             # (often the previous afternoon). Bisect backward to find when.
             seg_start = _segment_start(cursor, (t_idx - 1) * 12, "tithi", max_back=2.0)
         end = _find_angle_time(cursor, t_end_deg, "tithi", max_days=2.0)
-        ends = min(end, end_jd) if end else end_jd
+        # Keep the true end even when it falls after the window: the ratio
+        # based Tithi Tyajyam needs the full span, and panchang convention
+        # lists real end times ("upto 09:38 AM, Jul 02"), not next sunrise.
+        ends = end if end else end_jd
         out.append(
             {
                 "index": t_idx,
@@ -604,7 +609,7 @@ def _yogas_in_window(start_jd: float, end_jd: float) -> List[Dict]:
         if seg_start is None:
             seg_start = _segment_start(cursor, y_idx * NAK_SPAN, "yoga", max_back=2.0)
         end = _find_angle_time(cursor, y_end_deg, "yoga", max_days=2.0)
-        ends = min(end, end_jd) if end else end_jd
+        ends = end if end else end_jd  # true end, see _tithis_in_window
         out.append(
             {
                 "index": y_idx + 1,
@@ -637,7 +642,9 @@ def _karanas_in_window(start_jd: float, end_jd: float) -> List[Dict]:
             # 1.5 days is comfortably longer than any karana.
             seg_start = _segment_start(cursor, h_idx * 6, "tithi", max_back=1.5)
         end = _find_angle_time(cursor, h_end_deg, "tithi", max_days=2.0)
-        ends = min(end, end_jd) if end else end_jd
+        # True end: Karana Tyajyam and Bhadra list the karana's real end,
+        # even when it falls after next sunrise.
+        ends = end if end else end_jd
         out.append(
             {
                 "half_index": h_idx,
