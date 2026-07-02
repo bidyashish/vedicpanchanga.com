@@ -344,6 +344,11 @@ const ne: Record<string, string> = {
   tyajyam_tamil_month_tithis: "तिथिहरू",
   tyajyam_tamil_month_naks: "नक्षत्रहरू",
   tyajyam_tamil_month_lagnas: "लग्नहरू",
+  tyajyam_none: "आज कुनै अवधि छैन",
+  tyajyam_note: "समय स्थानीय समयअनुसार छ। महत्त्वपूर्ण कार्यअघि पुष्टि गर्नुहोस्",
+  tyajyam_dosha_desc: "ग्रहण र ग्रह अस्त अवधि",
+  tyajyam_gowri_desc: "गौरी पञ्चाङ्गका अशुभ खण्ड",
+  tyajyam_tamil_month_desc: "वर्तमान तमिल महिनाका वर्जित तत्व",
 
   pd_title: "ग्रह विवरण",
   pd_position: "स्थिति",

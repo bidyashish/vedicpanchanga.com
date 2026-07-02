@@ -345,6 +345,11 @@ const ar: Record<string, string> = {
   tyajyam_tamil_month_tithis: "تيثي",
   tyajyam_tamil_month_naks: "ناكشاترا",
   tyajyam_tamil_month_lagnas: "لاغنا",
+  tyajyam_none: "لا فترات اليوم",
+  tyajyam_note: "الأوقات بالتوقيت المحلي. تحقق قبل الأعمال المهمة",
+  tyajyam_dosha_desc: "الكسوف والخسوف وفترات احتراق الكواكب",
+  tyajyam_gowri_desc: "المقاطع غير الميمونة في غوري بانشانغام",
+  tyajyam_tamil_month_desc: "عناصر يجب تجنبها في الشهر التاميلي الحالي",
 
   pd_title: "تفاصيل الكوكب",
   pd_position: "الموضع",

@@ -345,6 +345,11 @@ const ru: Record<string, string> = {
   tyajyam_tamil_month_tithis: "Титхи",
   tyajyam_tamil_month_naks: "Накшатры",
   tyajyam_tamil_month_lagnas: "Лагны",
+  tyajyam_none: "Сегодня периодов нет",
+  tyajyam_note: "Время указано местное. Проверяйте перед важными делами",
+  tyajyam_dosha_desc: "Затмения и периоды сожжения планет",
+  tyajyam_gowri_desc: "Неблагоприятные отрезки Гоури Панчангама",
+  tyajyam_tamil_month_desc: "Чего избегать в текущем тамильском месяце",
 
   pd_title: "Детали планеты",
   pd_position: "Положение",
