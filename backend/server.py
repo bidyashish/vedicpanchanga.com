@@ -302,7 +302,7 @@ class MuhurtaRequest(BaseModel):
 
 @api_router.get("/muhurta-purposes")
 async def get_muhurta_purposes(response: Response):
-    """List available Muhurta purposes (marriage, griha-pravesha, business, etc.)."""
+    """List available Muhurta purposes (griha-pravesha, business, travel, etc.)."""
     response.headers["Cache-Control"] = "public, max-age=86400"
     return list_purposes()
 

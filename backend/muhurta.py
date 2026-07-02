@@ -64,30 +64,9 @@ _MIN_WINDOW_MINUTES = 30
 # ---- Purpose rules ----
 
 PURPOSES: Dict[str, Dict[str, Any]] = {
-    "marriage": {
-        "label": "Marriage (Vivaha)",
-        "good_tithis": _both_pakshas(2, 3, 5, 7, 10, 11, 12, 13),
-        "good_nakshatras": _naks(
-            "Rohini",
-            "Mrigashira",
-            "Magha",
-            "Uttara Phalguni",
-            "Hasta",
-            "Swati",
-            "Anuradha",
-            "Mula",
-            "Uttara Ashadha",
-            "Shravana",
-            "Uttara Bhadrapada",
-            "Revati",
-        ),
-        "good_weekdays": {MON, WED, THU, FRI},
-        "avoid_weekdays": {TUE, SAT, SUN},
-        "bad_tithis": RIKTA_TITHIS | {AMAVASYA},
-    },
     "engagement": {
         "label": "Engagement (Sagai / Vagdana)",
-        # Same star set as Vivaha - betrothal shares the marriage tables.
+        # Betrothal uses the classical Vivaha star set.
         "good_tithis": _both_pakshas(2, 3, 5, 7, 10, 11, 12, 13),
         "good_nakshatras": _naks(
             "Rohini",
@@ -311,28 +290,6 @@ PURPOSES: Dict[str, Dict[str, Any]] = {
         "good_weekdays": {MON, WED, THU, FRI},
         "avoid_weekdays": {TUE, SUN},
         "bad_tithis": RIKTA_TITHIS | {AMAVASYA},
-    },
-    "mundan": {
-        "label": "Mundan (Chudakarana)",
-        "good_tithis": _both_pakshas(2, 3, 5, 7, 10, 11, 13),
-        "good_nakshatras": _naks(
-            "Ashwini",
-            "Mrigashira",
-            "Punarvasu",
-            "Pushya",
-            "Hasta",
-            "Chitra",
-            "Swati",
-            "Jyeshtha",
-            "Shravana",
-            "Dhanishta",
-            "Shatabhisha",
-            "Revati",
-        ),
-        "good_weekdays": {MON, WED, THU, FRI},
-        "avoid_weekdays": {TUE, SAT, SUN},
-        # Pratipada, Purnima and Amavasya are also avoided for mundan.
-        "bad_tithis": RIKTA_TITHIS | _both_pakshas(1) | {PURNIMA, AMAVASYA},
     },
     "annaprashana": {
         "label": "Annaprashana (First Feeding)",

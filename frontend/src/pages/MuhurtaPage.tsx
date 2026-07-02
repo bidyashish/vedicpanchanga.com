@@ -242,7 +242,7 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
   }, []);
 
   const [purposes, setPurposes] = useState<MuhurtaPurpose[]>([]);
-  const [purpose, setPurpose] = useState(initialParams.purpose ?? "marriage");
+  const [purpose, setPurpose] = useState(initialParams.purpose ?? "griha_pravesh");
   const [startDate, setStartDate] = useState(initialParams.start ?? todayISO());
   const [endDate, setEndDate] = useState(initialParams.end ?? daysFromNow(30));
   const [loc, setLoc] = useState<LocationChoice>(() =>
@@ -272,12 +272,17 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
     if (purposesFetchedRef.current) return;
     purposesFetchedRef.current = true;
     fetchMuhurtaPurposes()
-      .then(setPurposes)
+      .then((list) => {
+        setPurposes(list);
+        // Shared links may carry a purpose that no longer exists (e.g. the
+        // removed "marriage"); snap those to the first available purpose.
+        setPurpose((prev) => (list.some((p) => p.id === prev) ? prev : (list[0]?.id ?? prev)));
+      })
       .catch(() =>
         setPurposes([
-          { id: "marriage", label: "Marriage" },
           { id: "griha_pravesh", label: "Griha Pravesha" },
           { id: "business", label: "Business" },
+          { id: "travel", label: "Travel" },
         ]),
       );
   }, []);
