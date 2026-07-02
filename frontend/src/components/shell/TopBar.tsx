@@ -11,6 +11,10 @@ const LEARN_META: { id: View; labelKey: string; href: string }[] = [
   { id: "learn-kundali", labelKey: "learn_kundali_title", href: "/learn/kundali" },
   { id: "learn-planets", labelKey: "learn_planets_title", href: "/learn/planets" },
   { id: "learn-panchang", labelKey: "learn_panchang_title", href: "/learn/panchang" },
+  { id: "learn-dasha", labelKey: "learn_dasha_title", href: "/learn/dasha" },
+  { id: "learn-nakshatras", labelKey: "learn_nakshatras_title", href: "/learn/nakshatras" },
+  { id: "learn-rashi", labelKey: "learn_rashi_title", href: "/learn/rashi" },
+  { id: "learn-vargas", labelKey: "learn_vargas_title", href: "/learn/vargas" },
 ];
 const LEARN_IDS = new Set<View>(LEARN_META.map((l) => l.id));
 

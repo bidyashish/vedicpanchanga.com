@@ -39,7 +39,7 @@ VARGA_NAMES = {
     16: "Shodashamsa",
     20: "Vimshamsa",
     24: "Chaturvimshamsa",
-    27: "Bhamsa",
+    27: "Nakshatramsa (Bhamsa)",
     30: "Trimshamsa",
     40: "Khavedamsa",
     45: "Akshavedamsa",

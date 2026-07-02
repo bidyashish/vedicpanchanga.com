@@ -39,6 +39,18 @@ const UnderstandingPanchang = lazy(() =>
     default: m.UnderstandingPanchang,
   })),
 );
+const VimshottariDasha = lazy(() =>
+  import("@/pages/articles/VimshottariDasha").then((m) => ({ default: m.VimshottariDasha })),
+);
+const Nakshatras = lazy(() =>
+  import("@/pages/articles/Nakshatras").then((m) => ({ default: m.Nakshatras })),
+);
+const MoonSignVsSunSign = lazy(() =>
+  import("@/pages/articles/MoonSignVsSunSign").then((m) => ({ default: m.MoonSignVsSunSign })),
+);
+const DivisionalCharts = lazy(() =>
+  import("@/pages/articles/DivisionalCharts").then((m) => ({ default: m.DivisionalCharts })),
+);
 
 export type View =
   | "kundali"
@@ -50,7 +62,11 @@ export type View =
   | "terms"
   | "learn-kundali"
   | "learn-planets"
-  | "learn-panchang";
+  | "learn-panchang"
+  | "learn-dasha"
+  | "learn-nakshatras"
+  | "learn-rashi"
+  | "learn-vargas";
 
 const MONETIZED_VIEWS = new Set<View>([
   "panchang",
@@ -61,6 +77,10 @@ const MONETIZED_VIEWS = new Set<View>([
   "learn-kundali",
   "learn-planets",
   "learn-panchang",
+  "learn-dasha",
+  "learn-nakshatras",
+  "learn-rashi",
+  "learn-vargas",
 ]);
 
 const SITE = "https://vedicpanchanga.com";
@@ -76,6 +96,10 @@ const VIEW_PATH: Record<View, string> = {
   "learn-kundali": "/learn/kundali",
   "learn-planets": "/learn/planets",
   "learn-panchang": "/learn/panchang",
+  "learn-dasha": "/learn/dasha",
+  "learn-nakshatras": "/learn/nakshatras",
+  "learn-rashi": "/learn/rashi",
+  "learn-vargas": "/learn/vargas",
 };
 
 const SEO_BY_VIEW: Record<
@@ -157,6 +181,38 @@ const SEO_BY_VIEW: Record<
     keywords:
       "what is panchang, panchanga, tithi, nakshatra, yoga, karana, vara, hindu calendar, drik panchang",
   },
+  "learn-dasha": {
+    title: "Vimshottari Dasha Explained: The Vedic Timeline of Your Life · Vedic Panchanga",
+    description:
+      "A beginner's guide to Vimshottari Dasha: how the 120-year planetary timeline works, the order and years of each mahadasha, antardasha and pratyantar sub-periods, and how to read your dasha.",
+    canonical: `${SITE}/learn/dasha`,
+    keywords:
+      "vimshottari dasha, mahadasha, antardasha, pratyantar, planetary periods, dasha calculator, vedic astrology timeline",
+  },
+  "learn-nakshatras": {
+    title: "The 27 Nakshatras: Your Vedic Birth Star Explained · Vedic Panchanga",
+    description:
+      "A beginner's guide to the 27 nakshatras (lunar mansions): what your janma nakshatra or birth star means, the four padas, and how nakshatras drive dasha, matching and muhurta.",
+    canonical: `${SITE}/learn/nakshatras`,
+    keywords:
+      "nakshatra, 27 nakshatras, lunar mansions, birth star, janma nakshatra, pada, vedic astrology star",
+  },
+  "learn-rashi": {
+    title: "Moon Sign vs Sun Sign: Why Vedic Astrology Uses the Moon · Vedic Panchanga",
+    description:
+      "Why your Vedic Moon sign (Chandra Rashi) differs from your Western Sun sign: the sidereal vs tropical zodiac, the ayanamsa, and which sign to read for what.",
+    canonical: `${SITE}/learn/rashi`,
+    keywords:
+      "moon sign vs sun sign, chandra rashi, rashi, sidereal vs tropical, ayanamsa, vedic vs western astrology",
+  },
+  "learn-vargas": {
+    title: "Divisional Charts (Vargas) Explained: Navamsa D9, D10 and More · Vedic Panchanga",
+    description:
+      "A beginner's guide to Vedic divisional charts (vargas): what D1, D9 Navamsa, D10 and other D-charts are for, how they are calculated, and why the Navamsa is so important.",
+    canonical: `${SITE}/learn/vargas`,
+    keywords:
+      "divisional charts, vargas, navamsa, d9 chart, d10 chart, dashamsa, vargottama, vedic astrology",
+  },
 };
 
 const DEFAULT_LOCATION: LocationChoice = {
@@ -187,6 +243,14 @@ function viewFromPath(): View {
       return "learn-planets";
     case "/learn/panchang":
       return "learn-panchang";
+    case "/learn/dasha":
+      return "learn-dasha";
+    case "/learn/nakshatras":
+      return "learn-nakshatras";
+    case "/learn/rashi":
+      return "learn-rashi";
+    case "/learn/vargas":
+      return "learn-vargas";
     case "/panchang":
       return "panchang";
     case "/":
@@ -310,6 +374,10 @@ export default function App() {
           {view === "learn-kundali" && <WhatIsKundali />}
           {view === "learn-planets" && <NinePlanets />}
           {view === "learn-panchang" && <UnderstandingPanchang />}
+          {view === "learn-dasha" && <VimshottariDasha />}
+          {view === "learn-nakshatras" && <Nakshatras />}
+          {view === "learn-rashi" && <MoonSignVsSunSign />}
+          {view === "learn-vargas" && <DivisionalCharts />}
         </Suspense>
       </main>
 

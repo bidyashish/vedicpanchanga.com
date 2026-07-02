@@ -150,6 +150,49 @@ def test_amritadi_bharani_sunday_is_prabalarishta():
     assert results[0]["yogam"] == "Prabalarishta"
 
 
+def test_amritadi_table_matches_source():
+    """Full-table anchor against the issue #48 source table (Sun..Sat order).
+
+    The table was once corrupted by a bad transcription (columns shifted by
+    one for 19 of 27 rows), so every cell is pinned here. Do not edit either
+    copy without the other.
+    """
+    source_sun_to_sat = [
+        "SSSMAAS",  # Ashwini
+        "PSSSSSS",  # Bharani
+        "SMSAMSS",  # Krittika
+        "SAASMMA",  # Rohini
+        "SSSSMSS",  # Mrigashira
+        "SSMSMSS",  # Ardra
+        "SASSASS",  # Punarvasu
+        "SSSSSMS",  # Pushya
+        "SSSSSMM",  # Ashlesha
+        "MMSSAMA",  # Magha
+        "SSSASSS",  # Purva Phalguni
+        "ASAAMSM",  # Uttara Phalguni
+        "SSSMSAM",  # Hasta
+        "SPSSSSM",  # Chitra
+        "SASSASS",  # Swati
+        "MMMSSSS",  # Vishakha
+        "MSSSSSS",  # Anuradha
+        "MSMSPMS",  # Jyeshtha
+        "ASAMSAS",  # Mula
+        "SMSASPS",  # Purva Ashadha
+        "AMPASSS",  # Uttara Ashadha
+        "AASSSMS",  # Shravana
+        "MSSPSSS",  # Dhanishta
+        "SSMSMSA",  # Shatabhisha
+        "SMMASSM",  # Purva Bhadrapada
+        "ASASSSS",  # Uttara Bhadrapada
+        "ASSMSSP",  # Revati
+    ]
+    for i, row in enumerate(source_sun_to_sat):
+        expected_mon_to_sun = row[1:] + row[0]
+        assert _AMRITADI_TABLE[i] == expected_mon_to_sun, (
+            f"Nakshatra {i}: expected {expected_mon_to_sun}, got {_AMRITADI_TABLE[i]}"
+        )
+
+
 # ---- Karana Tyajyam ----
 
 
@@ -334,6 +377,30 @@ def test_compute_tyajyam_returns_all_keys():
     assert "tithi_tyajyam" in result
     assert "vara_tyajyam" in result
     assert "amritadi_yogam" in result
+
+
+def test_tithi_tyajyam_uses_true_tithi_span():
+    """Regression for issue #48: the last tithi of the day used to have its
+    end clipped to next sunrise, shrinking the span the ratio is applied to.
+
+    Chennai 2026-07-01: Krishna Dwitiya runs 07:38:42 IST (Jul 1) to
+    09:38:24 IST (Jul 2, after next sunrise 05:46:18). Ratio 1/5 over the
+    full span puts the tyajyam start at 12:50 IST; the clipped span gave
+    the wrong 12:04 IST.
+    """
+    from advanced_panchang import compute_detailed_panchang
+
+    result = compute_detailed_panchang("2026-07-01", 13.0837, 80.2702, "Asia/Kolkata")
+
+    last_tithi = result["panchang"]["tithi_sequence"][-1]
+    assert last_tithi["name"] == "Krishna Dwitiya"
+    assert last_tithi["ends_at"].startswith("2026-07-02T09:38")
+
+    dwitiya = [
+        t for t in result["tyajyam"]["tithi_tyajyam"] if t["tithi"] == "Krishna Dwitiya"
+    ]
+    assert len(dwitiya) == 1
+    assert dwitiya[0]["start"].startswith("2026-07-01T12:50")
 
 
 def test_full_panchang_includes_tyajyam():

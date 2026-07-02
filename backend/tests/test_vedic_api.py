@@ -283,6 +283,11 @@ class TestPanchang:
         from datetime import datetime
 
         ab = panchang_today["auspicious_timings"]["abhijit"]
+        # On Wednesday the Dur Muhurtam occupies the 8th muhurta (the Abhijit
+        # slot), so Abhijit is suppressed and reported as null. That is correct
+        # behaviour, not a failure - skip the midday assertion in that case.
+        if ab is None:
+            return
         sm = panchang_today["sun_moon"]
         sr = datetime.fromisoformat(sm["sunrise"])
         ss = datetime.fromisoformat(sm["sunset"])

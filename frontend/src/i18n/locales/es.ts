@@ -65,6 +65,11 @@ const es: Record<string, string> = {
   time_of_birth: "Hora de nacimiento",
   place_of_birth: "Lugar de nacimiento",
   search_city: "Buscar ciudad…",
+  tp_pick_time: "Elegir hora",
+  tp_hour: "Hora",
+  tp_minute: "Minuto",
+  tp_period: "AM/PM",
+  tp_hint: "Escribe dígitos para fijar la hora, flechas para ajustar",
   ayanamsa: "Ayanamsa",
   latitude: "Latitud",
   longitude: "Longitud",
@@ -660,6 +665,148 @@ const es: Record<string, string> = {
     "Para el día a día, mira el tithi y el nakshatra para captar el carácter del día, y revisa los periodos inauspiciosos si planeas algo importante. Para elegir un momento realmente auspicioso, como una ceremonia, un viaje o un nuevo comienzo, los cinco miembros se sopesan juntos. Eso es justo lo que hace una herramienta electiva.",
   art_panchang_p10:
     "Puedes explorar el almanaque completo de hoy en la {0} y encontrar tiempos favorables para un propósito concreto con nuestro {1}.",
+  learn_dasha_title: "Dasha Vimshottari",
+  learn_nakshatras_title: "Los 27 Nakshatras",
+  learn_rashi_title: "Signo lunar vs signo solar",
+  learn_vargas_title: "Cartas divisionales",
+  link_dasha_guide: "guia de la Dasha Vimshottari",
+  link_nakshatras_guide: "los 27 nakshatras",
+  link_rashi_guide: "guia del signo lunar",
+  link_vargas_guide: "guia de cartas divisionales",
+  link_panchang_guide: "guia del Panchang",
+  link_transits_page: "transitos planetarios",
+  art_dasha_title: "Dasha Vimshottari: la linea de tiempo vedica de tu vida",
+  art_dasha_intro:
+    "La Dasha Vimshottari es el sistema de tiempos mas usado en la astrologia vedica. Divide tu vida en periodos planetarios que muestran cuando es mas probable que se manifieste la promesa de tu carta natal.",
+  art_dasha_h1: "Que es una dasha?",
+  art_dasha_p1:
+    "Una dasha es un lapso de tiempo regido por un planeta concreto. Mientras tu carta natal muestra lo que es posible, la secuencia de dashas muestra cuando. Durante la dasha de un planeta, los temas, casas y relaciones que ese planeta rige en tu carta pasan a primer plano, para bien o para mal segun como este ubicado el planeta.",
+  art_dasha_p2:
+    "Vimshottari es la mas conocida de varios sistemas de dasha. Su ciclo completo dura 120 anos y se vincula al nakshatra de la Luna al nacer, por eso importan tanto una hora de nacimiento exacta y {0}.",
+  art_dasha_h2: "Los nueve periodos planetarios",
+  art_dasha_p3:
+    "El ciclo completo de 120 anos se reparte entre los nueve planetas, cada uno con un numero fijo de anos:",
+  art_dasha_li1: "Ketu - 7 anos",
+  art_dasha_li2: "Venus - 20 anos",
+  art_dasha_li3: "Sol - 6 anos",
+  art_dasha_li4: "Luna - 10 anos",
+  art_dasha_li5: "Marte - 7 anos",
+  art_dasha_li6: "Rahu - 18 anos",
+  art_dasha_li7: "Jupiter - 16 anos",
+  art_dasha_li8: "Saturno - 19 anos",
+  art_dasha_li9: "Mercurio - 17 anos",
+  art_dasha_p4:
+    "El planeta en cuyo periodo naces, y en que punto de ese periodo empiezas, dependen de tu nakshatra natal. A partir de ahi los periodos siguen siempre el mismo orden.",
+  art_dasha_h3: "Mahadasha, antardasha y pratyantar",
+  art_dasha_p5:
+    "Cada periodo mayor (mahadasha) se divide en nueve subperiodos (antardasha), uno por planeta, en el mismo orden Vimshottari y en proporcion a los anos de cada planeta. Cada antardasha se divide de nuevo en periodos pratyantar. Este anidamiento permite al astrologo reducir una prediccion de un lapso de anos a unas pocas semanas.",
+  art_dasha_p6:
+    "Una forma sencilla de leerlo: la mahadasha marca el gran capitulo de la vida, la antardasha la trama actual y el pratyantar afina los tiempos dentro de ella.",
+  art_dasha_h4: "Como usar tu linea de tiempo de dashas",
+  art_dasha_p7:
+    "Observa que planeta rige tu mahadasha y antardasha actuales, y luego como estan ubicados esos planetas en tu carta: su signo, casa y dignidad. Un planeta fuerte y bien ubicado tiende a dar buenos resultados durante su periodo; uno debil o afligido puede traer desafios que piden paciencia. Nuestro {0} calcula la secuencia completa de 120 anos con subperiodos a partir de tus datos de nacimiento.",
+  art_dasha_h5: "Preguntas frecuentes",
+  art_dasha_faq1_q: "Por que el ciclo es de 120 anos?",
+  art_dasha_faq1_a:
+    "Los nueve periodos planetarios suman 120 anos (7+20+6+10+7+18+16+19+17). En la tradicion se considera una vida humana completa, tras la cual el ciclo se repetiria.",
+  art_dasha_faq2_q: "Empieza todo el mundo con el mismo planeta?",
+  art_dasha_faq2_a:
+    "No. Tu primera dasha la decide el nakshatra que ocupa la Luna al nacer, y normalmente empiezas a mitad del periodo de ese planeta, no al principio.",
+  art_dasha_faq3_q: "Una dasha 'mala' es realmente mala?",
+  art_dasha_faq3_a:
+    "No necesariamente. Un periodo refleja como se situa su planeta regente en tu carta. Incluso un planeta dificil puede dar crecimiento y disciplina, y los resultados siempre se leen junto a la fuerza del planeta, sus aspectos y las casas que rige.",
+  art_naks_title: "Los 27 Nakshatras: tu estrella natal vedica",
+  art_naks_intro:
+    "Los nakshatras son las 27 mansiones lunares de la astrologia vedica. El nakshatra que ocupa la Luna al nacer, tu janma nakshatra o estrella natal, dice mucho sobre tu temperamento y es central para los tiempos y la compatibilidad.",
+  art_naks_h1: "Que es un nakshatra?",
+  art_naks_p1:
+    "El zodiaco de 360 grados se divide en 27 nakshatras de 13 grados 20 minutos cada uno. Mientras los doce rashis (signos) dan una imagen amplia, los nakshatras anaden una capa de significado mas fina. La Luna tarda alrededor de un dia en cruzar un nakshatra, asi que cada dia tiene una estrella regente.",
+  art_naks_p2:
+    "Cada nakshatra tiene un planeta regente, una deidad presidente, un simbolo y una naturaleza propia. Juntos matizan como se expresa un planeta situado en ese nakshatra, por eso los nakshatras importan para mucho mas que la Luna.",
+  art_naks_h2: "Padas: los cuatro cuartos",
+  art_naks_p3:
+    "Cada nakshatra se divide en cuatro padas (cuartos) de 3 grados 20 minutos cada uno. Los cuatro padas de un nakshatra se corresponden con la carta Navamsa (D9), de modo que tu pada refina tu estrella natal y la vincula a tu novena {0}. Conocer tu nakshatra y tu pada juntos da una lectura mucho mas precisa que el signo solo.",
+  art_naks_h3: "Por que importa tu estrella natal",
+  art_naks_p4: "El janma nakshatra se usa en la astrologia vedica de formas practicas:",
+  art_naks_li1:
+    "Fija tu Dasha Vimshottari inicial, la linea de tiempo planetaria de tu vida. ({0})",
+  art_naks_li2:
+    "Es la base del tarabalam, la fuerza diaria de las estrellas usada al elegir tiempos auspiciosos.",
+  art_naks_li3: "Es central en la compatibilidad (el sistema kuta o porutham) para el matrimonio.",
+  art_naks_li4:
+    "Guia la eleccion del primer sonido del nombre de un bebe en la tradicion namakarana.",
+  art_naks_h4: "Encontrar tu nakshatra",
+  art_naks_p5:
+    "Tu estrella natal es simplemente el nakshatra en que estaba la Luna en el momento de nacer, asi que necesitas hora y lugar de nacimiento exactos. Nuestro {0} muestra el nakshatra y el pada de tu Luna, y nuestro {1} indica el nakshatra regente de cualquier fecha.",
+  art_naks_h5: "Preguntas frecuentes",
+  art_naks_faq1_q: "El nakshatra se basa en el Sol o en la Luna?",
+  art_naks_faq1_a:
+    "Tu estrella natal se basa en la posicion de la Luna. La astrologia vedica se apoya en la Luna para el temperamento y los tiempos, por eso el nakshatra lunar es tan importante.",
+  art_naks_faq2_q: "Cual es la diferencia entre un rashi y un nakshatra?",
+  art_naks_faq2_a:
+    "Un rashi es uno de los 12 signos de 30 grados cada uno; un nakshatra es una de las 27 mansiones de unos 13 grados cada una. Los nakshatras dan una lectura mas fina y cada signo contiene partes de mas de dos nakshatras.",
+  art_naks_faq3_q: "Por que a veces se habla de 28 nakshatras?",
+  art_naks_faq3_a:
+    "Algunos sistemas antiguos anaden un 28, Abhijit, entre Uttara Ashadha y Shravana. La mayor parte de la astrologia vedica moderna, y este sitio, usa los 27 estandar para los calculos de carta y dasha.",
+  art_rashi_title: "Signo lunar vs signo solar: por que la astrologia vedica usa la Luna",
+  art_rashi_intro:
+    "Si tu signo lunar vedico parece distinto del signo que conoces por las revistas, no estas solo. La astrologia vedica y la occidental usan puntos de referencia distintos, y la vedica se apoya en la Luna mas que en el Sol.",
+  art_rashi_h1: "Que es un rashi?",
+  art_rashi_p1:
+    "Rashi es la palabra sanscrita para un signo zodiacal: una de las doce divisiones de 30 grados de Aries a Piscis. Cada planeta esta en un rashi, pero dos se leen con mas frecuencia: el signo en que estaba el Sol (tu Surya Rashi o signo solar) y el signo en que estaba la Luna (tu Chandra Rashi o signo lunar).",
+  art_rashi_h2: "Por que el signo lunar manda en la astrologia vedica",
+  art_rashi_p2:
+    "La astrologia occidental destaca el signo solar, que refleja la identidad y el ego. La astrologia vedica da mas peso al Chandra Rashi, el signo lunar, porque la Luna rige la mente, las emociones y la vida diaria. El signo lunar es tambien el ancla de la linea de tiempo de la Dasha Vimshottari y de la lectura del panchang diario, asi que tiene mucho peso practico. ({0})",
+  art_rashi_h3: "Sideral vs tropical: la verdadera razon de la diferencia",
+  art_rashi_p3:
+    "La mayor diferencia es el zodiaco mismo. La astrologia occidental usa el zodiaco tropical, ligado a las estaciones y al equinoccio de primavera. La vedica usa el zodiaco sideral, ligado a las posiciones reales de las estrellas. Ambos se han separado con los siglos por una cantidad llamada ayanamsa, hoy de unos 24 grados.",
+  art_rashi_p4:
+    "Por esa diferencia, tu signo solar sideral suele estar un signo antes que el tropical. Quien se llama Aries occidental suele ser Piscis vedico. Es normal y solo refleja que los dos sistemas miden desde puntos de partida distintos.",
+  art_rashi_h4: "Que signo deberias leer?",
+  art_rashi_p5:
+    "Para la astrologia vedica, empieza por tu signo lunar para el temperamento y los tiempos, tu ascendente (lagna) para la carta global y tu signo solar para la vitalidad y el papel del padre. Ninguno es erroneo; cada uno describe una capa distinta. Puedes verlos todos, calculados con el zodiaco sideral, en nuestro {0}.",
+  art_rashi_h5: "Preguntas frecuentes",
+  art_rashi_faq1_q: "Por que mi signo vedico difiere de mi signo occidental?",
+  art_rashi_faq1_a:
+    "La astrologia vedica usa el zodiaco sideral, desplazado respecto al tropical occidental por el ayanamsa (unos 24 grados). Ese desfase retrasa un signo el signo solar de muchas personas.",
+  art_rashi_faq2_q: "Es el signo lunar mas importante que el solar?",
+  art_rashi_faq2_a:
+    "En la astrologia vedica el signo lunar suele tener mas peso para la personalidad y los tiempos, pero una lectura completa usa el signo lunar, el solar y el ascendente juntos.",
+  art_rashi_faq3_q: "Como encuentro mi signo lunar?",
+  art_rashi_faq3_a:
+    "Necesitas tu fecha, hora exacta y lugar de nacimiento, porque la Luna cambia de signo cada dos dias y cuarto aproximadamente. Una calculadora de carta natal lo mostrara directamente.",
+  art_vargas_title: "Cartas divisionales (vargas): un nacimiento, muchas cartas",
+  art_vargas_intro:
+    "Las cartas divisionales, o vargas, son un rasgo distintivo de la astrologia vedica. De un solo nacimiento producen una familia de cartas, cada una centrada en un area de la vida como el matrimonio, la carrera o la fortuna.",
+  art_vargas_h1: "Que es una carta divisional?",
+  art_vargas_p1:
+    "Una carta divisional se construye dividiendo cada signo de 30 grados en partes iguales mas pequenas y proyectandolas en una nueva carta. La carta natal principal es el Rashi o D1. Dividir cada signo en nueve da el Navamsa o D9, en diez el Dashamsa o D10, y asi hasta el D60. Cada division se calcula desde las mismas longitudes planetarias, solo que con mas detalle.",
+  art_vargas_p2:
+    "La idea es que el D1 muestra la promesa amplia de un asunto, mientras la carta divisional pertinente muestra su detalle y fuerza. Un planeta que parece fuerte en el D1 pero debil en las divisiones puede no dar tanto como aparenta.",
+  art_vargas_h2: "Las vargas mas usadas",
+  art_vargas_p3: "Dieciseis vargas son clasicas, pero unas pocas se consultan mas a menudo:",
+  art_vargas_li1: "D1 (Rashi) - la carta natal y la base de todo lo demas.",
+  art_vargas_li2: "D9 (Navamsa) - matrimonio, dharma y la fuerza subyacente de cada planeta.",
+  art_vargas_li3: "D10 (Dashamsa) - carrera, profesion y logro publico.",
+  art_vargas_li4: "D7 (Saptamsa) - hijos y descendencia.",
+  art_vargas_li5: "D12 (Dwadashamsa) - padres y ascendencia.",
+  art_vargas_li6: "D27 (Nakshatramsa) - fortalezas y debilidades generales.",
+  art_vargas_h3: "Por que el Navamsa es especial",
+  art_vargas_p4:
+    "De todas las vargas, el D9 Navamsa es la mas importante despues de la carta natal. Se lee para el matrimonio y la pareja, pero tambien como prueba de fuerza de toda la carta: un planeta bien ubicado tanto en el D1 como en el D9 se considera realmente fuerte, una cualidad llamada vargottama cuando esta en el mismo signo en ambos.",
+  art_vargas_h4: "Como usar las cartas divisionales",
+  art_vargas_p5:
+    "Elige la carta que corresponde a tu pregunta -el D10 para la carrera, el D9 para el matrimonio- y lee alli la casa pertinente y su regente, luego compara con el D1. Es una tecnica avanzada, asi que los principiantes pueden empezar notando si un planeta mantiene buena ubicacion en varias cartas. Nuestro {0} genera las dieciseis cartas divisionales a partir de tus datos de nacimiento.",
+  art_vargas_h5: "Preguntas frecuentes",
+  art_vargas_faq1_q: "Son las cartas divisionales horoscopos separados?",
+  art_vargas_faq1_a:
+    "No. Todas derivan del mismo momento de nacimiento y posiciones planetarias. Cada una es una ampliacion distinta de la misma carta, centrada en un area de la vida.",
+  art_vargas_faq2_q: "Que carta divisional deberia aprender primero un principiante?",
+  art_vargas_faq2_a:
+    "El D9 Navamsa. Se usa tanto para las relaciones como para comprobar la fuerza general de toda la carta, asi que aporta el mayor valor al principio.",
+  art_vargas_faq3_q: "Necesito una hora de nacimiento muy exacta para las vargas?",
+  art_vargas_faq3_a:
+    "Si, mas que para el D1. Como cada signo se divide en muchas partes, un pequeno error en la hora puede mover un planeta a otra division, asi que una hora exacta importa.",
 };
 
 export default es;
