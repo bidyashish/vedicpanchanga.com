@@ -345,6 +345,11 @@ const ta: Record<string, string> = {
   tyajyam_tamil_month_tithis: "திதிகள்",
   tyajyam_tamil_month_naks: "நட்சத்திரங்கள்",
   tyajyam_tamil_month_lagnas: "லக்னங்கள்",
+  tyajyam_none: "இன்று எந்த நேரமும் இல்லை",
+  tyajyam_note: "நேரங்கள் உள்ளூர் நேரப்படி. முக்கியப் பணிகளுக்கு முன் உறுதிசெய்யவும்",
+  tyajyam_dosha_desc: "கிரகணம் மற்றும் கிரக மறைவு காலங்கள்",
+  tyajyam_gowri_desc: "கௌரி பஞ்சாங்கத்தின் அசுப பிரிவுகள்",
+  tyajyam_tamil_month_desc: "நடப்புத் தமிழ் மாதத்தில் தவிர்க்க வேண்டியவை",
 
   pd_title: "கிரக விவரம்",
   pd_position: "நிலை",

@@ -346,6 +346,11 @@ const es: Record<string, string> = {
   tyajyam_tamil_month_tithis: "Tithis",
   tyajyam_tamil_month_naks: "Nakshatras",
   tyajyam_tamil_month_lagnas: "Lagnas",
+  tyajyam_none: "Sin periodos hoy",
+  tyajyam_note: "Los horarios estan en hora local. Verifique antes de actividades importantes",
+  tyajyam_dosha_desc: "Eclipses y periodos de combustion planetaria",
+  tyajyam_gowri_desc: "Segmentos desfavorables del Gowri Panchangam",
+  tyajyam_tamil_month_desc: "Elementos a evitar en el mes tamil actual",
 
   pd_title: "Detalles del Planeta",
   pd_position: "Posicion",

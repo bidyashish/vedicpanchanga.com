@@ -345,6 +345,11 @@ const he: Record<string, string> = {
   tyajyam_tamil_month_tithis: "טיטהי",
   tyajyam_tamil_month_naks: "נאקשטרות",
   tyajyam_tamil_month_lagnas: "לאגנות",
+  tyajyam_none: "אין תקופות היום",
+  tyajyam_note: "הזמנים בשעון מקומי. יש לוודא לפני פעילויות חשובות",
+  tyajyam_dosha_desc: "ליקויי חמה ולבנה ותקופות שריפת כוכבי לכת",
+  tyajyam_gowri_desc: "מקטעים לא מבורכים בגוורי פנצ'נגם",
+  tyajyam_tamil_month_desc: "מרכיבים שיש להימנע מהם בחודש הטמילי הנוכחי",
 
   pd_title: "פרטי כוכב לכת",
   pd_position: "מיקום",

@@ -344,6 +344,11 @@ const bn: Record<string, string> = {
   tyajyam_tamil_month_tithis: "তিথি",
   tyajyam_tamil_month_naks: "নক্ষত্র",
   tyajyam_tamil_month_lagnas: "লগ্ন",
+  tyajyam_none: "আজ কোনো সময়কাল নেই",
+  tyajyam_note: "সময় স্থানীয় সময় অনুযায়ী। গুরুত্বপূর্ণ কাজের আগে যাচাই করুন",
+  tyajyam_dosha_desc: "গ্রহণ ও গ্রহের অস্তকাল",
+  tyajyam_gowri_desc: "গৌরী পঞ্চাঙ্গমের অশুভ অংশ",
+  tyajyam_tamil_month_desc: "চলতি তামিল মাসে বর্জনীয় উপাদান",
 
   pd_title: "গ্রহ বিবরণ",
   pd_position: "অবস্থান",

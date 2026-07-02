@@ -345,6 +345,11 @@ const fa: Record<string, string> = {
   tyajyam_tamil_month_tithis: "تیتهی",
   tyajyam_tamil_month_naks: "ناکشاترا",
   tyajyam_tamil_month_lagnas: "لگنه",
+  tyajyam_none: "امروز دوره‌ای نیست",
+  tyajyam_note: "زمان‌ها به وقت محلی است. پیش از کارهای مهم بررسی کنید",
+  tyajyam_dosha_desc: "خورشیدگرفتگی، ماه‌گرفتگی و دوره‌های احتراق سیارات",
+  tyajyam_gowri_desc: "بخش‌های نامبارک گوری پنچانگم",
+  tyajyam_tamil_month_desc: "موارد پرهیز در ماه تامیلی جاری",
 
   pd_title: "جزئیات سیاره",
   pd_position: "موقعیت",

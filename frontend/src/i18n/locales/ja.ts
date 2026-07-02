@@ -346,6 +346,11 @@ const ja: Record<string, string> = {
   tyajyam_tamil_month_tithis: "ティティ",
   tyajyam_tamil_month_naks: "ナクシャトラ",
   tyajyam_tamil_month_lagnas: "ラグナ",
+  tyajyam_none: "本日は該当する時間帯がありません",
+  tyajyam_note: "時刻は現地時間です。重要な行事の前にご確認ください",
+  tyajyam_dosha_desc: "日食・月食と惑星の合の期間",
+  tyajyam_gowri_desc: "ガウリ暦の不吉な時間帯",
+  tyajyam_tamil_month_desc: "現在のタミル月で避けるべき要素",
 
   pd_title: "惑星詳細",
   pd_position: "位置",

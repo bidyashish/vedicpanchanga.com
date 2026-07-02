@@ -345,6 +345,11 @@ const zh: Record<string, string> = {
   tyajyam_tamil_month_tithis: "月相",
   tyajyam_tamil_month_naks: "星宿",
   tyajyam_tamil_month_lagnas: "命度",
+  tyajyam_none: "今日无此类时段",
+  tyajyam_note: "时间均为当地时间，重要活动前请先核实",
+  tyajyam_dosha_desc: "日食月食及行星伏日时段",
+  tyajyam_gowri_desc: "高里历中的不吉时段",
+  tyajyam_tamil_month_desc: "当前泰米尔月的避忌事项",
 
   pd_title: "行星详情",
   pd_position: "位置",
