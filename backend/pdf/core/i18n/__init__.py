@@ -234,31 +234,16 @@ def tr_tithi(lang: str, name: str) -> str:
     return f"{paksha_word} {ordinal}"
 
 
-# Devanagari & Tamil routinely co-render with their native digits. Other
-# locales conventionally keep Latin digits for numeric data, so we don't
-# substitute there. Mirrors frontend src/i18n/astro.ts NATIVE_DIGITS.
-_NATIVE_DIGITS: Dict[str, str] = {
-    "hi": "०१२३४५६७८९",
-    "ne": "०१२३४५६७८९",
-    "ta": "௦௧௨௩௪௫௬௭௮௯",
-    "bn": "০১২৩৪৫৬৭৮৯",
-    "ar": "٠١٢٣٤٥٦٧٨٩",
-    "fa": "۰۱۲۳۴۵۶۷۸۹",
-}
-
-_LATIN_DIGITS = "0123456789"
-
-
 def t_num(lang: str, value) -> str:
-    """Replace ASCII digits with the locale's native digit set (hi/ta).
+    """Stringify a numeric value for the report; "" for None.
 
-    Returns the stringified value unchanged for locales without a native
-    digit table, and "" for None.
+    All numeric data (dates, times, degrees, padas, dasha years, table
+    counts) stays in Latin digits 0-9 for every language. This used to
+    substitute native digit sets (Tamil/Devanagari/Bengali/Arabic), which
+    readers found unreadable and which the web UI never does - see issue
+    #86. The `lang` parameter is kept so call sites don't churn if a locale
+    ever genuinely needs digit shaping again.
     """
     if value is None:
         return ""
-    s = str(value)
-    digits = _NATIVE_DIGITS.get(lang)
-    if not digits:
-        return s
-    return s.translate(str.maketrans(_LATIN_DIGITS, digits))
+    return str(value)

@@ -155,15 +155,45 @@ def test_render_pdf_tamil_keeps_technical_values_latin(delhi_chart, panchang_mod
         place_name="New Delhi",
         lang="ta",
     )
-    page1 = pdfium.PdfDocument(out)[0].get_textpage().get_text_range()
+    doc = pdfium.PdfDocument(out)
+    page1 = doc[0].get_textpage().get_text_range()
     # Gregorian date, birth time and both coordinates render in Latin digits
     # (DELHI_BIRTH: 1990-01-01 12:00, 28.6139 N, 77.2090 E).
     assert "01.01.1990" in page1
     assert "12.00.00" in page1
     assert "28.37.N" in page1
     assert "77.13.E" in page1
-    # And no Tamil digit is ever fused to a Latin direction letter.
-    assert not re.search(r"[௦-௯][ENWS]", page1)
+    # No native digit anywhere in the report: degrees, padas, dasha years,
+    # dasha date ranges and table counts were still Tamil numerals after the
+    # first round of #86 and read as gibberish (e.g. '௦௮-௦௬-௪௧' for a DMS).
+    for i in range(len(doc)):
+        page_text = doc[i].get_textpage().get_text_range()
+        assert not re.search(r"[௦-௯]", page_text), f"Tamil digit on page {i + 1}"
+
+
+def test_render_pdf_hindi_keeps_all_digits_latin(delhi_chart, panchang_module):
+    """Same rule for Devanagari: every numeral in the Hindi report is Latin."""
+    pdfium = pytest.importorskip("pypdfium2")
+    from pdf import render_pdf
+
+    panch = panchang_module.compute_detailed_panchang(
+        target_date="1990-01-01",
+        latitude=28.6139,
+        longitude=77.2090,
+        timezone_name="Asia/Kolkata",
+    )
+    out = render_pdf(
+        name="Smoke",
+        sex="Male",
+        chart_data=delhi_chart,
+        panchang_data=panch,
+        place_name="New Delhi",
+        lang="hi",
+    )
+    doc = pdfium.PdfDocument(out)
+    for i in range(len(doc)):
+        page_text = doc[i].get_textpage().get_text_range()
+        assert not re.search(r"[०-९]", page_text), f"Devanagari digit on page {i + 1}"
 
 
 def test_render_pdf_explicit_chart_style_override(delhi_chart, panchang_module):
