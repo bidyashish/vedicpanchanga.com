@@ -9,7 +9,7 @@ import pytest
 pytestmark = pytest.mark.http
 
 EXPECTED_PURPOSE_IDS = {
-    "marriage",
+    "engagement",
     "griha_pravesh",
     "business",
     "travel",
@@ -25,7 +25,7 @@ def test_muhurta_purposes_list(api, base_url):
     r = api.get(f"{base_url}/api/muhurta-purposes", timeout=30)
     assert r.status_code == 200
     data = r.json()
-    assert isinstance(data, list) and len(data) == 8
+    assert isinstance(data, list) and len(data) == 12
     ids = {x["id"] for x in data}
     assert EXPECTED_PURPOSE_IDS.issubset(ids), f"Missing: {EXPECTED_PURPOSE_IDS - ids}"
     for x in data:
@@ -37,7 +37,7 @@ def test_find_muhurta_happy_path(api, base_url):
     r = api.post(
         f"{base_url}/api/find-muhurta",
         json={
-            "purpose": "marriage",
+            "purpose": "engagement",
             "start_date": "2026-04-20",
             "end_date": "2026-04-26",
             "latitude": 28.6139,
@@ -50,7 +50,7 @@ def test_find_muhurta_happy_path(api, base_url):
     )
     assert r.status_code == 200
     d = r.json()
-    assert d["purpose"] == "marriage"
+    assert d["purpose"] == "engagement"
     # timezone auto-resolved from lat/lon
     assert d["location"]["timezone"] == "Asia/Kolkata"
     assert d["date_range"]["start"] == "2026-04-20"
@@ -77,7 +77,7 @@ def test_find_muhurta_happy_path(api, base_url):
 
 def test_find_muhurta_with_native_filters(api, base_url):
     payload = {
-        "purpose": "marriage",
+        "purpose": "engagement",
         "start_date": "2026-04-20",
         "end_date": "2026-04-26",
         "latitude": 28.6139,
@@ -128,7 +128,7 @@ def test_find_muhurta_end_before_start(api, base_url):
     r = api.post(
         f"{base_url}/api/find-muhurta",
         json={
-            "purpose": "marriage",
+            "purpose": "engagement",
             "start_date": "2026-04-26",
             "end_date": "2026-04-20",
             "latitude": 28.6,
@@ -143,7 +143,7 @@ def test_find_muhurta_range_too_large(api, base_url):
     r = api.post(
         f"{base_url}/api/find-muhurta",
         json={
-            "purpose": "marriage",
+            "purpose": "engagement",
             "start_date": "2026-01-01",
             "end_date": "2026-12-31",
             "latitude": 28.6,

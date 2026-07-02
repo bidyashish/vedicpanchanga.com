@@ -16,17 +16,17 @@ def test_list_purposes_shape():
     assert len(p) >= 5
     ids = {x["id"] for x in p}
     # core purposes should be present
-    assert {"marriage", "griha_pravesh", "business", "travel", "education"}.issubset(
+    assert {"engagement", "griha_pravesh", "business", "travel", "education"}.issubset(
         ids
     )
     for x in p:
         assert "id" in x and "label" in x
 
 
-def test_find_muhurtas_marriage_range():
+def test_find_muhurtas_engagement_range():
     """Scan 7 days — should return scored results and a resolved timezone."""
     r = find_muhurtas(
-        "marriage",
+        "engagement",
         "2026-04-20",
         "2026-04-26",
         latitude=28.6139,
@@ -35,7 +35,7 @@ def test_find_muhurtas_marriage_range():
         min_score=0,
         limit=30,
     )
-    assert r["purpose"] == "marriage"
+    assert r["purpose"] == "engagement"
     assert r["date_range"]["days_scanned"] == 7
     assert r["location"]["timezone"] == "Asia/Kolkata"
     assert len(r["all_days"]) == 7
@@ -76,10 +76,10 @@ def test_find_muhurtas_marriage_range():
     assert isinstance(top["amrita_siddhi_yoga"], list)
 
 
-def test_marriage_avoids_rikta_tithis():
-    """Rikta tithis (4, 9, 14) should get penalized for marriage."""
+def test_engagement_avoids_rikta_tithis():
+    """Rikta tithis (4, 9, 14) should get penalized for engagement."""
     r = find_muhurtas(
-        "marriage",
+        "engagement",
         "2026-04-20",
         "2026-05-20",
         latitude=28.6139,
@@ -102,7 +102,7 @@ def test_marriage_avoids_rikta_tithis():
 def test_tarabalam_filter_changes_score():
     """Adding a native birth nakshatra must change at least one day's score."""
     base = find_muhurtas(
-        "marriage",
+        "engagement",
         "2026-04-20",
         "2026-04-26",
         latitude=28.6139,
@@ -112,7 +112,7 @@ def test_tarabalam_filter_changes_score():
         limit=30,
     )
     with_filter = find_muhurtas(
-        "marriage",
+        "engagement",
         "2026-04-20",
         "2026-04-26",
         latitude=28.6139,
@@ -140,9 +140,13 @@ def test_bad_inputs():
     with pytest.raises(ValueError):
         find_muhurtas("not_a_purpose", "2026-04-20", "2026-04-22", 28.6, 77.2)
     with pytest.raises(ValueError):
-        find_muhurtas("marriage", "2026-04-26", "2026-04-20", 28.6, 77.2)  # end < start
+        find_muhurtas(
+            "engagement", "2026-04-26", "2026-04-20", 28.6, 77.2
+        )  # end < start
     with pytest.raises(ValueError):
-        find_muhurtas("marriage", "2026-01-01", "2026-12-31", 28.6, 77.2)  # > 120 days
+        find_muhurtas(
+            "engagement", "2026-01-01", "2026-12-31", 28.6, 77.2
+        )  # > 120 days
 
 
 def test_score_capped_0_100():
@@ -163,17 +167,16 @@ def test_score_capped_0_100():
 
 
 def test_new_purposes_listed():
-    """The six purposes added for shaadi/house/ceremony coverage must be exposed."""
+    """The purposes added for house/ceremony coverage must be exposed."""
     ids = {x["id"] for x in list_purposes()}
     assert {
         "engagement",
         "property_purchase",
         "bhoomi_pujan",
-        "mundan",
         "annaprashana",
         "gold_purchase",
     }.issubset(ids)
-    assert len(ids) == 14
+    assert len(ids) == 12
 
 
 def test_rule_tables_consistent():
@@ -255,7 +258,7 @@ def test_muhurta_window_avoids_bhadra():
     from muhurta import _bhadra_spans
 
     r = find_muhurtas(
-        "marriage",
+        "engagement",
         "2026-06-01",
         "2026-06-10",
         latitude=28.6139,
