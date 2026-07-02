@@ -2,6 +2,16 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+1. Ask, don't assume. If something is unclear, ask before writing a single line. Never make silent assumptions about intent, architecture, or requirements. When running unattended, pick the most reasonable interpretation, proceed, and record the assumption rather than blocking.
+
+2. Implement the simplest solution for simple problems, better solutions for harder problems. Do not over-engineer or add flexibility that isn't needed yet. 
+
+3. Don't touch unrelated code but please do surface bad code or design smells you discover with me so we can address them as a separate issue.
+
+4. Flag uncertainty explicitly. If you're unsure about something, see point 1 above. If it makes sense to do so, conduct a small, localised and low-risk experiment and bring the hypothesis and results to me to discuss. Confidence without certainty causes more damage than admitting a gap.
+
+5. I'm always open to ideas on better ways to do things. Please don't hesitate to suggest a better way, or one that has long lasting impact over a tactical change. (as a few examples)
+
 ## Primary reference
 
 `AGENTS.md` at the repo root is the canonical agent brief (project summary, coding standards, security rules, deployment, backlog). Read it first. The notes below focus on commands, current architecture reality, and gotchas - they do **not** repeat what's in `AGENTS.md`.
@@ -85,7 +95,7 @@ Browser → `http://localhost:3121` (Vite dev server / Nginx-served static build
 - `panchang_extras.py` - verified extra-yoga detectors layered on top of `advanced_panchang`: Ganda Mūla window + Ravi Yoga window. (Other classical sections like Mantri Mandala / Agnivāsa / Śivavāsa are intentionally omitted - see file docstring.)
 - `gowri_panchang.py` - Tamil/Telugu Gowri Panchangam (Nalla Neram). Splits sunrise→sunset and sunset→next-sunrise into 8 segments each, labels them via the 8-name cycle (Soram, Uthi, Visham, Amridha, Rogam, Labam, Dhanam, Sugam) plus an auspicious tag. Per-weekday starting Gowri lives in `GOWRI_DAY_START` / `GOWRI_NIGHT_START` - change those tables if your regional source disagrees. Exposed via `panchang["gowri_panchang"] = {day, night}` and rendered behind the **Telugu** tab on `/panchang`.
 - `hora.py` - Planetary Hora hours. 12 day-horas (sunrise→sunset / 12) + 12 night-horas (sunset→next-sunrise / 12). Cycles forward through `HORA_CYCLE = [Sun, Venus, Mercury, Moon, Saturn, Jupiter, Mars]` starting from the day-lord; the night seamlessly continues the same cycle (12 mod 7 = 5 positions later). Auspicious = {Jupiter, Venus, Mercury, Moon}. Exposed via `panchang["hora"] = {day, night}` and rendered on `/panchang` for **both** style tabs (Hora is universal across traditions).
-- `tyajyam.py` - Tyajyam (inauspicious time periods). Four calculation types: Nakshatra Tyajyam (ratio-based offset within nakshatra span, 96 min fixed), Tithi Tyajyam (ratio-based offset within tithi span, 96 min fixed), Vara Tyajyam (nazhigai offset from sunrise, 90 min fixed), and Amritadi Yogam (weekday + nakshatra lookup yielding Siddha/Amrita/Marana/Prabalarishta). Exposed via `panchang["tyajyam"]`. Lagna Tyajyam is defined but not wired in yet (needs lagna start/end JDs from udaya_lagna).
+- `tyajyam.py` - Tyajyam (inauspicious time periods). Ten calculation types, all wired into `panchang["tyajyam"]` from `advanced_panchang.py`: Nakshatra Tyajyam (ratio-based offset within nakshatra span, 96 min fixed), Tithi Tyajyam (ratio-based offset within tithi span, 96 min fixed - the span must be the TRUE tithi span, not clipped to next sunrise; see test_tithi_tyajyam_uses_true_tithi_span), Vara Tyajyam (nazhigai offset from sunrise, 90 min fixed), Amritadi Yogam (weekday + nakshatra lookup yielding Siddha/Amrita/Marana/Prabalarishta - the table is pinned cell-by-cell by test_amritadi_table_matches_source after a transcription bug shifted 19 rows), Lagna Tyajyam, Karana Tyajyam, Gowri Tyajyam, Dosha Tyajyam (eclipses + Guru/Sukra Asthamanam), Tamil Month Avoidables, and Tithi-Lagna Tyajyam.
 - `vargas.py` - 16 divisional charts (D1–D60). D30 uses special uneven-segment rules; touch with care.
 - `ayanamsa.py` - ayanamsa selection (`AYANAMSA_OPTIONS`, default `lahiri`) plus `sidereal_context()`, the required wrapper for ALL sidereal swisseph math: it locks swisseph (sid mode is process-global, endpoints run in a threadpool) and pins the mode for the block. Never call `swe.set_sid_mode` directly.
 - `muhurta.py` - auspicious-window scanner with purpose-based scoring (0–100 with explainable reasons).
