@@ -170,13 +170,14 @@ def test_new_purposes_listed():
     """The purposes added for house/ceremony coverage must be exposed."""
     ids = {x["id"] for x in list_purposes()}
     assert {
+        "marriage",
         "engagement",
         "property_purchase",
         "bhoomi_pujan",
         "annaprashana",
         "gold_purchase",
     }.issubset(ids)
-    assert len(ids) == 12
+    assert len(ids) == 13
 
 
 def test_rule_tables_consistent():

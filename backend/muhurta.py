@@ -12,10 +12,15 @@ of the per-purpose tables, universal rules apply to every purpose:
   Bhadra-free portion remains.
 - Optional Chandrabalam (Moon-sign compatibility) and Tarabalam (birth
   nakshatra compatibility) for the native.
+- Hard veto blackouts per purpose (the rules mainstream panchangas such as
+  DrikPanchang apply before any day-quality scoring): Guru/Shukra Asta
+  (Jupiter/Venus combustion, padded by the Balya/Vriddha tara days),
+  Chaturmas (Devshayani Ekadashi to Devuthani Ekadashi), Kharmas/Malmas
+  (Sun in Dhanu or Meena) and Adhika Maas. A vetoed day scores 0
+  regardless of tithi/nakshatra/vara quality.
 
 We score each day 0-100 then rank. Deliberately out of scope at day-level
-granularity: lagna selection within the window, Guru/Shukra combustion
-blackout periods, Adhik Maas, and solar-month rules for specific samskaras.
+granularity: lagna selection within the window.
 """
 
 from __future__ import annotations
@@ -23,11 +28,20 @@ from __future__ import annotations
 from datetime import date as date_cls
 from datetime import datetime as dt_cls
 from datetime import timedelta
+from datetime import timezone as _timezone
+from functools import lru_cache as _lru_cache
 from typing import Any, Dict, List, Optional, Set, Tuple
 
+import swisseph as swe
+
 from advanced_panchang import compute_detailed_panchang
+from ayanamsa import sidereal_context
 from constants import NAKSHATRAS
 from panchang_constants import GOOD_CHANDRA_OFFSETS, RASHI_NAMES
+from tyajyam import (
+    _GURU_ASTHAMANAM_ORB,
+    _SUKRA_ASTHAMANAM_ORB_RETRO,
+)
 
 # ---- Rule-table building blocks ----
 # Tithi ids 1-30 (1-15 Shukla, 15=Purnima, 16-30 Krishna, 30=Amavasya).
@@ -61,9 +75,213 @@ _W_BHADRA = -15
 # A trimmed Bhadra-free window shorter than this is treated as unusable.
 _MIN_WINDOW_MINUTES = 30
 
+# ---- Veto rules (hard blackouts, applied before scoring) ----
+# Purposes opt in via a "vetoes" set with any of: "combust", "chaturmas",
+# "kharmas", "adhika". A triggered veto forces the day's score to 0. These
+# are the blackout rules mainstream panchangas (DrikPanchang et al.) apply
+# before any day-quality scoring.
+
+# Panchangas extend the combustion blackout by ~3 days on each side
+# (Vriddha tara before setting, Balya tara after rising).
+_TARA_BALA_PAD_DAYS = 3.0
+# Direct (superior-conjunction side) Venus is bright enough to be seen at
+# ~6 deg from the Sun, so published udaya/asta dates (DrikPanchang et al.)
+# correspond to a tighter orb than the classical 10 deg used for display
+# in the Dosha Tyajyam panel.
+_MUHURTA_SHUKRA_ORB_DIRECT = 6.0
+# Kharmas / Malmas: Sun in Dhanu (9) or Meena (12) - no shubha samskaras.
+_KHARMAS_SUN_SIGNS = {9, 12}
+
+_SYNODIC_MONTH = 29.530589  # days
+_MEAN_ELONGATION_RATE = 360.0 / _SYNODIC_MONTH  # Moon-Sun, degrees/day
+_MEAN_SUN_RATE = 360.0 / 365.2422  # degrees/day
+
+
+def _moon_sun_elongation(jd: float) -> float:
+    """Tropical Moon-Sun elongation in [0, 360). Tithi n spans
+    [(n-1)*12, n*12); new moon at 0, Shukla Ekadashi begins at 120."""
+    moon = swe.calc_ut(jd, swe.MOON, swe.FLG_SWIEPH)[0][0]
+    sun = swe.calc_ut(jd, swe.SUN, swe.FLG_SWIEPH)[0][0]
+    return (moon - sun) % 360.0
+
+
+def _elongation_crossing(jd_guess: float, target: float) -> float:
+    """JD where Moon-Sun elongation reaches `target` deg, nearest jd_guess.
+    Newton iteration on the mean rate; elongation grows ~11-15 deg/day so a
+    handful of steps converges to well under a minute."""
+    jd = jd_guess
+    for _ in range(8):
+        diff = (_moon_sun_elongation(jd) - target + 180.0) % 360.0 - 180.0
+        if abs(diff) < 1e-4:
+            break
+        jd -= diff / _MEAN_ELONGATION_RATE
+    return jd
+
+
+def _prev_new_moon(jd: float) -> float:
+    """JD of the last new moon at or before jd."""
+    nm = _elongation_crossing(jd - _moon_sun_elongation(jd) / _MEAN_ELONGATION_RATE, 0)
+    while nm > jd:
+        nm = _elongation_crossing(nm - _SYNODIC_MONTH, 0)
+    return nm
+
+
+def _sun_sidereal(jd: float) -> float:
+    with sidereal_context("lahiri"):
+        return swe.calc_ut(jd, swe.SUN, swe.FLG_SWIEPH | swe.FLG_SIDEREAL)[0][0]
+
+
+def _sankranti_jd(year: int, target_long: float) -> float:
+    """JD when the sidereal Sun reaches target_long (a sign boundary) in the
+    given Gregorian year. Seeks forward from Jan 1 so the crossing found is
+    this year's, then refines with Newton steps."""
+    jd = swe.julday(year, 1, 1, 0.0)
+    jd += ((target_long - _sun_sidereal(jd)) % 360.0) / _MEAN_SUN_RATE
+    for _ in range(10):
+        diff = (_sun_sidereal(jd) - target_long + 180.0) % 360.0 - 180.0
+        if abs(diff) < 1e-4:
+            break
+        jd -= diff / _MEAN_SUN_RATE
+    return jd
+
+
+def _sankranti_between(jd1: float, jd2: float) -> bool:
+    """True when the sidereal Sun crosses a 30-degree sign boundary in
+    (jd1, jd2). A lunar month with no sankranti is Adhika (intercalary)."""
+    l1, l2 = _sun_sidereal(jd1), _sun_sidereal(jd2)
+    travelled = (l2 - l1) % 360.0
+    into_sign = l1 % 30.0
+    return travelled >= (30.0 - into_sign)
+
+
+@_lru_cache(maxsize=32)
+def _chaturmas_span(year: int) -> Tuple[float, float]:
+    """(start_jd, end_jd) of Chaturmas for the year: start of Devshayani
+    Ekadashi (Ashadha Shukla 11) to end of Devuthani Ekadashi (Kartika
+    Shukla 11). Amanta months are anchored by the sankranti they contain:
+    Ashadha holds Karka sankranti, Kartika holds Vrishchika sankranti."""
+    spans = []
+    for sank_long, ek_target in ((90.0, 120.0), (210.0, 132.0)):
+        sank = _sankranti_jd(year, sank_long)
+        nm = _prev_new_moon(sank)
+        spans.append(
+            _elongation_crossing(nm + ek_target / _MEAN_ELONGATION_RATE, ek_target)
+        )
+    return spans[0], spans[1]
+
+
+@_lru_cache(maxsize=512)
+def _is_adhika_day(jd_day: int) -> bool:
+    """True when the lunar month containing this day (integer JD) has no
+    sankranti - an Adhika Maas, barred for shubha karya."""
+    nm = _prev_new_moon(float(jd_day))
+    nm_next = _elongation_crossing(nm + _SYNODIC_MONTH, 0)
+    return not _sankranti_between(nm, nm_next)
+
+
+@_lru_cache(maxsize=512)
+def _combust_labels(jd_day: int) -> Tuple[str, ...]:
+    """Guru/Shukra Asta labels active within _TARA_BALA_PAD_DAYS of the day
+    (integer JD). The pad reproduces the Vriddha/Balya tara blackout that
+    panchangas add around the combustion window itself."""
+    labels = []
+    sample_jds = (
+        float(jd_day) - _TARA_BALA_PAD_DAYS,
+        float(jd_day),
+        float(jd_day) + _TARA_BALA_PAD_DAYS,
+    )
+    for planet_id, label in (
+        (swe.JUPITER, "Guru Asta (Jupiter combust)"),
+        (swe.VENUS, "Shukra Asta (Venus combust)"),
+    ):
+        for jd in sample_jds:
+            sun_lon = swe.calc_ut(jd, swe.SUN, swe.FLG_SWIEPH)[0][0]
+            pos = swe.calc_ut(jd, planet_id, swe.FLG_SWIEPH | swe.FLG_SPEED)[0]
+            lon, speed = pos[0], pos[3]
+            if planet_id == swe.JUPITER:
+                orb = _GURU_ASTHAMANAM_ORB
+            else:
+                orb = (
+                    _SUKRA_ASTHAMANAM_ORB_RETRO
+                    if speed < 0
+                    else _MUHURTA_SHUKRA_ORB_DIRECT
+                )
+            elongation = abs((lon - sun_lon + 180.0) % 360.0 - 180.0)
+            if elongation <= orb:
+                labels.append(label)
+                break
+    return tuple(labels)
+
+
+def _sunrise_jd(panch: Dict[str, Any]) -> Optional[float]:
+    sunrise = panch.get("sun_moon", {}).get("sunrise")
+    if not sunrise:
+        return None
+    utc = dt_cls.fromisoformat(sunrise).astimezone(_timezone.utc)
+    return swe.julday(
+        utc.year, utc.month, utc.day, utc.hour + utc.minute / 60 + utc.second / 3600
+    )
+
+
+def _veto_reasons(panch: Dict[str, Any], purpose_cfg: Dict[str, Any]) -> List[str]:
+    """Blackout reasons for the day, empty when the day is workable."""
+    vetoes = purpose_cfg.get("vetoes", set())
+    reasons: List[str] = []
+    if not vetoes:
+        return reasons
+    jd = _sunrise_jd(panch)
+    if jd is None:
+        return reasons
+    if "combust" in vetoes:
+        for label in _combust_labels(round(jd)):
+            reasons.append(f"{label} - event prohibited")
+    if "kharmas" in vetoes:
+        sun_sign = panch["rashi_nakshatra"]["sunsign"]["index"]
+        if sun_sign in _KHARMAS_SUN_SIGNS:
+            reasons.append(
+                f"Kharmas (Sun in {RASHI_NAMES[sun_sign - 1]}) - prohibited solar month"
+            )
+    if "chaturmas" in vetoes:
+        # Chaturmas never straddles a Gregorian year boundary (Jul-Nov).
+        utc_year = swe.revjul(jd)[0]
+        start, end = _chaturmas_span(utc_year)
+        if start <= jd < end:
+            reasons.append(
+                "Chaturmas (Devshayani to Devuthani Ekadashi) - event prohibited"
+            )
+    if "adhika" in vetoes and _is_adhika_day(round(jd)):
+        reasons.append("Adhika Maas (intercalary month) - event prohibited")
+    return reasons
+
+
 # ---- Purpose rules ----
 
 PURPOSES: Dict[str, Dict[str, Any]] = {
+    "marriage": {
+        "label": "Marriage (Vivaha)",
+        "good_tithis": _both_pakshas(2, 3, 5, 7, 10, 11, 12, 13),
+        # Classical Vivaha star set per Muhurta Chintamani.
+        "good_nakshatras": _naks(
+            "Rohini",
+            "Mrigashira",
+            "Magha",
+            "Uttara Phalguni",
+            "Hasta",
+            "Swati",
+            "Anuradha",
+            "Mula",
+            "Uttara Ashadha",
+            "Shravana",
+            "Uttara Bhadrapada",
+            "Revati",
+        ),
+        "good_weekdays": {MON, WED, THU, FRI},
+        # No hard weekday avoidance: published vivaha lists (DrikPanchang
+        # et al.) freely include Tue/Sat/Sun dates when the stars fit.
+        "avoid_weekdays": set(),
+        "bad_tithis": RIKTA_TITHIS | {AMAVASYA},
+        "vetoes": {"combust", "chaturmas", "kharmas", "adhika"},
+    },
     "engagement": {
         "label": "Engagement (Sagai / Vagdana)",
         # Betrothal uses the classical Vivaha star set.
@@ -85,6 +303,7 @@ PURPOSES: Dict[str, Dict[str, Any]] = {
         "good_weekdays": {MON, WED, THU, FRI},
         "avoid_weekdays": {TUE, SAT, SUN},
         "bad_tithis": RIKTA_TITHIS | {AMAVASYA},
+        "vetoes": {"combust", "chaturmas", "kharmas", "adhika"},
     },
     "griha_pravesh": {
         "label": "Griha Pravesha (Housewarming)",
@@ -108,6 +327,7 @@ PURPOSES: Dict[str, Dict[str, Any]] = {
         "good_weekdays": {MON, WED, THU, FRI},
         "avoid_weekdays": {TUE, SUN},
         "bad_tithis": RIKTA_TITHIS | {PURNIMA, AMAVASYA},
+        "vetoes": {"combust", "chaturmas", "kharmas", "adhika"},
     },
     "bhoomi_pujan": {
         "label": "Bhoomi Pujan (Foundation / Griharambha)",
@@ -131,6 +351,7 @@ PURPOSES: Dict[str, Dict[str, Any]] = {
         "good_weekdays": {MON, WED, THU, FRI},
         "avoid_weekdays": {TUE, SAT, SUN},
         "bad_tithis": RIKTA_TITHIS | {AMAVASYA},
+        "vetoes": {"combust", "kharmas", "adhika"},
     },
     "property_purchase": {
         "label": "Property Purchase (Land / House)",
@@ -472,6 +693,11 @@ def score_day(
     vara_name = panch["vara"]["sanskrit"]
     moon_sign_id = panch["rashi_nakshatra"]["moonsign"]["index"]
 
+    # Hard vetoes: combustion / Chaturmas / Kharmas / Adhika blackouts kill
+    # the day outright - no tithi/nakshatra quality can rescue it.
+    veto = _veto_reasons(panch, purpose_cfg)
+    reasons_bad.extend(veto)
+
     # Tithi
     if tithi_idx in purpose_cfg.get("bad_tithis", set()):
         score += _W_BAD_TITHI
@@ -533,11 +759,12 @@ def score_day(
         elif tbal == 0:
             reasons_bad.append("Inauspicious Tarabalam for native's birth-nakshatra")
 
-    score = max(0, min(100, score))
+    score = 0 if veto else max(0, min(100, score))
 
     aus = panch["auspicious_timings"]
     result: Dict[str, Any] = {
         "score": score,
+        "vetoed": bool(veto),
         "reasons": reasons,
         "cautions": reasons_bad,
         "tithi": tithi_name,
