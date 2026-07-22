@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Literal, Optional
 
 from dotenv import load_dotenv
-from fastapi import APIRouter, FastAPI, HTTPException, Request
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse, ORJSONResponse, Response
 from prometheus_fastapi_instrumentator import Instrumentator
@@ -16,6 +16,7 @@ from pydantic import BaseModel, Field
 from starlette.middleware.cors import CORSMiddleware
 
 from advanced_panchang import compute_detailed_panchang
+from auth import require_api_key
 from ayanamsa import AYANAMSA_OPTIONS
 from calculator import compute_chart
 from muhurta import find_muhurtas, list_purposes
@@ -24,11 +25,16 @@ from transits import compute_transits
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
+# Server-side overrides (API_KEYS, AUTH_EXEMPT_ORIGINS, custom CORS_ORIGINS)
+# live in .env.local: gitignored and never rewritten by setup-vps.sh, so
+# secrets survive deploys. Values here win over .env.
+load_dotenv(ROOT_DIR / ".env.local", override=True)
 
 # ORJSONResponse serializes the ~100 KB panchang payloads several times
 # faster than the stdlib json encoder FastAPI defaults to.
 app = FastAPI(title="Vedic Astrology API", default_response_class=ORJSONResponse)
-api_router = APIRouter(prefix="/api")
+# API-key auth is a no-op until API_KEYS is set in the env - see auth.py.
+api_router = APIRouter(prefix="/api", dependencies=[Depends(require_api_key)])
 
 
 class CalculateRequest(BaseModel):
@@ -498,6 +504,10 @@ def print_pdf(req: PrintPdfRequest):
 
 app.include_router(api_router)
 
+# Third-party browser apps (Flutter Web, React, ...) calling with an API key
+# need their origin added to CORS_ORIGINS. Preflight OPTIONS is answered here,
+# before routing, so it never hits the auth dependency; max_age lets browsers
+# cache the preflight verdict for a day.
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
@@ -505,7 +515,8 @@ app.add_middleware(
         "CORS_ORIGINS", "https://vedicpanchanga.com,http://localhost:3121"
     ).split(","),
     allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["Content-Type"],
+    allow_headers=["Content-Type", "Authorization", "X-API-Key"],
+    max_age=86400,
 )
 
 # Nginx gzips in production; this covers the dev server and any path that

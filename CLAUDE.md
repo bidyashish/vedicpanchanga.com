@@ -51,7 +51,8 @@ ruff check . --fix                                # lint + auto-fix
 ruff format .                                     # format - write
 ruff format --check .                             # format check (CI)
 ```
-- Reads `CORS_ORIGINS` from `backend/.env` (optional, defaults to `*`). No MongoDB required.
+- Reads `CORS_ORIGINS` from `backend/.env` (optional, defaults to `*`). No MongoDB required. `backend/.env.local` (gitignored, loaded on top with override) is where server-side secrets go - `setup-vps.sh` rewrites `.env` on every deploy but never touches `.env.local`.
+- Optional third-party API-key auth lives in `auth.py`: `API_KEYS` (comma-separated, unset = open API) + `AUTH_EXEMPT_ORIGINS` (own-site origins that stay keyless, defaults to vedicpanchanga.com + localhost dev), both read per-request. Clients send `Authorization: Bearer <key>` or `X-API-Key: <key>`; browser apps also need their origin in `CORS_ORIGINS`. `/api/` and `/api/health` stay open for monitoring. See `AGENTS.md` §4.
 - Swiss Ephemeris data files live in `backend/ephe/` (`*.se1`). Calculations silently fail without them; never delete or move this directory.
 - Must bind to `127.0.0.1` only in production. Never expose 8001 publicly (see `AGENTS.md` §8).
 - The CPU-bound endpoints (`/calculate`, `/get-panchang`, `/find-muhurta`) are plain `def` handlers so FastAPI runs them in its threadpool - keeps the event loop responsive under concurrent load.

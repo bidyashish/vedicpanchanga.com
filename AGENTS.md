@@ -94,6 +94,30 @@ vedicpanchanga.com/
 
 The frontend calls these directly via same-origin `/api/` (Nginx proxy in prod, Vite proxy in dev).
 
+### Third-party API access (optional API keys)
+
+The API is open by default. To grant external clients (mobile apps, other
+domains) access, set `API_KEYS` (comma-separated) in `backend/.env.local`
+on the server - that file is gitignored and never rewritten by
+`setup-vps.sh`, so keys survive deploys. Clients authenticate with either
+header:
+
+```
+Authorization: Bearer <key>
+X-API-Key: <key>
+```
+
+- The site's own frontend needs no key: requests whose `Origin` (or
+  `Referer`, for same-origin GETs) matches `AUTH_EXEMPT_ORIGINS`
+  (default: vedicpanchanga.com + localhost dev) skip the check, as do
+  `/api/` and `/api/health` (monitoring probes).
+- Browser-based third-party apps (Flutter Web, React, ...) additionally
+  need their origin added to `CORS_ORIGINS` (overridable in `.env.local`).
+  Preflight `OPTIONS` is answered by CORSMiddleware before auth runs and
+  allows `Content-Type, Authorization, X-API-Key` with `max_age=86400`.
+- Generate keys with `python3 -c "import secrets; print(secrets.token_urlsafe(32))"`.
+- Logic: `backend/auth.py`. Tests: `backend/tests/test_api_auth.py`.
+
 ---
 
 ## 5. Coding Standards
@@ -162,7 +186,7 @@ pytest tests/test_muhurta.py -v              # single suite
   panchang reference data (Kelowna), ayanamsa variants, varjyam/amrit/siddhi yogas,
   muhurta unit + HTTP, Gowri panchangam, Hora, Tyajyam, Tamil calendar,
   planetary transits, dasha sub-periods, Jaimini karakas, friendships,
-  Kalsarpa yoga, PDF rendering.
+  Kalsarpa yoga, PDF rendering, API-key auth + CORS preflight.
 
 ### Test Rules
 - Never reduce test count. If you refactor, migrate tests - don't delete them.
