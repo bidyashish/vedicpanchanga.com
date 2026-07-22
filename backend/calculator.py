@@ -567,15 +567,3 @@ def _is_combust(name: str, lon: float, sun_lon: float, retro: bool) -> bool:
     if diff > 180:
         diff = 360 - diff
     return diff <= _COMBUST_ORB
-
-
-def _build_house_map(
-    planets: Dict[str, Dict[str, Any]], asc_sign: int, key: str
-) -> Dict[int, List[str]]:
-    """Return dict house (1-12) -> list of planet abbreviations, using whole-sign houses."""
-    houses: Dict[int, List[str]] = {i: [] for i in range(1, 13)}
-    for p in planets.values():
-        sign = p[key]
-        house = ((sign - asc_sign) % 12) + 1
-        houses[house].append(p["abbr"])
-    return houses
