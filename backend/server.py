@@ -511,9 +511,13 @@ app.include_router(api_router)
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get(
-        "CORS_ORIGINS", "https://vedicpanchanga.com,http://localhost:3121"
-    ).split(","),
+    allow_origins=[
+        o.strip()
+        for o in os.environ.get(
+            "CORS_ORIGINS", "https://vedicpanchanga.com,http://localhost:3121"
+        ).split(",")
+        if o.strip()
+    ],
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "X-API-Key"],
     max_age=86400,
