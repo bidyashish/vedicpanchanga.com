@@ -15,6 +15,11 @@ PYTEST  := backend/venv/bin/pytest
 RUFF    := backend/venv/bin/ruff
 UVICORN := backend/venv/bin/uvicorn
 
+# Interpreter used to CREATE the venv. On some macOS setups `python3` is the
+# CommandLineTools 3.9 (which once produced a broken hybrid venv here), so
+# prefer Homebrew's 3.14 when present. Override: make install VENV_PY=...
+VENV_PY ?= $(shell command -v python3.14 2>/dev/null || command -v python3)
+
 NPM := npm --prefix frontend
 
 # ---- Discoverability ------------------------------------------------------
@@ -32,9 +37,10 @@ help:  ## Show this help (default target).
 install: install-backend install-frontend install-hooks  ## First-time setup: venv, npm deps, git hooks.
 
 .PHONY: install-backend
-install-backend:  ## Create backend venv and install Python deps.
-	test -d backend/venv || python3 -m venv backend/venv
+install-backend:  ## Create backend venv, install Python deps, seed .env.
+	test -d backend/venv || $(VENV_PY) -m venv backend/venv
 	$(PIP) install -r backend/requirements.txt
+	test -f backend/.env || cp backend/.env.example backend/.env
 
 .PHONY: install-frontend
 install-frontend:  ## Install frontend npm deps.
