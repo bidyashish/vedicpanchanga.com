@@ -502,28 +502,6 @@ def _nakshatras_with_bounds(start_jd: float, end_jd: float) -> List[Dict]:
         else:
             break
     return out
-    out = []
-    cursor = start_jd
-    safety = 0
-    while cursor < end_jd and safety < 6:
-        safety += 1
-        _, m = _sun_moon_sid(cursor)
-        nak_idx = int(m // NAK_SPAN)
-        nak_end_deg = (nak_idx + 1) * NAK_SPAN
-        end = _find_angle_time(cursor, nak_end_deg, "moon", max_days=2.0)
-        ends = min(end, end_jd) if end else end_jd
-        out.append(
-            {
-                "name": NAKSHATRAS[nak_idx],
-                "index": nak_idx + 1,
-                "ends_at_jd": ends,
-            }
-        )
-        if end and end < end_jd:
-            cursor = end + 1e-5
-        else:
-            break
-    return out
 
 
 def _nakshatras_in_window(start_jd: float, end_jd: float) -> List[Dict]:
