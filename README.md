@@ -38,7 +38,8 @@ Per-folder docs:
 
 ## Run locally (developer setup)
 
-Requires Python 3.10+ and Node.js 20+.
+Requires Python 3.10+ and Node.js 20+. On Windows, use Python 3.11: the pinned
+`pyswisseph` release has no newer wheel and would require Microsoft C++ Build Tools.
 
 ```bash
 # 1. Clone
@@ -47,7 +48,7 @@ cd vedicpanchanga.com
 
 # 2. Backend (terminal 1) - FastAPI on :8001
 cd backend
-python3 -m venv venv
+python3 -m venv venv                # Windows: py -3.11 -m venv venv
 source venv/bin/activate.fish        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn server:app --host 127.0.0.1 --port 8001 --reload

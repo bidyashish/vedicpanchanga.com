@@ -18,6 +18,7 @@ const PanchangPage = lazy(() =>
 const MuhurtaPage = lazy(() =>
   import("@/pages/MuhurtaPage").then((m) => ({ default: m.MuhurtaPage })),
 );
+const BalaPage = lazy(() => import("@/pages/BalaPage").then((m) => ({ default: m.BalaPage })));
 const TransitsPage = lazy(() =>
   import("@/pages/TransitsPage").then((m) => ({ default: m.TransitsPage })),
 );
@@ -56,6 +57,7 @@ export type View =
   | "kundali"
   | "panchang"
   | "muhurta"
+  | "bala"
   | "transits"
   | "frequency"
   | "privacy"
@@ -72,6 +74,7 @@ const MONETIZED_VIEWS = new Set<View>([
   "panchang",
   "kundali",
   "muhurta",
+  "bala",
   "transits",
   "frequency",
   "learn-kundali",
@@ -89,6 +92,7 @@ const VIEW_PATH: Record<View, string> = {
   panchang: "/",
   kundali: "/kundali",
   muhurta: "/muhurta",
+  bala: "/tarabala-chandrabala",
   transits: "/transits",
   frequency: "/frequency",
   privacy: "/privacy",
@@ -129,6 +133,14 @@ const SEO_BY_VIEW: Record<
     canonical: `${SITE}/muhurta`,
     keywords:
       "muhurta, shubh muhurat, auspicious time, vedic timing, chandrabalam, tarabalam, electional astrology, griha pravesh muhurat, vivah muhurat",
+  },
+  bala: {
+    title: "Tarabala & Chandrabala Calculator · Vedic Panchanga",
+    description:
+      "Calculate precise monthly Tarabala and Chandrabala intervals from your birth Moon sign and Nakshatra using Lahiri sidereal Moon positions.",
+    canonical: `${SITE}/tarabala-chandrabala`,
+    keywords:
+      "tarabala calculator, chandrabala calculator, tara balam, chandra balam, birth nakshatra, moon sign, vedic muhurta",
   },
   transits: {
     title: "Planetary Transits - Sign, Nakshatra & Retrograde Timeline · Vedic Panchanga",
@@ -229,6 +241,8 @@ function viewFromPath(): View {
       return "kundali";
     case "/muhurta":
       return "muhurta";
+    case "/tarabala-chandrabala":
+      return "bala";
     case "/transits":
       return "transits";
     case "/frequency":
@@ -265,7 +279,7 @@ function viewFromPath(): View {
 function migrateHashOnce(): View | null {
   const hash = window.location.hash.replace("#", "");
   if (!hash) return null;
-  const allowed: View[] = ["kundali", "panchang", "muhurta", "transits", "frequency"];
+  const allowed: View[] = ["kundali", "panchang", "muhurta", "bala", "transits", "frequency"];
   const v = allowed.includes(hash as View) ? (hash as View) : null;
   if (!v) return null;
   window.history.replaceState(null, "", VIEW_PATH[v] + window.location.search);
@@ -367,6 +381,7 @@ export default function App() {
           )}
           {view === "panchang" && <PanchangPage defaultLocation={sharedLocation} />}
           {view === "muhurta" && <MuhurtaPage defaultLocation={sharedLocation} />}
+          {view === "bala" && <BalaPage defaultLocation={sharedLocation} />}
           {view === "transits" && <TransitsPage defaultLocation={sharedLocation} />}
           {view === "frequency" && <FrequencyPage />}
           {view === "privacy" && <PrivacyPage />}

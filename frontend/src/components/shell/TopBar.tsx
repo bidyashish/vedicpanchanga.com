@@ -28,6 +28,7 @@ export function TopBar({ view, setView }: { view: View; setView: (v: View) => vo
     { id: "panchang", label: t("nav_panchang"), href: "/" },
     { id: "kundali", label: t("nav_kundali"), href: "/kundali" },
     { id: "muhurta", label: t("nav_muhurta"), href: "/muhurta" },
+    { id: "bala", label: t("nav_bala"), href: "/tarabala-chandrabala" },
     { id: "transits", label: t("nav_transits"), href: "/transits" },
     { id: "frequency", label: t("nav_frequency"), href: "/frequency" },
   ];

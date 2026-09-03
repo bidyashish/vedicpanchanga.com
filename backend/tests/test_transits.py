@@ -19,9 +19,9 @@ def transits_60d():
     return compute_transits(
         start_date="2026-05-16",
         end_date="2026-07-16",
-        latitude=23.1765,
-        longitude=75.7885,
-        timezone_name="Asia/Kolkata",
+        latitude=43.5884727,
+        longitude=-79.643658,
+        timezone_name="America/Toronto",
         include_moon=False,
     )
 
@@ -137,17 +137,17 @@ class TestMoonToggle:
         without_moon = compute_transits(
             start_date="2026-05-16",
             end_date="2026-06-16",
-            latitude=23.1765,
-            longitude=75.7885,
-            timezone_name="Asia/Kolkata",
+            latitude=43.5884727,
+            longitude=-79.643658,
+            timezone_name="America/Toronto",
             include_moon=False,
         )
         with_moon = compute_transits(
             start_date="2026-05-16",
             end_date="2026-06-16",
-            latitude=23.1765,
-            longitude=75.7885,
-            timezone_name="Asia/Kolkata",
+            latitude=43.5884727,
+            longitude=-79.643658,
+            timezone_name="America/Toronto",
             include_moon=True,
             moon_nakshatras=False,
         )
@@ -163,9 +163,9 @@ class TestMoonToggle:
         out = compute_transits(
             start_date="2026-05-16",
             end_date="2026-06-16",
-            latitude=23.1765,
-            longitude=75.7885,
-            timezone_name="Asia/Kolkata",
+            latitude=43.5884727,
+            longitude=-79.643658,
+            timezone_name="America/Toronto",
             include_moon=True,
             moon_nakshatras=True,
         )
@@ -185,9 +185,9 @@ class TestKetuAntipode:
         out = compute_transits(
             start_date="2026-01-01",
             end_date="2026-12-31",
-            latitude=23.1765,
-            longitude=75.7885,
-            timezone_name="Asia/Kolkata",
+            latitude=43.5884727,
+            longitude=-79.643658,
+            timezone_name="America/Toronto",
         )
         rahu_ingress = [
             e

@@ -18,6 +18,7 @@ from starlette.middleware.cors import CORSMiddleware
 from advanced_panchang import compute_detailed_panchang
 from auth import require_api_key
 from ayanamsa import AYANAMSA_OPTIONS
+from bala import calculate_bala_range
 from calculator import compute_chart
 from muhurta import find_muhurtas, list_purposes
 from pdf import render_pdf
@@ -291,6 +292,36 @@ def get_panchang(
     except Exception as e:
         logging.exception("Panchang computation failed")
         raise HTTPException(status_code=500, detail=f"Panchang error: {e}")
+
+
+class BalaRequest(BaseModel):
+    start_date: str = Field(..., description="YYYY-MM-DD")
+    end_date: str = Field(..., description="YYYY-MM-DD")
+    birth_rashi_id: int = Field(..., ge=1, le=12)
+    birth_nakshatra_id: int = Field(..., ge=1, le=27)
+    latitude: float = Field(..., ge=-90, le=90)
+    longitude: float = Field(..., ge=-180, le=180)
+    timezone: Optional[str] = None
+
+
+@api_router.post("/tarabala-chandrabala")
+def get_tarabala_chandrabala(req: BalaRequest):
+    """Return exact Tarabala and Chandrabala intervals for a local date range."""
+    try:
+        return calculate_bala_range(
+            start_date=req.start_date,
+            end_date=req.end_date,
+            birth_rashi_id=req.birth_rashi_id,
+            birth_nakshatra_id=req.birth_nakshatra_id,
+            latitude=req.latitude,
+            longitude=req.longitude,
+            timezone_name=req.timezone,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except Exception as exc:
+        logging.exception("Tarabala/Chandrabala calculation failed")
+        raise HTTPException(status_code=500, detail=f"Bala calculation error: {exc}")
 
 
 class MuhurtaRequest(BaseModel):

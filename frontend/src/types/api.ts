@@ -429,6 +429,78 @@ export interface PanchangData {
   };
 }
 
+export interface BalaRequest {
+  start_date: string;
+  end_date: string;
+  birth_rashi_id: number;
+  birth_nakshatra_id: number;
+  latitude: number;
+  longitude: number;
+  timezone?: string | null;
+}
+
+export interface BalaGuidance {
+  result: string;
+  do: string;
+  dont: string;
+}
+
+export interface TarabalaSegment extends BalaGuidance {
+  start: string;
+  end: string;
+  nakshatra_id: number;
+  nakshatra: string;
+  count: number;
+  cycle: number;
+  tara_number: number;
+  tara:
+    | "janma"
+    | "sampat"
+    | "vipat"
+    | "kshema"
+    | "pratyak"
+    | "sadhana"
+    | "naidhana"
+    | "mitra"
+    | "parama_mitra";
+  favorable: boolean;
+}
+
+export interface ChandrabalaSegment extends BalaGuidance {
+  start: string;
+  end: string;
+  rashi_id: number;
+  sign: string;
+  rashi: string;
+  house: number;
+  favorable: boolean;
+}
+
+export interface BalaResponse {
+  date_range: { start_date: string; end_date: string; days: number };
+  location: { latitude: number; longitude: number; timezone: string };
+  birth: {
+    rashi_id: number;
+    rashi: string;
+    sign: string;
+    nakshatra_id: number;
+    nakshatra: string;
+  };
+  rules: {
+    ayanamsa: "lahiri";
+    day_boundary: "local_midnight";
+    favorable_taras: number[];
+    favorable_chandra_houses: number[];
+  };
+  favorable_days: number;
+  days: {
+    date: string;
+    tarabala: TarabalaSegment[];
+    chandrabala: ChandrabalaSegment[];
+    favorable_windows: MuhurtaWindow[];
+  }[];
+}
+
 export interface NominatimResult {
   place_id: number;
   display_name: string;

@@ -17,8 +17,9 @@ UVICORN := backend/venv/bin/uvicorn
 
 # Interpreter used to CREATE the venv. On some macOS setups `python3` is the
 # CommandLineTools 3.9 (which once produced a broken hybrid venv here), so
-# prefer Homebrew's 3.14 when present. Override: make install VENV_PY=...
-VENV_PY ?= $(shell command -v python3.14 2>/dev/null || command -v python3)
+# prefer Python 3.11, which has wheels for all pinned dependencies.
+# Override: make install VENV_PY=...
+VENV_PY ?= $(shell command -v python3.11 2>/dev/null || command -v python3)
 
 NPM := npm --prefix frontend
 

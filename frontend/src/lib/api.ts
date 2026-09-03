@@ -1,5 +1,7 @@
 import type {
   AyanamsaOption,
+  BalaRequest,
+  BalaResponse,
   CalculateRequest,
   ChartData,
   MuhurtaPurpose,
@@ -118,6 +120,13 @@ export function fetchMuhurtaPurposes(): Promise<MuhurtaPurpose[]> {
 
 export function findMuhurtas(req: MuhurtaRequest): Promise<MuhurtaResponse> {
   return request<MuhurtaResponse>(`${API}/find-muhurta`, {
+    method: "POST",
+    body: JSON.stringify(req),
+  });
+}
+
+export function calculateBala(req: BalaRequest): Promise<BalaResponse> {
+  return request<BalaResponse>(`${API}/tarabala-chandrabala`, {
     method: "POST",
     body: JSON.stringify(req),
   });
