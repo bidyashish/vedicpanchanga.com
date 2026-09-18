@@ -2,13 +2,13 @@
 
 Converts a Gregorian date + IANA timezone into the Tamil weekday, date,
 month and 60-year-cycle year name. The month boundaries are computed from
-the Sun's sidereal longitude (Lahiri ayanāṁśa) — i.e. each month begins at
+the Sun's sidereal longitude (Lahiri ayanāṁśa) - i.e. each month begins at
 the actual sankranti when the Sun enters a new rashi, not from a fixed
 April-14 boundary table. This matches Drik / Vakya Panchangam usage.
 
 Cycle reference: Prabhava (id 1) corresponds to the Tamil year that
 *starts* on the Mesha sankranti of Gregorian 1987 (Apr 14 1987 → Apr 13
-1988). Verified against publicly available references — Apr 14 2026 →
+1988). Verified against publicly available references - Apr 14 2026 →
 Parabhava (id 40).
 """
 
@@ -313,7 +313,7 @@ def _local_end_of_day_jd(d: date_cls, tz: pytz.BaseTzInfo) -> float:
     We pick *end* of the day (not noon) so the Drik rule "the calendar day
     of a sankranti is day 1 of the new month" holds even when the sankranti
     happens late in the day. E.g. Makara sankranti 2026 IST is 15:07 on
-    Jan 14 — at noon Jan 14 the Sun is still in Dhanusu, but the day still
+    Jan 14 - at noon Jan 14 the Sun is still in Dhanusu, but the day still
     counts as Thai 1.
     """
     end_local = tz.localize(datetime(d.year, d.month, d.day, 23, 59, 59))
@@ -344,7 +344,7 @@ def _find_sankranti_jd(jd: float, sign_id: int) -> float:
     before `jd`. Binary search on the 30° span starting at (sign_id-1)*30."""
     target_deg = (sign_id - 1) * 30
     sun_now = swe.calc_ut(jd, swe.SUN, _SIDEREAL_FLAGS)[0][0] % 360
-    # Distance the Sun has travelled since entering this sign — at ~360°/yr.
+    # Distance the Sun has travelled since entering this sign - at ~360°/yr.
     dist_into_sign = (sun_now - target_deg) % 360
     days_back = dist_into_sign * 365.25 / 360 + 2  # +2 d safety margin
     lo, hi = jd - days_back - 5, jd
@@ -363,7 +363,7 @@ def _find_sankranti_jd(jd: float, sign_id: int) -> float:
 
 def _mesha_sankranti_jd(gregorian_year: int) -> float:
     """JD when the Sun crosses 0° sidereal Aries in `gregorian_year`
-    (Tamil New Year — around April 13–15)."""
+    (Tamil New Year - around April 13–15)."""
     lo = swe.julday(gregorian_year, 4, 9, 0.0)  # Sun deep in Meena
     hi = swe.julday(gregorian_year, 4, 19, 0.0)  # Sun safely in Mesha
     for _ in range(80):

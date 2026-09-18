@@ -1,5 +1,5 @@
 """Unit tests for `dasha_extras.compute_antardashas` and
-`compute_pratyantars`. No HTTP needed — runs against `chart_data` produced
+`compute_pratyantars`. No HTTP needed - runs against `chart_data` produced
 in-process by the `delhi_chart`/`knk_chart` fixtures.
 
 Reference values for `knk_chart` (Knk, 25 Apr 2026 11:36 IST Ranchi) come
@@ -25,7 +25,7 @@ def test_antardasha_durations_sum_to_mahadasha(delhi_chart, chart_module):
     """Within a Mahadasha M-years long, the 9 antardashas should sum to M."""
     md = delhi_chart["dasha_antar"]
     total_years = chart_module.DASHA_YEARS
-    # Skip the first MD (partial — its concept-start is pre-birth, so the
+    # Skip the first MD (partial - its concept-start is pre-birth, so the
     # 9 ADs sum to its FULL Vimshottari period, not its `years` field).
     for entry in md[1:]:
         ad_total = sum(ad["years"] for ad in entry["antardashas"])

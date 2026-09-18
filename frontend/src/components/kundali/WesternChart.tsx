@@ -101,7 +101,7 @@ function spreadOverlaps(longs: number[], minGap = 10): number[] {
 
 function assignRadii(spreadLongs: number[], threshold = 14): number[] {
   const indexed = spreadLongs.map((v, i) => ({ v, i })).sort((a, b) => a.v - b.v);
-  const radii = new Array(spreadLongs.length).fill(R_LABEL_NEAR);
+  const radii = Array.from({ length: spreadLongs.length }, () => R_LABEL_NEAR);
   for (let k = 0; k < indexed.length; k++) {
     const prev = (k - 1 + indexed.length) % indexed.length;
     let diff = indexed[k].v - indexed[prev].v;

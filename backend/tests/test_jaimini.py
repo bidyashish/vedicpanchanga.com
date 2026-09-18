@@ -1,6 +1,6 @@
 """Unit tests for `jaimini.compute_chara_karakas` + `compute_karakamsa_swamsa`.
 
-Reference (Knk): all 7 Chara karakas match the AstroSage sample —
+Reference (Knk): all 7 Chara karakas match the AstroSage sample -
 Atma=Moon, Amatya=Jupiter, Bhratru=Mercury, Matru=Mars, Putra=Saturn,
 Gnati=Sun, Dara=Venus. Karakamsa lagna = D9 sign of AK = Aquarius (11).
 """

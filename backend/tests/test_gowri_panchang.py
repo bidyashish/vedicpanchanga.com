@@ -44,7 +44,7 @@ def test_all_weekdays_have_starts():
 
 
 def test_saturday_day_starts_with_soram():
-    """The example in the feature spec shows the day starting with Soram —
+    """The example in the feature spec shows the day starting with Soram -
     that's only consistent with a Saturday start (ISO weekday 6)."""
     assert GOWRI_NAMES[GOWRI_DAY_START[6]] == "Soram"
 
@@ -95,7 +95,7 @@ def test_auspicious_flag_is_set_consistently():
 
 
 def test_polar_day_returns_empty_lists():
-    """At the poles a date can have no sunrise — function should not raise."""
+    """At the poles a date can have no sunrise - function should not raise."""
     g = compute_gowri_panchang(
         sunrise_iso=None,
         sunset_iso=None,
@@ -107,7 +107,7 @@ def test_polar_day_returns_empty_lists():
 
 
 def test_saturday_chennai_matches_user_example_order():
-    """Saturday in Chennai with sunrise ~06:23, sunset ~18:24 — ordering of
+    """Saturday in Chennai with sunrise ~06:23, sunset ~18:24 - ordering of
     day labels must match the example: Soram, Uthi, Visham, Amridha, Rogam,
     Labam, Dhanam, Sugam."""
     g = compute_gowri_panchang(

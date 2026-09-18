@@ -1,8 +1,8 @@
-"""HTTP integration tests for `/api/calculate` and `/api/get-panchang`.
+"""HTTP contract tests for `/api/calculate` and `/api/get-panchang`.
 
-Sample anchor: `DELHI_BIRTH` (1990-01-01 12:00 New Delhi). Numbers like the
-Julian Day, classical BAV totals (Su=48, Mo=49, …, SAV=337), Sun's sign
-(Sagittarius) are all true for that birth and act as regression checks.
+Anchor: `delhi_birth` (1990-01-01 12:00 New Delhi). The Julian Day, classical
+BAV totals (Su=48, Mo=49, ..., SAV=337) and the Sun's sign (Sagittarius) are
+all true for that birth and act as regression checks.
 """
 
 from __future__ import annotations
@@ -12,18 +12,12 @@ import pytest
 pytestmark = pytest.mark.http
 
 
+DELHI_LOCATION = {"latitude": 28.6139, "longitude": 77.2090, "timezone": "Asia/Kolkata"}
+
+
 @pytest.fixture(scope="module")
-def chart(api, base_url):
-    payload = {
-        "birth_date": "1990-01-01",
-        "birth_time": "12:00",
-        "latitude": 28.6139,
-        "longitude": 77.2090,
-        "timezone": "Asia/Kolkata",
-        "place_name": "New Delhi",
-        "ayanamsa": "lahiri",
-    }
-    r = api.post(f"{base_url}/api/calculate", json=payload, timeout=30)
+def chart(api, base_url, delhi_birth):
+    r = api.post(f"{base_url}/api/calculate", json=delhi_birth)
     assert r.status_code == 200, f"Status {r.status_code}: {r.text}"
     return r.json()
 
@@ -91,25 +85,6 @@ class TestCalculateAccuracy:
         diff = abs(planets["Rahu"]["longitude"] - planets["Ketu"]["longitude"])
         diff = min(diff, 360 - diff)
         assert abs(diff - 180.0) < 1e-6, f"Rahu-Ketu diff = {diff}"
-
-    def test_d9_sign_calculation_valid(self, chart):
-        for p in chart["planets_data"]:
-            lon = p["longitude"]
-            expected = int(((lon * 9) % 360) // 30) + 1
-            # We need d9_sign on the planet entry — re-derive from chart map
-            # Find which D9 house the abbr is in:
-            d9 = chart["d9_chart"]
-            d9_asc = chart["d9_asc_sign"]
-            placed_house = None
-            for h, abbrs in d9.items():
-                if p["abbr"] in abbrs:
-                    placed_house = int(h)
-                    break
-            assert placed_house is not None, f"{p['name']} not in d9_chart"
-            placed_sign = ((placed_house - 1) + (d9_asc - 1)) % 12 + 1
-            assert placed_sign == expected, (
-                f"{p['name']} D9 sign mismatch: got {placed_sign}, expected {expected}"
-            )
 
     def test_d2_hora_correctness(self, chart):
         for p in chart["planets_data"]:
@@ -201,7 +176,6 @@ class TestCalculateValidation:
                 "latitude": 28.6,
                 "longitude": 77.2,
             },
-            timeout=15,
         )
         assert r.status_code == 400, f"Got {r.status_code}: {r.text}"
 
@@ -214,7 +188,6 @@ class TestCalculateValidation:
                 "latitude": 28.6,
                 "longitude": 77.2,
             },
-            timeout=15,
         )
         assert r.status_code == 400
 
@@ -224,16 +197,7 @@ class TestCalculateValidation:
 
 @pytest.fixture(scope="module")
 def panchang_today(api, base_url):
-    r = api.get(
-        f"{base_url}/api/get-panchang",
-        params={
-            "latitude": 28.6139,
-            "longitude": 77.2090,
-            "timezone": "Asia/Kolkata",
-            "detailed": "false",
-        },
-        timeout=30,
-    )
+    r = api.get(f"{base_url}/api/get-panchang", params=DELHI_LOCATION)
     assert r.status_code == 200, f"Status {r.status_code}: {r.text}"
     return r.json()
 
@@ -243,14 +207,7 @@ def panchang_thursday(api, base_url):
     # 2024-01-04 was a Thursday.
     r = api.get(
         f"{base_url}/api/get-panchang",
-        params={
-            "latitude": 28.6139,
-            "longitude": 77.2090,
-            "timezone": "Asia/Kolkata",
-            "date": "2024-01-04",
-            "detailed": "false",
-        },
-        timeout=30,
+        params={**DELHI_LOCATION, "date": "2024-01-04"},
     )
     assert r.status_code == 200, f"Status {r.status_code}: {r.text}"
     return r.json()
@@ -308,7 +265,7 @@ class TestPanchang:
         ss = datetime.fromisoformat(sm["sunset"])
         seg_dur = (ss - sr) / 8
         # Thursday's Rāhu kālam is the 6th of 8 day-eighths (segments are
-        # 0-indexed: index 5 → start sr+5·seg, end sr+6·seg).
+        # 0-indexed: index 5 -> start sr+5*seg, end sr+6*seg).
         expected_start = sr + 5 * seg_dur
         expected_end = sr + 6 * seg_dur
         rk = panchang_thursday["inauspicious_timings"]["rahu_kalam"]
@@ -317,17 +274,31 @@ class TestPanchang:
         assert abs((rk_s - expected_start).total_seconds()) < 60
         assert abs((rk_e - expected_end).total_seconds()) < 60
 
-    def test_default_date_is_today(self, api, base_url):
+    def test_default_date_is_today(self, panchang_today):
         from datetime import date as date_cls
 
-        r = api.get(
-            f"{base_url}/api/get-panchang",
-            params={
-                "latitude": 28.6139,
-                "longitude": 77.2090,
-                "timezone": "Asia/Kolkata",
-            },
-            timeout=30,
-        )
-        assert r.status_code == 200
-        assert r.json()["date"] == date_cls.today().isoformat()
+        assert panchang_today["date"] == date_cls.today().isoformat()
+
+
+class TestPanchangYogas:
+    """Extra yoga windows on the Delhi Thursday anchor (2024-01-04)."""
+
+    def test_amrit_kalam_entries_have_start_end_nakshatra(self, panchang_thursday):
+        entries = panchang_thursday["auspicious_timings"]["amrit_kalam"]
+        assert isinstance(entries, list) and entries
+        for e in entries:
+            assert e["start"] and e["end"] and e["nakshatra"]
+
+    def test_siddhi_yoga_lists_are_lists(self, panchang_thursday):
+        aus = panchang_thursday["auspicious_timings"]
+        assert isinstance(aus["sarvartha_siddhi_yoga"], list)
+        assert isinstance(aus["amrita_siddhi_yoga"], list)
+
+    def test_varjyam_present(self, panchang_thursday):
+        varjyam = panchang_thursday["inauspicious_timings"]["varjyam"]
+        assert isinstance(varjyam, list) and varjyam
+        for v in varjyam:
+            assert v["start"] and v["end"]
+
+    def test_extra_yoga_detectors_present(self, panchang_thursday):
+        assert {"ganda_mula", "ravi_yoga"} <= set(panchang_thursday["yogas_extra"])

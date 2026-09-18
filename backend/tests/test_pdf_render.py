@@ -1,5 +1,5 @@
 """Smoke tests for the PDF report. Verifies render_pdf produces a well-
-formed PDF with the expected section layout — exercises every page builder
+formed PDF with the expected section layout - exercises every page builder
 without checking pixel positions."""
 
 from __future__ import annotations
@@ -85,7 +85,7 @@ def test_index_lists_every_section_with_a_page_number(rendered):
         "Kalsarpa Yoga",
         "Mangal Dosha",
     ):
-        # Pattern "<label>\n…\n<int>" — page numbers are bold-rendered ints.
+        # Pattern "<label>\n…\n<int>" - page numbers are bold-rendered ints.
         assert re.search(rf"{re.escape(label)}.{{0,20}}\d+", last, re.DOTALL), label
 
 
@@ -264,7 +264,7 @@ def test_render_pdf_handles_hindi_lang(delhi_chart, panchang_module):
         timezone_name="Asia/Kolkata",
     )
     out = render_pdf(
-        name="Aśiṣ",  # IAST diacritics — must use Latin font
+        name="Aśiṣ",  # IAST diacritics - must use Latin font
         sex="Male",
         chart_data=delhi_chart,
         panchang_data=panch,

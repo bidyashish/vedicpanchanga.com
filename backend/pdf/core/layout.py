@@ -38,7 +38,7 @@ def page_header(pdf: FPDF, name: str, label: str) -> None:
 
 
 def page_footer(pdf: FPDF) -> None:
-    # Must be called during the page's draw — revisiting a finalised page
+    # Must be called during the page's draw - revisiting a finalised page
     # via `pdf.page = n` corrupts fpdf2's per-page font subset and produces
     # garbled glyphs.
     y = pdf.h - FOOTER_H

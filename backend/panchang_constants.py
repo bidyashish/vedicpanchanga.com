@@ -80,7 +80,7 @@ CHANDRA_MASA = [
     "Phalguna",
 ]
 
-# Solar sidereal months (Nirayana) — month begins when Sun enters each sign (Mesha first)
+# Solar sidereal months (Nirayana) - month begins when Sun enters each sign (Mesha first)
 NIRAYANA_MONTHS = [
     "Vaishakha",
     "Jyeshtha",
@@ -203,14 +203,14 @@ DUR_MUHURTA = {
 # Dur Muhurtam falls on this same index, Abhijit is not observed (e.g. Wednesday).
 ABHIJIT_MUHURTA_INDEX = 8
 
-# Tarabalam — when current nakshatra is (N_birth + k) % 27 + 1, k of {0,1,2,..26}:
+# Tarabalam - when current nakshatra is (N_birth + k) % 27 + 1, k of {0,1,2,..26}:
 # Good (auspicious) stars are: Janma (1), Sampat (2), Kshema (4), Sadhaka (6), Mitra (8), Param Mitra (9)
 # Bad stars are: Vipat (3), Pratyak (5), Naidhana (7)
 # In 27-nakshatra cycle, the series 1..9 repeats three times.
 GOOD_TARA_OFFSETS = {0, 1, 3, 5, 7, 8, 9, 10, 12, 14, 16, 17, 18, 19, 21, 23, 25, 26}
 # (offsets 0..26 from birth nakshatra where tarabalam is favorable, i.e. position 1,2,4,6,8,9 within each cycle of 9)
 
-# Chandrabalam — good when current Moon sign is 1st, 3rd, 6th, 7th, 10th, 11th from native's rashi
+# Chandrabalam - good when current Moon sign is 1st, 3rd, 6th, 7th, 10th, 11th from native's rashi
 GOOD_CHANDRA_OFFSETS = {0, 2, 5, 6, 9, 10}  # (sign - birth_sign) mod 12
 
 RASHI_NAMES = [

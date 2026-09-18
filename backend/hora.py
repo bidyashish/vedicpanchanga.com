@@ -1,4 +1,4 @@
-"""Hora timing — every hour of the day is ruled by one of the 7 visible
+"""Hora timing - every hour of the day is ruled by one of the 7 visible
 planets. The first hora of the day is the planet that rules the weekday;
 each subsequent hora moves through the fixed Chaldean cycle below.
 
@@ -36,7 +36,7 @@ AUSPICIOUS: set[str] = {"Jupiter", "Venus", "Mercury", "Moon"}
 
 # Index in HORA_CYCLE of the planet that rules the *first* day hora, keyed by
 # ISO weekday (1 = Monday … 7 = Sunday). The day-lord *is* the first-hora
-# lord — this is the universally agreed rule.
+# lord - this is the universally agreed rule.
 HORA_DAY_START: Dict[int, int] = {
     1: 3,  # Mon → Moon
     2: 6,  # Tue → Mars

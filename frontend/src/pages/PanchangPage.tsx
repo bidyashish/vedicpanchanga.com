@@ -6,11 +6,16 @@ import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { ShareLinkButton } from "@/components/common/ShareLinkButton";
 import { DatePicker } from "@/components/ui/date-picker";
 import { AuspiciousHeatmap } from "@/components/panchang/AuspiciousHeatmap";
+import { AuspiciousTimings } from "@/components/panchang/AuspiciousTimings";
 import { GowriPanchangam } from "@/components/panchang/GowriPanchangam";
 import { HoraPanchangam } from "@/components/panchang/HoraPanchangam";
+import { InauspiciousTimings } from "@/components/panchang/InauspiciousTimings";
+import { KeyValueGrid } from "@/components/panchang/KeyValueGrid";
+import { LimbCol } from "@/components/panchang/LimbCol";
 import { NallaNeram } from "@/components/panchang/NallaNeram";
 import { Section } from "@/components/panchang/Section";
-import { TimeBand } from "@/components/panchang/TimeBand";
+import { TimeCard } from "@/components/panchang/TimeCard";
+import { TransitList } from "@/components/panchang/TransitList";
 import { TyajyamSection } from "@/components/panchang/TyajyamSection";
 import { VedicChart } from "@/components/kundali/VedicChart";
 import type { PlanetStatus } from "@/components/kundali/VedicChart";
@@ -43,61 +48,7 @@ import {
   round4,
   shareUrlFor,
 } from "@/lib/urlState";
-import type { ChartData, LocationChoice, PanchangData, TransitItem } from "@/types/api";
-
-function TransitList({
-  items,
-  tz,
-  refDate,
-  labelFn,
-  accent = "var(--ink)",
-}: {
-  items?: TransitItem[];
-  tz?: string;
-  refDate?: string;
-  labelFn: (it: TransitItem) => string;
-  accent?: string;
-}) {
-  const { t } = useI18n();
-  if (!items?.length) return <div className="meta">-</div>;
-  return (
-    <ul className="divide-y divide-parchment-200">
-      {items.map((it, i) => {
-        const endIso = it.ends_at ?? it.end;
-        const range = it.starts_at
-          ? `${formatTimeWithDate(it.starts_at, tz, refDate)} → ${formatTimeWithDate(endIso, tz, refDate)}`
-          : `${t("upto")} ${formatTimeWithDate(endIso, tz, refDate)}`;
-        return (
-          <li
-            key={i}
-            className="flex flex-col gap-0.5 py-1.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3"
-          >
-            <span className="text-meta font-medium" style={{ color: accent }}>
-              {labelFn(it)}
-            </span>
-            <span className="text-mini text-ink-soft num sm:shrink-0">{range}</span>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
-function KV2({ rows }: { rows: { label: string; value: React.ReactNode }[] }) {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-0">
-      {rows.map((r, i) => (
-        <div
-          key={i}
-          className="flex items-baseline justify-between border-b border-parchment-200 py-1.5 gap-3 last:border-0 sm:[&:nth-last-child(2)]:border-0"
-        >
-          <span className="text-mini text-ink-soft">{r.label}</span>
-          <span className="text-meta text-ink text-right font-medium num">{r.value}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
+import type { ChartData, LocationChoice, PanchangData } from "@/types/api";
 
 export function PanchangPage({ defaultLocation }: { defaultLocation: LocationChoice }) {
   const { t, lang } = useI18n();
@@ -150,7 +101,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
   }, []);
 
   // The HH:MM the lagna kundali is cast for. We use *current* wall-clock time
-  // in the chart's location so the chart reflects the live sky — at sunrise
+  // in the chart's location so the chart reflects the live sky - at sunrise
   // the lagna co-rises with the sun and the chart looked frozen on Aries when
   // the sun was in Aries.
   const [chartTime, setChartTime] = useState<string>("");
@@ -754,7 +705,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
             </Section>
 
             <Section title={t("section_lunar_month")} testId="section-samvat">
-              <KV2
+              <KeyValueGrid
                 rows={[
                   {
                     label: t("lunar_vikram"),
@@ -846,7 +797,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
             )}
 
             <Section title={t("section_ritu_ayana")} testId="section-ritu-ayana">
-              <KV2
+              <KeyValueGrid
                 rows={[
                   { label: t("ritu_drik_ritu"), value: a.ritu(data.ritu_ayana.drik_ritu) },
                   { label: t("ritu_vedic_ritu"), value: a.ritu(data.ritu_ayana.vedic_ritu) },
@@ -874,202 +825,9 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
               <AuspiciousHeatmap data={data} tz={tz} />
             </Section>
 
-            <Section title={t("auspicious_title")} testId="section-auspicious">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                <TimeBand
-                  testId="band-brahma"
-                  title={t("muhurta_brahma")}
-                  window={data.auspicious_timings.brahma_muhurta}
-                  color="var(--success)"
-                  desc={t("muhurta_brahma_desc")}
-                  tz={tz}
-                  refDate={refDate}
-                />
-                <TimeBand
-                  testId="band-pratah"
-                  title={t("muhurta_pratah_sandhya")}
-                  window={data.auspicious_timings.pratah_sandhya}
-                  color="var(--success)"
-                  desc={t("muhurta_pratah_sandhya_desc")}
-                  tz={tz}
-                  refDate={refDate}
-                />
-                <TimeBand
-                  testId="band-abhijit"
-                  title={t("muhurta_abhijit_full")}
-                  window={data.auspicious_timings.abhijit}
-                  color="var(--success)"
-                  desc={t("muhurta_abhijit_desc")}
-                  tz={tz}
-                  refDate={refDate}
-                />
-                <TimeBand
-                  testId="band-vijay"
-                  title={t("muhurta_vijay")}
-                  window={data.auspicious_timings.vijay_muhurta}
-                  color="var(--success)"
-                  desc={t("muhurta_vijay_desc")}
-                  tz={tz}
-                  refDate={refDate}
-                />
-                <TimeBand
-                  testId="band-godhuli"
-                  title={t("muhurta_godhuli")}
-                  window={data.auspicious_timings.godhuli_muhurta}
-                  color="var(--success)"
-                  desc={t("muhurta_godhuli_desc")}
-                  tz={tz}
-                  refDate={refDate}
-                />
-                <TimeBand
-                  testId="band-sayahna"
-                  title={t("muhurta_sayam_sandhya")}
-                  window={data.auspicious_timings.sayahna_sandhya}
-                  color="var(--success)"
-                  desc={t("muhurta_sayam_sandhya_desc")}
-                  tz={tz}
-                  refDate={refDate}
-                />
-                <TimeBand
-                  testId="band-nishita"
-                  title={t("muhurta_nishita")}
-                  window={data.auspicious_timings.nishita_muhurta}
-                  color="var(--success)"
-                  desc={t("muhurta_nishita_desc")}
-                  tz={tz}
-                  refDate={refDate}
-                />
-                {(data.auspicious_timings.amrit_kalam ?? []).map((amrit, i) => (
-                  <TimeBand
-                    key={`am-${i}`}
-                    testId={`band-amrit-${i}`}
-                    title={t("muhurta_amrit_kalam")}
-                    window={amrit}
-                    color="var(--success)"
-                    desc={`${t("muhurta_amrit_kalam_desc")} · ${a.nakshatra(amrit.nakshatra ?? "")}`}
-                    tz={tz}
-                    refDate={refDate}
-                  />
-                ))}
-                {(data.auspicious_timings.sarvartha_siddhi_yoga ?? []).map((s, i) => (
-                  <TimeBand
-                    key={`ss-${i}`}
-                    testId={`band-sarvartha-${i}`}
-                    title={t("muhurta_sarvartha")}
-                    window={s}
-                    color="var(--success)"
-                    desc={`${t("muhurta_sarvartha_desc")} · ${a.nakshatra(s.nakshatra ?? "")}`}
-                    tz={tz}
-                    refDate={refDate}
-                  />
-                ))}
-                {(data.auspicious_timings.amrita_siddhi_yoga ?? []).map((s, i) => (
-                  <TimeBand
-                    key={`asd-${i}`}
-                    testId={`band-amrita-siddhi-${i}`}
-                    title={t("muhurta_amrita_siddhi")}
-                    window={s}
-                    color="var(--success)"
-                    desc={`${t("muhurta_amrita_siddhi_desc")} · ${a.nakshatra(s.nakshatra ?? "")}`}
-                    tz={tz}
-                    refDate={refDate}
-                  />
-                ))}
-                {data.yogas_extra?.ravi_yoga && (
-                  <TimeBand
-                    testId="band-ravi-yoga"
-                    title={t("muhurta_ravi_yoga")}
-                    window={data.yogas_extra.ravi_yoga}
-                    color="var(--success)"
-                    desc={t("muhurta_ravi_yoga_desc")}
-                    tz={tz}
-                    refDate={refDate}
-                  />
-                )}
-              </div>
-            </Section>
+            <AuspiciousTimings data={data} tz={tz} refDate={refDate} />
 
-            <Section title={t("inauspicious_title")} testId="section-inauspicious">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                <TimeBand
-                  testId="band-rahu"
-                  title={t("muhurta_rahu_kalam")}
-                  window={data.inauspicious_timings.rahu_kalam}
-                  color="var(--danger)"
-                  desc={t("muhurta_rahu_kalam_desc")}
-                  tz={tz}
-                  refDate={refDate}
-                />
-                <TimeBand
-                  testId="band-yamaganda"
-                  title={t("muhurta_yamaganda")}
-                  window={data.inauspicious_timings.yamaganda}
-                  color="var(--accent-sun)"
-                  desc={t("muhurta_yamaganda_desc")}
-                  tz={tz}
-                  refDate={refDate}
-                />
-                <TimeBand
-                  testId="band-gulika"
-                  title={t("muhurta_gulika")}
-                  window={data.inauspicious_timings.gulika_kalam}
-                  color="var(--ink-soft)"
-                  desc={t("muhurta_gulika_desc")}
-                  tz={tz}
-                  refDate={refDate}
-                />
-                {(data.inauspicious_timings.dur_muhurtam ?? []).map((dm, i) => (
-                  <TimeBand
-                    key={i}
-                    testId={`band-dur-${i}`}
-                    title={`${t("muhurta_dur")} #${a.num(dm.muhurta_number)}`}
-                    window={dm}
-                    color="var(--danger)"
-                    desc={t("muhurta_dur_desc")}
-                    tz={tz}
-                    refDate={refDate}
-                  />
-                ))}
-                {(data.inauspicious_timings.bhadra ?? []).map((b, i) => (
-                  <TimeBand
-                    key={`b-${i}`}
-                    testId={`band-bhadra-${i}`}
-                    title={t("muhurta_bhadra")}
-                    window={b}
-                    color="var(--danger)"
-                    desc={t("muhurta_bhadra_desc")}
-                    tz={tz}
-                    refDate={refDate}
-                  />
-                ))}
-                {(data.inauspicious_timings.varjyam ?? []).map((v, i) => (
-                  <TimeBand
-                    key={`v-${i}`}
-                    testId={`band-varjyam-${i}`}
-                    title={t("muhurta_varjyam")}
-                    window={v}
-                    color="var(--danger)"
-                    desc={`${t("muhurta_varjyam_desc")} · ${a.nakshatra(v.nakshatra ?? "")}`}
-                    tz={tz}
-                    refDate={refDate}
-                  />
-                ))}
-                {data.yogas_extra?.ganda_mula && (
-                  <TimeBand
-                    testId="band-ganda-mula"
-                    title={t("muhurta_ganda_mula")}
-                    window={{
-                      start: data.sun_moon.sunrise,
-                      end: data.yogas_extra.ganda_mula.ends_at,
-                    }}
-                    color="var(--danger)"
-                    desc={`${t("muhurta_moon_in")} ${a.nakshatra(data.yogas_extra.ganda_mula.nakshatra)} · ${t("muhurta_ganda_mula_desc")}`}
-                    tz={tz}
-                    refDate={refDate}
-                  />
-                )}
-              </div>
-            </Section>
+            <InauspiciousTimings data={data} tz={tz} refDate={refDate} />
 
             {data.tyajyam && (
               <TyajyamSection
@@ -1139,7 +897,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
               subtitle={t("shool_vasa_sub")}
               testId="section-shool-vasa"
             >
-              <KV2
+              <KeyValueGrid
                 rows={[
                   { label: t("disha_shool"), value: a.direction(data.shool_vasa.disha_shool) },
                   { label: t("rahu_vasa"), value: a.direction(data.shool_vasa.rahu_vasa) },
@@ -1149,7 +907,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
             </Section>
 
             <Section title={t("calendars_title")} testId="section-calendars">
-              <KV2
+              <KeyValueGrid
                 rows={[
                   { label: t("cal_kaliyuga"), value: a.num(data.calendars.kali_year) },
                   {
@@ -1253,7 +1011,7 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                     </p>
                   </div>
                 )}
-                <KV2
+                <KeyValueGrid
                   rows={[
                     {
                       label: t("tamil_weekday"),
@@ -1299,60 +1057,5 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
         )}
       </div>
     </section>
-  );
-}
-
-function TimeCard({
-  label,
-  value,
-  color,
-  icon,
-  testId,
-}: {
-  label: string;
-  value: string;
-  color: string;
-  icon?: string;
-  testId?: string;
-}) {
-  return (
-    <div
-      className="px-3 py-2 bg-parchment-50 border border-parchment-200 rounded-sm"
-      data-testid={testId}
-    >
-      <div className="flex items-center justify-between gap-2">
-        <p className="eyebrow">{label}</p>
-        {icon && (
-          <span className="text-base leading-none opacity-80" style={{ color }} aria-hidden="true">
-            {icon}
-          </span>
-        )}
-      </div>
-      <p className="text-lead num mt-0.5 font-semibold" style={{ color }}>
-        {value}
-      </p>
-    </div>
-  );
-}
-
-function LimbCol({
-  label,
-  accent,
-  children,
-}: {
-  label: string;
-  accent: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <p
-        className="eyebrow-lg mb-1.5 pb-1 border-b"
-        style={{ color: accent, borderColor: "var(--border)" }}
-      >
-        {label}
-      </p>
-      {children}
-    </div>
   );
 }

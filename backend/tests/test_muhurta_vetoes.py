@@ -9,14 +9,9 @@ Anchors are 2026 events cross-checked against DrikPanchang (New Delhi):
   resume Feb 5, 2026
 """
 
-import sys
-from pathlib import Path
-
 import swisseph as swe
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from muhurta import (  # noqa: E402
+from muhurta import (
     _chaturmas_span,
     _combust_labels,
     _is_adhika_day,

@@ -1,4 +1,4 @@
-"""Gowri Panchangam (Nalla Neram) — used in Tamil/Telugu traditions.
+"""Gowri Panchangam (Nalla Neram) - used in Tamil/Telugu traditions.
 
 Splits the day (sunrise → sunset) and the night (sunset → next sunrise) into
 8 equal segments each, and labels every segment with one of the 8 Gowri
@@ -12,11 +12,11 @@ table:
     Rogam (Inauspicious)  →  Labam (Auspicious)
     Dhanam (Auspicious)   →  Sugam (Auspicious)
 
-The starting Gowri for the day rotates by weekday — that's the one part of
+The starting Gowri for the day rotates by weekday - that's the one part of
 the table that varies between regional traditions. The mapping below
 matches the standard Drik-Panchangam / Prokerala convention. If your
 reference uses a different rotation, change `GOWRI_DAY_START` /
-`GOWRI_NIGHT_START` only — every other piece of the algorithm is
+`GOWRI_NIGHT_START` only - every other piece of the algorithm is
 data-driven off these tables.
 """
 

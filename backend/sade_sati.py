@@ -10,7 +10,7 @@ days in the same sign into segments. Each segment is classified:
 - 4th from Moon   → Small Panoti (Ardha Ashtama)
 - 8th from Moon   → Small Panoti (Ashtama / Kantaka)
 
-Daily stepping is sufficient — Saturn moves <0.15°/day so missing a
+Daily stepping is sufficient - Saturn moves <0.15°/day so missing a
 mid-day ingress shifts boundaries by at most ~12 hours. We refine each
 detected sign-change with a small binary search to get day-precision.
 """

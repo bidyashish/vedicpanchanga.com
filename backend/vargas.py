@@ -255,7 +255,7 @@ def varga_degree_in_sign(longitude: float, n: int) -> float:
     """Return the planet's position within its divisional D<n> sign (0-30°).
 
     For D1 this is just `longitude % 30`. For uniform vargas the formula is
-    `(deg_in_rashi * n) mod 30` — each rasi is split into n equal segments
+    `(deg_in_rashi * n) mod 30` - each rasi is split into n equal segments
     of width 30/n, and scaling the offset within a segment back to 30° gives
     the sub-degree. D30 is the exception (uneven planetary segments) and
     needs piecewise scaling against `_D30_BREAKS_*`.

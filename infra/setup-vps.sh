@@ -22,14 +22,14 @@ RUN_USER="${SUDO_USER:-ubuntu}"
 RUN_GROUP="$(id -gn "$RUN_USER" 2>/dev/null || echo ubuntu)"
 
 if [ ! -d "$APP_DIR/backend" ] || [ ! -d "$APP_DIR/frontend" ]; then
-    echo "Expected $APP_DIR/{backend,frontend} — did you clone to the right path?" >&2
+    echo "Expected $APP_DIR/{backend,frontend} - did you clone to the right path?" >&2
     echo "  sudo mkdir -p /apps && cd /apps" >&2
     echo "  sudo git clone https://github.com/bidyashish/vedicpanchanga.com panchanga" >&2
     exit 1
 fi
 
 if [ ! -d "$APP_DIR/backend/ephe" ]; then
-    echo "WARNING: $APP_DIR/backend/ephe/ is missing — Swiss Ephemeris needs it." >&2
+    echo "WARNING: $APP_DIR/backend/ephe/ is missing - Swiss Ephemeris needs it." >&2
 fi
 
 if [ -f /etc/os-release ]; then
@@ -76,7 +76,7 @@ pip install -r requirements.txt
 deactivate
 chown -R "$RUN_USER:$RUN_GROUP" "$APP_DIR/backend/venv"
 
-# Production CORS allowlist — only the public domain, no localhost. Frontend is
+# Production CORS allowlist - only the public domain, no localhost. Frontend is
 # served same-origin via Nginx so cross-origin XHR is impossible from the app
 # itself; this lockdown blocks third-party sites from calling the API directly.
 cat > "$APP_DIR/backend/.env" <<'EOF'
@@ -139,7 +139,7 @@ CF_KEY="/etc/ssl/cloudflare/origin.key"
 
 if [ -f "$CF_CERT" ] && [ -f "$CF_KEY" ]; then
     TLS_ENABLED=1
-    echo "  Cloudflare Origin Cert found — Nginx will serve HTTPS on :443"
+    echo "  Cloudflare Origin Cert found - Nginx will serve HTTPS on :443"
 else
     TLS_ENABLED=0
     cat <<'WARN'
@@ -456,7 +456,7 @@ echo "4. Firewall (UFW)..."
 ufw allow 22/tcp  comment 'SSH'   >/dev/null
 ufw allow 80/tcp  comment 'HTTP'  >/dev/null
 ufw allow 443/tcp comment 'HTTPS' >/dev/null
-# Monitoring (see AGENTS.md §8). Exporters bind to 127.0.0.1 and Grafana is
+# Monitoring (see infra/README.md). Exporters bind to 127.0.0.1 and Grafana is
 # reached via the /grafana/ Nginx proxy above, so NONE of these ports are exposed
 # publicly. Drop any legacy public allows left by earlier setups.
 for mon_port in 3002 9090 9100 9115; do

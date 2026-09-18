@@ -1,4 +1,4 @@
-"""PDF report generation (Traditional layout — single A4 page)."""
+"""PDF report generation (Traditional layout - single A4 page)."""
 
 from .report import render_pdf
 

@@ -8,7 +8,7 @@
 //
 //   2. Native script - non-Latin locales (hi, ne, ta, bn, zh, ja, ru, ar, fa,
 //      he) must not leave bare Latin words inside their string values. This is
-//      the "written for a native speaker" rule from CLAUDE.md / AGENTS.md. A
+//      the "written for a native speaker" rule from CLAUDE.md. A
 //      small allow-list covers brand names, units, acronyms and scientific
 //      catalog names that legitimately stay Latin.
 //

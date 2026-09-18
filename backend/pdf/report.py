@@ -70,7 +70,7 @@ PAGE_W_PT, PAGE_H_PT = 595.28, 841.89  # A4 in pt
 
 
 class _ReportPDF(FPDF):
-    """FPDF subclass — uses the built-in `footer()` hook so the stamp runs
+    """FPDF subclass - uses the built-in `footer()` hook so the stamp runs
     while each page's font subset is still mutable. (Stamping post-finalise
     via `pdf.page = n` corrupts the subset.)"""
 

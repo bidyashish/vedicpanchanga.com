@@ -1,7 +1,7 @@
 """Unit tests for backend/tamil_calendar.py.
 
 Anchored on the spec example: Apr 27 2026 (Asia/Kolkata) →
-Chithirai 14, Parabhava (id 40) — and on the cycle anchor Prabhava (id 1)
+Chithirai 14, Parabhava (id 40) - and on the cycle anchor Prabhava (id 1)
 on the Mesha sankranti of 1987.
 """
 

@@ -92,14 +92,14 @@ def test_segments_cover_full_day_and_night():
 
 
 def test_night_continues_planetary_cycle_from_day():
-    """The 7-planet cycle should not reset at sunset — night-hora-1's planet
+    """The 7-planet cycle should not reset at sunset - night-hora-1's planet
     must be the planet that *would* come next in the cycle after the day's
     last hora (12 day-horas advance the cycle by 12 mod 7 = 5)."""
     g = compute_hora(
         sunrise_iso="2026-04-26T06:00:00+05:30",
         sunset_iso="2026-04-26T18:30:00+05:30",
         next_sunrise_iso="2026-04-27T06:01:00+05:30",
-        weekday_iso=7,  # Sunday — day starts with Sun (idx 0)
+        weekday_iso=7,  # Sunday - day starts with Sun (idx 0)
         timezone_name="Asia/Kolkata",
     )
     # Day hora 12 = idx (0 + 11) % 7 = 4 = Saturn

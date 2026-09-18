@@ -1,6 +1,6 @@
 """Detailed Drik Panchang verification.
 
-Anchor reference: Kelowna, BC on 2026-04-20 — values were captured from
+Anchor reference: Kelowna, BC on 2026-04-20 - values were captured from
 drikpanchang.com and serve as the regression baseline. Do not change the
 expected values without explicit approval (see CLAUDE.md note).
 """
@@ -22,7 +22,6 @@ def kelowna(api, base_url):
             "timezone": "America/Vancouver",
             "date": "2026-04-20",
         },
-        timeout=30,
     )
     assert r.status_code == 200, r.text
     return r.json()
@@ -37,7 +36,6 @@ def delhi_default(api, base_url):
             "longitude": 77.2090,
             "timezone": "Asia/Kolkata",
         },
-        timeout=30,
     )
     assert r.status_code == 200, r.text
     return r.json()

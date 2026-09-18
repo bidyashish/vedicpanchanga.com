@@ -1,4 +1,4 @@
-"""Index page — placed last so each section's actual page number is known."""
+"""Index page - placed last so each section's actual page number is known."""
 
 from __future__ import annotations
 

@@ -209,9 +209,9 @@ touched substantially:
 
 | File | Lines | Suggested split |
 |---|---|---|
-| `frontend/src/i18n/astro.ts` | 2161 | Each locale dict (HI/TA/...) into its own file under `i18n/astro/`, keep `index.ts` for the lookup helpers. |
-| `backend/advanced_panchang.py` | 1255 | Group by panchang section: tithi/nak/yoga/karana detectors separated from sunrise/sunset machinery. |
-| `frontend/src/pages/PanchangPage.tsx` | 1161 | Extract each `<Section>` block into its own component under `components/panchang/`. |
+| `frontend/src/i18n/astro.ts` | 2195 | Each locale dict (HI/TA/...) into its own file under `i18n/astro/`, keep `index.ts` for the lookup helpers. |
+| `backend/advanced_panchang.py` | 1313 | Group by panchang section: tithi/nak/yoga/karana detectors separated from sunrise/sunset machinery. |
+| `frontend/src/pages/PanchangPage.tsx` | 1061 | Auspicious / inauspicious timings are already components; keep extracting the remaining `<Section>` blocks (limbs, calendars, lagna) under `components/panchang/`. |
 
 A split is only worth it if it reduces "where do I edit?" friction. Don't
 split for line-count alone.

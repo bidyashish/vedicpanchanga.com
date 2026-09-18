@@ -1,5 +1,5 @@
 export function MandalaMark({ size = 28 }: { size?: number }) {
-  // Single accent color stays warm — gives the brand identity a pop without
+  // Single accent color stays warm - gives the brand identity a pop without
   // introducing a second hue across the rest of the UI.
   const accent = "rgb(var(--accent-sun-rgb))";
   return (

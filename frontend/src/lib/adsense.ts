@@ -3,8 +3,7 @@
 // This file only injects the loader script. Which formats appear, where they
 // go and how often they fire is NOT controlled from code: Google reads the
 // per-site Auto ads settings from the AdSense dashboard (Ads > By site >
-// vedicpanchanga.com > Edit). The expected, low-intrusion configuration is
-// recorded in AGENTS.md section 7 ("AdSense Auto ads settings"). Do not add
+// vedicpanchanga.com > Edit). Keep that configuration low-intrusion. Do not add
 // manual <ins class="adsbygoogle"> slots, page-level `adsbygoogle.push()`
 // configs, or CSS that hides served ads - hidden ads count as invalid
 // impressions and put the account at risk.

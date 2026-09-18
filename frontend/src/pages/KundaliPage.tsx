@@ -342,7 +342,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   return (
     <section className="pt-3 sm:pt-4 pb-8" data-testid="kundali-page">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
-        {/* Left sidebar — form */}
+        {/* Left sidebar - form */}
         <aside className="lg:col-span-4 xl:col-span-3">
           <div className="card p-3 sm:p-4 lg:p-5 lg:sticky lg:top-16">
             <h2 className="heading-section">{t("birth_details")}</h2>
@@ -385,7 +385,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
           </div>
         </aside>
 
-        {/* Middle — chart + data */}
+        {/* Middle - chart + data */}
         <div className="lg:col-span-8 xl:col-span-9 space-y-4">
           {loading && !data && (
             <div className="flex flex-col items-center justify-center py-20 gap-3">

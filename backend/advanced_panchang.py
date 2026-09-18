@@ -87,7 +87,7 @@ VARJYAM_GHATIKAS = [
 ]
 VARJYAM_DURATION_GHATIKAS = 1.6  # 1 ghatika 36 vighati (fixed across all nakshatras)
 
-# Amrit Kalam starting ghatika per nakshatra — Varjyam of the 12th subsequent nakshatra's point
+# Amrit Kalam starting ghatika per nakshatra - Varjyam of the 12th subsequent nakshatra's point
 # Classical correspondence: Amrit Kalam of nakshatra N = Varjyam of nakshatra (N + ?) adjusted.
 # Simpler accepted rule: Amrit Kalam is 60 * (12/27) = ~26.67 ghatikas after Varjyam within Moon motion.
 # We compute Amrit Kalam as: offset = (VARJYAM + 26.67) mod 60 (approx).
@@ -957,7 +957,7 @@ def _compute_detailed_panchang_locked(
     else:
         vara_iso = greg_date.isoweekday()
 
-    # Five limbs in the window (sunrise to next sunrise) — capture transitions
+    # Five limbs in the window (sunrise to next sunrise) - capture transitions
     tithis = _tithis_in_window(ref_jd, end_of_day_jd)
     nakshatras = _nakshatras_in_window(ref_jd, end_of_day_jd)
     yogas = _yogas_in_window(ref_jd, end_of_day_jd)
@@ -1106,7 +1106,7 @@ def _compute_detailed_panchang_locked(
     rahu_vasa = RAHU_VASA[vara_iso]
     chandra_vasa = CHANDRA_VASA[moon_sign_id]
 
-    # Lookup-style yoga extras — only keeping the two whose canonical formula
+    # Lookup-style yoga extras - only keeping the two whose canonical formula
     # we've verified against drikpanchang. Mantri Mandala / Homahuti /
     # Agnivāsa / Śivavāsa / Kumbha Cakra each need authoritative tables we
     # don't have and the speculative formulas disagreed with the reference.
@@ -1127,7 +1127,7 @@ def _compute_detailed_panchang_locked(
         ),
     }
 
-    # Gowri Panchangam (Tamil/Telugu) — 8 day-segments + 8 night-segments.
+    # Gowri Panchangam (Tamil/Telugu) - 8 day-segments + 8 night-segments.
     gowri = compute_gowri_panchang(
         sunrise_iso=_iso(sunrise_jd, tz),
         sunset_iso=_iso(sunset_jd, tz),
@@ -1138,7 +1138,7 @@ def _compute_detailed_panchang_locked(
 
     tyajyam["gowri_tyajyam"] = compute_gowri_tyajyam(gowri)
 
-    # Hora — 12 day-horas + 12 night-horas, planetary cycle.
+    # Hora - 12 day-horas + 12 night-horas, planetary cycle.
     hora = compute_hora(
         sunrise_iso=_iso(sunrise_jd, tz),
         sunset_iso=_iso(sunset_jd, tz),
@@ -1147,7 +1147,7 @@ def _compute_detailed_panchang_locked(
         timezone_name=timezone_name,
     )
 
-    # Nalla Neram — auspicious hora windows minus Rahu/Yama/Gulika.
+    # Nalla Neram - auspicious hora windows minus Rahu/Yama/Gulika.
     inauspicious_for_nalla = {
         "rahu_kalam": rahu,
         "yamaganda": yama,
@@ -1155,7 +1155,7 @@ def _compute_detailed_panchang_locked(
     }
     nalla = compute_nalla_neram(hora["day"], inauspicious_for_nalla) if hora else []
 
-    # Tamil solar calendar (Nirayana) — month/date/year-cycle from sidereal Sun,
+    # Tamil solar calendar (Nirayana) - month/date/year-cycle from sidereal Sun,
     # plus Nokku/Kari/Thaniya day classifications (sunrise nakshatra drives Nokku).
     tamil_cal = compute_tamil_calendar(
         target_date,

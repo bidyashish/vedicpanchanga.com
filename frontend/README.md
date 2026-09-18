@@ -1,20 +1,20 @@
 # frontend/
 
 Vite + React 19 + TypeScript single-page app served on port **3121** in
-dev. In production it's a static `dist/` build that Nginx serves with
+dev. In production it is a static `dist/` build that Nginx serves with a
 year-long cache on fingerprinted `/assets/`.
 
-- **Stack**: Vite 5 · React 19 · TypeScript · Tailwind CSS v4
-  (CSS-based theme tokens - no `tailwind.config.js`)
-- **Routing**: clean paths (`/`, `/panchang`, `/muhurta`, `/privacy`,
-  `/terms`) - no hash. Path → view mapping lives in `App.tsx`.
-- **No global state library** - each page owns its own form state and
-  fetch logic. `App.tsx` keeps a shared `LocationChoice` so switching
-  tabs preserves the selected city.
+- **Stack**: Vite 8, React 19, TypeScript 6, Tailwind CSS v4 (CSS-based
+  theme tokens, no `tailwind.config.js`)
+- **Routing**: clean paths, no hash. Path to view mapping lives in `App.tsx`.
+- **No global state library**: each page owns its own form state and fetch
+  logic. `App.tsx` keeps a shared `LocationChoice` so switching tabs
+  preserves the selected city.
 
 ## Run locally
 
-Requires Node.js 20+.
+Requires Node.js 20+. From the repo root `make install` runs `npm ci` and
+`make frontend` starts the dev server; the manual equivalent:
 
 ```bash
 npm install
@@ -22,142 +22,142 @@ cp .env.example .env       # sets VITE_BACKEND_URL=http://localhost:8001
 npm run dev                # http://localhost:3121
 ```
 
-| Command                | What                                                                 |
-| ---------------------- | -------------------------------------------------------------------- |
-| `npm run dev`          | Vite dev server with HMR (port 3121)                                 |
-| `npm run build`        | `tsc --noEmit` then `vite build` → `dist/`                           |
-| `npm run preview`      | Serve the built bundle (sanity-check prod output)                    |
-| `npm run lint`         | [oxlint](https://github.com/oxc-project/oxc) - Rust-based linter     |
-| `npm run format`       | [oxfmt](https://github.com/oxc-project/oxc) - write formatted output |
-| `npm run format:check` | `oxfmt --check` - exits non-zero on a diff (used by CI)              |
-| `npx tsc --noEmit`     | TypeScript type-check (also runs as part of `npm run build`)         |
+| Command                | What                                                                   |
+| ---------------------- | ---------------------------------------------------------------------- |
+| `npm run dev`          | Vite dev server with HMR (port 3121)                                   |
+| `npm run build`        | `tsc --noEmit` then `vite build` into `dist/`                          |
+| `npm run preview`      | Serve the built bundle                                                 |
+| `npm run lint`         | [oxlint](https://github.com/oxc-project/oxc)                           |
+| `npm run format`       | oxfmt, write                                                           |
+| `npm run format:check` | oxfmt `--check`, exits non-zero on a diff (CI)                         |
+| `npm run i18n:check`   | Locale key parity + native-script guard (`scripts/check-i18n.mjs`, CI) |
+| `npx tsc --noEmit`     | Type-check only (also part of `npm run build`)                         |
 
-`npm run lint` and `npm run format:check` are enforced by
-`.github/workflows/ci.yml` on every push to `main` and every PR. To run
-them automatically before each commit, install
-[pre-commit](https://pre-commit.com) at the repo root and run
-`pre-commit install` once - see the root `.pre-commit-config.yaml`.
-
-There's no test runner wired up yet (Jest was part of the removed CRA
-setup). When you need one, add Vitest.
+`make check-frontend` at the repo root runs tsc, lint, format:check and
+i18n:check exactly as CI does. There is no test runner wired up yet; add
+Vitest when you need one.
 
 ## Environment
 
 Vite bakes `VITE_*` variables in **at build time**, so editing `.env`
-needs a rebuild - restarting the dev server isn't enough.
+needs a rebuild. Restarting the dev server is not enough.
 
-| Var                | Required | Purpose                                                             |
-| ------------------ | -------- | ------------------------------------------------------------------- |
-| `VITE_BACKEND_URL` | dev      | Backend origin. Empty in prod → same-origin `/api` via Nginx proxy. |
+| Var                                        | Required | Purpose                                                                    |
+| ------------------------------------------ | -------- | -------------------------------------------------------------------------- |
+| `VITE_BACKEND_URL`                         | dev      | Backend origin. Empty in prod: same-origin `/api` via the Nginx proxy.     |
+| `VITE_SUPPORT_EMAIL`, `VITE_CONTACT_EMAIL` | no       | Footer / legal-page contacts. Default to the vedicpanchanga.com addresses. |
 
 ## Routing
 
-Real path-based SPA - refreshing on `/panchang` works (Vite dev server
-falls back to `index.html` automatically; nginx prod has
-`try_files $uri $uri/ /index.html;` for the same reason).
+| Path                                                              | View                                           |
+| ----------------------------------------------------------------- | ---------------------------------------------- |
+| `/`                                                               | Daily panchang + live lagna chart              |
+| `/kundali`                                                        | Birth chart, vargas, dashas, ashtakavarga, PDF |
+| `/muhurta`                                                        | Muhurta finder                                 |
+| `/transits`                                                       | Planetary transit timeline                     |
+| `/frequency`                                                      | Healing frequency / tone generator             |
+| `/learn/{kundali,planets,panchang,dasha,nakshatras,rashi,vargas}` | Long-form articles (`pages/articles/`)         |
+| `/privacy`, `/terms`                                              | Legal pages (no ads)                           |
 
-Old hash URLs (`/#panchang`, `/#muhurta`) are migrated to clean paths on
-first load by `migrateHashOnce()` in `App.tsx`, so any existing inbound
-links survive.
-
-Nav tabs render as real `<a href="/path">` anchors with `aria-current`
-
-- middle-click and right-click "Open in new tab" work, and crawlers see
-  real links.
+Refreshing on any path works: the Vite dev server falls back to
+`index.html` and nginx has `try_files $uri $uri/ /index.html;`. Old hash
+URLs (`/#panchang`) are migrated to clean paths on first load by
+`migrateHashOnce()` in `App.tsx`. Nav tabs are real `<a href>` anchors with
+`aria-current`, so middle-click and crawlers work. Add new routes to
+`public/sitemap.xml` and `lib/seo.ts` as well.
 
 ## Layout
 
 ```
 src/
-├── main.tsx                bootstrap - StrictMode + I18nProvider
-├── App.tsx                 shell: TopBar · path-routed view switcher · Footer.
-│                           Per-route SEO (title/description/canonical/og:tags)
-│                           applied via lib/seo.applySeo on view change.
+├── main.tsx                bootstrap: StrictMode + I18nProvider
+├── App.tsx                 shell: TopBar, path-routed view switcher, Footer;
+│                           per-route SEO via lib/seo.applySeo
 ├── pages/
-│   ├── KundaliPage.tsx     birth chart + Vimshottari + Ashtakavarga + Print PDF
-│   ├── PanchangPage.tsx    daily Drik panchang + live lagna kundali (anchored
-│   │                       to current wall-clock time in chart's timezone)
+│   ├── PanchangPage.tsx    daily Drik panchang + lagna kundali anchored to "now"
+│   ├── KundaliPage.tsx     birth chart, vargas, dashas, ashtakavarga, Print PDF
 │   ├── MuhurtaPage.tsx     date-range scanner with native filters
-│   ├── TransitsPage.tsx    year-long planetary transit timeline
-│   ├── FrequencyPage.tsx   healing frequency / tone generator
-│   ├── PrivacyPage.tsx
-│   └── TermsPage.tsx
+│   ├── TransitsPage.tsx    transit timeline
+│   ├── FrequencyPage.tsx   tone generator (Solfeggio, chakra, Navagraha presets)
+│   ├── PrivacyPage.tsx / TermsPage.tsx
+│   └── articles/           ArticleLayout + the seven /learn/* pages
 ├── components/
 │   ├── shell/              TopBar, Footer, NotificationBanner
-│   ├── common/             CitySearch, LanguageSwitcher, MandalaLoader,
+│   ├── common/             CitySearch, InfoTooltip, LanguageSwitcher, MandalaLoader,
 │   │                       MandalaMark, ShareLinkButton, ThemeToggle
-│   ├── kundali/            BirthForm, BirthHeader, ChartTabs, VedicChart
-│   │                       (North Indian), SouthIndianChart, WesternChart,
-│   │                       PlanetsTable (Dignity + Status columns),
-│   │                       PlanetDetailModal, DashaTable, AshtakavargaTable,
-│   │                       DrishtiPanel, JaiminiSection, OmGlyph
-│   └── panchang/           Section, TimeBand, GowriPanchangam,
-│                           HoraPanchangam, NallaNeram, SegmentTable
+│   ├── kundali/            BirthForm, BirthHeader, ChartTabs, VedicChart (North Indian),
+│   │                       SouthIndianChart, WesternChart, PlanetsTable, PlanetDetailModal,
+│   │                       PlanetGuide, DashaTable, AshtakavargaTable, DrishtiPanel,
+│   │                       JaiminiSection, OmGlyph
+│   ├── panchang/           Section, TimeBand, TimeCard, LimbCol, KeyValueGrid, TransitList,
+│   │                       AuspiciousTimings, InauspiciousTimings, AuspiciousHeatmap,
+│   │                       TyajyamSection, GowriPanchangam, HoraPanchangam, NallaNeram,
+│   │                       SegmentTable
+│   ├── transits/           TransitTimeline
+│   └── ui/                 calendar, date-picker, time-picker, modal, popover,
+│                           segmented-control, switch
+├── content/planetGuide.ts  planet guide copy shown in PlanetDetailModal
 ├── lib/
-│   ├── api.ts              typed fetch for every backend endpoint +
-│   │                       Nominatim geocode/reverse-geocode
+│   ├── api.ts              typed fetch for every backend endpoint + Nominatim geocoding
 │   ├── adsense.ts          Auto Ads loader (lazy, route-aware)
-│   ├── format.ts           date/time/dms formatters
+│   ├── auspiciousHeatmap.ts day-strip scoring behind AuspiciousHeatmap
+│   ├── format.ts           date / time / dms formatters, nowTimeInTz
 │   ├── gtag.ts             Google Analytics helper
 │   ├── planets.ts          planet -> colour / long-name tables
-│   ├── seo.ts              applySeo({ title, description, canonical }) - sets
-│   │                       <title>, meta tags, og/twitter tags, canonical link
-│   ├── theme.ts            dark/light theme toggle
-│   ├── urlState.ts         URL state sync helpers
-│   ├── utils.ts            shared utility functions
-│   ├── vargas.ts           varga chart helpers
-│   └── contact.ts          contact email constant
+│   ├── richText.tsx        inline markup renderer for i18n strings
+│   ├── seo.ts              applySeo({ title, description, canonical })
+│   ├── theme.ts            dark / light toggle
+│   ├── urlState.ts         query-string state sync (shareable links)
+│   ├── vargas.ts           per-locale varga names and subtitles
+│   ├── contact.ts, utils.ts
 ├── types/api.ts            TypeScript shapes mirroring every backend response
-├── i18n/                   index.tsx (LANGUAGES list, I18nProvider, RTL
-│                           dispatch), astro.ts (planet/sign/nakshatra +
-│                           native-digit tables), locales/*.ts (15 langs:
-│                           en, hi, ta, bn, ne, zh, ja, es, de, pt, fr,
-│                           ru, ar, fa, he). Sets <html lang> + <html dir>
-│                           so script-aware CSS and date formatters pick up
-│                           the locale on the very next render.
-├── index.css               Tailwind v4 + CSS variables (parchment palette,
-│                           saffron accent, locale-aware Devanagari fonts)
-└── App.css                 anything Tailwind can't express
+├── i18n/                   index.tsx (LANGUAGES, I18nProvider, RTL dispatch),
+│                           astro.ts (planet / sign / nakshatra names + native digits),
+│                           locales/*.ts (15 languages)
+├── index.css               Tailwind v4 + CSS variables (parchment palette, saffron
+│                           accent, Devanagari font rules)
+└── App.css                 anything Tailwind cannot express
 ```
 
-Path alias `@/*` → `src/*` is set in both `vite.config.ts` and
+Path alias `@/*` maps to `src/*` in both `vite.config.ts` and
 `tsconfig.json`. Keep them in sync.
 
 ## SEO
 
-- `index.html` ships with full meta (description, keywords, og/twitter,
-  Apple touch icon, theme-color, format-detection) and three JSON-LD
-  blocks (`WebSite`, `WebApplication`, `Organization`) - these stay
-  static for every route.
-- Per-route `<title>`, description and canonical are rewritten by
-  `lib/seo.applySeo()` whenever the view changes.
-- Sitemap at `/sitemap.xml` lists all 5 clean URLs.
-- `robots.txt` allows everything.
+- `index.html` ships full meta (description, og / twitter, Apple touch icon,
+  theme-color) and JSON-LD blocks (`WebSite`, `WebApplication`,
+  `Organization`) that stay static for every route.
+- Per-route `<title>`, description, canonical and og tags are rewritten by
+  `lib/seo.applySeo()` whenever the view changes. There is no SSR.
+- `public/sitemap.xml` lists all 14 clean URLs; `robots.txt` allows
+  everything; `llms.txt`, `index.md` and `.well-known/api-catalog` describe
+  the site and API for AI crawlers.
 
 ## AdSense
 
-Auto Ads only - the loader lives in `src/lib/adsense.ts` and is
-lazy-injected post-mount on monetized routes (not `/privacy` or `/terms`).
-`index.html` only has the `<meta name="google-adsense-account">` tag.
-There is no in-app `<AdSlot>` component and no per-slot env vars.
+Auto Ads only. The loader in `src/lib/adsense.ts` is lazy-injected after
+mount on monetised routes (not `/privacy` or `/terms`). `index.html` only
+carries the `<meta name="google-adsense-account">` tag. Do not add manual
+`<ins>` slots or per-slot env vars.
 
-## React-18 StrictMode dev quirk
+## React StrictMode dev quirk
 
-In dev, `useEffect` runs twice on mount to surface side-effect bugs.
-The pages that hit the API on first render (`KundaliPage`, `PanchangPage`,
-`MuhurtaPage`, `BirthForm`) each guard their initial fetch with a
-`useRef` flag so the network panel matches production.
+In dev, React 19 runs `useEffect` twice on mount to surface side-effect
+bugs. Pages that hit the API on first render (`KundaliPage`, `PanchangPage`,
+`MuhurtaPage`, `BirthForm`) guard the initial fetch with a `useRef` flag so
+the network panel matches production.
 
 ## i18n
 
-`src/i18n/index.tsx` registers all 15 supported locales in `LANGUAGES`
-and exposes `useI18n()` returning `{ lang, t, setLang }`. Per-locale UI
-strings live in `src/i18n/locales/{en,hi,ta,bn,ne,zh,ja,es,de,pt,fr,ru,ar,fa,he}.ts`
-(direct ports of `en.ts`'s key set). Astronomical names (planet, sign,
-nakshatra) and native-digit tables live in `src/i18n/astro.ts` so the UI
-strings dictionaries don't carry the 49 astro names per language.
+`src/i18n/index.tsx` registers the 15 locales in `LANGUAGES` and exposes
+`useI18n()` returning `{ lang, t, setLang }`. UI strings live in
+`src/i18n/locales/{en,hi,ta,bn,ne,zh,ja,es,de,pt,fr,ru,ar,fa,he}.ts` with
+exactly the key set of `en.ts`. Astronomical names and native-digit tables
+live in `src/i18n/astro.ts`; varga names in `src/lib/vargas.ts`.
 
-`setLang()` writes `<html lang>` and `<html dir>` synchronously so
-script-aware CSS (`html[lang="hi"], html[lang="ne"]` Devanagari rule),
-RTL flow for `ar`/`fa`/`he`, and locale-aware date formatters see the
-new locale on the very next render.
+Every non-English locale must read naturally to a native speaker in its
+own script (see the style rules in `CLAUDE.md`). `npm run i18n:check`
+enforces key parity and rejects bare Latin words in the ten non-Latin
+locales. `setLang()` writes `<html lang>` and `<html dir>` synchronously so
+Devanagari CSS, RTL flow for `ar` / `fa` / `he` and locale-aware date
+formatters pick up the new locale on the next render.

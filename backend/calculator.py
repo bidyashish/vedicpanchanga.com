@@ -405,7 +405,7 @@ def compute_chart(
         house_map = {i: [] for i in range(1, 13)}
         # Per-planet position within the D-n sign, keyed by abbreviation.
         # Frontend reads this to render sub-degrees and to sort planets
-        # within each house — sorting by D1 degree in a varga is meaningless.
+        # within each house - sorting by D1 degree in a varga is meaningless.
         planet_degrees: Dict[str, float] = {}
         # Populate with planets
         for p in planets.values():

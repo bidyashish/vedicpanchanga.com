@@ -6,14 +6,14 @@ out of the box. We keep a thin wrapper here so the rest of the package
 never deals with fpdf2 details beyond the high-level font names.
 
 Eight font families are registered to cover the fifteen languages we ship:
-  NotoSans    — Latin + IAST + Cyrillic (en, es, de, pt, fr, ru)
-  NotoDev     — Devanagari (hi, ne)
-  NotoTamil   — Tamil block (ta)
-  NotoBengali — Bengali block (bn)
-  NotoArabic  — Arabic block (ar, fa)
-  NotoHebrew  — Hebrew block (he)
-  NotoSC      — Han for Simplified Chinese (zh)
-  NotoJP      — Hiragana / Katakana + Han for Japanese (ja)
+  NotoSans    - Latin + IAST + Cyrillic (en, es, de, pt, fr, ru)
+  NotoDev     - Devanagari (hi, ne)
+  NotoTamil   - Tamil block (ta)
+  NotoBengali - Bengali block (bn)
+  NotoArabic  - Arabic block (ar, fa)
+  NotoHebrew  - Hebrew block (he)
+  NotoSC      - Han for Simplified Chinese (zh)
+  NotoJP      - Hiragana / Katakana + Han for Japanese (ja)
 
 draw_text() auto-detects the dominant script per text run and overrides the
 caller's `family` hint when the string actually contains glyphs from a
@@ -131,7 +131,7 @@ def _script_of(text: str) -> str:
     to use the Japanese face instead (since the Han block is shared).
 
     Cyrillic falls through to 'latin' because NotoSans-Regular ships with
-    full Cyrillic coverage — no separate face is needed for Russian.
+    full Cyrillic coverage - no separate face is needed for Russian.
     """
     has_han = False
     for ch in text:
@@ -162,7 +162,7 @@ def _script_of(text: str) -> str:
 
 def _family_for(text: str, lang: str = "en") -> str:
     """Pick the font family for `text`. `lang` only matters for Han
-    disambiguation — pure-Latin runs always render in NotoSans regardless
+    disambiguation - pure-Latin runs always render in NotoSans regardless
     of page language, which keeps numerals consistent across locales."""
     script = _script_of(text)
     if script == "deva":
@@ -210,7 +210,7 @@ def text_width(pdf: FPDF, text: str, family: str, style: str, size: float) -> fl
 def _split_runs(text: str, lang: str):
     """Yield (family, segment) pairs by walking `text` and breaking at every
     script boundary. Required because no single font in our stack covers
-    both IAST diacritics (ā, ś, ṁ — Latin Extended-A/Additional) AND CJK
+    both IAST diacritics (ā, ś, ṁ - Latin Extended-A/Additional) AND CJK
     ideographs simultaneously, so a label like "Rāśi 主星" must be split
     into a Latin run and a Han run rendered with their respective fonts."""
     cur_family: str | None = None
@@ -242,12 +242,12 @@ def draw_text(
     """Draw `text` with baseline at (x, y).
 
     Splits `text` into per-script runs and renders each with the appropriate
-    Noto family — so a mixed string like "Rāśi 主星" picks NotoSans for the
+    Noto family - so a mixed string like "Rāśi 主星" picks NotoSans for the
     Latin/IAST head and NotoSC for the Han tail.
 
     Each run is rendered through `FPDF.cell()`, NOT `FPDF.text()`: text()
     bypasses the HarfBuzz shaping engine entirely (its own docstring says
-    so), which broke every complex-script run — Tamil pre-base matras came
+    so), which broke every complex-script run - Tamil pre-base matras came
     out after their consonant (நேரம் read as நரேம்), Devanagari conjuncts
     never formed, Arabic letters never joined. cell() goes through the
     shaping path; we zero `c_margin` so the run starts exactly at the

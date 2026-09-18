@@ -14,9 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Primary reference
 
-`AGENTS.md` at the repo root is the canonical agent brief (project summary, coding standards, security rules, deployment, backlog). Read it first. The notes below focus on commands, current architecture reality, and gotchas - they do **not** repeat what's in `AGENTS.md`.
-
-`CONTRIBUTING.md` (root) is the human-oriented onboarding doc - file-location conventions, where new code goes, hot-spot list. Cross-reference it when adding any non-trivial module so the layout stays consistent.
+`CONTRIBUTING.md` (root) is the onboarding doc - file-location conventions, where new code goes, hot-spot list. Read it first and cross-reference it when adding any non-trivial module so the layout stays consistent. `README.md` and the per-folder READMEs (`backend/`, `frontend/`, `infra/`, `backend/tests/`) cover setup, deployment, security posture and the API surface. `CHANGELOG.md` records what shipped in each release. The notes below focus on commands, current architecture reality, and gotchas - they do **not** repeat what's in those files.
 
 ## Tooling (use this, not the individual commands below)
 
@@ -52,9 +50,9 @@ ruff format .                                     # format - write
 ruff format --check .                             # format check (CI)
 ```
 - Reads `CORS_ORIGINS` from `backend/.env` (untracked; `make install` seeds it from `backend/.env.example`, and the code falls back to vedicpanchanga.com + localhost:3121 when absent). No MongoDB required. `backend/.env.local` (gitignored, loaded on top with override) is where server-side secrets go - `setup-vps.sh` rewrites `.env` on every deploy but never touches `.env.local`.
-- Optional third-party API-key auth lives in `auth.py`: `API_KEYS` (comma-separated, unset = open API) + `AUTH_EXEMPT_ORIGINS` (own-site origins that stay keyless, defaults to vedicpanchanga.com + localhost dev), both read per-request. Clients send `Authorization: Bearer <key>` or `X-API-Key: <key>`; browser apps also need their origin in `CORS_ORIGINS`. `/api/` and `/api/health` stay open for monitoring. See `AGENTS.md` §4.
+- Optional third-party API-key auth lives in `auth.py`: `API_KEYS` (comma-separated, unset = open API) + `AUTH_EXEMPT_ORIGINS` (own-site origins that stay keyless, defaults to vedicpanchanga.com + localhost dev), both read per-request. Clients send `Authorization: Bearer <key>` or `X-API-Key: <key>`; browser apps also need their origin in `CORS_ORIGINS`. `/api/` and `/api/health` stay open for monitoring. See the `auth.py` module docstring.
 - Swiss Ephemeris data files live in `backend/ephe/` (`*.se1`). Calculations silently fail without them; never delete or move this directory.
-- Must bind to `127.0.0.1` only in production. Never expose 8001 publicly (see `AGENTS.md` §8).
+- Must bind to `127.0.0.1` only in production. Never expose 8001 publicly (see `infra/README.md`).
 - The CPU-bound endpoints (`/calculate`, `/get-panchang`, `/find-muhurta`) are plain `def` handlers so FastAPI runs them in its threadpool - keeps the event loop responsive under concurrent load.
 
 ### Frontend (Vite + React 19 + TypeScript, port 3121)
@@ -76,11 +74,11 @@ npx tsc --noEmit     # type-check only (was previously aliased as `npm run lint`
 ### Tests
 ```bash
 cd backend && source venv/bin/activate
-pytest tests/ -v                                  # all backend tests
+pytest tests/ -v                                  # all backend tests (API tests run in-process)
 pytest tests/test_muhurta.py -v                   # single suite
-pytest tests/test_iteration4_vargas.py::test_d30  # single test
+pytest tests/test_vargas.py::TestD30Trimshamsha  # single class
 ```
-- The pytest suites live in `backend/tests/`, not the top-level `tests/` directory.
+- The pytest suites live in `backend/tests/`. HTTP tests use FastAPI's in-process `TestClient` by default; set `BACKEND_URL` to run them against a live server.
 - Kelowna panchang reference-data tests are regression anchors - do not change expected values without explicit approval.
 - There is no frontend test runner configured right now (Jest was part of the removed CRA setup). Add Vitest when you need one.
 

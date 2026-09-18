@@ -98,7 +98,7 @@ def test_nakshatra_tyajyam_skips_if_offset_past_end():
     span_jd = 1.0 / 24.0
     naks = [{"nak_idx": 13, "start_jd": base_jd, "end_jd": base_jd + span_jd}]
     results = compute_nakshatra_tyajyam(naks, _iso, TZ)
-    # Chitra 14/15 of 60 min = 56 min offset, so start is at 56 min — within window
+    # Chitra 14/15 of 60 min = 56 min offset, so start is at 56 min - within window
     assert len(results) == 1
 
 

@@ -1,4 +1,4 @@
-"""Planet friendship table — natural, temporal, and the 5-fold composite.
+"""Planet friendship table - natural, temporal, and the 5-fold composite.
 
 Natural friendship is the classical Parashara table. Temporal friendship is
 derived from the chart: planets in the 2nd, 3rd, 4th, 10th, 11th or 12th

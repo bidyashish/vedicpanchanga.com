@@ -1,6 +1,6 @@
 """Panchang yoga detectors verified against drikpanchang. Other classical
 sections (Mantri Mandala, Agnivāsa, Śivavāsa, Kumbha Cakra, Homahuti) are
-intentionally omitted — they need authoritative source tables we don't
+intentionally omitted - they need authoritative source tables we don't
 have, and printing a wrong value is worse than printing none."""
 
 from __future__ import annotations

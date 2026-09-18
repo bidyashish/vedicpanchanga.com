@@ -1,10 +1,5 @@
 """Tests for the Muhurta finder module."""
 
-import os
-import sys
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-
 import pytest
 
 from muhurta import find_muhurtas, list_purposes
@@ -24,7 +19,7 @@ def test_list_purposes_shape():
 
 
 def test_find_muhurtas_engagement_range():
-    """Scan 7 days — should return scored results and a resolved timezone."""
+    """Scan 7 days - should return scored results and a resolved timezone."""
     r = find_muhurtas(
         "engagement",
         "2026-04-20",
