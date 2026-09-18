@@ -34,10 +34,15 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 import swisseph as swe
 
-from advanced_panchang import compute_detailed_panchang
+from advanced_panchang import chandra_house, compute_detailed_panchang, tara_position
 from ayanamsa import sidereal_context
 from constants import NAKSHATRAS
-from panchang_constants import GOOD_CHANDRA_OFFSETS, RASHI_NAMES
+from panchang_constants import (
+    GOOD_CHANDRA_HOUSES,
+    GOOD_TARA_POSITIONS,
+    RASHI_NAMES,
+    TARA_NAMES,
+)
 from tyajyam import (
     _GURU_ASTHAMANAM_ORB,
     _SUKRA_ASTHAMANAM_ORB_RETRO,
@@ -555,18 +560,14 @@ PURPOSES: Dict[str, Dict[str, Any]] = {
 
 
 def _taraba_score(current_nak_idx: int, birth_nak_idx: Optional[int]) -> int:
-    """Return 0-20 score. Indices are 0-26. Counting from the birth star,
-    taras cycle in 9: Janma(1), Sampat(2), Vipat(3), Kshema(4), Pratyari(5),
-    Sadhaka(6), Vadha(7), Mitra(8), Param Mitra(9)."""
+    """0-20 score from the transit nakshatra's tara counted from the janma
+    nakshatra (both 0-26). Sampat, Kshema, Sadhaka, Mitra and Ati Mitra score
+    20; Janma, Vipat, Pratyari and Vadha score 0 (DrikPanchang convention)."""
     if birth_nak_idx is None:
         return 10  # neutral
-    offset = (current_nak_idx - birth_nak_idx) % 27
-    star_sub = (offset % 9) + 1  # 1-9
-    if star_sub in {2, 4, 6, 8, 9}:  # Sampat, Kshema, Sadhaka, Mitra, Param Mitra
+    if tara_position(birth_nak_idx, current_nak_idx) in GOOD_TARA_POSITIONS:
         return 20
-    if star_sub == 1:  # Janma - mixed; acceptable for most purposes
-        return 12
-    return 0  # Vipat, Pratyari, Vadha
+    return 0
 
 
 def _chandrabalam_score(current_sign_id: int, birth_sign_id: Optional[int]) -> int:
@@ -574,12 +575,26 @@ def _chandrabalam_score(current_sign_id: int, birth_sign_id: Optional[int]) -> i
     is strong; 2,5,9 neutral; 4,8,12 weak."""
     if birth_sign_id is None:
         return 10
-    offset = (current_sign_id - birth_sign_id) % 12
-    if offset in GOOD_CHANDRA_OFFSETS:
+    house = chandra_house(birth_sign_id, current_sign_id)
+    if house in GOOD_CHANDRA_HOUSES:
         return 20
-    if offset in {1, 4, 8}:  # houses 2/5/9 - neutral
+    if house in {2, 5, 9}:
         return 10
     return 0
+
+
+def _moonsign_at(panch: Dict[str, Any], at_iso: Optional[str]) -> Dict[str, Any]:
+    """Moon-sign entry covering the instant `at_iso`; the sunrise entry when
+    `at_iso` is None or past every segment."""
+    seq = panch["rashi_nakshatra"].get("moonsign_sequence") or [
+        panch["rashi_nakshatra"]["moonsign"]
+    ]
+    if at_iso:
+        at = dt_cls.fromisoformat(at_iso)
+        for seg in seq:
+            if seg.get("ends_at") and at < dt_cls.fromisoformat(seg["ends_at"]):
+                return seg
+    return seq[0]
 
 
 def _bhadra_spans(panch: Dict[str, Any]) -> List[Tuple[dt_cls, dt_cls]]:
@@ -621,11 +636,16 @@ def _subtract_spans(
 def _best_window(
     panch: Dict[str, Any],
     purpose_cfg: Dict[str, Any],
+    birth_nak_idx: Optional[int] = None,
+    birth_sign_id: Optional[int] = None,
 ) -> Tuple[Dict, Dict, Optional[str], Optional[str]]:
     """Find the best tithi+nakshatra overlap window during the day.
 
     Scans every (tithi, nakshatra) pair that co-exists in the sunrise-to-next-sunrise
     window and picks the combination with the highest raw tithi+nakshatra score.
+    When the native's birth nakshatra / rashi are known, each window's Tarabalam
+    and Chandrabalam join the comparison, so a day whose later nakshatra or Moon
+    sign suits the native is not judged by its first.
     Returns (tithi_entry, nak_entry, window_start_iso, window_end_iso).
     """
     tithi_seq = panch["panchang"]["tithi_sequence"]
@@ -662,6 +682,12 @@ def _best_window(
             elif tithi["index"] in good_tithis:
                 combo += _W_GOOD_TITHI
 
+            if birth_nak_idx is not None:
+                combo += _taraba_score(nak["index"] - 1, birth_nak_idx) - 10
+            if birth_sign_id is not None:
+                moon = _moonsign_at(panch, w_start.isoformat())
+                combo += _chandrabalam_score(moon["index"], birth_sign_id) - 10
+
             if combo > best_combo:
                 best_combo = combo
                 best = (tithi, nak, w_start.isoformat(), w_end.isoformat())
@@ -682,7 +708,9 @@ def score_day(
     reasons_bad: List[str] = []
     score = 50  # baseline
 
-    best_tithi, best_nak, win_start, win_end = _best_window(panch, purpose_cfg)
+    best_tithi, best_nak, win_start, win_end = _best_window(
+        panch, purpose_cfg, birth_nak_idx, birth_sign_id
+    )
 
     tithi_idx = best_tithi["index"]
     tithi_name = best_tithi["name"]
@@ -691,7 +719,8 @@ def score_day(
     nak_name = best_nak["name"]
     vara_iso = panch["vara"]["index"]
     vara_name = panch["vara"]["sanskrit"]
-    moon_sign_id = panch["rashi_nakshatra"]["moonsign"]["index"]
+    moonsign = _moonsign_at(panch, win_start)  # Moon sign during the window
+    moon_sign_id = moonsign["index"]
 
     # Hard vetoes: combustion / Chaturmas / Kharmas / Adhika blackouts kill
     # the day outright - no tithi/nakshatra quality can rescue it.
@@ -745,19 +774,25 @@ def score_day(
     cbal = _chandrabalam_score(moon_sign_id, birth_sign_id)
     if birth_sign_id is not None:
         score += cbal - 10
+        house = chandra_house(birth_sign_id, moon_sign_id)
+        where = f"Moon in house {house} from native's rashi"
         if cbal == 20:
-            reasons.append("Strong Chandrabalam for native's rashi")
+            reasons.append(f"Strong Chandrabalam: {where}")
         elif cbal == 0:
-            reasons_bad.append("Weak Chandrabalam for native's rashi")
+            tag = " (Chandrashtama)" if house == 8 else ""
+            reasons_bad.append(f"Weak Chandrabalam: {where}{tag}")
 
     # Tarabalam
     tbal = _taraba_score(nak_idx_0, birth_nak_idx)
     if birth_nak_idx is not None:
         score += tbal - 10
+        tara = TARA_NAMES[tara_position(birth_nak_idx, nak_idx_0) - 1]
         if tbal == 20:
-            reasons.append("Auspicious Tarabalam for native's birth-nakshatra")
-        elif tbal == 0:
-            reasons_bad.append("Inauspicious Tarabalam for native's birth-nakshatra")
+            reasons.append(f"Auspicious Tarabalam: {tara} tara for native's nakshatra")
+        else:
+            reasons_bad.append(
+                f"Inauspicious Tarabalam: {tara} tara for native's nakshatra"
+            )
 
     score = 0 if veto else max(0, min(100, score))
 
@@ -771,7 +806,7 @@ def score_day(
         "nakshatra": nak_name,
         "vara": vara_name,
         "paksha": best_tithi.get("paksha", panch["panchang"]["paksha"]),
-        "moon_rashi": panch["rashi_nakshatra"]["moonsign"]["rashi"],
+        "moon_rashi": moonsign["rashi"],
         "abhijit": aus["abhijit"],
         "brahma_muhurta": aus.get("brahma_muhurta"),
         "pratah_sandhya": aus.get("pratah_sandhya"),

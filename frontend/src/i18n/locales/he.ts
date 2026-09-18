@@ -8,6 +8,7 @@ const he: Record<string, string> = {
   nav_panchang: "פנצ'נגה",
   nav_muhurta: "מוהורתה",
   nav_transits: "מעברי כוכבים",
+  nav_festivals: "חגים",
   transits_eyebrow: "מעברי כוכבים",
   transits_title: "תצוגת ציר זמן של כל אירועי הכוכבים",
   transits_subtitle: "כניסות למזלות, שינויי נקשטרה ועמדות נסיגה של כל 12 הכוכבים",
@@ -27,6 +28,17 @@ const he: Record<string, string> = {
   transits_sign_short: "מזל",
   transits_nak_short: "נקשטרה",
   transits_retro_short: "נסיגה",
+  festivals_eyebrow: "חגים הינדיים",
+  festivals_title: "חגים, צומות ותאריכי שראדהה הקרובים",
+  festivals_subtitle: "לוח השנה ההינדי של השנה חודש אחר חודש, כולל טיטהי השראדהה של פיטרו פאקשה.",
+  festivals_next_up: "הבא בתור",
+  festivals_show_past: "הצג תאריכים קודמים",
+  festivals_hide_past: "הסתר תאריכים קודמים",
+  festivals_location_note:
+    "התאריכים לפי לוח השנה ההינדי של ניו דלהי, הודו. באזורי זמן אחרים החג עשוי לחול יום קודם או אחרי; בדקו את זמני אותו יום עבור העיר שלכם.",
+  festivals_source: "מקור",
+  festivals_none: "טרם נרשמו תאריכים לשנה זו.",
+  festivals_dates_short: "תאריכים",
 
   muhurta_title: "מאתר מוהורתה",
   muhurta_subtitle: "מצא חלונות זמן מבורכים לכל מעשה",
@@ -216,6 +228,7 @@ const he: Record<string, string> = {
   lagna_caption_nakshatra: "נקשטרה",
   lagna_caption_pada: "פדה",
   upto: "עד",
+  balam_next_sunrise: "עד הזריחה הבאה",
 
   limb_tithi: "טיתי",
   limb_nakshatra: "נקשטרה",

@@ -7,6 +7,7 @@ import { ShareLinkButton } from "@/components/common/ShareLinkButton";
 import { DatePicker } from "@/components/ui/date-picker";
 import { AuspiciousHeatmap } from "@/components/panchang/AuspiciousHeatmap";
 import { AuspiciousTimings } from "@/components/panchang/AuspiciousTimings";
+import { BalamSegments } from "@/components/panchang/BalamSegments";
 import { GowriPanchangam } from "@/components/panchang/GowriPanchangam";
 import { HoraPanchangam } from "@/components/panchang/HoraPanchangam";
 import { InauspiciousTimings } from "@/components/panchang/InauspiciousTimings";
@@ -869,26 +870,27 @@ export function PanchangPage({ defaultLocation }: { defaultLocation: LocationCho
                 subtitle={t("chandrabalam_sub")}
                 testId="section-chandrabalam"
               >
-                <div className="flex flex-wrap gap-2">
-                  {(data.chandrabalam?.good_rashis ?? []).map((r, i) => (
-                    <span key={i} className="tag font-serif">
-                      {a.sign(r.rashi)}
-                    </span>
-                  ))}
-                </div>
+                <BalamSegments
+                  segments={data.chandrabalam?.segments ?? []}
+                  heading={(s) => a.sign(s.rashi)}
+                  items={(s) => s.good_rashis.map((r) => a.sign(r.rashi))}
+                  tz={tz}
+                  refDate={refDate}
+                  serif
+                />
               </Section>
               <Section
                 title={t("tarabalam_title")}
                 subtitle={t("tarabalam_sub")}
                 testId="section-tarabalam"
               >
-                <div className="flex flex-wrap gap-2">
-                  {(data.tarabalam?.good_nakshatras ?? []).map((n, i) => (
-                    <span key={i} className="tag">
-                      {a.nakshatra(n.nakshatra)}
-                    </span>
-                  ))}
-                </div>
+                <BalamSegments
+                  segments={data.tarabalam?.segments ?? []}
+                  heading={(s) => a.nakshatra(s.nakshatra)}
+                  items={(s) => s.good_nakshatras.map((n) => a.nakshatra(n.nakshatra))}
+                  tz={tz}
+                  refDate={refDate}
+                />
               </Section>
             </div>
 

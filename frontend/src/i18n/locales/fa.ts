@@ -8,6 +8,7 @@ const fa: Record<string, string> = {
   nav_panchang: "پنچانگه",
   nav_muhurta: "مهورته",
   nav_transits: "ترانزیت",
+  nav_festivals: "جشن‌ها",
   transits_eyebrow: "گذر سیارات",
   transits_title: "نمای زمانی همه رویدادهای سیاره‌ای",
   transits_subtitle: "ورود به برج، تغییر منزل قمری و ایستگاه‌های رجعت برای هر ۱۲ سیاره",
@@ -27,6 +28,17 @@ const fa: Record<string, string> = {
   transits_sign_short: "برج",
   transits_nak_short: "منزل قمری",
   transits_retro_short: "رجعت",
+  festivals_eyebrow: "جشن‌های هندو",
+  festivals_title: "جشن‌ها، روزه‌ها و تاریخ‌های شرادهای پیش رو",
+  festivals_subtitle: "تقویم هندوی سال، ماه به ماه، همراه با تیتی‌های شرادهای پیترو پاکشا.",
+  festivals_next_up: "پیش رو",
+  festivals_show_past: "نمایش تاریخ‌های گذشته",
+  festivals_hide_past: "پنهان کردن تاریخ‌های گذشته",
+  festivals_location_note:
+    "تاریخ‌ها بر اساس تقویم هندوی دهلی نو، هند است. در دیگر مناطق زمانی ممکن است یک روز زودتر یا دیرتر باشد؛ زمان‌های همان روز را برای شهر خود ببینید.",
+  festivals_source: "منبع",
+  festivals_none: "هنوز تاریخی برای این سال ثبت نشده است.",
+  festivals_dates_short: "تاریخ",
 
   muhurta_title: "یابنده مهورته",
   muhurta_subtitle: "زمان‌های فرخنده برای هر کاری بیابید",
@@ -216,6 +228,7 @@ const fa: Record<string, string> = {
   lagna_caption_nakshatra: "نکشتره",
   lagna_caption_pada: "پاده",
   upto: "تا",
+  balam_next_sunrise: "تا طلوع آفتاب روز بعد",
 
   limb_tithi: "تیتی",
   limb_nakshatra: "نکشتره",

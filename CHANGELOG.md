@@ -7,6 +7,32 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- **Hindu festivals page** (`/festivals`): month-by-month festival, vrat and
+  Pitru Paksha Shraddha dates for 2026 and 2027, taken from the DrikPanchang
+  Hindu calendar for New Delhi. The data is plain markdown, one file per year
+  in `frontend/src/content/festivals/`; add `2028.md` to extend it. Opens on
+  the upcoming dates with a "Next up" strip; earlier dates sit behind a toggle.
+
+### Fixed
+
+- **Tarabalam** no longer lists the native's own (Janma) nakshatra as good.
+  Only Sampat, Kshema, Sadhaka, Mitra and Ati Mitra count, which yields the
+  same 15 nakshatras DrikPanchang shows (users had reported the Chandrabalam /
+  Tarabalam lists as wrong).
+- **Chandrabalam / Tarabalam per segment**: `/api/get-panchang` now returns
+  `segments` with one list per nakshatra and per Moon-sign span of the day and
+  its end time ("upto 07:53 PM", then "until next sunrise"), matching
+  DrikPanchang instead of a single sunrise-only list. The legacy `good_rashis`
+  / `good_nakshatras` fields still mirror the sunrise segment. Pinned against
+  DrikPanchang New Delhi 17-19 Sep 2026 in `backend/tests/test_balam.py`.
+- **Muhurta scorer**: Chandrabalam is judged on the Moon sign during the chosen
+  window rather than at sunrise, Janma tara scores as inauspicious instead of
+  "mixed", the window picker weighs the native's Tarabalam / Chandrabalam, and
+  the reasons name the tara ("Sampat tara") and the house ("Moon in house 8
+  from native's rashi (Chandrashtama)").
+
 ## [1.2.0] - 2026-09-17
 
 ### Added

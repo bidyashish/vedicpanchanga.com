@@ -21,6 +21,9 @@ const MuhurtaPage = lazy(() =>
 const TransitsPage = lazy(() =>
   import("@/pages/TransitsPage").then((m) => ({ default: m.TransitsPage })),
 );
+const FestivalsPage = lazy(() =>
+  import("@/pages/FestivalsPage").then((m) => ({ default: m.FestivalsPage })),
+);
 const FrequencyPage = lazy(() =>
   import("@/pages/FrequencyPage").then((m) => ({ default: m.FrequencyPage })),
 );
@@ -57,6 +60,7 @@ export type View =
   | "panchang"
   | "muhurta"
   | "transits"
+  | "festivals"
   | "frequency"
   | "privacy"
   | "terms"
@@ -73,6 +77,7 @@ const MONETIZED_VIEWS = new Set<View>([
   "kundali",
   "muhurta",
   "transits",
+  "festivals",
   "frequency",
   "learn-kundali",
   "learn-planets",
@@ -90,6 +95,7 @@ const VIEW_PATH: Record<View, string> = {
   kundali: "/kundali",
   muhurta: "/muhurta",
   transits: "/transits",
+  festivals: "/festivals",
   frequency: "/frequency",
   privacy: "/privacy",
   terms: "/terms",
@@ -137,6 +143,15 @@ const SEO_BY_VIEW: Record<
     canonical: `${SITE}/transits`,
     keywords:
       "planetary transits, gochar, saturn transit, jupiter transit, rahu ketu transit, retrograde planets, nakshatra transit, vedic astrology transits",
+  },
+  festivals: {
+    title:
+      "Hindu Festival Calendar - Upcoming Festivals, Vrats & Pitru Paksha Shraddha Dates · Vedic Panchanga",
+    description:
+      "Month-by-month Hindu festival calendar with vrat, Ekadashi, Sankranti, Navratri, Diwali and Pitru Paksha Shraddha dates for 2026 and 2027, as per the New Delhi Hindu calendar.",
+    canonical: `${SITE}/festivals`,
+    keywords:
+      "hindu festivals 2026, hindu calendar 2026, hindu festivals 2027, pitru paksha 2026, shraddha dates, ekadashi dates, navratri 2026, diwali 2026, sankranti dates, hindu vrat calendar",
   },
   frequency: {
     title:
@@ -231,6 +246,8 @@ function viewFromPath(): View {
       return "muhurta";
     case "/transits":
       return "transits";
+    case "/festivals":
+      return "festivals";
     case "/frequency":
       return "frequency";
     case "/privacy":
@@ -371,6 +388,7 @@ export default function App() {
           {view === "panchang" && <PanchangPage defaultLocation={sharedLocation} />}
           {view === "muhurta" && <MuhurtaPage defaultLocation={sharedLocation} />}
           {view === "transits" && <TransitsPage defaultLocation={sharedLocation} />}
+          {view === "festivals" && <FestivalsPage />}
           {view === "frequency" && <FrequencyPage />}
           {view === "privacy" && <PrivacyPage />}
           {view === "terms" && <TermsPage />}

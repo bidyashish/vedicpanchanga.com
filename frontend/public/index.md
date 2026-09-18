@@ -18,6 +18,10 @@ Find auspicious muhurta windows for any purpose: marriage, housewarming, busines
 
 Year-long planetary transit (Gochar) timeline showing sign changes, nakshatra ingresses, and retrograde/direct stations for all planets including Rahu, Ketu, Uranus, Neptune, and Pluto. Sidereal Lahiri positions.
 
+## [Hindu Festival Calendar](https://vedicpanchanga.com/festivals)
+
+Upcoming Hindu festivals, vrats and observances month by month for 2026 and 2027: Ekadashi, Sankranti, Navratri, Diwali, Holi and the full Pitru Paksha Shraddha tithi list, as per the New Delhi Hindu calendar (DrikPanchang).
+
 ## [Healing Frequency Generator](https://vedicpanchanga.com/frequency)
 
 Free online tone generator with Solfeggio frequencies (174-963 Hz), 7 Chakra frequencies, Vedic OM tone (136.1 Hz), 9 Navagraha planetary frequencies, Schumann resonance (7.83 Hz), and White/Pink/Brown noise. Sine, square, sawtooth, and triangle waveforms. No app download needed.

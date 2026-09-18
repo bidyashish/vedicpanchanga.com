@@ -8,6 +8,7 @@ const zh: Record<string, string> = {
   nav_panchang: "潘查昂迦",
   nav_muhurta: "吉时",
   nav_transits: "凌相",
+  nav_festivals: "节日",
   transits_eyebrow: "行星过境",
   transits_title: "所有行星事件的时间轴",
   transits_subtitle: "全部 12 颗行星的星座入境、星宿变换与逆行驻留",
@@ -27,6 +28,17 @@ const zh: Record<string, string> = {
   transits_sign_short: "星座",
   transits_nak_short: "星宿",
   transits_retro_short: "逆行",
+  festivals_eyebrow: "印度教节日",
+  festivals_title: "即将到来的节日、斋戒与祭祖日期",
+  festivals_subtitle: "全年逐月的印度教历，含祖灵半月祭祖日期。",
+  festivals_next_up: "即将到来",
+  festivals_show_past: "显示更早日期",
+  festivals_hide_past: "隐藏更早日期",
+  festivals_location_note:
+    "日期依据印度新德里的印度教历。在其他时区，节日可能提前或推后一天，请以您所在城市当日的时刻为准。",
+  festivals_source: "来源",
+  festivals_none: "本年度暂无日期。",
+  festivals_dates_short: "个日期",
 
   muhurta_title: "吉时查询",
   muhurta_subtitle: "为任何活动寻找吉祥时段",
@@ -216,6 +228,7 @@ const zh: Record<string, string> = {
   lagna_caption_nakshatra: "星宿",
   lagna_caption_pada: "宿步",
   upto: "直至",
+  balam_next_sunrise: "直至次日日出",
 
   limb_tithi: "阴历日",
   limb_nakshatra: "星宿",

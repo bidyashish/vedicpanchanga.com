@@ -29,6 +29,7 @@ export function TopBar({ view, setView }: { view: View; setView: (v: View) => vo
     { id: "kundali", label: t("nav_kundali"), href: "/kundali" },
     { id: "muhurta", label: t("nav_muhurta"), href: "/muhurta" },
     { id: "transits", label: t("nav_transits"), href: "/transits" },
+    { id: "festivals", label: t("nav_festivals"), href: "/festivals" },
     { id: "frequency", label: t("nav_frequency"), href: "/frequency" },
   ];
   const learnLinks = LEARN_META.map((l) => ({ id: l.id, label: t(l.labelKey), href: l.href }));

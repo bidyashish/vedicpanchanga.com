@@ -8,6 +8,7 @@ const bn: Record<string, string> = {
   nav_panchang: "পঞ্জিকা",
   nav_muhurta: "মুহূর্ত",
   nav_transits: "গোচর",
+  nav_festivals: "উৎসব",
   transits_eyebrow: "গ্রহ গোচর",
   transits_title: "সমস্ত গ্রহ ঘটনার কালক্রম",
   transits_subtitle: "১২টি গ্রহের রাশি পরিবর্তন, নক্ষত্র পরিবর্তন ও বক্রী অবস্থা",
@@ -27,6 +28,17 @@ const bn: Record<string, string> = {
   transits_sign_short: "রাশি",
   transits_nak_short: "নক্ষত্র",
   transits_retro_short: "বক্রী",
+  festivals_eyebrow: "হিন্দু উৎসব",
+  festivals_title: "আসন্ন উৎসব, ব্রত ও শ্রাদ্ধের তারিখ",
+  festivals_subtitle: "বছরের মাসভিত্তিক হিন্দু পঞ্জিকা, পিতৃপক্ষ শ্রাদ্ধ তিথিসহ।",
+  festivals_next_up: "পরবর্তী",
+  festivals_show_past: "আগের তারিখ দেখান",
+  festivals_hide_past: "আগের তারিখ লুকান",
+  festivals_location_note:
+    "তারিখগুলি নয়াদিল্লি, ভারতের হিন্দু পঞ্জিকা অনুযায়ী। অন্য সময় অঞ্চলে পালন এক দিন আগে বা পরে হতে পারে; আপনার শহরের জন্য সেই দিনের সময় দেখুন।",
+  festivals_source: "উৎস",
+  festivals_none: "এই বছরের জন্য এখনও কোনো তারিখ তালিকাভুক্ত নেই।",
+  festivals_dates_short: "তারিখ",
 
   muhurta_title: "মুহূর্ত অনুসন্ধান",
   muhurta_subtitle: "যেকোনো কাজের জন্য শুভ সময় খুঁজুন",
@@ -215,6 +227,7 @@ const bn: Record<string, string> = {
   lagna_caption_nakshatra: "নক্ষত্র",
   lagna_caption_pada: "পাদ",
   upto: "পর্যন্ত",
+  balam_next_sunrise: "পরবর্তী সূর্যোদয় পর্যন্ত",
 
   limb_tithi: "তিথি",
   limb_nakshatra: "নক্ষত্র",

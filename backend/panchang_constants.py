@@ -203,15 +203,27 @@ DUR_MUHURTA = {
 # Dur Muhurtam falls on this same index, Abhijit is not observed (e.g. Wednesday).
 ABHIJIT_MUHURTA_INDEX = 8
 
-# Tarabalam - when current nakshatra is (N_birth + k) % 27 + 1, k of {0,1,2,..26}:
-# Good (auspicious) stars are: Janma (1), Sampat (2), Kshema (4), Sadhaka (6), Mitra (8), Param Mitra (9)
-# Bad stars are: Vipat (3), Pratyak (5), Naidhana (7)
-# In 27-nakshatra cycle, the series 1..9 repeats three times.
-GOOD_TARA_OFFSETS = {0, 1, 3, 5, 7, 8, 9, 10, 12, 14, 16, 17, 18, 19, 21, 23, 25, 26}
-# (offsets 0..26 from birth nakshatra where tarabalam is favorable, i.e. position 1,2,4,6,8,9 within each cycle of 9)
+# Tarabalam - count inclusively from the native's janma nakshatra to the transit
+# nakshatra and reduce to a position in the 9-tara cycle (it repeats three times
+# over the 27 nakshatras). DrikPanchang counts Sampat, Kshema, Sadhaka, Mitra and
+# Ati Mitra as good Tarabalam; Janma, Vipat, Pratyari and Vadha are not.
+TARA_NAMES = (
+    "Janma",
+    "Sampat",
+    "Vipat",
+    "Kshema",
+    "Pratyari",
+    "Sadhaka",
+    "Vadha",
+    "Mitra",
+    "Ati Mitra",
+)
+GOOD_TARA_POSITIONS = {2, 4, 6, 8, 9}
 
-# Chandrabalam - good when current Moon sign is 1st, 3rd, 6th, 7th, 10th, 11th from native's rashi
-GOOD_CHANDRA_OFFSETS = {0, 2, 5, 6, 9, 10}  # (sign - birth_sign) mod 12
+# Chandrabalam - good when the transit Moon is in house 1, 3, 6, 7, 10 or 11
+# counted from the native's janma rashi. 2, 5, 9 are neutral; 4, 8, 12 are weak
+# (8 is Chandrashtama).
+GOOD_CHANDRA_HOUSES = {1, 3, 6, 7, 10, 11}
 
 RASHI_NAMES = [
     "Mesha",

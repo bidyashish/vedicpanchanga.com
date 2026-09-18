@@ -44,7 +44,8 @@ from panchang_constants import (
     CHANDRA_VASA,
     DISHA_SHOOL,
     DUR_MUHURTA,
-    GOOD_CHANDRA_OFFSETS,
+    GOOD_CHANDRA_HOUSES,
+    GOOD_TARA_POSITIONS,
     NIRAYANA_MONTHS,
     RAHU_VASA,
     RASHI_NAMES,
@@ -810,29 +811,71 @@ def _dur_muhurtam(sunrise_jd, sunset_jd, vara_iso, tz):
 # ---- Tarabalam / Chandrabalam ----
 
 
-def _tarabalam(current_nak_idx: int) -> Dict:
-    """Return nakshatras with good tarabalam (offset from birth nakshatra)."""
-    # current_nak_idx 0-26 (current moon's nakshatra)
-    # For a person born in nakshatra N (0-26), offset = (current_nak_idx - N) % 27
-    # Good if offset % 9 in {0,1,3,5,7,8}
-    good_from = []
-    for n_birth in range(27):
-        offset = (current_nak_idx - n_birth) % 27
-        star_number = offset + 1  # 1-27
-        sub = (star_number - 1) % 9 + 1  # 1-9 position within cycle
-        if sub in {1, 2, 4, 6, 8, 9}:
-            good_from.append({"nakshatra": NAKSHATRAS[n_birth], "index": n_birth + 1})
-    return {"good_nakshatras": good_from}
+def tara_position(birth_nak_idx: int, current_nak_idx: int) -> int:
+    """1-9 position of the transit nakshatra in the tara cycle counted from the
+    janma nakshatra (both 0-26): 1 Janma, 2 Sampat, ... 9 Ati Mitra."""
+    return (current_nak_idx - birth_nak_idx) % 9 + 1
 
 
-def _chandrabalam(current_sign_id: int) -> Dict:
-    """Return rashis with good Chandrabalam."""
-    good = []
-    for birth_sign in range(1, 13):
-        offset = (current_sign_id - birth_sign) % 12
-        if offset in GOOD_CHANDRA_OFFSETS:
-            good.append({"rashi": RASHI_NAMES[birth_sign - 1], "index": birth_sign})
-    return {"good_rashis": good}
+def chandra_house(birth_sign_id: int, current_sign_id: int) -> int:
+    """1-12 house of the transit Moon counted from the janma rashi (both 1-12)."""
+    return (current_sign_id - birth_sign_id) % 12 + 1
+
+
+def _good_tara_births(current_nak_idx: int) -> List[Dict]:
+    """Birth nakshatras for which the transit nakshatra falls on a good tara."""
+    return [
+        {"nakshatra": NAKSHATRAS[n], "index": n + 1}
+        for n in range(27)
+        if tara_position(n, current_nak_idx) in GOOD_TARA_POSITIONS
+    ]
+
+
+def _good_chandra_births(current_sign_id: int) -> List[Dict]:
+    """Birth rashis for which the transit Moon sits in a good house."""
+    return [
+        {"rashi": RASHI_NAMES[s - 1], "index": s}
+        for s in range(1, 13)
+        if chandra_house(s, current_sign_id) in GOOD_CHANDRA_HOUSES
+    ]
+
+
+def _tarabalam(nakshatras_iso: List[Dict]) -> Dict:
+    """Good-Tarabalam list per nakshatra segment of the panchang day.
+
+    DrikPanchang publishes one list per transit nakshatra ("till HH:MM", then
+    "till next day sunrise"). `good_nakshatras` mirrors the sunrise segment for
+    older clients."""
+    segments = [
+        {
+            "nakshatra": seg["name"],
+            "index": seg["index"],
+            "ends_at": seg["ends_at"],
+            "good_nakshatras": _good_tara_births(seg["index"] - 1),
+        }
+        for seg in nakshatras_iso
+    ]
+    return {
+        "good_nakshatras": segments[0]["good_nakshatras"] if segments else [],
+        "segments": segments,
+    }
+
+
+def _chandrabalam(moonsigns_iso: List[Dict]) -> Dict:
+    """Good-Chandrabalam list per Moon-sign segment of the panchang day."""
+    segments = [
+        {
+            "rashi": seg["rashi"],
+            "index": seg["index"],
+            "ends_at": seg["ends_at"],
+            "good_rashis": _good_chandra_births(seg["index"]),
+        }
+        for seg in moonsigns_iso
+    ]
+    return {
+        "good_rashis": segments[0]["good_rashis"] if segments else [],
+        "segments": segments,
+    }
 
 
 # ---- Lunar month (Chaitradi) ----
@@ -1097,9 +1140,9 @@ def _compute_detailed_panchang_locked(
     modified_jd = int(noon_jd - 2400000.5)
     rata_die = int(noon_jd - RATA_DIE_EPOCH_JD)
 
-    # Tarabalam & Chandrabalam
-    tara = _tarabalam(int(moon_sid // NAK_SPAN))
-    chandra = _chandrabalam(moon_sign_id)
+    # Tarabalam & Chandrabalam - one list per nakshatra / Moon-sign segment
+    tara = _tarabalam(nakshatras_iso)
+    chandra = _chandrabalam(moonsigns_iso)
 
     # Shool & Vasa
     disha_shool = DISHA_SHOOL[vara_iso]

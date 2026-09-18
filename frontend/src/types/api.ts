@@ -368,8 +368,24 @@ export interface PanchangData {
     varjyam?: AuspiciousWindow[];
   };
   udaya_lagna: { rashi: string; start: string; end: string }[];
-  chandrabalam: { good_rashis: { rashi: string }[] };
-  tarabalam: { good_nakshatras: { nakshatra: string }[] };
+  chandrabalam: {
+    good_rashis: { rashi: string; index: number }[];
+    segments: {
+      rashi: string;
+      index: number;
+      ends_at: string;
+      good_rashis: { rashi: string; index: number }[];
+    }[];
+  };
+  tarabalam: {
+    good_nakshatras: { nakshatra: string; index: number }[];
+    segments: {
+      nakshatra: string;
+      index: number;
+      ends_at: string;
+      good_nakshatras: { nakshatra: string; index: number }[];
+    }[];
+  };
   shool_vasa: { disha_shool: string; rahu_vasa: string; chandra_vasa: string };
   yogas_extra?: {
     ganda_mula?: { nakshatra: string; ends_at: string } | null;

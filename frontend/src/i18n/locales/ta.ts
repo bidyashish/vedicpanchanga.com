@@ -8,6 +8,7 @@ const ta: Record<string, string> = {
   nav_panchang: "பஞ்சாங்கம்",
   nav_muhurta: "முகூர்த்தம்",
   nav_transits: "கோசாரம்",
+  nav_festivals: "பண்டிகைகள்",
   transits_eyebrow: "கிரக பெயர்ச்சி",
   transits_title: "அனைத்து கிரக நிகழ்வுகளின் காலவரிசை",
   transits_subtitle: "12 கிரகங்களின் ராசி மாற்றம், நட்சத்திர மாற்றம் மற்றும் வக்கிர நிலைகள்",
@@ -27,6 +28,17 @@ const ta: Record<string, string> = {
   transits_sign_short: "ராசி",
   transits_nak_short: "நட்சத்திரம்",
   transits_retro_short: "வக்கிரம்",
+  festivals_eyebrow: "இந்து பண்டிகைகள்",
+  festivals_title: "வரவிருக்கும் பண்டிகைகள், விரதங்கள் மற்றும் சிரார்த்த நாட்கள்",
+  festivals_subtitle: "ஆண்டின் மாதவாரி இந்து நாட்காட்டி, பித்ரு பட்ச சிரார்த்த திதிகளுடன்.",
+  festivals_next_up: "அடுத்தது",
+  festivals_show_past: "முந்தைய நாட்களைக் காட்டு",
+  festivals_hide_past: "முந்தைய நாட்களை மறை",
+  festivals_location_note:
+    "நாட்கள் புது தில்லி, இந்தியாவின் இந்து நாட்காட்டியைப் பின்பற்றுகின்றன. பிற நேர மண்டலங்களில் ஒரு நாள் முன்னும் பின்னும் மாறலாம்; உங்கள் ஊருக்கான அன்றைய நேரங்களைப் பாருங்கள்.",
+  festivals_source: "மூலம்",
+  festivals_none: "இந்த ஆண்டிற்கு இன்னும் நாட்கள் பட்டியலிடப்படவில்லை.",
+  festivals_dates_short: "நாட்கள்",
 
   muhurta_title: "முகூர்த்த தேடல்",
   muhurta_subtitle: "எந்த ஒரு செயலுக்கும் சுபமான நேரத்தைக் கண்டறியவும்",
@@ -216,6 +228,7 @@ const ta: Record<string, string> = {
   lagna_caption_nakshatra: "நட்சத்திரம்",
   lagna_caption_pada: "பாதம்",
   upto: "வரை",
+  balam_next_sunrise: "அடுத்த சூரிய உதயம் வரை",
 
   limb_tithi: "திதி",
   limb_nakshatra: "நட்சத்திரம்",

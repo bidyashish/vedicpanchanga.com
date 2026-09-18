@@ -8,6 +8,7 @@ const ar: Record<string, string> = {
   nav_panchang: "بانشانغا",
   nav_muhurta: "موهورتا",
   nav_transits: "عبور الكواكب",
+  nav_festivals: "الأعياد",
   transits_eyebrow: "عبور الكواكب",
   transits_title: "عرض زمني لجميع أحداث الكواكب",
   transits_subtitle: "دخول الأبراج وتغيّر النجوم القمرية ومحطات التراجع لجميع الكواكب الـ12",
@@ -27,6 +28,17 @@ const ar: Record<string, string> = {
   transits_sign_short: "برج",
   transits_nak_short: "نجم قمري",
   transits_retro_short: "تراجع",
+  festivals_eyebrow: "الأعياد الهندوسية",
+  festivals_title: "الأعياد والصيامات ومواعيد الشرادها القادمة",
+  festivals_subtitle: "التقويم الهندوسي للسنة شهرًا بشهر، مع تيثيات شرادها بيترو باكشا.",
+  festivals_next_up: "القادم",
+  festivals_show_past: "عرض التواريخ السابقة",
+  festivals_hide_past: "إخفاء التواريخ السابقة",
+  festivals_location_note:
+    "تتبع التواريخ التقويم الهندوسي لنيودلهي، الهند. في المناطق الزمنية الأخرى قد يقع الاحتفال قبل يوم أو بعده؛ راجع توقيتات ذلك اليوم لمدينتك.",
+  festivals_source: "المصدر",
+  festivals_none: "لا توجد تواريخ مدرجة لهذه السنة بعد.",
+  festivals_dates_short: "تواريخ",
 
   muhurta_title: "باحث الموهورتا",
   muhurta_subtitle: "ابحث عن أوقات ميمونة لأي عمل",
@@ -216,6 +228,7 @@ const ar: Record<string, string> = {
   lagna_caption_nakshatra: "ناكشاترا",
   lagna_caption_pada: "بادا",
   upto: "حتى",
+  balam_next_sunrise: "حتى شروق اليوم التالي",
 
   limb_tithi: "تيتي",
   limb_nakshatra: "ناكشاترا",

@@ -8,6 +8,7 @@ const ja: Record<string, string> = {
   nav_panchang: "パンチャーンガ",
   nav_muhurta: "ムフールタ",
   nav_transits: "トランジット",
+  nav_festivals: "祭日",
   transits_eyebrow: "惑星トランジット",
   transits_title: "すべての惑星イベントのタイムライン",
   transits_subtitle: "全 12 惑星の星座入り、ナクシャトラの変化、逆行の留",
@@ -27,6 +28,17 @@ const ja: Record<string, string> = {
   transits_sign_short: "星座",
   transits_nak_short: "ナクシャトラ",
   transits_retro_short: "逆行",
+  festivals_eyebrow: "ヒンドゥー教の祭日",
+  festivals_title: "今後の祭日・断食行・祖霊祭の日程",
+  festivals_subtitle: "その年のヒンドゥー暦を月ごとに、ピトリ・パクシャの祖霊祭ティティとともに。",
+  festivals_next_up: "次の予定",
+  festivals_show_past: "過去の日程を表示",
+  festivals_hide_past: "過去の日程を隠す",
+  festivals_location_note:
+    "日付はインド・ニューデリーのヒンドゥー暦に基づきます。他のタイムゾーンでは1日前後する場合があります。お住まいの都市の当日の時刻をご確認ください。",
+  festivals_source: "出典",
+  festivals_none: "この年の日程はまだ登録されていません。",
+  festivals_dates_short: "件",
 
   muhurta_title: "ムフールタ検索",
   muhurta_subtitle: "あらゆる行いに吉となる時間帯を探す",
@@ -217,6 +229,7 @@ const ja: Record<string, string> = {
   lagna_caption_nakshatra: "ナクシャトラ",
   lagna_caption_pada: "パダ",
   upto: "まで",
+  balam_next_sunrise: "翌日の日の出まで",
 
   limb_tithi: "ティティ（太陰日）",
   limb_nakshatra: "ナクシャトラ（星宿）",

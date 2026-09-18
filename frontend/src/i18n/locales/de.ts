@@ -8,6 +8,7 @@ const de: Record<string, string> = {
   nav_panchang: "Panchang",
   nav_muhurta: "Muhurta",
   nav_transits: "Transite",
+  nav_festivals: "Feste",
   transits_eyebrow: "Planetare Transite",
   transits_title: "Zeitleiste aller Planetenereignisse",
   transits_subtitle:
@@ -28,6 +29,18 @@ const de: Record<string, string> = {
   transits_sign_short: "Zeichen",
   transits_nak_short: "Nakshatra",
   transits_retro_short: "rückläufig",
+  festivals_eyebrow: "Hinduistische Feste",
+  festivals_title: "Kommende Feste, Vratas und Shraddha-Termine",
+  festivals_subtitle:
+    "Hindu-Kalender des Jahres, Monat für Monat, mit den Shraddha-Tithis des Pitru Paksha.",
+  festivals_next_up: "Als Nächstes",
+  festivals_show_past: "Frühere Termine anzeigen",
+  festivals_hide_past: "Frühere Termine ausblenden",
+  festivals_location_note:
+    "Die Termine folgen dem Hindu-Kalender für Neu-Delhi, Indien. In anderen Zeitzonen kann ein Fest einen Tag früher oder später liegen; prüfe die Zeiten des Tages für deine Stadt.",
+  festivals_source: "Quelle",
+  festivals_none: "Für dieses Jahr sind noch keine Termine eingetragen.",
+  festivals_dates_short: "Termine",
 
   muhurta_title: "Muhurta-Suche",
   muhurta_subtitle: "Günstige Zeitfenster für jedes Vorhaben finden",
@@ -217,6 +230,7 @@ const de: Record<string, string> = {
   lagna_caption_nakshatra: "Nakshatra",
   lagna_caption_pada: "Pada",
   upto: "bis",
+  balam_next_sunrise: "bis zum nächsten Sonnenaufgang",
 
   limb_tithi: "Tithi",
   limb_nakshatra: "Nakshatra",

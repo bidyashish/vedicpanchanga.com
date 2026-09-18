@@ -8,6 +8,7 @@ const ru: Record<string, string> = {
   nav_panchang: "Панчанга",
   nav_muhurta: "Мухурта",
   nav_transits: "Транзиты",
+  nav_festivals: "Праздники",
   transits_eyebrow: "Транзиты планет",
   transits_title: "Хронология всех планетных событий",
   transits_subtitle: "Смена знаков, смена накшатр и стоянки ретроградности всех 12 планет",
@@ -27,6 +28,17 @@ const ru: Record<string, string> = {
   transits_sign_short: "знак",
   transits_nak_short: "накшатра",
   transits_retro_short: "ретроград",
+  festivals_eyebrow: "Индуистские праздники",
+  festivals_title: "Ближайшие праздники, враты и даты шраддхи",
+  festivals_subtitle: "Индуистский календарь года по месяцам, включая титхи шраддхи Питру-пакши.",
+  festivals_next_up: "Ближайшие",
+  festivals_show_past: "Показать прошедшие даты",
+  festivals_hide_past: "Скрыть прошедшие даты",
+  festivals_location_note:
+    "Даты приведены по индуистскому календарю для Нью-Дели, Индия. В других часовых поясах праздник может приходиться на день раньше или позже; сверьтесь со временем этого дня для вашего города.",
+  festivals_source: "Источник",
+  festivals_none: "Для этого года даты пока не указаны.",
+  festivals_dates_short: "дат",
 
   muhurta_title: "Поиск Мухурты",
   muhurta_subtitle: "Найдите благоприятные окна для любого начинания",
@@ -216,6 +228,7 @@ const ru: Record<string, string> = {
   lagna_caption_nakshatra: "Накшатра",
   lagna_caption_pada: "Пада",
   upto: "до",
+  balam_next_sunrise: "до следующего восхода",
 
   limb_tithi: "Титхи",
   limb_nakshatra: "Накшатра",

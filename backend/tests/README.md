@@ -36,6 +36,7 @@ API tests skip with a clear message instead of erroring.
 | File | What it tests |
 |------|---------------|
 | `test_api_auth.py` | Optional API-key layer (`auth.py`): open by default, Bearer / `X-API-Key`, exempt origins, Referer fallback, CORS preflight contract |
+| `test_balam.py` | Chandrabalam / Tarabalam: tara and house arithmetic, per-segment lists pinned to DrikPanchang New Delhi 17-19 Sep 2026, muhurta scoring tiers and window Moon sign |
 | `test_ayanamsa.py` | API: the 7 ayanamsa options and their effect on the Delhi ascendant (Lahiri / Raman / Manoj / Sayana / KP variants) |
 | `test_dasha_extras.py` | Vimshottari Antardasha / Pratyantar: durations sum to the mahadasha, first period straddles birth, Ranchi reference values |
 | `test_dur_muhurtam.py` | Dur Muhurtam slots per weekday and the Wednesday Abhijit suppression |

@@ -8,6 +8,7 @@ const hi: Record<string, string> = {
   nav_panchang: "पञ्चाङ्ग",
   nav_muhurta: "मुहूर्त",
   nav_transits: "गोचर",
+  nav_festivals: "त्योहार",
   transits_eyebrow: "ग्रह गोचर",
   transits_title: "समस्त ग्रह घटनाओं का कालक्रम",
   transits_subtitle: "सभी 12 ग्रहों की राशि-संक्रांति, नक्षत्र परिवर्तन एवं वक्री स्थितियाँ",
@@ -27,6 +28,17 @@ const hi: Record<string, string> = {
   transits_sign_short: "राशि",
   transits_nak_short: "नक्षत्र",
   transits_retro_short: "वक्री",
+  festivals_eyebrow: "हिंदू त्योहार",
+  festivals_title: "आगामी त्योहार, व्रत और श्राद्ध तिथियाँ",
+  festivals_subtitle: "पूरे वर्ष का माहवार हिंदू पंचांग, पितृ पक्ष श्राद्ध तिथियों सहित।",
+  festivals_next_up: "आगे",
+  festivals_show_past: "पिछली तिथियाँ दिखाएँ",
+  festivals_hide_past: "पिछली तिथियाँ छिपाएँ",
+  festivals_location_note:
+    "तिथियाँ नई दिल्ली, भारत के हिंदू पंचांग के अनुसार हैं। अन्य समय क्षेत्रों में पर्व एक दिन आगे या पीछे हो सकता है; अपने शहर के लिए उस दिन का समय देखें।",
+  festivals_source: "स्रोत",
+  festivals_none: "इस वर्ष के लिए अभी कोई तिथि सूचीबद्ध नहीं है।",
+  festivals_dates_short: "तिथियाँ",
 
   muhurta_title: "मुहूर्त खोज",
   muhurta_subtitle: "किसी भी कार्य हेतु शुभ समय ज्ञात करें",
@@ -215,6 +227,7 @@ const hi: Record<string, string> = {
   lagna_caption_nakshatra: "नक्षत्र",
   lagna_caption_pada: "पाद",
   upto: "तक",
+  balam_next_sunrise: "अगले सूर्योदय तक",
 
   limb_tithi: "तिथि",
   limb_nakshatra: "नक्षत्र",
