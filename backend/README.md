@@ -74,12 +74,13 @@ and `/api/health` are always open; everything else honours `API_KEYS`.
 | GET | `/api/muhurta-purposes` | The 13 purpose categories (marriage, engagement, griha pravesh, ...) |
 | POST | `/api/find-muhurta` | Scan a date range (max 120 days) and score each day 0-100 with reasons |
 | GET | `/api/transits` | Sign ingresses, nakshatra changes and retrograde stations for a date range |
+| GET | `/api/festivals` | Hindu festival calendar for a year and place: festivals, vrats, Ekadashi, Sankranti, eclipses, Shraddha tithis with exact local tithi spans and puja windows, plus Adhika Masa / Chaturmas / Pitru Paksha / Navratri / Durga Puja periods |
 | GET | `/api/suggest-lang` | UI locale suggestion from Cloudflare country header with Accept-Language fallback |
 | GET | `/api/geo-ip` | Approximate visitor location from Cloudflare geo headers |
 | POST | `/api/print-pdf` | Multi-page PDF report in any of the 15 locales |
 
 CPU-bound endpoints (`/calculate`, `/get-panchang`, `/find-muhurta`,
-`/transits`, `/print-pdf`) are plain `def` handlers so FastAPI runs them in
+`/transits`, `/festivals`, `/print-pdf`) are plain `def` handlers so FastAPI runs them in
 its thread pool and the event loop stays responsive. `/print-pdf` renders in
 a spawned process pool. Prometheus metrics are exposed at `/metrics`.
 
@@ -103,6 +104,7 @@ backend/
 ├── ayanamsa.py                AYANAMSA_OPTIONS + sidereal_context() lock; default lahiri
 ├── muhurta.py                 Muhurta scanner with purpose-based scoring and vetoes
 ├── transits.py                Planetary transit timeline
+├── festivals.py               Festival calendar: tithi / nakshatra / Sankranti rules -> local dates and timings
 ├── dasha_extras.py            Vimshottari Antardasha + Pratyantar (levels 2 and 3)
 ├── jaimini.py                 Chara karakas + Karakamsa / Swamsa charts
 ├── relationships.py           Natural / temporal / 5-fold friendship matrices

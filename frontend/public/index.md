@@ -20,7 +20,7 @@ Year-long planetary transit (Gochar) timeline showing sign changes, nakshatra in
 
 ## [Hindu Festival Calendar](https://vedicpanchanga.com/festivals)
 
-Upcoming Hindu festivals, vrats and observances month by month for 2026 and 2027: Ekadashi, Sankranti, Navratri, Diwali, Holi and the full Pitru Paksha Shraddha tithi list, as per the New Delhi Hindu calendar (DrikPanchang).
+Hindu festivals, vrats and observances for any year 1900-2100, computed from the ephemeris for your own city: Ekadashi, Sankranti, Navratri, Durga Puja, Diwali, Holi, eclipses, Adhika Masa, Chaturmas and the full Pitru Paksha Shraddha tithi list, each with exact local timings (tithi span, puja muhurta, parana). Available in 15 languages.
 
 ## [Healing Frequency Generator](https://vedicpanchanga.com/frequency)
 

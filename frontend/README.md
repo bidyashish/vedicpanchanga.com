@@ -55,7 +55,7 @@ needs a rebuild. Restarting the dev server is not enough.
 | `/kundali`                                                        | Birth chart, vargas, dashas, ashtakavarga, PDF |
 | `/muhurta`                                                        | Muhurta finder                                 |
 | `/transits`                                                       | Planetary transit timeline                     |
-| `/festivals`                                                      | Hindu festival calendar (static markdown)      |
+| `/festivals`                                                      | Hindu festival calendar for the chosen city    |
 | `/frequency`                                                      | Healing frequency / tone generator             |
 | `/learn/{kundali,planets,panchang,dasha,nakshatras,rashi,vargas}` | Long-form articles (`pages/articles/`)         |
 | `/privacy`, `/terms`                                              | Legal pages (no ads)                           |
@@ -79,7 +79,7 @@ src/
 │   ├── KundaliPage.tsx     birth chart, vargas, dashas, ashtakavarga, Print PDF
 │   ├── MuhurtaPage.tsx     date-range scanner with native filters
 │   ├── TransitsPage.tsx    transit timeline
-│   ├── FestivalsPage.tsx   festival / vrat / Shraddha dates from content/festivals/*.md
+│   ├── FestivalsPage.tsx   festival / vrat / Shraddha dates + timings from /api/festivals
 │   ├── FrequencyPage.tsx   tone generator (Solfeggio, chakra, Navagraha presets)
 │   ├── PrivacyPage.tsx / TermsPage.tsx
 │   └── articles/           ArticleLayout + the seven /learn/* pages
@@ -99,13 +99,12 @@ src/
 │   └── ui/                 calendar, date-picker, time-picker, modal, popover,
 │                           segmented-control, switch
 ├── content/
-│   ├── planetGuide.ts      planet guide copy shown in PlanetDetailModal
-│   └── festivals/<year>.md DrikPanchang (New Delhi) festival tables, one file per year
+│   └── planetGuide.ts      planet guide copy shown in PlanetDetailModal
 ├── lib/
 │   ├── api.ts              typed fetch for every backend endpoint + Nominatim geocoding
 │   ├── adsense.ts          Auto Ads loader (lazy, route-aware)
 │   ├── auspiciousHeatmap.ts day-strip scoring behind AuspiciousHeatmap
-│   ├── festivals.ts        parses content/festivals/*.md into FESTIVAL_YEARS
+│   ├── festivalThemes.ts   glyph + gradient per festival id for the hero cards
 │   ├── format.ts           date / time / dms formatters, nowTimeInTz
 │   ├── gtag.ts             Google Analytics helper
 │   ├── planets.ts          planet -> colour / long-name tables

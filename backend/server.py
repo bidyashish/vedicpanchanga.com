@@ -19,6 +19,7 @@ from advanced_panchang import compute_detailed_panchang
 from auth import require_api_key
 from ayanamsa import AYANAMSA_OPTIONS
 from calculator import compute_chart
+from festivals import MAX_YEAR, MIN_YEAR, compute_festivals
 from muhurta import find_muhurtas, list_purposes
 from pdf import render_pdf
 from transits import compute_transits
@@ -383,6 +384,36 @@ def get_transits(
     except Exception as e:
         logging.exception("Transit computation failed")
         raise HTTPException(status_code=500, detail=f"Transit error: {e}")
+
+
+@api_router.get("/festivals")
+def get_festivals(
+    latitude: float,
+    longitude: float,
+    year: Optional[int] = None,
+    timezone: Optional[str] = None,
+):
+    """Hindu festival calendar for one Gregorian year at a location: every
+    festival, vrat, Ekadashi, Sankranti, Purnima / Amavasya, eclipse and
+    Pitru Paksha Shraddha tithi with its exact local tithi span and puja
+    window, plus the multi-day periods (Adhika Masa, Chaturmas, Pitru
+    Paksha, Navratri, Durga Puja). Computed from the ephemeris, so dates are
+    correct for the given place rather than copied from a New Delhi table."""
+    from datetime import date as date_cls
+
+    if year is None:
+        year = date_cls.today().year
+    if not MIN_YEAR <= year <= MAX_YEAR:
+        raise HTTPException(
+            status_code=400, detail=f"year must be between {MIN_YEAR} and {MAX_YEAR}"
+        )
+    if not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
+        raise HTTPException(status_code=400, detail="latitude / longitude out of range")
+    try:
+        return compute_festivals(year, latitude, longitude, timezone)
+    except Exception as e:
+        logging.exception("Festival computation failed")
+        raise HTTPException(status_code=500, detail=f"Festival error: {e}")
 
 
 class PrintPdfRequest(BaseModel):

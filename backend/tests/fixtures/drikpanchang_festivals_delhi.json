@@ -1,0 +1,1602 @@
+{
+ "source": "drikpanchang.com Hindu calendar + Pitru Paksha Shraddha pages, New Delhi (geoname-id=1261481), fetched 2026-09-17",
+ "location": {
+  "latitude": 28.6139,
+  "longitude": 77.209,
+  "timezone": "Asia/Kolkata"
+ },
+ "events": [
+  {
+   "date": "2026-01-03",
+   "name": "Pausha Purnima",
+   "rule": "Pausha, Shukla Purnima"
+  },
+  {
+   "date": "2026-01-06",
+   "name": "Sakat Chauth",
+   "rule": "Magha, Krishna Chaturthi"
+  },
+  {
+   "date": "2026-01-14",
+   "name": "Makara Sankranti",
+   "rule": "Dhanu to Makara transit of Sun"
+  },
+  {
+   "date": "2026-01-14",
+   "name": "Pongal",
+   "rule": "on Makara Sankranti day"
+  },
+  {
+   "date": "2026-01-14",
+   "name": "Shattila Ekadashi",
+   "rule": "Magha, Krishna Ekadashi"
+  },
+  {
+   "date": "2026-01-18",
+   "name": "Mauni Amavas",
+   "rule": "Magha, Krishna Amavasya"
+  },
+  {
+   "date": "2026-01-23",
+   "name": "Vasant Panchami",
+   "rule": "Magha, Shukla Panchami"
+  },
+  {
+   "date": "2026-01-25",
+   "name": "Ratha Saptami",
+   "rule": "Magha, Shukla Saptami"
+  },
+  {
+   "date": "2026-01-26",
+   "name": "Bhishma Ashtami",
+   "rule": "Magha, Shukla Ashtami"
+  },
+  {
+   "date": "2026-01-29",
+   "name": "Jaya Ekadashi",
+   "rule": "Magha, Shukla Ekadashi"
+  },
+  {
+   "date": "2026-02-01",
+   "name": "Magha Purnima",
+   "rule": "Magha, Shukla Purnima"
+  },
+  {
+   "date": "2026-02-13",
+   "name": "Kumbha Sankranti",
+   "rule": "Makara to Kumbha transit of Sun"
+  },
+  {
+   "date": "2026-02-13",
+   "name": "Vijaya Ekadashi",
+   "rule": "Phalguna, Krishna Ekadashi"
+  },
+  {
+   "date": "2026-02-15",
+   "name": "Maha Shivaratri",
+   "rule": "Phalguna, Krishna Chaturdashi"
+  },
+  {
+   "date": "2026-02-17",
+   "name": "Surya Grahan *Valayakara",
+   "rule": "occurs during Amavasya"
+  },
+  {
+   "date": "2026-02-27",
+   "name": "Amalaki Ekadashi",
+   "rule": "Phalguna, Shukla Ekadashi"
+  },
+  {
+   "date": "2026-03-03",
+   "name": "Chandra Grahan *Purna",
+   "rule": "occurs during Purnima"
+  },
+  {
+   "date": "2026-03-03",
+   "name": "Chhoti Holi",
+   "rule": "Phalguna, Shukla Purnima"
+  },
+  {
+   "date": "2026-03-03",
+   "name": "Holika Dahan",
+   "rule": "Phalguna, Shukla Purnima"
+  },
+  {
+   "date": "2026-03-03",
+   "name": "Phalguna Purnima",
+   "rule": "Phalguna, Shukla Purnima"
+  },
+  {
+   "date": "2026-03-04",
+   "name": "Holi",
+   "rule": "Chaitra, Krishna Pratipada"
+  },
+  {
+   "date": "2026-03-11",
+   "name": "Basoda",
+   "rule": "Chaitra, Krishna Ashtami"
+  },
+  {
+   "date": "2026-03-11",
+   "name": "Sheetala Ashtami",
+   "rule": "Chaitra, Krishna Ashtami"
+  },
+  {
+   "date": "2026-03-15",
+   "name": "Meena Sankranti",
+   "rule": "Kumbha to Meena transit of Sun"
+  },
+  {
+   "date": "2026-03-15",
+   "name": "Papamochani Ekadashi",
+   "rule": "Chaitra, Krishna Ekadashi"
+  },
+  {
+   "date": "2026-03-19",
+   "name": "Chaitra Navratri",
+   "rule": "Chaitra, Shukla Pratipada"
+  },
+  {
+   "date": "2026-03-19",
+   "name": "Gudi Padwa",
+   "rule": "Chaitra, Shukla Pratipada"
+  },
+  {
+   "date": "2026-03-19",
+   "name": "Nutan Varsh Prarambha",
+   "rule": "Chaitra, Shukla Pratipada"
+  },
+  {
+   "date": "2026-03-19",
+   "name": "Ugadi",
+   "rule": "Chaitra, Shukla Pratipada"
+  },
+  {
+   "date": "2026-03-21",
+   "name": "Gangaur",
+   "rule": "Chaitra, Shukla Tritiya"
+  },
+  {
+   "date": "2026-03-21",
+   "name": "Gauri Puja",
+   "rule": "Chaitra, Shukla Tritiya"
+  },
+  {
+   "date": "2026-03-24",
+   "name": "Yamuna Chhath",
+   "rule": "Chaitra, Shukla Shashthi"
+  },
+  {
+   "date": "2026-03-26",
+   "name": "Rama Navami *Smarta",
+   "rule": "Chaitra, Shukla Navami"
+  },
+  {
+   "date": "2026-03-27",
+   "name": "Rama Navami *ISKCON",
+   "rule": "Chaitra, Shukla Navami"
+  },
+  {
+   "date": "2026-03-27",
+   "name": "Swaminarayan Jayanti",
+   "rule": "Chaitra, Shukla Navami"
+  },
+  {
+   "date": "2026-03-29",
+   "name": "Kamada Ekadashi",
+   "rule": "Chaitra, Shukla Ekadashi"
+  },
+  {
+   "date": "2026-04-02",
+   "name": "Chaitra Purnima",
+   "rule": "Chaitra, Shukla Purnima"
+  },
+  {
+   "date": "2026-04-02",
+   "name": "Hanuman Janmotsava",
+   "rule": "Chaitra, Shukla Purnima"
+  },
+  {
+   "date": "2026-04-02",
+   "name": "Hanuman Jayanti",
+   "rule": "Chaitra, Shukla Purnima"
+  },
+  {
+   "date": "2026-04-13",
+   "name": "Varuthini Ekadashi",
+   "rule": "Vaishakha, Krishna Ekadashi"
+  },
+  {
+   "date": "2026-04-14",
+   "name": "Mesha Sankranti",
+   "rule": "Meena to Mesha transit of Sun"
+  },
+  {
+   "date": "2026-04-14",
+   "name": "Solar New Year",
+   "rule": "first day of Hindu Solar calendar"
+  },
+  {
+   "date": "2026-04-19",
+   "name": "Akshaya Tritiya",
+   "rule": "Vaishakha, Shukla Tritiya"
+  },
+  {
+   "date": "2026-04-19",
+   "name": "Parashurama Jayanti",
+   "rule": "Vaishakha, Shukla Tritiya"
+  },
+  {
+   "date": "2026-04-23",
+   "name": "Ganga Saptami",
+   "rule": "Vaishakha, Shukla Saptami"
+  },
+  {
+   "date": "2026-04-25",
+   "name": "Sita Navami",
+   "rule": "Vaishakha, Shukla Navami"
+  },
+  {
+   "date": "2026-04-27",
+   "name": "Mohini Ekadashi",
+   "rule": "Vaishakha, Shukla Ekadashi"
+  },
+  {
+   "date": "2026-04-30",
+   "name": "Narasimha Jayanti",
+   "rule": "Vaishakha, Shukla Chaturdashi"
+  },
+  {
+   "date": "2026-05-01",
+   "name": "Buddha Purnima",
+   "rule": "Vaishakha, Shukla Purnima"
+  },
+  {
+   "date": "2026-05-01",
+   "name": "Vaishakha Purnima",
+   "rule": "Vaishakha, Shukla Purnima"
+  },
+  {
+   "date": "2026-05-02",
+   "name": "Narada Jayanti",
+   "rule": "Jyeshtha, Krishna Pratipada"
+  },
+  {
+   "date": "2026-05-13",
+   "name": "Apara Ekadashi",
+   "rule": "Jyeshtha, Krishna Ekadashi"
+  },
+  {
+   "date": "2026-05-15",
+   "name": "Vrishabha Sankranti",
+   "rule": "Mesha to Vrishabha transit of Sun"
+  },
+  {
+   "date": "2026-05-16",
+   "name": "Shani Jayanti",
+   "rule": "Jyeshtha, Krishna Amavasya"
+  },
+  {
+   "date": "2026-05-16",
+   "name": "Vat Savitri Vrat",
+   "rule": "Jyeshtha, Krishna Amavasya"
+  },
+  {
+   "date": "2026-05-25",
+   "name": "Ganga Dussehra",
+   "rule": "Jyeshtha, Shukla Dashami"
+  },
+  {
+   "date": "2026-05-27",
+   "name": "Padmini Ekadashi",
+   "rule": "Jyeshtha Adhika, Shukla Ekadashi"
+  },
+  {
+   "date": "2026-05-31",
+   "name": "Jyeshtha Adhika Purnima",
+   "rule": "Jyeshtha Adhika, Shukla Purnima"
+  },
+  {
+   "date": "2026-06-11",
+   "name": "Parama Ekadashi",
+   "rule": "Jyeshtha Adhika, Krishna Ekadashi"
+  },
+  {
+   "date": "2026-06-15",
+   "name": "Mithuna Sankranti",
+   "rule": "Vrishabha to Mithuna transit of Sun"
+  },
+  {
+   "date": "2026-06-25",
+   "name": "Nirjala Ekadashi",
+   "rule": "Jyeshtha, Shukla Ekadashi"
+  },
+  {
+   "date": "2026-06-29",
+   "name": "Jyeshtha Purnima",
+   "rule": "Jyeshtha, Shukla Purnima"
+  },
+  {
+   "date": "2026-06-29",
+   "name": "Vat Purnima Vrat",
+   "rule": "Jyeshtha, Shukla Purnima"
+  },
+  {
+   "date": "2026-07-10",
+   "name": "Yogini Ekadashi",
+   "rule": "Ashadha, Krishna Ekadashi"
+  },
+  {
+   "date": "2026-07-11",
+   "name": "Gauna Yogini Ekadashi",
+   "rule": "Ashadha, Krishna Ekadashi"
+  },
+  {
+   "date": "2026-07-16",
+   "name": "Jagannath Rathyatra",
+   "rule": "Ashadha, Shukla Dwitiya"
+  },
+  {
+   "date": "2026-07-16",
+   "name": "Karka Sankranti",
+   "rule": "Mithuna to Karka transit of Sun"
+  },
+  {
+   "date": "2026-07-25",
+   "name": "Devshayani Ekadashi",
+   "rule": "Ashadha, Shukla Ekadashi"
+  },
+  {
+   "date": "2026-07-29",
+   "name": "Ashadha Purnima",
+   "rule": "Ashadha, Shukla Purnima"
+  },
+  {
+   "date": "2026-07-29",
+   "name": "Guru Purnima",
+   "rule": "Ashadha, Shukla Purnima"
+  },
+  {
+   "date": "2026-08-09",
+   "name": "Kamika Ekadashi",
+   "rule": "Shravana, Krishna Ekadashi"
+  },
+  {
+   "date": "2026-08-12",
+   "name": "Surya Grahan *Purna",
+   "rule": "occurs during Amavasya"
+  },
+  {
+   "date": "2026-08-15",
+   "name": "Hariyali Teej",
+   "rule": "Shravana, Shukla Tritiya"
+  },
+  {
+   "date": "2026-08-17",
+   "name": "Nag Panchami",
+   "rule": "Shravana, Shukla Panchami"
+  },
+  {
+   "date": "2026-08-17",
+   "name": "Simha Sankranti",
+   "rule": "Karka to Simha transit of Sun"
+  },
+  {
+   "date": "2026-08-23",
+   "name": "Shravana Putrada Ekadashi",
+   "rule": "Shravana, Shukla Ekadashi"
+  },
+  {
+   "date": "2026-08-26",
+   "name": "Onam",
+   "rule": "Sun in Simha & Shravana Nakshatra"
+  },
+  {
+   "date": "2026-08-28",
+   "name": "Chandra Grahan *Anshika",
+   "rule": "occurs during Purnima"
+  },
+  {
+   "date": "2026-08-28",
+   "name": "Gayatri Jayanti",
+   "rule": "Shravana, Shukla Purnima"
+  },
+  {
+   "date": "2026-08-28",
+   "name": "Rakhi",
+   "rule": "Shravana, Shukla Purnima"
+  },
+  {
+   "date": "2026-08-28",
+   "name": "Raksha Bandhan",
+   "rule": "Shravana, Shukla Purnima"
+  },
+  {
+   "date": "2026-08-28",
+   "name": "Shravana Purnima",
+   "rule": "Shravana, Shukla Purnima"
+  },
+  {
+   "date": "2026-08-28",
+   "name": "Varalakshmi Vrat",
+   "rule": "Friday before Shravana Purnima"
+  },
+  {
+   "date": "2026-08-31",
+   "name": "Kajari Teej",
+   "rule": "Bhadrapada, Krishna Tritiya"
+  },
+  {
+   "date": "2026-09-04",
+   "name": "Agastya Arghya",
+   "rule": "based on Astronomy calculations"
+  },
+  {
+   "date": "2026-09-04",
+   "name": "Krishna Janmashtami",
+   "rule": "Bhadrapada, Krishna Ashtami"
+  },
+  {
+   "date": "2026-09-07",
+   "name": "Aja Ekadashi",
+   "rule": "Bhadrapada, Krishna Ekadashi"
+  },
+  {
+   "date": "2026-09-14",
+   "name": "Ganesh Chaturthi",
+   "rule": "Bhadrapada, Shukla Chaturthi"
+  },
+  {
+   "date": "2026-09-14",
+   "name": "Hartalika Teej",
+   "rule": "Bhadrapada, Shukla Tritiya"
+  },
+  {
+   "date": "2026-09-15",
+   "name": "Rishi Panchami",
+   "rule": "Bhadrapada, Shukla Panchami"
+  },
+  {
+   "date": "2026-09-16",
+   "name": "Balarama Jayanti",
+   "rule": "Bhadrapada, Shukla Shashthi"
+  },
+  {
+   "date": "2026-09-17",
+   "name": "Kanya Sankranti",
+   "rule": "Simha to Kanya transit of Sun"
+  },
+  {
+   "date": "2026-09-17",
+   "name": "Vishwakarma Puja",
+   "rule": "on Kanya Sankranti day"
+  },
+  {
+   "date": "2026-09-19",
+   "name": "Radha Ashtami",
+   "rule": "Bhadrapada, Shukla Ashtami"
+  },
+  {
+   "date": "2026-09-22",
+   "name": "Parsva Ekadashi",
+   "rule": "Bhadrapada, Shukla Ekadashi"
+  },
+  {
+   "date": "2026-09-25",
+   "name": "Anant Chaturdashi",
+   "rule": "Bhadrapada, Shukla Chaturdashi"
+  },
+  {
+   "date": "2026-09-25",
+   "name": "Ganesh Visarjan",
+   "rule": "Bhadrapada, Shukla Chaturdashi"
+  },
+  {
+   "date": "2026-09-26",
+   "name": "Bhadrapada Purnima",
+   "rule": "Bhadrapada, Shukla Purnima"
+  },
+  {
+   "date": "2026-09-27",
+   "name": "Pitrupaksha Begins",
+   "rule": "Ashwina, Krishna Pratipada"
+  },
+  {
+   "date": "2026-10-06",
+   "name": "Indira Ekadashi",
+   "rule": "Ashwina, Krishna Ekadashi"
+  },
+  {
+   "date": "2026-10-10",
+   "name": "Sarva Pitru Amavasya",
+   "rule": "Ashwina, Krishna Amavasya"
+  },
+  {
+   "date": "2026-10-11",
+   "name": "Navratri Begins",
+   "rule": "Ashwina, Shukla Pratipada"
+  },
+  {
+   "date": "2026-10-16",
+   "name": "Saraswati Avahan",
+   "rule": "Ashwina, Mula Nakshatra"
+  },
+  {
+   "date": "2026-10-17",
+   "name": "Saraswati Puja",
+   "rule": "Ashwina, Purva Ashadha Nakshatra"
+  },
+  {
+   "date": "2026-10-17",
+   "name": "Tula Sankranti",
+   "rule": "Kanya to Tula transit of Sun"
+  },
+  {
+   "date": "2026-10-19",
+   "name": "Durga Ashtami",
+   "rule": "Ashwina, Shukla Ashtami"
+  },
+  {
+   "date": "2026-10-19",
+   "name": "Maha Navami",
+   "rule": "Ashwina, Shukla Navami"
+  },
+  {
+   "date": "2026-10-20",
+   "name": "Dussehra",
+   "rule": "Ashwina, Shukla Dashami"
+  },
+  {
+   "date": "2026-10-20",
+   "name": "Vijayadashami",
+   "rule": "Ashwina, Shukla Dashami"
+  },
+  {
+   "date": "2026-10-22",
+   "name": "Papankusha Ekadashi",
+   "rule": "Ashwina, Shukla Ekadashi"
+  },
+  {
+   "date": "2026-10-25",
+   "name": "Kojagara Puja",
+   "rule": "Ashwina, Shukla Purnima"
+  },
+  {
+   "date": "2026-10-25",
+   "name": "Sharad Purnima",
+   "rule": "Ashwina, Shukla Purnima"
+  },
+  {
+   "date": "2026-10-26",
+   "name": "Ashwina Purnima",
+   "rule": "Ashwina, Shukla Purnima"
+  },
+  {
+   "date": "2026-10-29",
+   "name": "Karwa Chauth",
+   "rule": "Kartika, Krishna Chaturthi"
+  },
+  {
+   "date": "2026-11-01",
+   "name": "Ahoi Ashtami",
+   "rule": "Kartika, Krishna Ashtami"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Govatsa Dwadashi",
+   "rule": "Kartika, Krishna Dwadashi"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Rama Ekadashi",
+   "rule": "Kartika, Krishna Ekadashi"
+  },
+  {
+   "date": "2026-11-06",
+   "name": "Dhanteras",
+   "rule": "Kartika, Krishna Trayodashi"
+  },
+  {
+   "date": "2026-11-07",
+   "name": "Kali Chaudas",
+   "rule": "Kartika, Krishna Chaturdashi"
+  },
+  {
+   "date": "2026-11-08",
+   "name": "Diwali",
+   "rule": "Kartika, Krishna Amavasya"
+  },
+  {
+   "date": "2026-11-08",
+   "name": "Lakshmi Puja",
+   "rule": "Kartika, Krishna Amavasya"
+  },
+  {
+   "date": "2026-11-08",
+   "name": "Narak Chaturdashi",
+   "rule": "Kartika, Krishna Chaturdashi"
+  },
+  {
+   "date": "2026-11-10",
+   "name": "Govardhan Puja",
+   "rule": "Kartika, Shukla Pratipada"
+  },
+  {
+   "date": "2026-11-11",
+   "name": "Bhaiya Dooj",
+   "rule": "Kartika, Shukla Dwitiya"
+  },
+  {
+   "date": "2026-11-15",
+   "name": "Chhath Puja",
+   "rule": "Kartika, Shukla Shashthi"
+  },
+  {
+   "date": "2026-11-16",
+   "name": "Vrishchika Sankranti",
+   "rule": "Tula to Vrishchika transit of Sun"
+  },
+  {
+   "date": "2026-11-20",
+   "name": "Devutthana Ekadashi",
+   "rule": "Kartika, Shukla Ekadashi"
+  },
+  {
+   "date": "2026-11-20",
+   "name": "Kansa Vadh",
+   "rule": "Kartika, Shukla Dashami"
+  },
+  {
+   "date": "2026-11-21",
+   "name": "Gauna Devutthana Ekadashi",
+   "rule": "Kartika, Shukla Ekadashi"
+  },
+  {
+   "date": "2026-11-21",
+   "name": "Tulasi Vivah",
+   "rule": "Kartika, Shukla Dwadashi"
+  },
+  {
+   "date": "2026-11-24",
+   "name": "Kartika Purnima",
+   "rule": "Kartika, Shukla Purnima"
+  },
+  {
+   "date": "2026-12-01",
+   "name": "Kalabhairav Jayanti",
+   "rule": "Margashirsha, Krishna Ashtami"
+  },
+  {
+   "date": "2026-12-04",
+   "name": "Utpanna Ekadashi",
+   "rule": "Margashirsha, Krishna Ekadashi"
+  },
+  {
+   "date": "2026-12-14",
+   "name": "Vivah Panchami",
+   "rule": "Margashirsha, Shukla Panchami"
+  },
+  {
+   "date": "2026-12-16",
+   "name": "Dhanu Sankranti",
+   "rule": "Vrishchika to Dhanu transit of Sun"
+  },
+  {
+   "date": "2026-12-20",
+   "name": "Gita Jayanti",
+   "rule": "Margashirsha, Shukla Ekadashi"
+  },
+  {
+   "date": "2026-12-20",
+   "name": "Mokshada Ekadashi",
+   "rule": "Margashirsha, Shukla Ekadashi"
+  },
+  {
+   "date": "2026-12-23",
+   "name": "Dattatreya Jayanti",
+   "rule": "Margashirsha, Shukla Purnima"
+  },
+  {
+   "date": "2026-12-23",
+   "name": "Margashirsha Purnima",
+   "rule": "Margashirsha, Shukla Purnima"
+  },
+  {
+   "date": "2027-01-03",
+   "name": "Saphala Ekadashi",
+   "rule": "Pausha, Krishna Ekadashi"
+  },
+  {
+   "date": "2027-01-15",
+   "name": "Makara Sankranti",
+   "rule": "Dhanu to Makara transit of Sun"
+  },
+  {
+   "date": "2027-01-15",
+   "name": "Pongal",
+   "rule": "on Makara Sankranti day"
+  },
+  {
+   "date": "2027-01-18",
+   "name": "Pausha Putrada Ekadashi",
+   "rule": "Pausha, Shukla Ekadashi"
+  },
+  {
+   "date": "2027-01-19",
+   "name": "Gauna Pausha Putrada Ekadashi",
+   "rule": "Pausha, Shukla Ekadashi"
+  },
+  {
+   "date": "2027-01-22",
+   "name": "Pausha Purnima",
+   "rule": "Pausha, Shukla Purnima"
+  },
+  {
+   "date": "2027-01-25",
+   "name": "Sakat Chauth",
+   "rule": "Magha, Krishna Chaturthi"
+  },
+  {
+   "date": "2027-02-02",
+   "name": "Shattila Ekadashi",
+   "rule": "Magha, Krishna Ekadashi"
+  },
+  {
+   "date": "2027-02-06",
+   "name": "Mauni Amavas",
+   "rule": "Magha, Krishna Amavasya"
+  },
+  {
+   "date": "2027-02-06",
+   "name": "Surya Grahan *Valayakara",
+   "rule": "occurs during Amavasya"
+  },
+  {
+   "date": "2027-02-11",
+   "name": "Vasant Panchami",
+   "rule": "Magha, Shukla Panchami"
+  },
+  {
+   "date": "2027-02-13",
+   "name": "Kumbha Sankranti",
+   "rule": "Makara to Kumbha transit of Sun"
+  },
+  {
+   "date": "2027-02-13",
+   "name": "Ratha Saptami",
+   "rule": "Magha, Shukla Saptami"
+  },
+  {
+   "date": "2027-02-14",
+   "name": "Bhishma Ashtami",
+   "rule": "Magha, Shukla Ashtami"
+  },
+  {
+   "date": "2027-02-17",
+   "name": "Jaya Ekadashi",
+   "rule": "Magha, Shukla Ekadashi"
+  },
+  {
+   "date": "2027-02-20",
+   "name": "Magha Purnima",
+   "rule": "Magha, Shukla Purnima"
+  },
+  {
+   "date": "2027-02-21",
+   "name": "Chandra Grahan *Upachchaya",
+   "rule": "occurs during Purnima"
+  },
+  {
+   "date": "2027-03-04",
+   "name": "Vijaya Ekadashi",
+   "rule": "Phalguna, Krishna Ekadashi"
+  },
+  {
+   "date": "2027-03-06",
+   "name": "Maha Shivaratri",
+   "rule": "Phalguna, Krishna Chaturdashi"
+  },
+  {
+   "date": "2027-03-08",
+   "name": "Somavati Amavasya",
+   "rule": "Phalguna, Krishna Amavasya"
+  },
+  {
+   "date": "2027-03-15",
+   "name": "Meena Sankranti",
+   "rule": "Kumbha to Meena transit of Sun"
+  },
+  {
+   "date": "2027-03-18",
+   "name": "Amalaki Ekadashi",
+   "rule": "Phalguna, Shukla Ekadashi"
+  },
+  {
+   "date": "2027-03-21",
+   "name": "Chhoti Holi",
+   "rule": "Phalguna, Shukla Purnima"
+  },
+  {
+   "date": "2027-03-21",
+   "name": "Holika Dahan",
+   "rule": "Phalguna, Shukla Purnima"
+  },
+  {
+   "date": "2027-03-22",
+   "name": "Holi",
+   "rule": "Chaitra, Krishna Pratipada"
+  },
+  {
+   "date": "2027-03-22",
+   "name": "Phalguna Purnima",
+   "rule": "Phalguna, Shukla Purnima"
+  },
+  {
+   "date": "2027-03-30",
+   "name": "Basoda",
+   "rule": "Chaitra, Krishna Ashtami"
+  },
+  {
+   "date": "2027-03-30",
+   "name": "Sheetala Ashtami",
+   "rule": "Chaitra, Krishna Ashtami"
+  },
+  {
+   "date": "2027-04-02",
+   "name": "Papamochani Ekadashi",
+   "rule": "Chaitra, Krishna Ekadashi"
+  },
+  {
+   "date": "2027-04-07",
+   "name": "Chaitra Navratri",
+   "rule": "Chaitra, Shukla Pratipada"
+  },
+  {
+   "date": "2027-04-07",
+   "name": "Gudi Padwa",
+   "rule": "Chaitra, Shukla Pratipada"
+  },
+  {
+   "date": "2027-04-07",
+   "name": "Nutan Varsh Prarambha",
+   "rule": "Chaitra, Shukla Pratipada"
+  },
+  {
+   "date": "2027-04-07",
+   "name": "Ugadi",
+   "rule": "Chaitra, Shukla Pratipada"
+  },
+  {
+   "date": "2027-04-09",
+   "name": "Gangaur",
+   "rule": "Chaitra, Shukla Tritiya"
+  },
+  {
+   "date": "2027-04-09",
+   "name": "Gauri Puja",
+   "rule": "Chaitra, Shukla Tritiya"
+  },
+  {
+   "date": "2027-04-12",
+   "name": "Yamuna Chhath",
+   "rule": "Chaitra, Shukla Shashthi"
+  },
+  {
+   "date": "2027-04-14",
+   "name": "Mesha Sankranti",
+   "rule": "Meena to Mesha transit of Sun"
+  },
+  {
+   "date": "2027-04-14",
+   "name": "Solar New Year",
+   "rule": "first day of Hindu Solar calendar"
+  },
+  {
+   "date": "2027-04-15",
+   "name": "Rama Navami",
+   "rule": "Chaitra, Shukla Navami"
+  },
+  {
+   "date": "2027-04-15",
+   "name": "Swaminarayan Jayanti",
+   "rule": "Chaitra, Shukla Navami"
+  },
+  {
+   "date": "2027-04-17",
+   "name": "Kamada Ekadashi",
+   "rule": "Chaitra, Shukla Ekadashi"
+  },
+  {
+   "date": "2027-04-20",
+   "name": "Chaitra Purnima",
+   "rule": "Chaitra, Shukla Purnima"
+  },
+  {
+   "date": "2027-04-20",
+   "name": "Hanuman Janmotsava",
+   "rule": "Chaitra, Shukla Purnima"
+  },
+  {
+   "date": "2027-04-20",
+   "name": "Hanuman Jayanti",
+   "rule": "Chaitra, Shukla Purnima"
+  },
+  {
+   "date": "2027-05-02",
+   "name": "Varuthini Ekadashi",
+   "rule": "Vaishakha, Krishna Ekadashi"
+  },
+  {
+   "date": "2027-05-08",
+   "name": "Parashurama Jayanti",
+   "rule": "Vaishakha, Shukla Tritiya"
+  },
+  {
+   "date": "2027-05-09",
+   "name": "Akshaya Tritiya",
+   "rule": "Vaishakha, Shukla Tritiya"
+  },
+  {
+   "date": "2027-05-12",
+   "name": "Ganga Saptami",
+   "rule": "Vaishakha, Shukla Saptami"
+  },
+  {
+   "date": "2027-05-14",
+   "name": "Sita Navami",
+   "rule": "Vaishakha, Shukla Navami"
+  },
+  {
+   "date": "2027-05-15",
+   "name": "Vrishabha Sankranti",
+   "rule": "Mesha to Vrishabha transit of Sun"
+  },
+  {
+   "date": "2027-05-16",
+   "name": "Mohini Ekadashi",
+   "rule": "Vaishakha, Shukla Ekadashi"
+  },
+  {
+   "date": "2027-05-18",
+   "name": "Narasimha Jayanti",
+   "rule": "Vaishakha, Shukla Chaturdashi"
+  },
+  {
+   "date": "2027-05-20",
+   "name": "Buddha Purnima",
+   "rule": "Vaishakha, Shukla Purnima"
+  },
+  {
+   "date": "2027-05-20",
+   "name": "Vaishakha Purnima",
+   "rule": "Vaishakha, Shukla Purnima"
+  },
+  {
+   "date": "2027-05-21",
+   "name": "Narada Jayanti",
+   "rule": "Jyeshtha, Krishna Pratipada"
+  },
+  {
+   "date": "2027-06-01",
+   "name": "Apara Ekadashi",
+   "rule": "Jyeshtha, Krishna Ekadashi"
+  },
+  {
+   "date": "2027-06-04",
+   "name": "Shani Jayanti",
+   "rule": "Jyeshtha, Krishna Amavasya"
+  },
+  {
+   "date": "2027-06-04",
+   "name": "Vat Savitri Vrat",
+   "rule": "Jyeshtha, Krishna Amavasya"
+  },
+  {
+   "date": "2027-06-13",
+   "name": "Ganga Dussehra",
+   "rule": "Jyeshtha, Shukla Dashami"
+  },
+  {
+   "date": "2027-06-14",
+   "name": "Nirjala Ekadashi",
+   "rule": "Jyeshtha, Shukla Ekadashi"
+  },
+  {
+   "date": "2027-06-15",
+   "name": "Mithuna Sankranti",
+   "rule": "Vrishabha to Mithuna transit of Sun"
+  },
+  {
+   "date": "2027-06-18",
+   "name": "Jyeshtha Purnima",
+   "rule": "Jyeshtha, Shukla Purnima"
+  },
+  {
+   "date": "2027-06-18",
+   "name": "Vat Purnima Vrat",
+   "rule": "Jyeshtha, Shukla Purnima"
+  },
+  {
+   "date": "2027-06-30",
+   "name": "Yogini Ekadashi",
+   "rule": "Ashadha, Krishna Ekadashi"
+  },
+  {
+   "date": "2027-07-05",
+   "name": "Jagannath Rathyatra",
+   "rule": "Ashadha, Shukla Dwitiya"
+  },
+  {
+   "date": "2027-07-14",
+   "name": "Devshayani Ekadashi",
+   "rule": "Ashadha, Shukla Ekadashi"
+  },
+  {
+   "date": "2027-07-17",
+   "name": "Karka Sankranti",
+   "rule": "Mithuna to Karka transit of Sun"
+  },
+  {
+   "date": "2027-07-17",
+   "name": "Simhasta Kumbha @Nashik",
+   "rule": "Karka Surya and Simha Guru"
+  },
+  {
+   "date": "2027-07-18",
+   "name": "Ashadha Purnima",
+   "rule": "Ashadha, Shukla Purnima"
+  },
+  {
+   "date": "2027-07-18",
+   "name": "Guru Purnima",
+   "rule": "Ashadha, Shukla Purnima"
+  },
+  {
+   "date": "2027-07-29",
+   "name": "Kamika Ekadashi",
+   "rule": "Shravana, Krishna Ekadashi"
+  },
+  {
+   "date": "2027-07-30",
+   "name": "Gauna Kamika Ekadashi",
+   "rule": "Shravana, Krishna Ekadashi"
+  },
+  {
+   "date": "2027-08-02",
+   "name": "Somavati Amavasya",
+   "rule": "Shravana, Krishna Amavasya"
+  },
+  {
+   "date": "2027-08-02",
+   "name": "Surya Grahan *Purna",
+   "rule": "occurs during Amavasya"
+  },
+  {
+   "date": "2027-08-04",
+   "name": "Hariyali Teej",
+   "rule": "Shravana, Shukla Tritiya"
+  },
+  {
+   "date": "2027-08-06",
+   "name": "Nag Panchami",
+   "rule": "Shravana, Shukla Panchami"
+  },
+  {
+   "date": "2027-08-12",
+   "name": "Shravana Putrada Ekadashi",
+   "rule": "Shravana, Shukla Ekadashi"
+  },
+  {
+   "date": "2027-08-13",
+   "name": "Varalakshmi Vrat",
+   "rule": "Friday before Shravana Purnima"
+  },
+  {
+   "date": "2027-08-17",
+   "name": "Chandra Grahan *Upachchaya",
+   "rule": "occurs during Purnima"
+  },
+  {
+   "date": "2027-08-17",
+   "name": "Gayatri Jayanti",
+   "rule": "Shravana, Shukla Purnima"
+  },
+  {
+   "date": "2027-08-17",
+   "name": "Rakhi",
+   "rule": "Shravana, Shukla Purnima"
+  },
+  {
+   "date": "2027-08-17",
+   "name": "Raksha Bandhan",
+   "rule": "Shravana, Shukla Purnima"
+  },
+  {
+   "date": "2027-08-17",
+   "name": "Shravana Purnima",
+   "rule": "Shravana, Shukla Purnima"
+  },
+  {
+   "date": "2027-08-17",
+   "name": "Simha Sankranti",
+   "rule": "Karka to Simha transit of Sun"
+  },
+  {
+   "date": "2027-08-17",
+   "name": "Simhasta Kumbha ends @Nashik",
+   "rule": "Karka Surya and Simha Guru"
+  },
+  {
+   "date": "2027-08-20",
+   "name": "Kajari Teej",
+   "rule": "Bhadrapada, Krishna Tritiya"
+  },
+  {
+   "date": "2027-08-25",
+   "name": "Krishna Janmashtami",
+   "rule": "Bhadrapada, Krishna Ashtami"
+  },
+  {
+   "date": "2027-08-28",
+   "name": "Aja Ekadashi",
+   "rule": "Bhadrapada, Krishna Ekadashi"
+  },
+  {
+   "date": "2027-09-03",
+   "name": "Hartalika Teej",
+   "rule": "Bhadrapada, Shukla Tritiya"
+  },
+  {
+   "date": "2027-09-04",
+   "name": "Agastya Arghya",
+   "rule": "based on Astronomy calculations"
+  },
+  {
+   "date": "2027-09-04",
+   "name": "Ganesh Chaturthi",
+   "rule": "Bhadrapada, Shukla Chaturthi"
+  },
+  {
+   "date": "2027-09-04",
+   "name": "Rishi Panchami",
+   "rule": "Bhadrapada, Shukla Panchami"
+  },
+  {
+   "date": "2027-09-06",
+   "name": "Balarama Jayanti",
+   "rule": "Bhadrapada, Shukla Shashthi"
+  },
+  {
+   "date": "2027-09-08",
+   "name": "Radha Ashtami",
+   "rule": "Bhadrapada, Shukla Ashtami"
+  },
+  {
+   "date": "2027-09-11",
+   "name": "Parsva Ekadashi",
+   "rule": "Bhadrapada, Shukla Ekadashi"
+  },
+  {
+   "date": "2027-09-12",
+   "name": "Onam",
+   "rule": "Sun in Simha & Shravana Nakshatra"
+  },
+  {
+   "date": "2027-09-14",
+   "name": "Anant Chaturdashi",
+   "rule": "Bhadrapada, Shukla Chaturdashi"
+  },
+  {
+   "date": "2027-09-14",
+   "name": "Ganesh Visarjan",
+   "rule": "Bhadrapada, Shukla Chaturdashi"
+  },
+  {
+   "date": "2027-09-15",
+   "name": "Bhadrapada Purnima",
+   "rule": "Bhadrapada, Shukla Purnima"
+  },
+  {
+   "date": "2027-09-16",
+   "name": "Pitrupaksha Begins",
+   "rule": "Ashwina, Krishna Pratipada"
+  },
+  {
+   "date": "2027-09-17",
+   "name": "Kanya Sankranti",
+   "rule": "Simha to Kanya transit of Sun"
+  },
+  {
+   "date": "2027-09-17",
+   "name": "Vishwakarma Puja",
+   "rule": "on Kanya Sankranti day"
+  },
+  {
+   "date": "2027-09-26",
+   "name": "Indira Ekadashi",
+   "rule": "Ashwina, Krishna Ekadashi"
+  },
+  {
+   "date": "2027-09-29",
+   "name": "Sarva Pitru Amavasya",
+   "rule": "Ashwina, Krishna Amavasya"
+  },
+  {
+   "date": "2027-09-30",
+   "name": "Navratri Begins",
+   "rule": "Ashwina, Shukla Pratipada"
+  },
+  {
+   "date": "2027-10-06",
+   "name": "Saraswati Avahan",
+   "rule": "Ashwina, Mula Nakshatra"
+  },
+  {
+   "date": "2027-10-07",
+   "name": "Durga Ashtami",
+   "rule": "Ashwina, Shukla Ashtami"
+  },
+  {
+   "date": "2027-10-07",
+   "name": "Saraswati Puja",
+   "rule": "Ashwina, Purva Ashadha Nakshatra"
+  },
+  {
+   "date": "2027-10-08",
+   "name": "Maha Navami",
+   "rule": "Ashwina, Shukla Navami"
+  },
+  {
+   "date": "2027-10-09",
+   "name": "Dussehra",
+   "rule": "Ashwina, Shukla Dashami"
+  },
+  {
+   "date": "2027-10-09",
+   "name": "Vijayadashami",
+   "rule": "Ashwina, Shukla Dashami"
+  },
+  {
+   "date": "2027-10-11",
+   "name": "Papankusha Ekadashi",
+   "rule": "Ashwina, Shukla Ekadashi"
+  },
+  {
+   "date": "2027-10-14",
+   "name": "Kojagara Puja",
+   "rule": "Ashwina, Shukla Purnima"
+  },
+  {
+   "date": "2027-10-14",
+   "name": "Sharad Purnima",
+   "rule": "Ashwina, Shukla Purnima"
+  },
+  {
+   "date": "2027-10-15",
+   "name": "Ashwina Purnima",
+   "rule": "Ashwina, Shukla Purnima"
+  },
+  {
+   "date": "2027-10-18",
+   "name": "Karwa Chauth",
+   "rule": "Kartika, Krishna Chaturthi"
+  },
+  {
+   "date": "2027-10-18",
+   "name": "Tula Sankranti",
+   "rule": "Kanya to Tula transit of Sun"
+  },
+  {
+   "date": "2027-10-22",
+   "name": "Ahoi Ashtami",
+   "rule": "Kartika, Krishna Ashtami"
+  },
+  {
+   "date": "2027-10-25",
+   "name": "Rama Ekadashi",
+   "rule": "Kartika, Krishna Ekadashi"
+  },
+  {
+   "date": "2027-10-26",
+   "name": "Govatsa Dwadashi",
+   "rule": "Kartika, Krishna Dwadashi"
+  },
+  {
+   "date": "2027-10-27",
+   "name": "Dhanteras",
+   "rule": "Kartika, Krishna Trayodashi"
+  },
+  {
+   "date": "2027-10-27",
+   "name": "Kali Chaudas",
+   "rule": "Kartika, Krishna Chaturdashi"
+  },
+  {
+   "date": "2027-10-28",
+   "name": "Narak Chaturdashi",
+   "rule": "Kartika, Krishna Chaturdashi"
+  },
+  {
+   "date": "2027-10-29",
+   "name": "Diwali",
+   "rule": "Kartika, Krishna Amavasya"
+  },
+  {
+   "date": "2027-10-29",
+   "name": "Lakshmi Puja",
+   "rule": "Kartika, Krishna Amavasya"
+  },
+  {
+   "date": "2027-10-30",
+   "name": "Govardhan Puja",
+   "rule": "Kartika, Shukla Pratipada"
+  },
+  {
+   "date": "2027-10-31",
+   "name": "Bhaiya Dooj",
+   "rule": "Kartika, Shukla Dwitiya"
+  },
+  {
+   "date": "2027-11-04",
+   "name": "Chhath Puja",
+   "rule": "Kartika, Shukla Shashthi"
+  },
+  {
+   "date": "2027-11-08",
+   "name": "Kansa Vadh",
+   "rule": "Kartika, Shukla Dashami"
+  },
+  {
+   "date": "2027-11-10",
+   "name": "Devutthana Ekadashi",
+   "rule": "Kartika, Shukla Ekadashi"
+  },
+  {
+   "date": "2027-11-11",
+   "name": "Tulasi Vivah",
+   "rule": "Kartika, Shukla Dwadashi"
+  },
+  {
+   "date": "2027-11-14",
+   "name": "Kartika Purnima",
+   "rule": "Kartika, Shukla Purnima"
+  },
+  {
+   "date": "2027-11-17",
+   "name": "Vrishchika Sankranti",
+   "rule": "Tula to Vrishchika transit of Sun"
+  },
+  {
+   "date": "2027-11-20",
+   "name": "Kalabhairav Jayanti",
+   "rule": "Margashirsha, Krishna Ashtami"
+  },
+  {
+   "date": "2027-11-24",
+   "name": "Utpanna Ekadashi",
+   "rule": "Margashirsha, Krishna Ekadashi"
+  },
+  {
+   "date": "2027-12-03",
+   "name": "Vivah Panchami",
+   "rule": "Margashirsha, Shukla Panchami"
+  },
+  {
+   "date": "2027-12-09",
+   "name": "Gita Jayanti",
+   "rule": "Margashirsha, Shukla Ekadashi"
+  },
+  {
+   "date": "2027-12-09",
+   "name": "Mokshada Ekadashi",
+   "rule": "Margashirsha, Shukla Ekadashi"
+  },
+  {
+   "date": "2027-12-13",
+   "name": "Dattatreya Jayanti",
+   "rule": "Margashirsha, Shukla Purnima"
+  },
+  {
+   "date": "2027-12-13",
+   "name": "Margashirsha Purnima",
+   "rule": "Margashirsha, Shukla Purnima"
+  },
+  {
+   "date": "2027-12-16",
+   "name": "Dhanu Sankranti",
+   "rule": "Vrishchika to Dhanu transit of Sun"
+  },
+  {
+   "date": "2027-12-23",
+   "name": "Saphala Ekadashi",
+   "rule": "Pausha, Krishna Ekadashi"
+  },
+  {
+   "date": "2027-12-27",
+   "name": "Somavati Amavasya",
+   "rule": "Pausha, Krishna Amavasya"
+  }
+ ],
+ "shraddha": [
+  {
+   "date": "2026-09-26",
+   "name": "Purnima Shraddha",
+   "rule": "Bhadrapada, Shukla Purnima"
+  },
+  {
+   "date": "2026-09-27",
+   "name": "Pratipada Shraddha",
+   "rule": "Ashwina, Krishna Pratipada"
+  },
+  {
+   "date": "2026-09-28",
+   "name": "Dwitiya Shraddha",
+   "rule": "Ashwina, Krishna Dwitiya"
+  },
+  {
+   "date": "2026-09-29",
+   "name": "Maha Bharani",
+   "rule": "Ashwina, Bharani Nakshatra"
+  },
+  {
+   "date": "2026-09-29",
+   "name": "Tritiya Shraddha",
+   "rule": "Ashwina, Krishna Tritiya"
+  },
+  {
+   "date": "2026-09-30",
+   "name": "Chaturthi Shraddha",
+   "rule": "Ashwina, Krishna Chaturthi"
+  },
+  {
+   "date": "2026-09-30",
+   "name": "Panchami Shraddha",
+   "rule": "Ashwina, Krishna Panchami"
+  },
+  {
+   "date": "2026-10-01",
+   "name": "Shashthi Shraddha",
+   "rule": "Ashwina, Krishna Shashthi"
+  },
+  {
+   "date": "2026-10-02",
+   "name": "Saptami Shraddha",
+   "rule": "Ashwina, Krishna Saptami"
+  },
+  {
+   "date": "2026-10-03",
+   "name": "Ashtami Shraddha",
+   "rule": "Ashwina, Krishna Ashtami"
+  },
+  {
+   "date": "2026-10-04",
+   "name": "Navami Shraddha",
+   "rule": "Ashwina, Krishna Navami"
+  },
+  {
+   "date": "2026-10-05",
+   "name": "Dashami Shraddha",
+   "rule": "Ashwina, Krishna Dashami"
+  },
+  {
+   "date": "2026-10-06",
+   "name": "Ekadashi Shraddha",
+   "rule": "Ashwina, Krishna Ekadashi"
+  },
+  {
+   "date": "2026-10-07",
+   "name": "Dwadashi Shraddha",
+   "rule": "Ashwina, Krishna Dwadashi"
+  },
+  {
+   "date": "2026-10-07",
+   "name": "Magha Shraddha",
+   "rule": "Ashwina, Magha Nakshatra"
+  },
+  {
+   "date": "2026-10-08",
+   "name": "Trayodashi Shraddha",
+   "rule": "Ashwina, Krishna Trayodashi"
+  },
+  {
+   "date": "2026-10-09",
+   "name": "Chaturdashi Shraddha",
+   "rule": "Ashwina, Krishna Chaturdashi"
+  },
+  {
+   "date": "2026-10-10",
+   "name": "Sarva Pitru Amavasya",
+   "rule": "Ashwina, Krishna Amavasya"
+  },
+  {
+   "date": "2027-09-15",
+   "name": "Purnima Shraddha",
+   "rule": "Bhadrapada, Shukla Purnima"
+  },
+  {
+   "date": "2027-09-16",
+   "name": "Pratipada Shraddha",
+   "rule": "Ashwina, Krishna Pratipada"
+  },
+  {
+   "date": "2027-09-17",
+   "name": "Dwitiya Shraddha",
+   "rule": "Ashwina, Krishna Dwitiya"
+  },
+  {
+   "date": "2027-09-18",
+   "name": "Tritiya Shraddha",
+   "rule": "Ashwina, Krishna Tritiya"
+  },
+  {
+   "date": "2027-09-19",
+   "name": "Chaturthi Shraddha",
+   "rule": "Ashwina, Krishna Chaturthi"
+  },
+  {
+   "date": "2027-09-20",
+   "name": "Maha Bharani",
+   "rule": "Ashwina, Bharani Nakshatra"
+  },
+  {
+   "date": "2027-09-20",
+   "name": "Panchami Shraddha",
+   "rule": "Ashwina, Krishna Panchami"
+  },
+  {
+   "date": "2027-09-21",
+   "name": "Shashthi Shraddha",
+   "rule": "Ashwina, Krishna Shashthi"
+  },
+  {
+   "date": "2027-09-22",
+   "name": "Saptami Shraddha",
+   "rule": "Ashwina, Krishna Saptami"
+  },
+  {
+   "date": "2027-09-23",
+   "name": "Ashtami Shraddha",
+   "rule": "Ashwina, Krishna Ashtami"
+  },
+  {
+   "date": "2027-09-24",
+   "name": "Navami Shraddha",
+   "rule": "Ashwina, Krishna Navami"
+  },
+  {
+   "date": "2027-09-25",
+   "name": "Dashami Shraddha",
+   "rule": "Ashwina, Krishna Dashami"
+  },
+  {
+   "date": "2027-09-26",
+   "name": "Ekadashi Shraddha",
+   "rule": "Ashwina, Krishna Ekadashi"
+  },
+  {
+   "date": "2027-09-27",
+   "name": "Dwadashi Shraddha",
+   "rule": "Ashwina, Krishna Dwadashi"
+  },
+  {
+   "date": "2027-09-27",
+   "name": "Magha Shraddha",
+   "rule": "Ashwina, Magha Nakshatra"
+  },
+  {
+   "date": "2027-09-28",
+   "name": "Chaturdashi Shraddha",
+   "rule": "Ashwina, Krishna Chaturdashi"
+  },
+  {
+   "date": "2027-09-28",
+   "name": "Trayodashi Shraddha",
+   "rule": "Ashwina, Krishna Trayodashi"
+  },
+  {
+   "date": "2027-09-29",
+   "name": "Sarva Pitru Amavasya",
+   "rule": "Ashwina, Krishna Amavasya"
+  }
+ ]
+}

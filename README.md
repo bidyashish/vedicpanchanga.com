@@ -161,6 +161,7 @@ vedicpanchanga.com/
 │   ├── advanced_panchang.py # detailed Drik panchang
 │   ├── muhurta.py           # muhurta scoring engine + vetoes
 │   ├── transits.py          # planetary transit timeline
+│   ├── festivals.py         # festival / vrat / Shraddha engine (per-location dates + timings)
 │   ├── vargas.py, dasha_extras.py, jaimini.py, relationships.py, placements.py,
 │   │   kalsarpa.py, drishti.py, tyajyam.py, hora.py, gowri_panchang.py, ...
 │   ├── pdf/                 # multi-page PDF report (core/ + pages/ + fonts/)
@@ -205,6 +206,7 @@ All endpoints are mounted under `/api` (not `/api/v1`). In production the browse
 | GET | `/api/muhurta-purposes` | The 13 muhurta purpose categories |
 | POST | `/api/find-muhurta` | Scan a date range (max 120 days) for auspicious windows |
 | GET | `/api/transits` | Sign / nakshatra ingresses and retrograde stations |
+| GET | `/api/festivals` | Festival, vrat, Ekadashi, Sankranti, eclipse and Shraddha dates with local timings for a year and location |
 | GET | `/api/suggest-lang` | UI locale suggestion from country / Accept-Language |
 | GET | `/api/geo-ip` | Approximate visitor location from Cloudflare headers |
 | POST | `/api/print-pdf` | Multi-page PDF report in any of the 15 locales |

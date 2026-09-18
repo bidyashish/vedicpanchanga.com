@@ -40,6 +40,7 @@ API tests skip with a clear message instead of erroring.
 | `test_ayanamsa.py` | API: the 7 ayanamsa options and their effect on the Delhi ascendant (Lahiri / Raman / Manoj / Sayana / KP variants) |
 | `test_dasha_extras.py` | Vimshottari Antardasha / Pratyantar: durations sum to the mahadasha, first period straddles birth, Ranchi reference values |
 | `test_dur_muhurtam.py` | Dur Muhurtam slots per weekday and the Wednesday Abhijit suppression |
+| `test_festivals.py` | Festival calendar: every DrikPanchang New Delhi 2026-2027 calendar entry and Shraddha tithi (`fixtures/drikpanchang_festivals_delhi.json`) matches our computed date; marquee festivals, timing fields, periods, Ekadashi parana and a Southern-hemisphere / Toronto smoke |
 | `test_gowri_panchang.py` | Gowri Panchangam segments, day/night split, weekday cycle |
 | `test_hora.py` | Planetary Hora hours, day-lord cycle, auspicious tagging |
 | `test_jaimini.py` | Chara karakas (descending degree order), AK in Karakamsa house 1, Ranchi reference (AK=Moon, Karakamsa=Aquarius) |

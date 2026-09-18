@@ -180,6 +180,62 @@ export interface TransitsResponse {
   events: TransitEvent[];
 }
 
+export type FestivalKind = "tithi" | "nakshatra" | "sankranti" | "eclipse" | "derived";
+
+export interface FestivalRule {
+  type: FestivalKind;
+  month?: string;
+  adhika?: boolean;
+  paksha?: string;
+  tithi?: string;
+  nakshatra?: string;
+  from_sign?: string;
+  to_sign?: string;
+  eclipse?: string;
+  after?: string;
+}
+
+export interface FestivalWindow {
+  start: string;
+  end: string;
+}
+
+export interface FestivalEvent {
+  date: string;
+  id: string;
+  name: string;
+  kind: FestivalKind;
+  major: boolean;
+  series: string | null;
+  rule: FestivalRule;
+  sunrise: string;
+  sunset: string;
+  /** Tithi / nakshatra span or eclipse window (ISO with local offset). */
+  starts?: string;
+  ends?: string;
+  /** Puja window with the classical kala it was picked from. */
+  muhurta?: FestivalWindow & { kala: string };
+  /** Ekadashi fast-breaking window on the following morning. */
+  parana?: FestivalWindow;
+  /** Sankranti instant or greatest-eclipse instant. */
+  instant?: string;
+}
+
+export interface FestivalPeriod {
+  id: string;
+  start: string;
+  end: string;
+  days: number;
+  month?: string;
+}
+
+export interface FestivalsResponse {
+  year: number;
+  location: { latitude: number; longitude: number; timezone: string };
+  festivals: FestivalEvent[];
+  periods: FestivalPeriod[];
+}
+
 export type FriendshipCode = "GF" | "F" | "N" | "E" | "GE" | "";
 
 export interface Friendships {

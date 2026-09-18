@@ -9,11 +9,19 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
-- **Hindu festivals page** (`/festivals`): month-by-month festival, vrat and
-  Pitru Paksha Shraddha dates for 2026 and 2027, taken from the DrikPanchang
-  Hindu calendar for New Delhi. The data is plain markdown, one file per year
-  in `frontend/src/content/festivals/`; add `2028.md` to extend it. Opens on
-  the upcoming dates with a "Next up" strip; earlier dates sit behind a toggle.
+- **Hindu festivals page** (`/festivals`) computed from the ephemeris for the
+  visitor's own city, in all 15 languages. A new `backend/festivals.py` engine
+  and `GET /api/festivals?year&latitude&longitude` return ~125 festivals, vrats,
+  the 26 Ekadashis, 12 Sankrantis, solar / lunar eclipses and every Pitru Paksha
+  Shraddha tithi for any year 1900-2100, each with its local sunrise / sunset,
+  tithi or nakshatra span, puja window (pradosh, nishita, aparahna, moonrise,
+  ...), parana and exact sankranti / eclipse instant. Special periods (Adhika
+  Masa, Chaturmas, Pitru Paksha, both Navratris, Durga Puja) sit at the top
+  with a day counter. Major festivals (Holi, Diwali, Durga Puja, Kali Puja,
+  Chhath, Rama Navami, Janmashtami, ...) render as themed hero cards. Festival
+  names are localized in every locale (`fest_<id>` keys). The page reuses the
+  location chosen on the panchang page. Pinned against the DrikPanchang New
+  Delhi calendar for 2026-2027 (304 entries, `backend/tests/test_festivals.py`).
 
 ### Changed
 

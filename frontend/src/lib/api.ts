@@ -8,6 +8,7 @@ import type {
   NominatimResult,
   PanchangData,
   TransitsResponse,
+  FestivalsResponse,
 } from "@/types/api";
 
 const BASE = (import.meta.env.VITE_BACKEND_URL ?? "").replace(/\/$/, "");
@@ -110,6 +111,23 @@ export function fetchTransits(params: TransitsParams): Promise<TransitsResponse>
   if (params.include_moon) qs.set("include_moon", "true");
   if (params.moon_nakshatras) qs.set("moon_nakshatras", "true");
   return request<TransitsResponse>(`${API}/transits?${qs.toString()}`);
+}
+
+export interface FestivalsParams {
+  year: number;
+  latitude: number;
+  longitude: number;
+  timezone?: string | null;
+}
+
+export function fetchFestivals(params: FestivalsParams): Promise<FestivalsResponse> {
+  const qs = new URLSearchParams({
+    year: String(params.year),
+    latitude: String(params.latitude),
+    longitude: String(params.longitude),
+  });
+  if (params.timezone) qs.set("timezone", params.timezone);
+  return request<FestivalsResponse>(`${API}/festivals?${qs.toString()}`);
 }
 
 export function fetchMuhurtaPurposes(): Promise<MuhurtaPurpose[]> {

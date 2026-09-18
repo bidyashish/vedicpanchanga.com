@@ -145,13 +145,12 @@ const SEO_BY_VIEW: Record<
       "planetary transits, gochar, saturn transit, jupiter transit, rahu ketu transit, retrograde planets, nakshatra transit, vedic astrology transits",
   },
   festivals: {
-    title:
-      "Hindu Festival Calendar - Upcoming Festivals, Vrats & Pitru Paksha Shraddha Dates · Vedic Panchanga",
+    title: "Hindu Festival Calendar - Exact Dates & Puja Timings for Your City · Vedic Panchanga",
     description:
-      "Month-by-month Hindu festival calendar with vrat, Ekadashi, Sankranti, Navratri, Diwali and Pitru Paksha Shraddha dates for 2026 and 2027, as per the New Delhi Hindu calendar.",
+      "Hindu festival calendar computed for your city: Diwali, Holi, Navratri, Durga Puja, Ekadashi, Sankranti, eclipses and Pitru Paksha Shraddha dates with exact local tithi and puja timings, in 15 languages.",
     canonical: `${SITE}/festivals`,
     keywords:
-      "hindu festivals 2026, hindu calendar 2026, hindu festivals 2027, pitru paksha 2026, shraddha dates, ekadashi dates, navratri 2026, diwali 2026, sankranti dates, hindu vrat calendar",
+      "hindu festivals, hindu calendar, festival dates by city, pitru paksha shraddha dates, ekadashi dates, navratri dates, diwali date, holi date, sankranti dates, adhika masa, chaturmas, hindu vrat calendar",
   },
   frequency: {
     title:
@@ -388,7 +387,7 @@ export default function App() {
           {view === "panchang" && <PanchangPage defaultLocation={sharedLocation} />}
           {view === "muhurta" && <MuhurtaPage defaultLocation={sharedLocation} />}
           {view === "transits" && <TransitsPage defaultLocation={sharedLocation} />}
-          {view === "festivals" && <FestivalsPage />}
+          {view === "festivals" && <FestivalsPage defaultLocation={sharedLocation} />}
           {view === "frequency" && <FrequencyPage />}
           {view === "privacy" && <PrivacyPage />}
           {view === "terms" && <TermsPage />}

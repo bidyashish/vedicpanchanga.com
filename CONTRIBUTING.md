@@ -42,6 +42,7 @@ backend/
 ├── relationships.py       Natural / temporal / 5-fold friendship matrices.
 ├── jaimini.py             Chara karakas + Karakamsa / Swamsa charts.
 ├── kalsarpa.py            Kalsarpa Yoga detection.
+├── festivals.py           Festival / vrat / Shraddha engine (GET /api/festivals).
 ├── mangal.py              Mangal Dosha analysis.
 ├── sade_sati.py           Saturn-from-Moon 120-year transit table.
 ├── gowri_panchang.py      Tamil/Telugu Gowri Panchangam.
