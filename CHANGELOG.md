@@ -15,6 +15,16 @@ All notable changes to this project are documented here. The format follows
   in `frontend/src/content/festivals/`; add `2028.md` to extend it. Opens on
   the upcoming dates with a "Next up" strip; earlier dates sit behind a toggle.
 
+### Changed
+
+- **Nginx request logging** (`infra/setup-vps.sh`): every request for the
+  vhost, including static assets and the direct-IP `444` catch-all, is logged
+  as JSON (`security` log format) to `/var/log/nginx/vedicpanchanga/access.log`
+  with client and edge IP, `CF-Ray`, request ID (forwarded upstream as
+  `X-Request-ID`), timings, upstream status, TLS details and an
+  `api_key_present` flag. Retained 365 days via logrotate. Vhost errors move to
+  `/var/log/nginx/vedicpanchanga/error.log`.
+
 ### Fixed
 
 - **Tarabalam** no longer lists the native's own (Janma) nakshatra as good.

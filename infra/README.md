@@ -59,7 +59,8 @@ What it does, in order:
    `panchanga-backend.service` on port 8001.
 4. **Frontend** - writes `.env.production` with empty `VITE_BACKEND_URL`
    (browser hits same-origin `/api`), runs `npm ci && npm run build`.
-5. **Nginx** - emits TLS or HTTP-only vhost depending on whether
+5. **Nginx** - installs the JSON `security` log format and a 365-day
+   logrotate policy, then emits TLS or HTTP-only vhost depending on whether
    `/etc/ssl/cloudflare/origin.{pem,key}` exist.
 6. **Firewall (UFW)** - opens `22/80/443`; blocks `8000/8001` directly; and
    drops any public allow on the monitoring ports `3002/9090/9100/9115` (they
@@ -78,6 +79,20 @@ sudo bash /apps/panchanga/infra/setup-vps.sh    # re-run; emits TLS vhost
 ```
 
 Then set Cloudflare SSL/TLS mode to **Full (strict)**.
+
+### Request logging
+
+Every request that reaches Nginx for this vhost - static assets, redirects and
+the direct-IP `444` catch-all included - is written as one JSON object per line
+to `/var/log/nginx/vedicpanchanga/access.log` using the `security` log format
+from `/etc/nginx/conf.d/vedicpanchanga-logging.conf`. Each line carries the
+Cloudflare-resolved client IP and edge IP, `CF-Ray`, country, the Nginx request
+ID (also forwarded to the backend as `X-Request-ID`), method, URI, protocol,
+status, byte counts, request and upstream timings, upstream status, TLS
+protocol and cipher, referer, user agent and an `api_key_present` flag (the key
+itself is never logged). Logs rotate daily with `dateext`, are compressed and
+kept for 365 days (`/etc/logrotate.d/vedicpanchanga-nginx`). Vhost errors go
+to `/var/log/nginx/vedicpanchanga/error.log` at `warn` and above.
 
 ## `auto-update-cron.sh` - deploy and auto-update
 
@@ -112,6 +127,8 @@ sudo journalctl -u panchanga-backend -f      # tail backend logs
 sudo systemctl restart panchanga-backend     # restart backend
 sudo systemctl reload nginx                  # reload nginx (no downtime)
 sudo nginx -t                                # validate nginx config
+sudo tail -f /var/log/nginx/vedicpanchanga/access.log   # JSON request log
+sudo tail -f /var/log/nginx/vedicpanchanga/error.log    # vhost errors (warn+)
 bash /apps/panchanga/infra/auto-update-cron.sh   # manual deploy
 ```
 

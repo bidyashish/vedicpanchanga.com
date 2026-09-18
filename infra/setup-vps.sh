@@ -154,6 +154,69 @@ else
 WARN
 fi
 
+# ── nginx logging ────────────────────────────────────────────────────────────
+install -d -o root -g adm -m 0750 /var/log/nginx/vedicpanchanga
+touch /var/log/nginx/vedicpanchanga/access.log /var/log/nginx/vedicpanchanga/error.log
+chown www-data:adm /var/log/nginx/vedicpanchanga/*.log
+chmod 0640 /var/log/nginx/vedicpanchanga/*.log
+
+cat > /etc/nginx/conf.d/vedicpanchanga-logging.conf <<'EOF'
+map "$http_authorization$http_x_api_key" $api_key_present {
+    default 1;
+    ""      0;
+}
+
+log_format security escape=json '{'
+    '"time":"$time_iso8601",'
+    '"msec":$msec,'
+    '"request_id":"$request_id",'
+    '"client_ip":"$remote_addr",'
+    '"edge_ip":"$realip_remote_addr",'
+    '"x_forwarded_for":"$http_x_forwarded_for",'
+    '"cf_ray":"$http_cf_ray",'
+    '"cf_country":"$http_cf_ipcountry",'
+    '"scheme":"$scheme",'
+    '"host":"$host",'
+    '"server_name":"$server_name",'
+    '"server_port":"$server_port",'
+    '"method":"$request_method",'
+    '"uri":"$request_uri",'
+    '"protocol":"$server_protocol",'
+    '"status":$status,'
+    '"request_length":$request_length,'
+    '"bytes_sent":$bytes_sent,'
+    '"body_bytes_sent":$body_bytes_sent,'
+    '"request_time":$request_time,'
+    '"upstream_addr":"$upstream_addr",'
+    '"upstream_status":"$upstream_status",'
+    '"upstream_response_time":"$upstream_response_time",'
+    '"api_key_present":$api_key_present,'
+    '"referer":"$http_referer",'
+    '"user_agent":"$http_user_agent",'
+    '"tls_protocol":"$ssl_protocol",'
+    '"tls_cipher":"$ssl_cipher",'
+    '"connection":$connection,'
+    '"connection_requests":$connection_requests'
+'}';
+EOF
+
+cat > /etc/logrotate.d/vedicpanchanga-nginx <<'EOF'
+/var/log/nginx/vedicpanchanga/*.log {
+    daily
+    missingok
+    rotate 365
+    dateext
+    compress
+    delaycompress
+    notifempty
+    create 0640 www-data adm
+    sharedscripts
+    postrotate
+        invoke-rc.d nginx rotate >/dev/null 2>&1
+    endscript
+}
+EOF
+
 if [ "$TLS_ENABLED" = "1" ]; then
 cat > /etc/nginx/sites-available/vedicpanchanga <<EOF
 # Serve markdown to agents that request it (Accept: text/markdown).
@@ -167,6 +230,8 @@ server {
     listen 80;
     listen [::]:80;
     server_name vedicpanchanga.com www.vedicpanchanga.com;
+    access_log /var/log/nginx/vedicpanchanga/access.log security;
+    error_log  /var/log/nginx/vedicpanchanga/error.log warn;
     return 301 https://\$host\$request_uri;
 }
 
@@ -176,6 +241,8 @@ server {
     listen [::]:443 ssl;
     http2 on;
     server_name vedicpanchanga.com www.vedicpanchanga.com;
+    access_log /var/log/nginx/vedicpanchanga/access.log security;
+    error_log  /var/log/nginx/vedicpanchanga/error.log warn;
 
     ssl_certificate     $CF_CERT;
     ssl_certificate_key $CF_KEY;
@@ -222,31 +289,26 @@ server {
 
     location = /.well-known/api-catalog {
         default_type application/json;
-        access_log off;
         expires 1d;
     }
 
     location /assets/ {
-        access_log off;
         expires 1y;
         add_header Cache-Control "public, immutable";
         try_files \$uri =404;
     }
 
     location ~* \.(png|jpg|jpeg|gif|ico|svg|webp)$ {
-        access_log off;
         expires 30d;
         add_header Cache-Control "public";
         try_files \$uri =404;
     }
 
     location = /robots.txt {
-        access_log off;
         expires 7d;
     }
 
     location = /sitemap.xml {
-        access_log off;
         expires 1d;
     }
 
@@ -275,6 +337,7 @@ server {
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_set_header X-Request-ID \$request_id;
     }
 
     # Grafana monitoring UI under /grafana/ (binds 127.0.0.1:3002 with
@@ -302,6 +365,7 @@ server {
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_set_header X-Request-ID \$request_id;
         proxy_set_header CF-IPCountry \$http_cf_ipcountry;
         proxy_set_header CF-IPCity \$http_cf_ipcity;
         proxy_set_header CF-IPRegion \$http_cf_ipregion;
@@ -317,6 +381,8 @@ server {
     ssl_certificate     $CF_CERT;
     ssl_certificate_key $CF_KEY;
     server_name _;
+    access_log /var/log/nginx/vedicpanchanga/access.log security;
+    error_log  /var/log/nginx/vedicpanchanga/error.log warn;
     return 444;
 }
 EOF
@@ -330,6 +396,8 @@ map \$http_accept \$serve_markdown {
 server {
     listen 80;
     server_name vedicpanchanga.com www.vedicpanchanga.com;
+    access_log /var/log/nginx/vedicpanchanga/access.log security;
+    error_log  /var/log/nginx/vedicpanchanga/error.log warn;
 
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-Content-Type-Options "nosniff" always;
@@ -348,31 +416,26 @@ server {
 
     location = /.well-known/api-catalog {
         default_type application/json;
-        access_log off;
         expires 1d;
     }
 
     location /assets/ {
-        access_log off;
         expires 1y;
         add_header Cache-Control "public, immutable";
         try_files \$uri =404;
     }
 
     location ~* \.(png|jpg|jpeg|gif|ico|svg|webp)$ {
-        access_log off;
         expires 30d;
         add_header Cache-Control "public";
         try_files \$uri =404;
     }
 
     location = /robots.txt {
-        access_log off;
         expires 7d;
     }
 
     location = /sitemap.xml {
-        access_log off;
         expires 1d;
     }
 
@@ -401,6 +464,7 @@ server {
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_set_header X-Request-ID \$request_id;
     }
 
     # Grafana monitoring UI, reverse-proxied under /grafana/. Grafana binds to
@@ -430,6 +494,7 @@ server {
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_set_header X-Request-ID \$request_id;
         proxy_set_header CF-IPCountry \$http_cf_ipcountry;
         proxy_set_header CF-IPCity \$http_cf_ipcity;
         proxy_set_header CF-IPRegion \$http_cf_ipregion;
@@ -441,6 +506,8 @@ server {
 server {
     listen 80 default_server;
     server_name _;
+    access_log /var/log/nginx/vedicpanchanga/access.log security;
+    error_log  /var/log/nginx/vedicpanchanga/error.log warn;
     return 444;
 }
 EOF
