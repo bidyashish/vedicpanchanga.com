@@ -1,0 +1,17 @@
+modules:
+  # Generic 2xx probe used by the blackbox-http job in prometheus.yml.
+  # Works for both https public URLs and the plain-http origin (SSL is not
+  # required, so the same module serves http://127.0.0.1:8001 too). TLS cert
+  # expiry is still exported for the https targets via probe_ssl_earliest_cert_expiry.
+  http_2xx:
+    prober: http
+    timeout: 10s
+    http:
+      method: GET
+      valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+      valid_status_codes: []          # empty => any 2xx is success
+      follow_redirects: true
+      fail_if_not_ssl: false
+      preferred_ip_protocol: ip4
+      headers:
+        User-Agent: "blackbox-exporter/vedicpanchanga-monitoring"

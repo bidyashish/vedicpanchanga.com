@@ -1,0 +1,832 @@
+@import "tailwindcss";
+
+/* Class-based dark mode (was darkMode: "class" in v3 config). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("-apple-system"), local("BlinkMacSystemFont"), local("Segoe UI");
+  size-adjust: 107%;
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+/* ────────────────────────────────────────────────────────────
+   Theme tokens. Colors are wired through CSS rgb-channel vars
+   (--surface-rgb, --primary-rgb, etc.) declared further down,
+   so dark mode flips palette by overriding those vars rather
+   than the higher-level color tokens here. Tailwind v4's
+   color-mix() opacity modifiers (bg-saffron/10) work fine
+   against rgb() expressions.
+   ──────────────────────────────────────────────────────────── */
+@theme {
+  /* System fonts first — instant first paint on iOS/macOS, Windows,
+     Android. Inter loads in the background and swaps in via
+     font-display: swap (declared on the Google Fonts URL). */
+  --font-sans:
+    "Inter", "Inter Fallback", -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI",
+    system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: var(--font-sans);
+  --font-deva: "Noto Sans Devanagari", "Hind", var(--font-sans);
+  --font-deva-body: "Noto Sans Devanagari", "Hind", var(--font-sans);
+
+  /* Brand scale — Pumpkin Spice. Static (does not flip in dark mode). */
+  --color-pumpkin-50: #fff0e5;
+  --color-pumpkin-100: #ffe0cc;
+  --color-pumpkin-200: #ffc299;
+  --color-pumpkin-300: #ffa366;
+  --color-pumpkin-400: #ff8533;
+  --color-pumpkin-500: #ff6600;
+  --color-pumpkin-600: #cc5200;
+  --color-pumpkin-700: #993d00;
+  --color-pumpkin-800: #662900;
+  --color-pumpkin-900: #331400;
+  --color-pumpkin-950: #240e00;
+
+  /* Surface tier — names retained for compatibility with existing JSX. */
+  --color-parchment-50: rgb(var(--surface-rgb));
+  --color-parchment-100: rgb(var(--surface-soft-rgb));
+  --color-parchment-200: rgb(var(--border-rgb));
+  --color-parchment-300: rgb(var(--border-strong-rgb));
+
+  /* Primary accent */
+  --color-crimson: rgb(var(--primary-rgb));
+  --color-crimson-dark: rgb(var(--primary-hover-rgb));
+  --color-crimson-light: rgb(var(--primary-soft-rgb));
+
+  --color-saffron: rgb(var(--primary-rgb));
+  --color-saffron-dark: rgb(var(--primary-hover-rgb));
+  --color-saffron-light: rgb(var(--primary-soft-rgb));
+
+  --color-gold: rgb(var(--text-muted-rgb));
+  --color-gold-dark: rgb(var(--text-soft-rgb));
+  --color-gold-light: rgb(var(--surface-soft-rgb));
+
+  --color-indigo: rgb(var(--accent-moon-rgb));
+  --color-indigo-dark: rgb(var(--accent-moon-rgb));
+  --color-indigo-soft: rgb(var(--primary-soft-rgb));
+
+  --color-ink: rgb(var(--text-rgb));
+  --color-ink-soft: rgb(var(--text-soft-rgb));
+  --color-ink-muted: rgb(var(--text-muted-rgb));
+
+  --color-leaf: rgb(var(--success-rgb));
+  --color-leaf-light: rgb(var(--success-rgb));
+
+  --color-rose: rgb(var(--danger-rgb));
+
+  /* Container scale — adds the missing `max-w-screen-3xl` utility. */
+  --container-screen-3xl: 1792px;
+
+  /* Restrained corner radii. */
+  --radius-2xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+
+  /* Shadows — overridden in `.dark` for higher contrast. */
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-lift: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-glow: 0 0 0 3px rgb(var(--primary-rgb) / 0.18);
+
+  /* Semantic font scale — every component should reach for one of
+     these instead of text-[Npx]. Tuned for WCAG-compliant body text
+     (16px floor) and stronger heading hierarchy. */
+  --text-micro: 11px;
+  --text-micro--line-height: 1.4;
+  --text-micro--letter-spacing: 0.04em;
+  --text-tiny: 12px;
+  --text-tiny--line-height: 1.45;
+  --text-mini: 13px;
+  --text-mini--line-height: 1.5;
+  --text-meta: 14px;
+  --text-meta--line-height: 1.55;
+  --text-body: 16px;
+  --text-body--line-height: 1.6;
+  --text-lead: 17px;
+  --text-lead--line-height: 1.6;
+  --text-title: 20px;
+  --text-title--line-height: 1.35;
+  --text-heading: 24px;
+  --text-heading--line-height: 1.3;
+  --text-display: 32px;
+  --text-display--line-height: 1.2;
+
+  --tracking-eyebrow: 0.1em;
+}
+
+@layer base {
+  /* ────────────────────────────────────────────────────────────
+     Underlying RGB-channel vars consumed by the @theme tokens
+     above. Dark mode overrides these in `.dark` — the higher
+     level color/shadow tokens recompute automatically.
+     ──────────────────────────────────────────────────────────── */
+  :root {
+    color-scheme: light;
+
+    /* Pumpkin Spice — the brand scale */
+    --color-pumpkin-spice-50: #fff0e5;
+    --color-pumpkin-spice-100: #ffe0cc;
+    --color-pumpkin-spice-200: #ffc299;
+    --color-pumpkin-spice-300: #ffa366;
+    --color-pumpkin-spice-400: #ff8533;
+    --color-pumpkin-spice-500: #ff6600;
+    --color-pumpkin-spice-600: #cc5200;
+    --color-pumpkin-spice-700: #993d00;
+    --color-pumpkin-spice-800: #662900;
+    --color-pumpkin-spice-900: #331400;
+    --color-pumpkin-spice-950: #240e00;
+
+    /* Base surfaces (light) */
+    --bg-rgb: 255 255 255;
+    --surface-rgb: 255 255 255;
+    --surface-soft-rgb: 248 250 252; /* slate-50 */
+    --surface-sunken-rgb: 241 245 249; /* slate-100 */
+
+    /* Borders */
+    --border-rgb: 226 232 240; /* slate-200 */
+    --border-strong-rgb: 203 213 225; /* slate-300 */
+
+    /* Text — high contrast neutrals */
+    --text-rgb: 15 23 42; /* slate-900 */
+    --text-soft-rgb: 71 85 105; /* slate-600 */
+    --text-muted-rgb: 100 116 139; /* slate-500 */
+
+    /* Functional primary — pumpkin-600 (4.7:1 on white, 4.7:1 white-on-it) */
+    --primary-rgb: 204 82 0; /* pumpkin-600 */
+    --primary-hover-rgb: 153 61 0; /* pumpkin-700 */
+    --primary-soft-rgb: 255 240 229; /* pumpkin-50 */
+
+    /* Status */
+    --success-rgb: 22 163 74; /* green-600 */
+    --warning-rgb: 217 119 6; /* amber-600 */
+    --danger-rgb: 220 38 38; /* red-600 */
+
+    /* Decorative semantic accents */
+    --accent-sun-rgb: 255 102 0; /* pumpkin-500 — vivid hero orange */
+    --accent-moon-rgb: 30 64 175; /* blue-800 */
+    --accent-amber-rgb: 180 83 9; /* amber-700 */
+
+    /* Convenient color() helpers */
+    --bg: rgb(var(--bg-rgb));
+    --surface: rgb(var(--surface-rgb));
+    --surface-soft: rgb(var(--surface-soft-rgb));
+    --surface-sunken: rgb(var(--surface-sunken-rgb));
+    --border: rgb(var(--border-rgb));
+    --border-soft: rgb(var(--surface-sunken-rgb));
+    --border-strong: rgb(var(--border-strong-rgb));
+    --ink: rgb(var(--text-rgb));
+    --ink-soft: rgb(var(--text-soft-rgb));
+    --ink-muted: rgb(var(--text-muted-rgb));
+    --primary: rgb(var(--primary-rgb));
+    --primary-hover: rgb(var(--primary-hover-rgb));
+    --primary-soft: rgb(var(--primary-soft-rgb));
+    --success: rgb(var(--success-rgb));
+    --warning: rgb(var(--warning-rgb));
+    --danger: rgb(var(--danger-rgb));
+    --accent-sun: rgb(var(--accent-sun-rgb));
+    --accent-moon: rgb(var(--accent-moon-rgb));
+    --accent-amber: rgb(var(--accent-amber-rgb));
+
+    /* Legacy aliases — old code still references these names */
+    --parchment: var(--bg);
+    --parchment-card: var(--surface);
+    --parchment-border: var(--border);
+    --crimson: var(--primary);
+    --crimson-dark: var(--primary-hover);
+    --saffron: var(--primary);
+    --saffron-dark: var(--primary-hover);
+    --saffron-soft: var(--primary-soft);
+    --gold: rgb(var(--text-muted-rgb));
+    --gold-dark: rgb(var(--text-soft-rgb));
+    --gold-soft: rgb(var(--surface-soft-rgb));
+    --leaf: var(--success);
+    --leaf-soft: rgb(220 252 231);
+    --indigo: rgb(var(--accent-moon-rgb));
+    --indigo-soft: rgb(219 234 254);
+    --rose: var(--danger);
+  }
+
+  /* ──────── Dark theme — comfortable charcoal, not pitch black ──────── */
+  .dark {
+    color-scheme: dark;
+
+    --bg-rgb: 28 30 36; /* #1c1e24 — warm charcoal */
+    --surface-rgb: 36 38 45; /* #24262d — cards, one step up */
+    --surface-soft-rgb: 46 48 56; /* #2e3038 */
+    --surface-sunken-rgb: 32 34 40;
+
+    --border-rgb: 56 58 68; /* #383a44 — visible separators */
+    --border-strong-rgb: 80 82 95; /* #50525f */
+
+    --text-rgb: 237 238 242; /* near white, slightly warm */
+    --text-soft-rgb: 174 176 185;
+    --text-muted-rgb: 130 132 142;
+
+    /* Brighter pumpkin in dark mode for contrast on dark surfaces */
+    --primary-rgb: 255 133 51; /* pumpkin-400 */
+    --primary-hover-rgb: 255 163 102; /* pumpkin-300 */
+    --primary-soft-rgb: 102 41 0; /* pumpkin-800, used at low alpha */
+
+    --success-rgb: 74 222 128; /* green-400 */
+    --warning-rgb: 251 191 36; /* amber-400 */
+    --danger-rgb: 248 113 113; /* red-400 */
+
+    --accent-sun-rgb: 255 133 51; /* pumpkin-400 */
+    --accent-moon-rgb: 147 197 253; /* blue-300 */
+    --accent-amber-rgb: 251 191 36; /* amber-400 */
+
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-lift: 0 4px 14px rgba(0, 0, 0, 0.55);
+
+    --indigo-soft: rgb(30 58 138 / 0.25);
+    --leaf-soft: rgb(20 83 45 / 0.4);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent; /* No grey flash on mobile tap */
+    text-size-adjust: 100%;
+  }
+
+  html,
+  body,
+  #root {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    font-feature-settings: "cv11", "ss01", "ss03"; /* Inter alternates */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    min-height: 100dvh; /* Honors mobile dynamic viewport (no jump on URL bar) */
+  }
+
+  /* Tap targets need ≥44px box on touch devices (Apple HIG, WCAG 2.5.5). */
+  button,
+  a,
+  [role="button"],
+  input,
+  select,
+  textarea {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation; /* Removes 300ms double-tap delay */
+  }
+
+  /* Devanagari just needs the right font; sizes stay aligned with the base
+     so switching languages doesn't reflow/zoom the whole page. */
+  html[lang="hi"],
+  html[lang="ne"] {
+    font-family: var(--font-deva-body);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    letter-spacing: -0.018em;
+    line-height: 1.25;
+    color: var(--ink);
+    font-feature-settings: "ss01", "cv11"; /* Inter's tabular digits + alt 1/0 */
+  }
+
+  html[lang="hi"],
+  html[lang="ne"] :is(h1, h2, h3, h4, h5, h6) {
+    font-family: var(--font-deva);
+    line-height: 1.45;
+    letter-spacing: 0;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    font-family: inherit;
+    font-size: inherit;
+  }
+
+  ::selection {
+    background-color: var(--primary-soft);
+    color: var(--ink);
+  }
+
+  /* Visible focus ring with halo — keyboard-only (no flash on click). */
+  *:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgb(var(--primary-rgb) / 0.15);
+    border-radius: 4px;
+  }
+
+  a {
+    color: var(--primary);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  a:hover {
+    color: var(--primary-hover);
+  }
+}
+
+@layer components {
+  .card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+  }
+  /* Default card body padding — generous on mobile, tighter on desktop. */
+  .card-body {
+    padding: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .card-body {
+      padding: 1.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .card-body {
+      padding: 1.75rem;
+    }
+  }
+
+  .card-lift {
+    transition:
+      box-shadow 180ms ease,
+      border-color 180ms ease;
+  }
+  .card-lift:hover {
+    box-shadow: var(--shadow-lift);
+    border-color: var(--border-strong);
+  }
+
+  .field-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 0.45rem;
+    text-transform: none;
+  }
+
+  .field {
+    width: 100%;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.6875rem 0.875rem; /* 11px 14px — generous, comfortable */
+    /* 16px on mobile prevents iOS Safari from auto-zooming on focus.
+       Drops to 15px on >=md to feel proportional to wider layouts. */
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+    min-height: 44px; /* WCAG 2.5.5 touch target */
+    transition:
+      border-color 140ms ease,
+      box-shadow 140ms ease;
+  }
+  @media (min-width: 768px) {
+    .field {
+      font-size: 15px;
+      min-height: 40px;
+      padding: 0.5625rem 0.8125rem;
+    }
+  }
+  .field::placeholder {
+    color: var(--ink-muted);
+  }
+  .field:hover {
+    border-color: var(--border-strong);
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgb(var(--primary-rgb) / 0.18);
+  }
+  /* react-day-picker — brand-aware overrides applied via the shadcn
+     Calendar component's root. Tokens live in :root so dark mode works. */
+  .rdp-root {
+    --rdp-accent-color: var(--primary);
+    --rdp-accent-background-color: rgb(var(--primary-rgb) / 0.12);
+    --rdp-today-color: var(--primary);
+    --rdp-day-height: 36px;
+    --rdp-day-width: 36px;
+    --rdp-day_button-height: 34px;
+    --rdp-day_button-width: 34px;
+    --rdp-nav_button-height: 1.75rem;
+    --rdp-nav_button-width: 1.75rem;
+    --rdp-nav-height: 2rem;
+    color: var(--ink);
+    font-size: 14px;
+  }
+  .rdp-month_caption,
+  .rdp-caption_label,
+  .rdp-weekday {
+    color: var(--ink-soft);
+  }
+  .rdp-dropdown {
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 6px;
+  }
+  .rdp-dropdown:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgb(var(--primary-rgb) / 0.18);
+  }
+  .rdp-button_next,
+  .rdp-button_previous {
+    color: var(--ink-soft);
+  }
+  .rdp-day_button:hover:not([disabled]) {
+    background: rgb(var(--primary-rgb) / 0.08);
+    color: var(--primary);
+  }
+  .rdp-selected .rdp-day_button {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+  .dark .rdp-selected .rdp-day_button {
+    color: rgb(15 23 42);
+  }
+  .rdp-today:not(.rdp-selected) .rdp-day_button {
+    font-weight: 700;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    background: var(--primary);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 0.6875rem 1.25rem;
+    min-height: 44px; /* Touch target */
+    border-radius: var(--radius-md);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+    transition:
+      background-color 140ms ease,
+      box-shadow 140ms ease,
+      transform 80ms ease;
+    user-select: none;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--primary-hover);
+  }
+  .btn-primary:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: none;
+  }
+  .btn-primary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .dark .btn-primary {
+    color: rgb(15 23 42);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--ink);
+    font-weight: 500;
+    font-size: 15px;
+    padding: 0.6875rem 1.125rem;
+    min-height: 44px;
+    border-radius: var(--radius-md);
+    transition:
+      background-color 140ms ease,
+      border-color 140ms ease,
+      color 140ms ease,
+      transform 80ms ease;
+    user-select: none;
+  }
+  .btn-ghost:hover {
+    background-color: var(--surface-soft);
+    border-color: var(--border-strong);
+    color: var(--primary);
+  }
+  .btn-ghost:active {
+    transform: translateY(1px);
+  }
+
+  /* On desktop where mouse precision is high, buttons can collapse a bit. */
+  @media (min-width: 768px) {
+    .btn-primary,
+    .btn-ghost {
+      min-height: 40px;
+      padding-top: 0.5625rem;
+      padding-bottom: 0.5625rem;
+    }
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.65rem;
+    background-color: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  /* Decorative divider with optional centered eyebrow */
+  .divider-ornate {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ink-muted);
+  }
+  .divider-ornate::before,
+  .divider-ornate::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .ornate-frame {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+  }
+
+  .parchment-bg {
+    background-color: var(--bg);
+  }
+
+  @keyframes mandala-spin {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .mandala-loader {
+    animation: mandala-spin 3.6s linear infinite;
+    color: var(--primary);
+  }
+  @keyframes mandala-pulse {
+    0%,
+    100% {
+      opacity: 0.85;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  /* Language-name rotator: each new label slides up + fades in,
+     then exits up + fades out. Ring pulse around the trigger keeps
+     the eye on the switcher without being noisy. */
+  @keyframes lang-rotate-in {
+    0% {
+      opacity: 0;
+      transform: translateY(60%);
+      filter: blur(2px);
+    }
+    18% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+    82% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-60%);
+      filter: blur(2px);
+    }
+  }
+  .lang-rotate-in {
+    animation: lang-rotate-in 2400ms ease-in-out both;
+  }
+  @keyframes lang-ring-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgb(var(--primary-rgb) / 0);
+    }
+    50% {
+      box-shadow: 0 0 0 4px rgb(var(--primary-rgb) / 0.18);
+    }
+  }
+  .lang-ring-pulse {
+    animation: lang-ring-pulse 2400ms ease-in-out infinite;
+  }
+
+  .kundali-svg text {
+    user-select: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    scrollbar-width: none;
+  }
+
+  /* ───────── Typography utilities — semantic, theme-aware ─────────
+     Use these instead of arbitrary text-[Npx] / tracking-[…].
+     Sizes meet WCAG 1.4.4 (16px body floor, ≥14px for prose labels). */
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.45;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .eyebrow-accent {
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.45;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+  .eyebrow-lg {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.45;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .label {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  .label-strong {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .value {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .value-strong {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .meta {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  /* Stripe / Linear / Vercel-style heading scale: bigger jumps,
+     heavier weight, tighter tracking as size grows. */
+  .heading-section {
+    font-family: var(--font-sans);
+    font-size: 20px;
+    line-height: 1.3;
+    color: var(--ink);
+    font-weight: 600;
+    letter-spacing: -0.014em;
+  }
+  .heading-page {
+    font-family: var(--font-sans);
+    font-size: 30px;
+    line-height: 1.15;
+    color: var(--ink);
+    font-weight: 700;
+    letter-spacing: -0.024em;
+  }
+  @media (min-width: 640px) {
+    .heading-section {
+      font-size: 22px;
+      letter-spacing: -0.016em;
+    }
+    .heading-page {
+      font-size: 38px;
+      letter-spacing: -0.028em;
+    }
+  }
+  @media (min-width: 1024px) {
+    .heading-page {
+      font-size: 44px;
+      letter-spacing: -0.03em;
+    }
+  }
+}
+
+@layer utilities {
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  .glass {
+    background-color: var(--surface);
+  }
+}
+
+@media print {
+  html,
+  body,
+  #root,
+  .parchment-bg,
+  .glass {
+    background-color: #ffffff !important;
+    color: #000 !important;
+  }
+  .card {
+    box-shadow: none !important;
+    border-color: #ccc !important;
+  }
+  header,
+  footer {
+    display: none !important;
+  }
+}
+
+/* Reusable modal */
+.modal-dialog {
+  border: none;
+  padding: 0;
+  background: transparent;
+  width: min(28rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.modal-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+}
+.modal-dialog[open] {
+  animation: modal-fade-in 150ms ease-out;
+}
+.modal-dialog[open]::backdrop {
+  animation: modal-backdrop-in 150ms ease-out;
+}
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+@keyframes modal-backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+@media (max-width: 480px) {
+  .modal-dialog {
+    width: 100vw;
+    max-height: 100dvh;
+    height: 100dvh;
+    margin: 0;
+    inset: unset;
+    border-radius: 0;
+  }
+  .modal-dialog > * {
+    min-height: 100dvh;
+    border-radius: 0 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+  .mandala-loader {
+    animation: mandala-pulse 2s ease-in-out infinite;
+  }
+}

@@ -1,0 +1,214 @@
+import type {
+  AyanamsaOption,
+  CalculateRequest,
+  ChartData,
+  MuhurtaPurpose,
+  MuhurtaRequest,
+  MuhurtaResponse,
+  NominatimResult,
+  PanchangData,
+  TransitsResponse,
+} from "@/types/api";
+
+const BASE = (import.meta.env.VITE_BACKEND_URL ?? "").replace(/\/$/, "");
+const API = `${BASE}/api`;
+
+async function request<T>(url: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(url, {
+    headers: { "content-type": "application/json", ...init?.headers },
+    ...init,
+  });
+  if (!res.ok) {
+    let detail = `${res.status} ${res.statusText}`;
+    try {
+      const body = await res.json();
+      if (body?.detail) detail = body.detail;
+    } catch {
+      /* ignore */
+    }
+    throw new Error(detail);
+  }
+  return (await res.json()) as T;
+}
+
+export function calculateChart(req: CalculateRequest): Promise<ChartData> {
+  return request<ChartData>(`${API}/calculate`, {
+    method: "POST",
+    body: JSON.stringify(req),
+  });
+}
+
+export function fetchPanchang(params: {
+  latitude: number;
+  longitude: number;
+  date: string;
+  timezone?: string | null;
+}): Promise<PanchangData> {
+  const qs = new URLSearchParams({
+    latitude: String(params.latitude),
+    longitude: String(params.longitude),
+    date: params.date,
+    detailed: "true",
+  });
+  if (params.timezone) qs.set("timezone", params.timezone);
+  return request<PanchangData>(`${API}/get-panchang?${qs.toString()}`);
+}
+
+export function fetchAyanamsaOptions(): Promise<AyanamsaOption[]> {
+  return request<AyanamsaOption[]>(`${API}/ayanamsa-options`);
+}
+
+export interface SuggestLangResponse {
+  country: string;
+  lang: string;
+}
+
+export function suggestLang(): Promise<SuggestLangResponse> {
+  return request<SuggestLangResponse>(`${API}/suggest-lang`);
+}
+
+export interface GeoIPResponse {
+  latitude: number;
+  longitude: number;
+  place_name: string;
+}
+
+export async function fetchGeoIP(): Promise<GeoIPResponse | null> {
+  try {
+    const res = await fetch(`${API}/geo-ip`);
+    if (!res.ok) return null;
+    return (await res.json()) as GeoIPResponse;
+  } catch {
+    return null;
+  }
+}
+
+export interface TransitsParams {
+  latitude: number;
+  longitude: number;
+  start_date?: string;
+  end_date?: string;
+  timezone?: string | null;
+  include_signs?: boolean;
+  include_nakshatras?: boolean;
+  include_retrograde?: boolean;
+  include_moon?: boolean;
+  moon_nakshatras?: boolean;
+}
+
+export function fetchTransits(params: TransitsParams): Promise<TransitsResponse> {
+  const qs = new URLSearchParams({
+    latitude: String(params.latitude),
+    longitude: String(params.longitude),
+  });
+  if (params.start_date) qs.set("start_date", params.start_date);
+  if (params.end_date) qs.set("end_date", params.end_date);
+  if (params.timezone) qs.set("timezone", params.timezone);
+  if (params.include_signs === false) qs.set("include_signs", "false");
+  if (params.include_nakshatras === false) qs.set("include_nakshatras", "false");
+  if (params.include_retrograde === false) qs.set("include_retrograde", "false");
+  if (params.include_moon) qs.set("include_moon", "true");
+  if (params.moon_nakshatras) qs.set("moon_nakshatras", "true");
+  return request<TransitsResponse>(`${API}/transits?${qs.toString()}`);
+}
+
+export function fetchMuhurtaPurposes(): Promise<MuhurtaPurpose[]> {
+  return request<MuhurtaPurpose[]>(`${API}/muhurta-purposes`);
+}
+
+export function findMuhurtas(req: MuhurtaRequest): Promise<MuhurtaResponse> {
+  return request<MuhurtaResponse>(`${API}/find-muhurta`, {
+    method: "POST",
+    body: JSON.stringify(req),
+  });
+}
+
+export interface PrintPdfRequest {
+  name?: string;
+  sex?: string;
+  birth_date: string;
+  birth_time: string;
+  latitude: number;
+  longitude: number;
+  timezone?: string | null;
+  place_name?: string;
+  ayanamsa?: string;
+  chart_style?: "north" | "south";
+  lang:
+    | "en"
+    | "hi"
+    | "ta"
+    | "bn"
+    | "ne"
+    | "zh"
+    | "ja"
+    | "es"
+    | "de"
+    | "pt"
+    | "fr"
+    | "ru"
+    | "ar"
+    | "fa"
+    | "he";
+}
+
+export async function printPdf(req: PrintPdfRequest): Promise<Blob> {
+  const res = await fetch(`${API}/print-pdf`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(req),
+  });
+  if (!res.ok) {
+    let detail = `${res.status} ${res.statusText}`;
+    try {
+      const body = await res.json();
+      if (body?.detail) detail = body.detail;
+    } catch {
+      /* ignore */
+    }
+    throw new Error(detail);
+  }
+  return await res.blob();
+}
+
+function activeAcceptLanguage(): string {
+  if (typeof document === "undefined") return "en";
+  const lang = document.documentElement.lang || "en";
+  // Nominatim honours BCP-47; en fallback keeps results readable for everyone.
+  return `${lang},en;q=0.7`;
+}
+
+export async function geocode(query: string, limit = 6): Promise<NominatimResult[]> {
+  if (query.length < 2) return [];
+  const url = new URL("https://nominatim.openstreetmap.org/search");
+  url.searchParams.set("q", query);
+  url.searchParams.set("format", "json");
+  url.searchParams.set("limit", String(limit));
+  url.searchParams.set("addressdetails", "1");
+  try {
+    const res = await fetch(url.toString(), {
+      headers: { "Accept-Language": activeAcceptLanguage() },
+    });
+    if (!res.ok) return [];
+    return (await res.json()) as NominatimResult[];
+  } catch {
+    return [];
+  }
+}
+
+export async function reverseGeocode(lat: number, lon: number): Promise<string | null> {
+  const url = new URL("https://nominatim.openstreetmap.org/reverse");
+  url.searchParams.set("lat", String(lat));
+  url.searchParams.set("lon", String(lon));
+  url.searchParams.set("format", "json");
+  try {
+    const res = await fetch(url.toString(), {
+      headers: { "Accept-Language": activeAcceptLanguage() },
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { display_name?: string };
+    return data.display_name ?? null;
+  } catch {
+    return null;
+  }
+}

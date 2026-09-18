@@ -1,0 +1,553 @@
+"""Vedic Astrology Calculator using Swiss Ephemeris (selectable ayanamsa)."""
+
+from __future__ import annotations
+
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List
+
+import pytz
+import swisseph as swe
+from timezonefinder import TimezoneFinder
+
+from ayanamsa import sidereal_context
+from vargas import (
+    VARGA_NAMES,
+    VARGA_ORDER,
+    VARGA_SUBTITLE,
+    varga_degree_in_sign,
+    varga_sign,
+)
+
+# Configure Swiss Ephemeris
+EPHE_PATH = str(Path(__file__).parent / "ephe")
+swe.set_ephe_path(EPHE_PATH)
+swe.set_sid_mode(swe.SIDM_LAHIRI)
+
+_TF = TimezoneFinder()
+
+SIGNS = [
+    "Aries",
+    "Taurus",
+    "Gemini",
+    "Cancer",
+    "Leo",
+    "Virgo",
+    "Libra",
+    "Scorpio",
+    "Sagittarius",
+    "Capricorn",
+    "Aquarius",
+    "Pisces",
+]
+
+SIGN_LORDS = [
+    "Mars",
+    "Venus",
+    "Mercury",
+    "Moon",
+    "Sun",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Saturn",
+    "Jupiter",
+]
+
+NAKSHATRAS = [
+    "Ashwini",
+    "Bharani",
+    "Krittika",
+    "Rohini",
+    "Mrigashira",
+    "Ardra",
+    "Punarvasu",
+    "Pushya",
+    "Ashlesha",
+    "Magha",
+    "Purva Phalguni",
+    "Uttara Phalguni",
+    "Hasta",
+    "Chitra",
+    "Swati",
+    "Vishakha",
+    "Anuradha",
+    "Jyeshtha",
+    "Mula",
+    "Purva Ashadha",
+    "Uttara Ashadha",
+    "Shravana",
+    "Dhanishta",
+    "Shatabhisha",
+    "Purva Bhadrapada",
+    "Uttara Bhadrapada",
+    "Revati",
+]
+
+# Vimshottari Dasha periods (years) - Mahadasha sequence starts from nakshatra lord
+NAKSHATRA_LORDS = [
+    "Ketu",
+    "Venus",
+    "Sun",
+    "Moon",
+    "Mars",
+    "Rahu",
+    "Jupiter",
+    "Saturn",
+    "Mercury",
+]
+# Nakshatra index -> lord (repeats every 9)
+DASHA_YEARS = {
+    "Ketu": 7,
+    "Venus": 20,
+    "Sun": 6,
+    "Moon": 10,
+    "Mars": 7,
+    "Rahu": 18,
+    "Jupiter": 16,
+    "Saturn": 19,
+    "Mercury": 17,
+}
+DASHA_SEQUENCE = [
+    "Ketu",
+    "Venus",
+    "Sun",
+    "Moon",
+    "Mars",
+    "Rahu",
+    "Jupiter",
+    "Saturn",
+    "Mercury",
+]
+
+PLANET_ORDER = [
+    ("Sun", swe.SUN, "Su"),
+    ("Moon", swe.MOON, "Mo"),
+    ("Mars", swe.MARS, "Ma"),
+    ("Mercury", swe.MERCURY, "Me"),
+    ("Jupiter", swe.JUPITER, "Ju"),
+    ("Venus", swe.VENUS, "Ve"),
+    ("Saturn", swe.SATURN, "Sa"),
+    ("Rahu", swe.MEAN_NODE, "Ra"),  # Mean node for Rahu
+    ("Uranus", swe.URANUS, "Ur"),
+    ("Neptune", swe.NEPTUNE, "Ne"),
+    ("Pluto", swe.PLUTO, "Pl"),
+]
+
+# Ashtakavarga contribution tables (benefic points)
+# Each planet gives points to houses counted from: itself, Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Ascendant
+# Source: Classical Parasara texts (standard Prastarashtakavarga tables)
+BAV_RULES = {
+    "Sun": {
+        "Sun": [1, 2, 4, 7, 8, 9, 10, 11],
+        "Moon": [3, 6, 10, 11],
+        "Mars": [1, 2, 4, 7, 8, 9, 10, 11],
+        "Mercury": [3, 5, 6, 9, 10, 11, 12],
+        "Jupiter": [5, 6, 9, 11],
+        "Venus": [6, 7, 12],
+        "Saturn": [1, 2, 4, 7, 8, 9, 10, 11],
+        "Asc": [3, 4, 6, 10, 11, 12],
+    },
+    "Moon": {
+        "Sun": [3, 6, 7, 8, 10, 11],
+        "Moon": [3, 6, 7, 8, 10, 11],
+        "Mars": [2, 3, 5, 6, 9, 10, 11],
+        "Mercury": [1, 3, 4, 5, 7, 8, 10, 11],
+        "Jupiter": [1, 4, 7, 8, 10, 11, 12],
+        "Venus": [3, 4, 5, 7, 9, 10, 11],
+        "Saturn": [3, 5, 6, 11],
+        "Asc": [3, 6, 10, 11],
+    },
+    "Mars": {
+        "Sun": [3, 5, 6, 10, 11],
+        "Moon": [3, 6, 11],
+        "Mars": [1, 2, 4, 7, 8, 10, 11],
+        "Mercury": [3, 5, 6, 11],
+        "Jupiter": [6, 10, 11, 12],
+        "Venus": [6, 8, 11, 12],
+        "Saturn": [1, 4, 7, 8, 9, 10, 11],
+        "Asc": [1, 3, 6, 10, 11],
+    },
+    "Mercury": {
+        "Sun": [5, 6, 9, 11, 12],
+        "Moon": [2, 4, 6, 8, 10, 11],
+        "Mars": [1, 2, 4, 7, 8, 9, 10, 11],
+        "Mercury": [1, 3, 5, 6, 9, 10, 11, 12],
+        "Jupiter": [6, 8, 11, 12],
+        "Venus": [1, 2, 3, 4, 5, 8, 9, 11],
+        "Saturn": [1, 2, 4, 7, 8, 9, 10, 11],
+        "Asc": [1, 2, 4, 6, 8, 10, 11],
+    },
+    "Jupiter": {
+        "Sun": [1, 2, 3, 4, 7, 8, 9, 10, 11],
+        "Moon": [2, 5, 7, 9, 11],
+        "Mars": [1, 2, 4, 7, 8, 10, 11],
+        "Mercury": [1, 2, 4, 5, 6, 9, 10, 11],
+        "Jupiter": [1, 2, 3, 4, 7, 8, 10, 11],
+        "Venus": [2, 5, 6, 9, 10, 11],
+        "Saturn": [3, 5, 6, 12],
+        "Asc": [1, 2, 4, 5, 6, 7, 9, 10, 11],
+    },
+    "Venus": {
+        "Sun": [8, 11, 12],
+        "Moon": [1, 2, 3, 4, 5, 8, 9, 11, 12],
+        "Mars": [3, 5, 6, 9, 11, 12],
+        "Mercury": [3, 5, 6, 9, 11],
+        "Jupiter": [5, 8, 9, 10, 11],
+        "Venus": [1, 2, 3, 4, 5, 8, 9, 10, 11],
+        "Saturn": [3, 4, 5, 8, 9, 10, 11],
+        "Asc": [1, 2, 3, 4, 5, 8, 9, 11],
+    },
+    "Saturn": {
+        "Sun": [1, 2, 4, 7, 8, 10, 11],
+        "Moon": [3, 6, 11],
+        "Mars": [3, 5, 6, 10, 11, 12],
+        "Mercury": [6, 8, 9, 10, 11, 12],
+        "Jupiter": [5, 6, 11, 12],
+        "Venus": [6, 11, 12],
+        "Saturn": [3, 5, 6, 11],
+        "Asc": [1, 3, 4, 6, 10, 11],
+    },
+}
+
+
+def sign_index_from_longitude(lon: float) -> int:
+    """Return 1-12 sign index (1=Aries)."""
+    return int(lon // 30) + 1
+
+
+def nakshatra_info(lon: float) -> Dict[str, Any]:
+    """Return nakshatra name, pada (1-4), and lord."""
+    # 27 nakshatras, each 13°20' = 13.3333°
+    n_idx = int(lon // (360 / 27))  # 0-26
+    deg_in_nak = lon - n_idx * (360 / 27)
+    pada = int(deg_in_nak // (360 / 27 / 4)) + 1
+    return {
+        "name": NAKSHATRAS[n_idx],
+        "pada": pada,
+        "lord": NAKSHATRA_LORDS[n_idx % 9],
+        "index": n_idx,
+    }
+
+
+def d9_sign_index(lon: float) -> int:
+    """Navamsha sign: sign = floor( (lon * 9) / 30 ) % 12, returns 1-12."""
+    nav = (lon * 9) % 360
+    return int(nav // 30) + 1
+
+
+def format_dms(deg_in_sign: float) -> str:
+    d = int(deg_in_sign)
+    m_full = (deg_in_sign - d) * 60
+    m = int(m_full)
+    s = int(round((m_full - m) * 60))
+    if s == 60:
+        s = 0
+        m += 1
+    return f"{d:02d}° {m:02d}' {s:02d}\""
+
+
+def compute_vimshottari_dasha(
+    moon_longitude: float, birth_dt_utc: datetime
+) -> List[Dict[str, Any]]:
+    """Compute Vimshottari Mahadasha sequence starting from birth."""
+    # Nakshatra index & how far into it
+    nak_span = 360.0 / 27  # 13.333..
+    n_idx = int(moon_longitude // nak_span)
+    deg_in_nak = moon_longitude - n_idx * nak_span
+    fraction_elapsed = deg_in_nak / nak_span  # 0-1
+    lord = NAKSHATRA_LORDS[n_idx % 9]
+    years_first = DASHA_YEARS[lord]
+    balance_years = years_first * (1 - fraction_elapsed)
+
+    # Build sequence starting from lord
+    start_idx = DASHA_SEQUENCE.index(lord)
+    result = []
+    current_start = birth_dt_utc
+    # First dasha has balance
+    first_end = _add_years(current_start, balance_years)
+    result.append(
+        {
+            "lord": lord,
+            "start": current_start.isoformat(),
+            "end": first_end.isoformat(),
+            "years": round(balance_years, 3),
+        }
+    )
+    current_start = first_end
+    # Next 8 Mahadashas
+    for i in range(1, 9):
+        next_lord = DASHA_SEQUENCE[(start_idx + i) % 9]
+        yrs = DASHA_YEARS[next_lord]
+        end = _add_years(current_start, yrs)
+        result.append(
+            {
+                "lord": next_lord,
+                "start": current_start.isoformat(),
+                "end": end.isoformat(),
+                "years": yrs,
+            }
+        )
+        current_start = end
+    return result
+
+
+def _add_years(dt: datetime, years: float) -> datetime:
+    """Add fractional years (365.25 days/year) to a UTC datetime."""
+    from datetime import timedelta
+
+    return dt + timedelta(days=years * 365.25)
+
+
+def compute_ashtakavarga(
+    planets: Dict[str, Dict[str, Any]], asc_sign: int
+) -> Dict[str, Any]:
+    """Compute BAV (Bhinnashtakavarga) and SAV (Sarvashtakavarga)."""
+    # sign positions 1-12 for each contributor
+    contributor_signs = {
+        name: planets[name]["sign_id"]
+        for name in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
+    }
+    contributor_signs["Asc"] = asc_sign
+
+    bav = {}  # planet -> list[12] of points per sign (index 0 = Aries)
+    for planet, rules in BAV_RULES.items():
+        sign_points = [0] * 12
+        for contributor, positions in rules.items():
+            base_sign = contributor_signs[contributor]  # 1-12
+            for pos in positions:
+                target_sign = (base_sign - 1 + pos - 1) % 12  # 0-11
+                sign_points[target_sign] += 1
+        bav[planet] = sign_points
+
+    # SAV = sum across all 7 planets
+    sav = [0] * 12
+    for i in range(12):
+        sav[i] = sum(bav[p][i] for p in BAV_RULES.keys())
+
+    return {"bav": bav, "sav": sav}
+
+
+def compute_chart(
+    year: int,
+    month: int,
+    day: int,
+    hour: int,
+    minute: int,
+    latitude: float,
+    longitude: float,
+    timezone_name: str | None = None,
+    ayanamsa: str = "lahiri",
+) -> Dict[str, Any]:
+    """Main calculation entry. Takes LOCAL time + timezone; returns full chart JSON."""
+
+    # Resolve timezone
+    if not timezone_name:
+        timezone_name = _TF.timezone_at(lat=latitude, lng=longitude) or "UTC"
+    tz = pytz.timezone(timezone_name)
+
+    # Local time -> UTC
+    local_dt = tz.localize(datetime(year, month, day, hour, minute))
+    utc_dt = local_dt.astimezone(pytz.utc)
+
+    # Julian Day (UT)
+    jd_ut = swe.julday(
+        utc_dt.year,
+        utc_dt.month,
+        utc_dt.day,
+        utc_dt.hour + utc_dt.minute / 60 + utc_dt.second / 3600,
+    )
+
+    # All position math runs inside sidereal_context: it pins the chosen
+    # ayanamsa for this request and locks out concurrent mode flips.
+    with sidereal_context(ayanamsa) as (sidereal_flag, ayanamsa_label):
+        flags = sidereal_flag | swe.FLG_SWIEPH | swe.FLG_SPEED
+
+        # Compute planets
+        planets: Dict[str, Dict[str, Any]] = {}
+        for name, pid, abbr in PLANET_ORDER:
+            xx, _ret = swe.calc_ut(jd_ut, pid, flags)
+            lon = xx[0] % 360
+            speed = xx[3]
+            retro = speed < 0 and name not in ("Sun", "Moon", "Rahu", "Ketu")
+            planets[name] = _planet_entry(name, abbr, lon, retro)
+
+        # Ketu = Rahu + 180
+        rahu_lon = planets["Rahu"]["longitude"]
+        ketu_lon = (rahu_lon + 180) % 360
+        planets["Ketu"] = _planet_entry("Ketu", "Ke", ketu_lon, False)
+
+        # Combust (astangata): set after Sun's longitude is known. Sun itself,
+        # Rahu, Ketu are skipped inside _is_combust.
+        sun_lon = planets["Sun"]["longitude"]
+        for pname, pdata in planets.items():
+            pdata["combust"] = _is_combust(pname, pdata["longitude"], sun_lon)
+
+        # Ascendant
+        cusps, ascmc = swe.houses_ex(jd_ut, latitude, longitude, b"P", sidereal_flag)
+        asc_lon = ascmc[0] % 360
+        asc_sign = sign_index_from_longitude(asc_lon)
+        asc_entry = _planet_entry("Ascendant", "As", asc_lon, False)
+
+        ayanamsa_value = swe.get_ayanamsa_ut(jd_ut) if sidereal_flag else 0.0
+
+    # Assign house (D1) based on Ascendant sign (whole sign houses)
+    for p in planets.values():
+        p["house"] = ((p["sign_id"] - asc_sign) % 12) + 1
+    asc_entry["house"] = 1
+
+    # === Build all divisional charts (D1..D60) ===
+    varga_charts: Dict[str, Any] = {}
+    for n in VARGA_ORDER:
+        v_asc_sign = varga_sign(asc_lon, n)
+        house_map = {i: [] for i in range(1, 13)}
+        # Per-planet position within the D-n sign, keyed by abbreviation.
+        # Frontend reads this to render sub-degrees and to sort planets
+        # within each house — sorting by D1 degree in a varga is meaningless.
+        planet_degrees: Dict[str, float] = {}
+        # Populate with planets
+        for p in planets.values():
+            p_sign = varga_sign(p["longitude"], n)
+            house = ((p_sign - v_asc_sign) % 12) + 1
+            house_map[house].append(p["abbr"])
+            planet_degrees[p["abbr"]] = round(
+                varga_degree_in_sign(p["longitude"], n), 4
+            )
+            # Store D-n sign on each planet for later tables
+            p[f"d{n}_sign"] = p_sign
+        # Put "As" in house 1
+        house_map[1].insert(0, "As")
+        planet_degrees["As"] = round(varga_degree_in_sign(asc_lon, n), 4)
+        varga_charts[f"d{n}"] = {
+            "chart": house_map,
+            "asc_sign": v_asc_sign,
+            "name": VARGA_NAMES[n],
+            "subtitle": VARGA_SUBTITLE[n],
+            "division": n,
+            "planet_degrees": planet_degrees,
+        }
+
+    # Preserve legacy top-level keys for backward-compat
+    d1_chart = varga_charts["d1"]["chart"]
+    d2_chart = varga_charts["d2"]["chart"]
+    d9_chart = varga_charts["d9"]["chart"]
+
+    # Vimshottari Dasha (Mahadasha + Antardasha sub-periods)
+    from dasha_extras import compute_antardashas
+
+    dasha = compute_vimshottari_dasha(
+        planets["Moon"]["longitude"], utc_dt.replace(tzinfo=None)
+    )
+    dasha_antar = compute_antardashas(dasha, utc_dt.replace(tzinfo=None))
+
+    # Ashtakavarga
+    ashtakavarga = compute_ashtakavarga(planets, asc_sign)
+
+    # Special placements (exaltation, debilitation, own sign, etc.)
+    from placements import compute_special_placements
+
+    compute_special_placements(list(planets.values()))
+
+    # Jaimini karakas + Karakamsa / Swamsa
+    from drishti import compute_aspects
+    from jaimini import compute_chara_karakas, compute_karakamsa_swamsa
+    from kalsarpa import analyse_kalsarpa
+    from relationships import compute_friendship_tables
+
+    # Build planets table (ordered)
+    planets_list = []
+    for name in [
+        "Sun",
+        "Moon",
+        "Mars",
+        "Mercury",
+        "Jupiter",
+        "Venus",
+        "Saturn",
+        "Rahu",
+        "Ketu",
+        "Uranus",
+        "Neptune",
+        "Pluto",
+    ]:
+        planets_list.append(planets[name])
+
+    karakas = compute_chara_karakas(planets_list)
+    karakamsa_swamsa = compute_karakamsa_swamsa(planets_list, karakas, asc_lon)
+    friendships = compute_friendship_tables(planets_list)
+    kalsarpa = analyse_kalsarpa(planets_list, asc_sign)
+    drishti = compute_aspects(planets_list, asc_sign)
+
+    return {
+        "birth": {
+            "local_time": local_dt.isoformat(),
+            "utc_time": utc_dt.isoformat(),
+            "timezone": timezone_name,
+            "latitude": latitude,
+            "longitude": longitude,
+            "julian_day": jd_ut,
+            "ayanamsa": ayanamsa_value,
+            "ayanamsa_id": ayanamsa,
+            "ayanamsa_label": ayanamsa_label,
+        },
+        "ascendant": asc_entry,
+        "planets_data": planets_list,
+        "d1_chart": d1_chart,
+        "d2_chart": d2_chart,
+        "d9_chart": d9_chart,
+        "d1_asc_sign": asc_sign,
+        "d2_asc_sign": varga_charts["d2"]["asc_sign"],
+        "d9_asc_sign": varga_charts["d9"]["asc_sign"],
+        "vargas": varga_charts,
+        "varga_order": VARGA_ORDER,
+        "dasha": dasha,
+        "dasha_antar": dasha_antar,
+        "karakas": karakas,
+        "karakamsa": karakamsa_swamsa["karakamsa"],
+        "swamsa": karakamsa_swamsa["swamsa"],
+        "friendships": friendships,
+        "kalsarpa": kalsarpa,
+        "ashtakavarga": ashtakavarga,
+        "drishti": drishti,
+    }
+
+
+def _planet_entry(name: str, abbr: str, lon: float, retro: bool) -> Dict[str, Any]:
+    sign_id = sign_index_from_longitude(lon)
+    deg_in_sign = lon - (sign_id - 1) * 30
+    nak = nakshatra_info(lon)
+    return {
+        "name": name,
+        "abbr": abbr,
+        "longitude": round(lon, 6),
+        "sign_id": sign_id,
+        "sign": SIGNS[sign_id - 1],
+        "sign_lord": SIGN_LORDS[sign_id - 1],
+        "degree_in_sign": round(deg_in_sign, 4),
+        "dms": format_dms(deg_in_sign),
+        "nakshatra": nak["name"],
+        "nakshatra_pada": nak["pada"],
+        "nakshatra_lord": nak["lord"],
+        "retrograde": retro,
+        "combust": False,  # filled in after Sun is known
+    }
+
+
+# Simplified combustion rule (issue #80): a planet within +/-5 deg of the Sun
+# is combust, beyond 5 deg it is not. This replaces the classical per-planet
+# orbs (Mercury 14, Venus 10, etc.) which flagged planets 10-15 deg away and
+# confused users scanning the chart.
+_COMBUST_ORB = 5.0
+
+_COMBUST_PLANETS = {"Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"}
+
+
+def _is_combust(name: str, lon: float, sun_lon: float) -> bool:
+    if name not in _COMBUST_PLANETS:
+        return False
+    diff = abs(lon - sun_lon)
+    if diff > 180:
+        diff = 360 - diff
+    return diff <= _COMBUST_ORB

@@ -1,0 +1,58 @@
+export const PLANET_LONG_NAMES: Record<string, string> = {
+  Su: "Surya",
+  Mo: "Chandra",
+  Ma: "Mangala",
+  Me: "Budha",
+  Ju: "Guru",
+  Ve: "Shukra",
+  Sa: "Shani",
+  Ra: "Rahu",
+  Ke: "Ketu",
+  Ur: "Uranus",
+  Ne: "Neptune",
+  Pl: "Pluto",
+  As: "Lagna",
+  Lg: "Lagna",
+};
+
+// CSS variables resolved at draw time so the chart colours follow the
+// active theme. `currentColor` falls back through `<svg color="…">`.
+export const PLANET_COLORS: Record<string, string> = {
+  Su: "var(--accent-sun)",
+  Mo: "var(--accent-moon)",
+  Ma: "var(--danger)",
+  Me: "var(--success)",
+  Ju: "var(--accent-amber)",
+  Ve: "rgb(168 85 247)", // violet-500 - readable in both themes
+  Sa: "var(--ink-soft)",
+  Ra: "var(--ink-soft)",
+  Ke: "var(--ink-soft)",
+  Ur: "rgb(56 189 248)", // sky-400 - cool blue for the modern planets
+  Ne: "rgb(34 197 94)", // green-500
+  Pl: "rgb(217 119 6)", // amber-600
+  As: "var(--primary)",
+  Lg: "var(--primary)",
+};
+
+export function planetTitle(abbr: string): string {
+  return PLANET_LONG_NAMES[abbr] ?? abbr;
+}
+
+export function planetColor(abbr: string): string {
+  return PLANET_COLORS[abbr] ?? "var(--ink)";
+}
+
+export const SIGN_NAMES = [
+  "Aries",
+  "Taurus",
+  "Gemini",
+  "Cancer",
+  "Leo",
+  "Virgo",
+  "Libra",
+  "Scorpio",
+  "Sagittarius",
+  "Capricorn",
+  "Aquarius",
+  "Pisces",
+];

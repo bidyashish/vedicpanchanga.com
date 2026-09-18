@@ -1,0 +1,24 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.12
+    hooks:
+      - id: ruff
+        args: [--fix]
+        files: ^backend/
+      - id: ruff-format
+        files: ^backend/
+
+  - repo: local
+    hooks:
+      - id: oxlint
+        name: oxlint
+        language: system
+        entry: bash -c 'cd frontend && npx oxlint'
+        files: ^frontend/src/.*\.(ts|tsx|js|jsx)$
+        pass_filenames: false
+      - id: oxfmt
+        name: oxfmt
+        language: system
+        entry: bash -c 'cd frontend && npx oxfmt'
+        files: ^frontend/src/.*\.(ts|tsx|js|jsx|css)$
+        pass_filenames: false
