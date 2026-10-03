@@ -7,6 +7,8 @@ import { applySeo } from "@/lib/seo";
 import { fetchGeoIP } from "@/lib/api";
 import { loadAdSense } from "@/lib/adsense";
 import { loadGtag } from "@/lib/gtag";
+import { useAuth } from "@/auth";
+import { AuthModal } from "@/components/account/AuthModal";
 import type { LocationChoice } from "@/types/api";
 
 const KundaliPage = lazy(() =>
@@ -31,6 +33,9 @@ const PrivacyPage = lazy(() =>
   import("@/pages/PrivacyPage").then((m) => ({ default: m.PrivacyPage })),
 );
 const TermsPage = lazy(() => import("@/pages/TermsPage").then((m) => ({ default: m.TermsPage })));
+const AccountPage = lazy(() =>
+  import("@/pages/AccountPage").then((m) => ({ default: m.AccountPage })),
+);
 const WhatIsKundali = lazy(() =>
   import("@/pages/articles/WhatIsKundali").then((m) => ({ default: m.WhatIsKundali })),
 );
@@ -64,6 +69,7 @@ export type View =
   | "frequency"
   | "privacy"
   | "terms"
+  | "account"
   | "learn-kundali"
   | "learn-planets"
   | "learn-panchang"
@@ -99,6 +105,7 @@ const VIEW_PATH: Record<View, string> = {
   frequency: "/frequency",
   privacy: "/privacy",
   terms: "/terms",
+  account: "/account",
   "learn-kundali": "/learn/kundali",
   "learn-planets": "/learn/planets",
   "learn-panchang": "/learn/panchang",
@@ -110,7 +117,7 @@ const VIEW_PATH: Record<View, string> = {
 
 const SEO_BY_VIEW: Record<
   View,
-  { title: string; description: string; canonical: string; keywords?: string }
+  { title: string; description: string; canonical: string; keywords?: string; noindex?: boolean }
 > = {
   panchang: {
     title: "Vedic Panchanga - Free Drik Panchang, Kundali & Muhurta Calculator",
@@ -170,6 +177,12 @@ const SEO_BY_VIEW: Record<
     title: "Terms of Use · Vedic Panchanga",
     description: "Terms governing the use of vedicpanchanga.com.",
     canonical: `${SITE}/terms`,
+  },
+  account: {
+    title: "Your Account · Vedic Panchanga",
+    description: "Manage your Vedic Panchanga account, saved charts and ad-free subscription.",
+    canonical: `${SITE}/account`,
+    noindex: true,
   },
   "learn-kundali": {
     title: "What Is a Kundali? Beginner's Guide to the Vedic Birth Chart · Vedic Panchanga",
@@ -253,6 +266,8 @@ function viewFromPath(): View {
       return "privacy";
     case "/terms":
       return "terms";
+    case "/account":
+      return "account";
     case "/learn/kundali":
       return "learn-kundali";
     case "/learn/planets":
@@ -299,6 +314,7 @@ function PageSkeleton() {
 export default function App() {
   const [view, setView] = useState<View>(() => migrateHashOnce() ?? viewFromPath());
   const [sharedLocation, setSharedLocation] = useState<LocationChoice>(DEFAULT_LOCATION);
+  const { status: authStatus, isPremium } = useAuth();
 
   // Push the new path whenever the view changes from in-app navigation.
   // Drop query params so the URL stays clean; share links are built on demand.
@@ -336,8 +352,13 @@ export default function App() {
     applySeo(SEO_BY_VIEW[view]);
   }, [view]);
 
+  // Auto ads: only on monetized routes, only once the session is known, and
+  // never for Premium subscribers (that is the subscription's entitlement).
+  // Waiting for authStatus === "ready" means a premium user never sees ads
+  // flash in before /api/auth/me answers.
   useEffect(() => {
     if (!MONETIZED_VIEWS.has(view)) return;
+    if (authStatus !== "ready" || isPremium) return;
     const id = window.setTimeout(() => {
       if (window.requestIdleCallback) {
         window.requestIdleCallback(() => loadAdSense());
@@ -346,7 +367,7 @@ export default function App() {
       }
     }, 3000);
     return () => window.clearTimeout(id);
-  }, [view]);
+  }, [view, authStatus, isPremium]);
 
   useEffect(() => {
     const id = window.setTimeout(() => {
@@ -391,6 +412,7 @@ export default function App() {
           {view === "frequency" && <FrequencyPage />}
           {view === "privacy" && <PrivacyPage />}
           {view === "terms" && <TermsPage />}
+          {view === "account" && <AccountPage />}
           {view === "learn-kundali" && <WhatIsKundali />}
           {view === "learn-planets" && <NinePlanets />}
           {view === "learn-panchang" && <UnderstandingPanchang />}
@@ -402,6 +424,7 @@ export default function App() {
       </main>
 
       <Footer />
+      <AuthModal />
     </div>
   );
 }

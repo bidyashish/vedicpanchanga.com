@@ -15,6 +15,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import BaseModel, Field
 from starlette.middleware.cors import CORSMiddleware
 
+from accounts import auth_router, billing_router, charts_router
 from advanced_panchang import compute_detailed_panchang
 from auth import require_api_key
 from ayanamsa import AYANAMSA_OPTIONS
@@ -533,6 +534,12 @@ def print_pdf(req: PrintPdfRequest):
     )
 
 
+# Accounts, saved charts and billing (see accounts/__init__.py). Feature-flagged
+# by SESSION_SECRET: without it every route answers 503 and the UI hides itself.
+api_router.include_router(auth_router)
+api_router.include_router(charts_router)
+api_router.include_router(billing_router)
+
 app.include_router(api_router)
 
 # Third-party browser apps (Flutter Web, React, ...) calling with an API key
@@ -549,7 +556,7 @@ app.add_middleware(
         ).split(",")
         if o.strip()
     ],
-    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "X-API-Key"],
     max_age=86400,
 )

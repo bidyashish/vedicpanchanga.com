@@ -85,6 +85,34 @@ EOF
 chown "$RUN_USER:$RUN_GROUP" "$APP_DIR/backend/.env"
 chmod 640 "$APP_DIR/backend/.env"
 
+# Server-side secrets live in .env.local (gitignored, loaded on top of .env).
+# This file is created once and never rewritten by later deploys. A fresh
+# SESSION_SECRET turns the accounts feature on (sign-in, saved charts); add
+# GOOGLE_CLIENT_ID / STRIPE_* / SMTP_* / R2_* by hand - see backend/.env.example.
+ENV_LOCAL="$APP_DIR/backend/.env.local"
+if [ ! -f "$ENV_LOCAL" ]; then
+    SESSION_SECRET="$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))')"
+    cat > "$ENV_LOCAL" <<EOF
+# Server-side secrets. Not in git; setup-vps.sh never overwrites this file.
+# Delete the SESSION_SECRET line to switch accounts off entirely.
+SESSION_SECRET=$SESSION_SECRET
+PUBLIC_URL=https://vedicpanchanga.com
+# GOOGLE_CLIENT_ID=
+# STRIPE_SECRET_KEY=
+# STRIPE_WEBHOOK_SECRET=
+# STRIPE_PRICE_MONTHLY=
+# STRIPE_PRICE_YEARLY=
+# SMTP_HOST= SMTP_PORT=587 SMTP_USER= SMTP_PASSWORD= SMTP_FROM=
+# R2_ACCOUNT_ID= R2_ACCESS_KEY_ID= R2_SECRET_ACCESS_KEY= R2_BUCKET=
+EOF
+    echo "  Created $ENV_LOCAL with a new SESSION_SECRET"
+fi
+chown "$RUN_USER:$RUN_GROUP" "$ENV_LOCAL"
+chmod 600 "$ENV_LOCAL"
+
+# SQLite database for accounts / saved charts (DATABASE_PATH default).
+install -d -o "$RUN_USER" -g "$RUN_GROUP" -m 0750 "$APP_DIR/backend/data"
+
 cat > /etc/systemd/system/panchanga-backend.service <<EOF
 [Unit]
 Description=Panchanga Backend API (FastAPI on :8001)
@@ -98,14 +126,45 @@ WorkingDirectory=$APP_DIR/backend
 Environment=PATH=$APP_DIR/backend/venv/bin:/usr/bin:/bin
 # Two workers so one CPU-bound request (PDF render, muhurta scan) cannot
 # starve quick panchang/chart requests behind the GIL of a single process.
-# All endpoints are stateless and per-process caches are independent, so
-# scaling workers is safe; raise alongside vCPU count if the VPS grows.
+# Calculation endpoints are stateless and per-process caches are independent;
+# the accounts store is SQLite in WAL mode with a 10 s busy timeout, which is
+# safe for a handful of workers on one box. Raise alongside vCPU count.
 ExecStart=$APP_DIR/backend/venv/bin/uvicorn server:app --host 127.0.0.1 --port 8001 --workers 2
 Restart=always
 RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
+EOF
+
+# Daily backup of the accounts database. Uploads a gzipped snapshot to
+# Cloudflare R2 when R2_* is set in .env.local, otherwise keeps it under
+# backend/data/backups/. See `python -m accounts.backup --help`.
+cat > /etc/systemd/system/panchanga-backup.service <<EOF
+[Unit]
+Description=Panchanga accounts DB backup (SQLite snapshot -> R2 / local)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=$RUN_USER
+Group=$RUN_GROUP
+WorkingDirectory=$APP_DIR/backend
+ExecStart=$APP_DIR/backend/venv/bin/python -m accounts.backup backup
+EOF
+
+cat > /etc/systemd/system/panchanga-backup.timer <<EOF
+[Unit]
+Description=Daily Panchanga accounts DB backup
+
+[Timer]
+OnCalendar=*-*-* 03:15:00
+RandomizedDelaySec=15m
+Persistent=true
+
+[Install]
+WantedBy=timers.target
 EOF
 
 # ── frontend ─────────────────────────────────────────────────────────────────
@@ -543,6 +602,7 @@ echo "5. Starting services..."
 systemctl daemon-reload
 systemctl enable panchanga-backend nginx
 systemctl restart panchanga-backend nginx
+systemctl enable --now panchanga-backup.timer
 
 echo
 echo "========================================="
@@ -580,5 +640,7 @@ fi
 echo "Useful commands:"
 echo "  sudo journalctl -u panchanga-backend -f      # backend logs"
 echo "  sudo systemctl restart panchanga-backend     # restart backend"
+echo "  sudo systemctl start panchanga-backup        # run a DB backup now"
+echo "  sudo nano $APP_DIR/backend/.env.local         # Google / Stripe / SMTP / R2 keys"
 echo "  bash $APP_DIR/infra/auto-update-cron.sh       # rebuild & redeploy"
 echo

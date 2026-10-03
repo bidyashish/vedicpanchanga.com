@@ -9,6 +9,25 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- **Accounts, saved charts and Premium.** Optional sign-in with Google or
+  email + password (`backend/accounts/`, SQLite via stdlib `sqlite3`, scrypt
+  password hashes, HttpOnly `vp_session` cookie). Signed-in users save birth
+  details from the Kundali page and reopen them from the new `/account` page
+  (10 charts free, 200 on Premium). **Premium** is a Stripe subscription
+  (monthly or yearly) that removes AdSense and raises the chart limit; the
+  Stripe webhook is the only writer of Premium status and billing is managed
+  through the Stripe customer portal. Password reset by email (SMTP), account
+  deletion that also cancels the subscription, per-IP rate limits. Nightly
+  gzipped snapshots of the database go to Cloudflare R2 via
+  `panchanga-backup.timer` (`python -m accounts.backup backup | list |
+  restore`). The whole feature is a flag: with `SESSION_SECRET` unset the
+  site behaves exactly as before. New endpoints `GET /api/auth/config`,
+  `/api/auth/*`, `/api/charts`, `/api/billing/*`; 84 new UI strings in all
+  15 locales; `backend/tests/test_accounts.py` (32 tests, Stripe / Google /
+  SMTP stubbed). `infra/setup-vps.sh` now seeds `backend/.env.local` once
+  with a generated `SESSION_SECRET`, creates `backend/data/` and installs the
+  backup timer. Design notes in `plan/accounts-subscriptions.md`.
+
 - **Hindu festivals page** (`/festivals`) computed from the ephemeris for the
   visitor's own city, in all 15 languages. A new `backend/festivals.py` engine
   and `GET /api/festivals?year&latitude&longitude` return ~125 festivals, vrats,
@@ -25,6 +44,15 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- **"No signup / no login required" wording removed** from `index.html`
+  meta descriptions and JSON-LD, `public/index.md` and `public/llms.txt`;
+  they now say the calculators are free and an optional account saves charts.
+  `/account` is disallowed in `robots.txt` and marked noindex.
+- **Privacy Policy and Terms of Use rewritten** (dated October 2026) to
+  cover account data, the session cookie, Stripe payments, R2 backups,
+  refunds and cancellation, saved-chart limits and the age requirement.
+- **AdSense loader is gated on auth state:** it waits for the session check
+  and is never injected for Premium users or on `/account`.
 - **Nginx request logging** (`infra/setup-vps.sh`): every request for the
   vhost, including static assets and the direct-IP `444` catch-all, is logged
   as JSON (`security` log format) to `/var/log/nginx/vedicpanchanga/access.log`

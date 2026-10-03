@@ -11,8 +11,9 @@ When keys are configured, a request passes if any of these hold:
 * its ``Origin`` (or, for same-origin GETs that omit Origin, its ``Referer``)
   matches ``AUTH_EXEMPT_ORIGINS`` - the site's own frontend keeps working
   without a key,
-* it targets an exempt liveness path (``/api/``, ``/api/health``) so
-  monitoring probes never need credentials.
+* it targets an exempt path: the liveness probes (``/api/``, ``/api/health``)
+  so monitoring never needs credentials, and the Stripe webhook
+  (``/api/billing/webhook``) which authenticates with its own signature.
 
 CORS preflight (``OPTIONS``) never reaches this dependency: CORSMiddleware
 answers it before routing, as the CORS spec requires (preflights carry no
@@ -32,8 +33,10 @@ import os
 
 from fastapi import HTTPException, Request
 
-# Liveness endpoints stay open even with keys configured.
-EXEMPT_PATHS = {"/api", "/api/", "/api/health"}
+# Liveness endpoints stay open even with keys configured. The Stripe webhook
+# is exempt too: Stripe sends neither Origin nor our key; its own signature
+# (verified in accounts/billing.py) is the authentication.
+EXEMPT_PATHS = {"/api", "/api/", "/api/health", "/api/billing/webhook"}
 
 _DEFAULT_EXEMPT_ORIGINS = (
     "https://vedicpanchanga.com,https://www.vedicpanchanga.com,"

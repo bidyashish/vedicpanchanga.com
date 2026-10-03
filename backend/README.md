@@ -2,7 +2,10 @@
 
 FastAPI service that wraps the [Swiss Ephemeris](https://www.astro.com/swisseph/)
 to compute Vedic charts, Drik Panchanga, Muhurta windows, planetary transits
-and a multi-page PDF report. Stateless - there is no database.
+and a multi-page PDF report. Calculations are stateless. The optional
+`accounts/` subpackage adds a small SQLite database for user accounts, saved
+charts and the Premium subscription; it stays dormant until `SESSION_SECRET`
+is set.
 
 * **Runtime**: Python 3.10+
 * **Entry point**: `server.py` (`uvicorn server:app`)
@@ -31,6 +34,13 @@ Interactive Swagger UI: <http://localhost:8001/docs>.
 | `.env` | `CORS_ORIGINS` | Comma-separated allowlist. Falls back to `https://vedicpanchanga.com,http://localhost:3121` when unset. `infra/setup-vps.sh` rewrites this file on every deploy. |
 | `.env.local` | `API_KEYS` | Optional. Comma-separated keys; unset means the API is open. Clients send `Authorization: Bearer <key>` or `X-API-Key: <key>`. See `auth.py`. |
 | `.env.local` | `AUTH_EXEMPT_ORIGINS` | Origins that stay keyless when `API_KEYS` is set. Defaults to the site itself plus localhost dev. |
+| `.env.local` | `SESSION_SECRET` | Master switch for accounts and the signing key for the `vp_session` cookie. Unset = `/api/auth/config` reports `enabled: false` and nothing is written to disk. Must be identical across uvicorn workers. |
+| `.env.local` | `DATABASE_PATH` | SQLite file. Default `backend/data/app.db` (WAL mode, created on first use). |
+| `.env.local` | `PUBLIC_URL` | Origin used in reset emails and Stripe redirects. Default `https://vedicpanchanga.com`. |
+| `.env.local` | `GOOGLE_CLIENT_ID` | OAuth 2.0 Web client id. Unset = no Google button. |
+| `.env.local` | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` | Password-reset mail. Unset `SMTP_HOST` = reset endpoint returns 503 and the UI hides "Forgot password". |
+| `.env.local` | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_MONTHLY`, `STRIPE_PRICE_YEARLY` | Premium subscription. All four needed for the upgrade UI. |
+| `.env.local` | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PREFIX`, `BACKUP_KEEP` | Nightly database backup target (`python -m accounts.backup`). Unset = snapshots stay in `backend/data/backups/`. |
 
 Both files are gitignored. `.env.local` is loaded on top of `.env` and is
 never touched by the deploy script, so server-side secrets live there.
@@ -78,11 +88,26 @@ and `/api/health` are always open; everything else honours `API_KEYS`.
 | GET | `/api/suggest-lang` | UI locale suggestion from Cloudflare country header with Accept-Language fallback |
 | GET | `/api/geo-ip` | Approximate visitor location from Cloudflare geo headers |
 | POST | `/api/print-pdf` | Multi-page PDF report in any of the 15 locales |
+| GET | `/api/auth/config` | Feature flags for the SPA: `enabled`, `google_client_id`, `password_reset`, `billing`, `plans`, chart limits. Always 200 |
+| GET | `/api/auth/me` | Current user from the session cookie, or `{"user": null}` |
+| POST | `/api/auth/signup` / `login` / `google` / `logout` | Email + password sign-up and sign-in, Google ID-token sign-in (links to an existing email account), sign-out |
+| POST | `/api/auth/forgot-password` / `reset-password` / `change-password` | Reset mail (always 200, no enumeration), token redemption, password change |
+| DELETE | `/api/auth/account` | Delete user + charts, cancel Stripe subscription, clear cookie |
+| GET / POST | `/api/charts` | List / save (201) the signed-in user's charts; `409 chart_limit_reached` at the plan cap |
+| PUT / DELETE | `/api/charts/{id}` | Rename or edit / delete one saved chart (`404 chart_not_found`) |
+| POST | `/api/billing/checkout` | Stripe Checkout URL for `{"plan": "monthly" | "yearly"}` |
+| POST | `/api/billing/portal` | Stripe customer-portal URL (cancel, change card) |
+| POST | `/api/billing/webhook` | Stripe events, signature-verified, idempotent via `billing_events`; exempt from `API_KEYS` |
 
 CPU-bound endpoints (`/calculate`, `/get-panchang`, `/find-muhurta`,
 `/transits`, `/festivals`, `/print-pdf`) are plain `def` handlers so FastAPI runs them in
 its thread pool and the event loop stays responsive. `/print-pdf` renders in
 a spawned process pool. Prometheus metrics are exposed at `/metrics`.
+
+Account endpoints fail with a short snake_case `detail` code
+(`invalid_credentials`, `email_exists`, `rate_limited`, `not_signed_in`,
+`accounts_disabled`, ...). The frontend maps those to localized strings, so
+the backend never needs the user's language.
 
 ## Module layout
 
@@ -117,6 +142,7 @@ backend/
 ├── sade_sati.py               120-year Saturn-from-Moon transit table (PDF only)
 ├── constants.py               magic numbers used by calculator
 ├── panchang_constants.py      magic numbers used by the panchang modules
+├── accounts/                  the only stateful code (see below)
 ├── pdf/                       PDF report (see below)
 ├── ephe/                      Swiss Ephemeris data files (REQUIRED; do not delete)
 └── tests/                     pytest suites - see tests/README.md
@@ -126,6 +152,33 @@ All sidereal swisseph math goes through `ayanamsa.sidereal_context()`. The
 sidereal mode is process-global and endpoints run in a thread pool, so the
 wrapper locks and pins it for the block. Never call `swe.set_sid_mode`
 directly.
+
+### `accounts/` sub-package
+
+```
+accounts/
+├── __init__.py       exports auth_router / charts_router / billing_router + env table
+├── db.py             sqlite3 connection (WAL, busy_timeout), schema + PRAGMA user_version migrations
+├── users.py          user rows, scrypt hashing, premium check, chart limits, reset tokens
+├── sessions.py       vp_session JWT cookie; current_user / require_user dependencies
+├── google_auth.py    Google Identity Services ID-token verification
+├── mailer.py         SMTP password-reset mail
+├── ratelimit.py      in-process sliding-window limiter (per IP, per bucket)
+├── routes_auth.py    /api/auth/*
+├── routes_charts.py  /api/charts
+├── billing.py        Stripe Checkout, customer portal, webhook -> premium_until
+├── storage.py        boto3 client for Cloudflare R2 (S3 API)
+└── backup.py         CLI: python -m accounts.backup backup [--keep N] | list | restore KEY [--to PATH]
+```
+
+Design notes: the Stripe webhook is the only code that grants or revokes
+Premium (`users.premium_until`); the checkout success redirect merely refreshes
+the page. Saved charts store birth details only and are recomputed on open, so
+old entries always reflect current calculation code. The rate limiter is
+per-process; with two uvicorn workers the effective limit is roughly double
+the configured one, which is acceptable for brute-force protection but is
+not a billing control. Tests: `tests/test_accounts.py` (in-process, temporary
+database, Stripe / Google / SMTP stubbed).
 
 ### `pdf/` sub-package
 

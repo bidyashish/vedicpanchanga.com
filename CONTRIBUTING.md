@@ -50,6 +50,8 @@ backend/
 ├── nalla_neram.py         Tamil Nalla Neram windows.
 ├── tamil_calendar.py      Tamil calendar (year, month, weekday).
 ├── tyajyam.py             Inauspicious time periods.
+├── accounts/              Users, sessions, saved charts, Stripe billing, SQLite +
+│                          R2 backup. The only stateful code; off until SESSION_SECRET.
 ├── pdf/                   PDF report renderer (its own subpackage).
 ├── ephe/                  Swiss Ephemeris data files. NEVER move or delete.
 └── tests/                 pytest suites + conftest.
@@ -63,6 +65,11 @@ backend/
   daily sunrise/sunset machinery, otherwise its own module.
 - A new API route: in `server.py`. Keep `server.py` thin - it should
   delegate calculation to a module.
+- Anything that touches users, sessions or the database: inside
+  `backend/accounts/` (routes in `routes_*.py` / `billing.py`, data access
+  in `users.py` / `db.py`). Error `detail` values are snake_case codes that
+  the frontend localizes; add the matching `auth_error_<code>` key to every
+  locale. New tables go through a `PRAGMA user_version` migration in `db.py`.
 - Constants and lookup tables: prefer `constants.py` (chart names) or
   `panchang_constants.py` (panchang tables).
 
@@ -82,11 +89,16 @@ src/
 │   ├── PanchangPage.tsx
 │   ├── MuhurtaPage.tsx
 │   ├── TransitsPage.tsx
+│   ├── AccountPage.tsx    /account: profile, plan, saved charts, security.
 │   └── ...
+│
+├── auth/                  AuthProvider / useAuth (session, premium flag,
+│                          error-code -> i18n key) + savedCharts helpers.
 │
 ├── components/            UI grouped by the page that owns it.
 │   ├── common/            Used by 2+ pages (CitySearch, MandalaLoader).
 │   ├── shell/             TopBar, Footer, NotificationBanner.
+│   ├── account/           AuthModal, AccountMenu, SavedChartList.
 │   ├── ui/                Generic primitives (DatePicker, Switch).
 │   ├── kundali/           Kundali-page-specific (Charts, PlanetsTable).
 │   ├── panchang/          Panchang-page-specific (Section, TimeBand).
@@ -94,6 +106,7 @@ src/
 │
 ├── lib/                   Pure utilities. No React, no JSX.
 │   ├── api.ts             Typed fetch wrappers for every backend route.
+│   ├── googleIdentity.ts  Lazy loader for the Google Identity Services script.
 │   ├── format.ts          Date / time / number formatters.
 │   ├── planets.ts         Planet abbr -> colour / long-name tables.
 │   ├── seo.ts             applySeo() for per-route title/canonical.
@@ -111,15 +124,20 @@ src/
 
 - New top-level route: page file in `pages/` + entry in `App.tsx`
   (`View` union, `VIEW_PATH`, `SEO_BY_VIEW`, `viewFromPath`) + tab in
-  `components/shell/TopBar.tsx` + nav-label key in
-  `i18n/locales/en.ts` (other locales fall back to English).
+  `components/shell/TopBar.tsx` + nav-label key in every
+  `i18n/locales/*.ts` (the i18n check enforces key parity).
+- Anything that needs the signed-in user: read it from `useAuth()`
+  (`user`, `isPremium`, `status`, `openAuthModal(mode, reasonKey)`); never
+  call the auth endpoints directly from a page.
 - New component used by one page: `components/<page>/<Name>.tsx`.
 - New component used by two or more pages: promote to `components/common/`.
 - New API call: typed wrapper in `lib/api.ts` + matching type in
   `types/api.ts`.
-- New translatable string: English in `i18n/locales/en.ts` (mandatory);
-  other locales optional - they fall back to English automatically. Astro
-  names (planet / sign / nakshatra) go in `i18n/astro.ts` instead.
+- New translatable string: add the key to `i18n/locales/en.ts` first, then
+  a native translation in all 14 other locales; `npm run i18n:check` (part
+  of `make check`) fails on missing keys or bare Latin in non-Latin
+  locales. Astro names (planet / sign / nakshatra) go in `i18n/astro.ts`
+  instead.
 
 **Path alias:** `@/...` resolves to `src/...`. Always use it. Never
 `../../components/...`.

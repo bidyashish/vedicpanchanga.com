@@ -26,7 +26,7 @@ Drik Panchang calculator with a modern web interface. Computes traditional Hindu
 | Frontend | Vite 8 · React 19 · TypeScript · Tailwind CSS v4 · clean-URL SPA on port 3121 |
 | Infra | Cloudflare, then Nginx (TLS, static-file host), then FastAPI on loopback · optional Prometheus + Grafana stack |
 
-There is **no** database. Calculations are stateless; the backend persists nothing.
+All calculations are stateless and persist nothing. The only state is an optional SQLite database (`backend/accounts/`) for user accounts, saved charts and Premium status, backed up nightly to Cloudflare R2. It is switched on by setting `SESSION_SECRET`; without it the site has no sign-in UI and writes nothing.
 
 Per-folder docs:
 [`backend/README.md`](backend/README.md) ·
@@ -70,6 +70,8 @@ Without `make`, the equivalent commands are documented in the backend and fronte
 |------|-----|---------|
 | `backend/.env` | `CORS_ORIGINS` | Comma-separated allowlist. Dev: `http://localhost:3121`. Prod: written by `setup-vps.sh` with the public domain only. |
 | `backend/.env.local` | `API_KEYS`, `AUTH_EXEMPT_ORIGINS` | Optional API-key auth for third-party clients. Unset means the API is open. Never rewritten by the deploy script. |
+| `backend/.env.local` | `SESSION_SECRET` | Master switch for accounts (sign-in, saved charts, Premium) and the session-cookie signing key. Unset = accounts off. `setup-vps.sh` generates one on first deploy. |
+| `backend/.env.local` | `GOOGLE_CLIENT_ID`, `SMTP_*`, `STRIPE_*`, `R2_*`, `DATABASE_PATH`, `PUBLIC_URL` | Google Sign-In, password-reset mail, Stripe subscription, R2 backups. Each is optional and independently hides its UI when unset. Full list with comments in `backend/.env.example`. |
 | `frontend/.env` | `VITE_BACKEND_URL` | Backend origin. Leave empty in prod: same-origin `/api` via Nginx. |
 
 Vite bakes `VITE_*` vars in at **build time**, so edit `.env` and rebuild. Restarting is not enough.
@@ -89,6 +91,8 @@ Vite bakes `VITE_*` vars in at **build time**, so edit `.env` and rebuild. Resta
 - **Multi-ayanamsa** - NC Lahiri (default), KP New / Old, BV Raman, KP Khullar, Sayana, Manoj
 - **Multilingual UI** - English, Hindi, Tamil, Bengali, Nepali, Chinese, Japanese, Spanish, German, Portuguese, French, Russian, Arabic, Persian, Hebrew. RTL flips automatically for Arabic / Persian / Hebrew.
 - **Learn section** - articles on Kundali, the nine planets, Panchang, Dasha, Nakshatras, Rashi and divisional charts
+- **Accounts and saved charts** - optional sign-in with Google or email + password; save birth details from the Kundali page and reopen them from any device (`/account`). Every calculator keeps working without an account.
+- **Premium** - Stripe-billed monthly or yearly subscription that removes ads and raises the saved-chart limit; managed from the Account page through the Stripe customer portal
 
 ---
 
@@ -128,7 +132,7 @@ sudo bash infra/grafana/install.sh
 
 While steps 3 and 4 are pending, set Cloudflare's SSL/TLS mode to **Flexible** so the site loads over Cloudflare-edge HTTPS with plain HTTP at the origin.
 
-`setup-vps.sh` writes `panchanga-backend.service` (runs `uvicorn server:app` on `127.0.0.1:8001`) and an Nginx vhost that serves the static Vite build from `frontend/dist/` with a one-year cache on fingerprinted `/assets/`. It also rewrites `backend/.env` with a tight `CORS_ORIGINS` allowlist; secrets go in `backend/.env.local`, which it never touches.
+`setup-vps.sh` writes `panchanga-backend.service` (runs `uvicorn server:app` on `127.0.0.1:8001`) and an Nginx vhost that serves the static Vite build from `frontend/dist/` with a one-year cache on fingerprinted `/assets/`. It also rewrites `backend/.env` with a tight `CORS_ORIGINS` allowlist; secrets go in `backend/.env.local`, which it seeds once (fresh `SESSION_SECRET`, commented placeholders for Google / Stripe / SMTP / R2) and never rewrites. It creates `backend/data/` for the SQLite accounts database and installs `panchanga-backup.timer`, a daily snapshot of that database to Cloudflare R2 (or `backend/data/backups/` when R2 is not configured).
 
 ### Manual redeploy
 
@@ -146,6 +150,7 @@ bash /apps/panchanga/infra/auto-update-cron.sh
 | TLS | Cloudflare Origin Certificate, TLS 1.2/1.3 only |
 | CORS | `CORS_ORIGINS` locked to the production domain; browser traffic is same-origin through the Nginx proxy |
 | API auth | Optional `API_KEYS` for third-party clients; the site's own origin stays keyless |
+| Accounts | scrypt password hashes; HttpOnly + Secure + SameSite=Lax session cookie signed with `SESSION_SECRET`; per-IP rate limits on sign-in, sign-up and reset; Stripe webhooks verified by signature and applied idempotently; secrets only in `.env.local` (mode 600) |
 | Monitoring | Prometheus, exporters and Grafana bind to localhost; Grafana is reachable only through the `/grafana/` proxy |
 
 ---
@@ -157,6 +162,8 @@ vedicpanchanga.com/
 ├── backend/                 # FastAPI service (port 8001) - see backend/README.md
 │   ├── server.py            # entry: uvicorn server:app
 │   ├── auth.py              # optional API-key dependency
+│   ├── accounts/            # users, sessions, Google sign-in, saved charts, Stripe billing,
+│   │                        # SQLite db + R2 backup CLI (the only stateful code)
 │   ├── calculator.py        # compute_chart (planets, vargas, dasha, ashtakavarga, ...)
 │   ├── advanced_panchang.py # detailed Drik panchang
 │   ├── muhurta.py           # muhurta scoring engine + vetoes
@@ -173,9 +180,10 @@ vedicpanchanga.com/
 │   ├── scripts/             # check-i18n.mjs (locale parity + native-script guard)
 │   └── src/
 │       ├── App.tsx          # shell: top bar, path-routed pages, footer
-│       ├── pages/           # Panchang, Kundali, Muhurta, Transits, Frequency, Privacy,
-│       │                    # Terms, articles/ (the /learn/* pages)
-│       ├── components/      # shell/, common/, kundali/, panchang/, transits/, ui/
+│       ├── pages/           # Panchang, Kundali, Muhurta, Transits, Frequency, Account,
+│       │                    # Privacy, Terms, articles/ (the /learn/* pages)
+│       ├── auth/            # AuthProvider / useAuth (session, premium flag), saved-chart helpers
+│       ├── components/      # shell/, common/, account/, kundali/, panchang/, transits/, ui/
 │       ├── lib/             # api.ts, format.ts, seo.ts, urlState.ts, adsense.ts, ...
 │       ├── types/api.ts     # TypeScript shapes for all backend responses
 │       └── i18n/            # provider, astro name tables, locales/*.ts (15 languages)
@@ -195,7 +203,7 @@ vedicpanchanga.com/
 
 ## API
 
-All endpoints are mounted under `/api` (not `/api/v1`). In production the browser reaches them through the Nginx `/api/` proxy on the same origin. `/api/` and `/api/health` are always open; the rest honour the optional `API_KEYS` setting (`Authorization: Bearer <key>` or `X-API-Key`).
+All endpoints are mounted under `/api` (not `/api/v1`). In production the browser reaches them through the Nginx `/api/` proxy on the same origin. `/api/`, `/api/health` and the Stripe webhook are always open; the rest honour the optional `API_KEYS` setting (`Authorization: Bearer <key>` or `X-API-Key`). Account endpoints use the `vp_session` cookie instead and answer `401 not_signed_in` without it.
 
 | Method | Path | Purpose |
 |--------|------|---------|
@@ -210,6 +218,14 @@ All endpoints are mounted under `/api` (not `/api/v1`). In production the browse
 | GET | `/api/suggest-lang` | UI locale suggestion from country / Accept-Language |
 | GET | `/api/geo-ip` | Approximate visitor location from Cloudflare headers |
 | POST | `/api/print-pdf` | Multi-page PDF report in any of the 15 locales |
+| GET | `/api/auth/config` | Which account features are enabled (Google client id, billing plans, chart limits) |
+| POST | `/api/auth/signup`, `/api/auth/login`, `/api/auth/google`, `/api/auth/logout` | Email + password or Google ID-token sign-in; sets / clears the session cookie |
+| GET | `/api/auth/me` | Current user or `{"user": null}` |
+| POST | `/api/auth/forgot-password`, `/api/auth/reset-password`, `/api/auth/change-password` | Password lifecycle (reset mail needs `SMTP_*`) |
+| DELETE | `/api/auth/account` | Delete the account, its charts and cancel any subscription |
+| GET / POST / PUT / DELETE | `/api/charts`, `/api/charts/{id}` | Saved birth details for the signed-in user (10 free, 200 Premium) |
+| POST | `/api/billing/checkout`, `/api/billing/portal` | Stripe Checkout session for a plan; Stripe customer portal link |
+| POST | `/api/billing/webhook` | Stripe webhook (signature-verified); the only writer of Premium status |
 
 Field shapes live in `frontend/src/types/api.ts`. Interactive Swagger UI in dev: <http://localhost:8001/docs>.
 

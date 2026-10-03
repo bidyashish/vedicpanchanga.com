@@ -1,6 +1,6 @@
 # Vedic Panchanga - Free Drik Panchang, Kundali & Muhurta Calculator
 
-Free online Vedic astrology calculator - no signup, no download, works in any browser. Sidereal Lahiri ayanamsa, Swiss Ephemeris precision from 5000 BCE to 5000 CE. Available in 14 languages: English, Hindi, Tamil, Bengali, Nepali, Chinese, Japanese, Spanish, German, Portuguese, French, Russian, Arabic, Hebrew.
+Free online Vedic astrology calculator - no download, works in any browser. Sign in with Google or email to save charts; Premium removes ads. Sidereal Lahiri ayanamsa, Swiss Ephemeris precision from 5000 BCE to 5000 CE. Available in 14 languages: English, Hindi, Tamil, Bengali, Nepali, Chinese, Japanese, Spanish, German, Portuguese, French, Russian, Arabic, Hebrew.
 
 ## [Panchang - Daily Vedic Almanac](https://vedicpanchanga.com/)
 

@@ -84,3 +84,6 @@ android-sdk/frontend/node_modules/.cache/default-development/0.pack
 backend/.env
 backend/.env.local
 frontend/.env.production
+
+# accounts database (SQLite + WAL) and local backup snapshots
+backend/data/

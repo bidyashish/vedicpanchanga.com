@@ -22,11 +22,17 @@ Nginx :80 -> 301 -> :443 (TLS 1.2/1.3, HSTS, real-IP from CF, X-Frame-Options,
     |-- /grafana/  -> proxy -> http://127.0.0.1:3002         (Grafana UI)
     |-- /health    -> proxy -> http://127.0.0.1:8001/api/health  (app health)
     +-- /api/      -> proxy -> http://127.0.0.1:8001/api/     (FastAPI)
-                                       |     (incl. GET /api/health probe)
+                                       |     (incl. GET /api/health probe,
+                                       |      Stripe -> /api/billing/webhook)
                                        v
                               uvicorn server:app
                               (panchanga-backend.service)
                               bound to 127.0.0.1 - never exposed
+                                       |
+                              backend/data/app.db  (SQLite: accounts, saved charts)
+                                       |
+                              panchanga-backup.timer (03:15 daily)
+                                       -> Cloudflare R2 bucket (gzipped snapshots)
 ```
 
 > `/grafana/` is the **Grafana** monitoring UI. The application's own readiness
@@ -55,8 +61,12 @@ What it does, in order:
    `backend/ephe/` is missing (Swiss Ephemeris data).
 2. **System packages** - `nginx python3-venv nodejs(20.x) ufw git curl`.
 3. **Backend** - creates venv, installs `requirements.txt`, writes
-   `backend/.env` with a tight `CORS_ORIGINS` allowlist, writes
-   `panchanga-backend.service` on port 8001.
+   `backend/.env` with a tight `CORS_ORIGINS` allowlist, seeds
+   `backend/.env.local` **once** (fresh `SESSION_SECRET`, commented
+   placeholders for Google / Stripe / SMTP / R2; mode 600; never rewritten),
+   creates `backend/data/` for the SQLite accounts database, writes
+   `panchanga-backend.service` on port 8001 plus `panchanga-backup.service`
+   + `.timer` (daily `python -m accounts.backup backup`).
 4. **Frontend** - writes `.env.production` with empty `VITE_BACKEND_URL`
    (browser hits same-origin `/api`), runs `npm ci && npm run build`.
 5. **Nginx** - installs the JSON `security` log format and a 365-day
@@ -65,7 +75,36 @@ What it does, in order:
 6. **Firewall (UFW)** - opens `22/80/443`; blocks `8000/8001` directly; and
    drops any public allow on the monitoring ports `3002/9090/9100/9115` (they
    stay localhost-only; Grafana is reached through the `/grafana/` proxy).
-7. **Systemd** - enables and restarts `panchanga-backend` + `nginx`.
+7. **Systemd** - enables and restarts `panchanga-backend` + `nginx`, enables
+   `panchanga-backup.timer`.
+
+### Accounts, Premium and backups (optional)
+
+Everything account-related is switched on by `SESSION_SECRET` in
+`backend/.env.local`, which the first deploy generates. Each integration is
+independent: leave a block commented out and its UI simply does not appear.
+
+| Integration | Where to configure | What to paste into `.env.local` |
+|---|---|---|
+| Google Sign-In | Google Cloud Console, APIs & Services, Credentials, OAuth 2.0 Client (Web). Authorized JavaScript origins: `https://vedicpanchanga.com` (+ `http://localhost:3121` for dev). No redirect URI needed (ID-token flow). | `GOOGLE_CLIENT_ID` |
+| Password-reset mail | Any SMTP relay (STARTTLS on 587 or implicit TLS on 465) | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` |
+| Premium (Stripe) | One Product with a monthly and a yearly recurring Price. Webhook endpoint `https://vedicpanchanga.com/api/billing/webhook` subscribed to `checkout.session.completed` and `customer.subscription.*`. Enable the Customer Portal in Stripe settings. | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_MONTHLY`, `STRIPE_PRICE_YEARLY` |
+| DB backups | Cloudflare R2 bucket + an API token scoped to that bucket (Object Read & Write). Add a lifecycle rule or rely on `BACKUP_KEEP` (default 30 newest). | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, optional `R2_PREFIX` |
+
+After editing `.env.local`: `sudo systemctl restart panchanga-backend`. The
+webhook path is exempt from `API_KEYS`; it is protected by Stripe's
+signature instead. Cookies are only marked `Secure` when Nginx forwards
+`X-Forwarded-Proto: https`, which the shipped vhost does.
+
+Restore drill, run as the deploy user (the one that ran `setup-vps.sh`,
+owner of `backend/data/`), never against the live file:
+
+```bash
+cd /apps/panchanga/backend
+venv/bin/python -m accounts.backup list
+venv/bin/python -m accounts.backup restore backups/app-20261003T031500Z.db.gz --to /tmp/app.db
+sqlite3 /tmp/app.db 'select count(*) from users;'
+```
 
 ### Cloudflare Origin Certificate
 
@@ -125,6 +164,9 @@ an SSH tunnel. The blackbox job probes `https://vedicpanchanga.com/api/health`
 ```bash
 sudo journalctl -u panchanga-backend -f      # tail backend logs
 sudo systemctl restart panchanga-backend     # restart backend
+sudo systemctl start panchanga-backup        # run a DB backup now
+sudo systemctl list-timers panchanga-backup.timer   # next scheduled backup
+sudo journalctl -u panchanga-backup -e       # last backup run output
 sudo systemctl reload nginx                  # reload nginx (no downtime)
 sudo nginx -t                                # validate nginx config
 sudo tail -f /var/log/nginx/vedicpanchanga/access.log   # JSON request log
@@ -142,6 +184,18 @@ bash /apps/panchanga/infra/auto-update-cron.sh   # manual deploy
 * **TLS handshake fails** - `sudo nginx -t`, check cert files exist with
   `chmod 600` on the key. Re-run `setup-vps.sh`.
 * **Cron updates not happening** - `tail -f /var/log/panchanga-auto-update.log`.
+* **No "Sign in" button on the site** - `SESSION_SECRET` is unset or empty in
+  `backend/.env.local`; `curl -s https://vedicpanchanga.com/api/auth/config`
+  shows `"enabled": false`. Google button missing with accounts enabled means
+  `GOOGLE_CLIENT_ID` is unset or the origin is not authorized in Google Cloud.
+* **Users signed out after every deploy** - `SESSION_SECRET` changed. It must
+  stay stable; the deploy script never rewrites `.env.local`, so check for a
+  manual edit.
+* **Stripe webhook returns 400** - signature mismatch: `STRIPE_WEBHOOK_SECRET`
+  does not match the endpoint in the Stripe dashboard. `500` means the handler
+  failed and Stripe will retry; see `journalctl -u panchanga-backend`.
+* **Backup timer fails** - `journalctl -u panchanga-backup -e`. With no `R2_*`
+  the snapshot is still written to `backend/data/backups/`.
 
 ## Layout
 

@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { MandalaMark } from "@/components/common/MandalaMark";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
+import { AccountMenu } from "@/components/account/AccountMenu";
 import { useI18n } from "@/i18n";
+import { useAuth } from "@/auth";
 import type { View } from "@/App";
 
 // Evergreen Learn articles surfaced under the "Learn" nav menu. Labels are
@@ -20,6 +22,7 @@ const LEARN_IDS = new Set<View>(LEARN_META.map((l) => l.id));
 
 export function TopBar({ view, setView }: { view: View; setView: (v: View) => void }) {
   const { t } = useI18n();
+  const auth = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [learnOpen, setLearnOpen] = useState(false);
   const learnRef = useRef<HTMLDivElement>(null);
@@ -206,6 +209,7 @@ export function TopBar({ view, setView }: { view: View; setView: (v: View) => vo
         <div className="flex items-center gap-1.5 shrink-0">
           <ThemeToggle />
           <LanguageSwitcher />
+          <AccountMenu setView={setView} />
           {/* Mobile menu button */}
           <button
             type="button"
@@ -285,6 +289,43 @@ export function TopBar({ view, setView }: { view: View; setView: (v: View) => vo
                   </li>
                 );
               })}
+              {auth.enabled && auth.status === "ready" && (
+                <li>
+                  {auth.user ? (
+                    <a
+                      href="/account"
+                      data-testid="mnav-account"
+                      onClick={(e) => onNavClick(e, "account")}
+                      aria-current={view === "account" ? "page" : undefined}
+                      className={`w-full flex items-center justify-between text-start px-4 py-3 rounded-md text-meta font-semibold no-underline transition-colors ${
+                        view === "account"
+                          ? "bg-saffron/10 text-saffron"
+                          : "text-ink hover:bg-parchment-100"
+                      }`}
+                    >
+                      <span>{t("nav_account")}</span>
+                      <span
+                        className="text-mini text-ink-soft font-normal truncate max-w-[50%]"
+                        dir="ltr"
+                      >
+                        {auth.user.email}
+                      </span>
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      data-testid="mnav-signin"
+                      onClick={() => {
+                        setDrawerOpen(false);
+                        auth.openAuthModal("signin");
+                      }}
+                      className="w-full text-start px-4 py-3 rounded-md text-meta font-semibold text-saffron hover:bg-parchment-100 transition-colors"
+                    >
+                      {t("auth_sign_in")}
+                    </button>
+                  )}
+                </li>
+              )}
             </ul>
             <div className="px-3 pb-3">
               <p className="px-4 pt-1 pb-1 text-mini font-semibold text-ink-soft uppercase tracking-wide">

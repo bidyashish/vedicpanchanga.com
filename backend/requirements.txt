@@ -13,3 +13,8 @@ fpdf2==2.8.4
 uharfbuzz==0.39.3
 orjson==3.11.9
 ruff==0.15.12
+# accounts / saved charts / subscriptions (backend/accounts/)
+PyJWT==2.15.1
+google-auth==2.59.1
+stripe==16.0.0
+boto3==1.43.108

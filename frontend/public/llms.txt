@@ -1,6 +1,6 @@
 # Vedic Panchanga
 
-> Free online Vedic astrology calculator at https://vedicpanchanga.com - no signup, no download, works in any browser. Available in 14 languages.
+> Free online Vedic astrology calculator at https://vedicpanchanga.com - no download, works in any browser. Optional free account (Google or email) saves charts; Premium removes ads. Available in 14 languages.
 
 ## Panchang - Daily Vedic Almanac
 

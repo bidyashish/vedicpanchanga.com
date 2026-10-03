@@ -58,6 +58,7 @@ needs a rebuild. Restarting the dev server is not enough.
 | `/festivals`                                                      | Hindu festival calendar for the chosen city    |
 | `/frequency`                                                      | Healing frequency / tone generator             |
 | `/learn/{kundali,planets,panchang,dasha,nakshatras,rashi,vargas}` | Long-form articles (`pages/articles/`)         |
+| `/account`                                                        | Profile, plan, saved charts (noindex, no ads)  |
 | `/privacy`, `/terms`                                              | Legal pages (no ads)                           |
 
 Refreshing on any path works: the Vite dev server falls back to
@@ -81,10 +82,15 @@ src/
 │   ├── TransitsPage.tsx    transit timeline
 │   ├── FestivalsPage.tsx   festival / vrat / Shraddha dates + timings from /api/festivals
 │   ├── FrequencyPage.tsx   tone generator (Solfeggio, chakra, Navagraha presets)
+│   ├── AccountPage.tsx     /account: profile, Premium plan, saved charts, security
 │   ├── PrivacyPage.tsx / TermsPage.tsx
 │   └── articles/           ArticleLayout + the seven /learn/* pages
+├── auth/
+│   ├── index.tsx           AuthProvider + useAuth (user, isPremium, openAuth), authErrorKey
+│   └── savedCharts.ts      chart <-> BirthForm mapping helpers
 ├── components/
 │   ├── shell/              TopBar, Footer, NotificationBanner
+│   ├── account/            AuthModal (Google + email), AccountMenu, SavedChartList
 │   ├── common/             CitySearch, InfoTooltip, LanguageSwitcher, MandalaLoader,
 │   │                       MandalaMark, ShareLinkButton, ThemeToggle
 │   ├── kundali/            BirthForm, BirthHeader, ChartTabs, VedicChart (North Indian),
@@ -106,6 +112,7 @@ src/
 │   ├── auspiciousHeatmap.ts day-strip scoring behind AuspiciousHeatmap
 │   ├── festivalThemes.ts   glyph + gradient per festival id for the hero cards
 │   ├── format.ts           date / time / dms formatters, nowTimeInTz
+│   ├── googleIdentity.ts   lazy loader for the Google Identity Services script
 │   ├── gtag.ts             Google Analytics helper
 │   ├── planets.ts          planet -> colour / long-name tables
 │   ├── richText.tsx        inline markup renderer for i18n strings
@@ -140,9 +147,20 @@ Path alias `@/*` maps to `src/*` in both `vite.config.ts` and
 ## AdSense
 
 Auto Ads only. The loader in `src/lib/adsense.ts` is lazy-injected after
-mount on monetised routes (not `/privacy` or `/terms`). `index.html` only
-carries the `<meta name="google-adsense-account">` tag. Do not add manual
-`<ins>` slots or per-slot env vars.
+mount on monetised routes (not `/privacy`, `/terms` or `/account`), and only
+once `useAuth()` has resolved the session and the user is **not** Premium.
+`index.html` only carries the `<meta name="google-adsense-account">` tag. Do
+not add manual `<ins>` slots or per-slot env vars.
+
+## Accounts
+
+`AuthProvider` (`src/auth/index.tsx`) calls `GET /api/auth/config` and
+`GET /api/auth/me` on boot. When `config.enabled` is false (no
+`SESSION_SECRET` on the server) every sign-in affordance is hidden and the
+app behaves exactly as before. All account requests use
+`credentials: "include"`; the session is an HttpOnly cookie, so there is no
+token in JavaScript. Backend errors arrive as snake*case codes and are
+rendered through `authErrorKey()` -> `auth_error*\*` locale keys.
 
 ## React StrictMode dev quirk
 

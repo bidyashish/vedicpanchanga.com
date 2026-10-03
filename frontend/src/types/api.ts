@@ -514,3 +514,58 @@ export interface LocationChoice {
   longitude: number;
   timezone: string | null;
 }
+
+// ── accounts / saved charts / billing (backend/accounts/) ───────────────
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string | null;
+  picture: string | null;
+  provider: "google" | "email";
+  has_password: boolean;
+  created_at: string;
+  plan: "free" | "premium";
+  is_premium: boolean;
+  premium_until: string | null;
+  subscription_status: string | null;
+  cancel_at_period_end: boolean;
+  has_billing: boolean;
+  chart_limit: number;
+}
+
+export interface BillingPlan {
+  id: "monthly" | "yearly";
+}
+
+export interface AuthConfig {
+  enabled: boolean;
+  google_client_id: string | null;
+  email_password: boolean;
+  password_reset: boolean;
+  billing: boolean;
+  plans: BillingPlan[];
+  free_chart_limit: number;
+  premium_chart_limit: number;
+}
+
+export interface SavedChartInput {
+  name: string;
+  sex?: string | null;
+  birth_date: string;
+  birth_time: string;
+  latitude: number;
+  longitude: number;
+  timezone: string | null;
+  place_name: string;
+  ayanamsa: string;
+  notes?: string;
+}
+
+export interface SavedChart extends SavedChartInput {
+  id: string;
+  sex: string | null;
+  notes: string;
+  created_at: string;
+  updated_at: string;
+}

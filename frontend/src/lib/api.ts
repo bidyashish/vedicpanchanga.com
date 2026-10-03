@@ -9,10 +9,28 @@ import type {
   PanchangData,
   TransitsResponse,
   FestivalsResponse,
+  AuthConfig,
+  AuthUser,
+  SavedChart,
+  SavedChartInput,
 } from "@/types/api";
 
 const BASE = (import.meta.env.VITE_BACKEND_URL ?? "").replace(/\/$/, "");
 const API = `${BASE}/api`;
+
+// Thrown for non-2xx responses. `code` is the backend's `detail` string
+// (snake_case for the accounts endpoints, e.g. "invalid_credentials") so the UI
+// can map it to a localized message; `message` falls back to status text.
+export class ApiError extends Error {
+  status: number;
+  code: string;
+  constructor(status: number, code: string) {
+    super(code);
+    this.name = "ApiError";
+    this.status = status;
+    this.code = code;
+  }
+}
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, {
@@ -23,14 +41,55 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
     let detail = `${res.status} ${res.statusText}`;
     try {
       const body = await res.json();
-      if (body?.detail) detail = body.detail;
+      if (typeof body?.detail === "string") detail = body.detail;
     } catch {
       /* ignore */
     }
-    throw new Error(detail);
+    throw new ApiError(res.status, detail);
   }
   return (await res.json()) as T;
 }
+
+// Account endpoints need the session cookie. Same-origin in production; in dev
+// localhost:3121 -> localhost:8001 is same-site so the cookie still flows.
+function authed<T>(path: string, init?: RequestInit): Promise<T> {
+  return request<T>(`${API}${path}`, { credentials: "include", ...init });
+}
+
+const json = (body: unknown): RequestInit => ({ method: "POST", body: JSON.stringify(body) });
+
+export const fetchAuthConfig = () => authed<AuthConfig>("/auth/config");
+export const fetchMe = () => authed<{ user: AuthUser | null }>("/auth/me");
+export const signup = (email: string, password: string, name?: string) =>
+  authed<{ user: AuthUser }>("/auth/signup", json({ email, password, name: name || undefined }));
+export const login = (email: string, password: string) =>
+  authed<{ user: AuthUser }>("/auth/login", json({ email, password }));
+export const loginWithGoogle = (credential: string) =>
+  authed<{ user: AuthUser }>("/auth/google", json({ credential }));
+export const logout = () => authed<{ user: null }>("/auth/logout", { method: "POST" });
+export const forgotPassword = (email: string) =>
+  authed<{ ok: true }>("/auth/forgot-password", json({ email }));
+export const resetPassword = (token: string, password: string) =>
+  authed<{ user: AuthUser }>("/auth/reset-password", json({ token, password }));
+export const changePassword = (currentPassword: string | null, newPassword: string) =>
+  authed<{ user: AuthUser }>(
+    "/auth/change-password",
+    json({ current_password: currentPassword, new_password: newPassword }),
+  );
+export const deleteAccount = () => authed<{ user: null }>("/auth/account", { method: "DELETE" });
+
+export const listCharts = () => authed<{ charts: SavedChart[]; limit: number }>("/charts");
+export const createChart = (input: SavedChartInput) =>
+  authed<{ chart: SavedChart }>("/charts", json(input));
+export const updateChart = (id: string, patch: Partial<SavedChartInput>) =>
+  authed<{ chart: SavedChart }>(`/charts/${id}`, { method: "PUT", body: JSON.stringify(patch) });
+export const deleteChart = (id: string) =>
+  authed<{ ok: true }>(`/charts/${id}`, { method: "DELETE" });
+
+export const startCheckout = (plan: "monthly" | "yearly") =>
+  authed<{ url: string }>("/billing/checkout", json({ plan }));
+export const openBillingPortal = () =>
+  authed<{ url: string }>("/billing/portal", { method: "POST" });
 
 export function calculateChart(req: CalculateRequest): Promise<ChartData> {
   return request<ChartData>(`${API}/calculate`, {

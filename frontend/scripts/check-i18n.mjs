@@ -33,6 +33,7 @@ const NON_LATIN = new Set(["hi", "ne", "ta", "bn", "zh", "ja", "ru", "ar", "fa",
 const ALLOW = [
   "vedicpanchanga.com",
   "AdSense",
+  "Google",
   "PDF",
   "Swiss Ephemeris",
   "Lahiri",

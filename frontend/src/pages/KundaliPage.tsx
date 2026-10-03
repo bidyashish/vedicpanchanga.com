@@ -18,6 +18,9 @@ import { DrishtiPanel } from "@/components/kundali/DrishtiPanel";
 import { JaiminiSection } from "@/components/kundali/JaiminiSection";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { ShareLinkButton } from "@/components/common/ShareLinkButton";
+import { SavedChartList } from "@/components/account/SavedChartList";
+import { authErrorKey, useAuth } from "@/auth";
+import { useSavedCharts } from "@/auth/savedCharts";
 import { calculateChart, printPdf } from "@/lib/api";
 import {
   parseDate,
@@ -29,7 +32,7 @@ import {
   round4,
   shareUrlFor,
 } from "@/lib/urlState";
-import type { ChartData, LocationChoice } from "@/types/api";
+import type { ChartData, LocationChoice, SavedChart } from "@/types/api";
 
 // PDF ships full label sets for all 15 UI languages. Bundled fonts cover
 // Latin (incl. Cyrillic), Devanagari, Tamil, SC, JP, Arabic (Persian shares
@@ -136,6 +139,9 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [nativeName, setNativeName] = useState<string>(initialParams.name ?? "");
   const [printing, setPrinting] = useState(false);
+  const auth = useAuth();
+  const saved = useSavedCharts();
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
   const [selectedPlanet, setSelectedPlanet] = useState<string | null>(null);
   const [detailPlanetAbbr, setDetailPlanetAbbr] = useState<string | null>(null);
   const [detailDivision, setDetailDivision] = useState(1);
@@ -261,6 +267,59 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
     calculate(form);
   };
 
+  // Saved charts: store the inputs only; opening one re-runs the calculation.
+  const onSaveChart = async () => {
+    if (!auth.user) {
+      auth.openAuthModal("signin", "auth_reason_save");
+      return;
+    }
+    if (!Number.isFinite(form.latitude) || !Number.isFinite(form.longitude)) {
+      setError("Please enter valid latitude and longitude, or pick a city.");
+      return;
+    }
+    setSaveState("saving");
+    setError(null);
+    try {
+      await saved.save({
+        name: nativeName.trim(),
+        birth_date: form.birth_date,
+        birth_time: form.birth_time,
+        latitude: form.latitude,
+        longitude: form.longitude,
+        timezone: form.timezone,
+        place_name: form.place_name,
+        ayanamsa: form.ayanamsa,
+      });
+      setSaveState("saved");
+      window.setTimeout(() => setSaveState("idle"), 1800);
+    } catch (e) {
+      setSaveState("idle");
+      setError(t(authErrorKey(e)));
+    }
+  };
+
+  const openSavedChart = (c: SavedChart) => {
+    const next: BirthFormState = {
+      birth_date: c.birth_date,
+      birth_time: c.birth_time,
+      place_name: c.place_name,
+      latitude: c.latitude,
+      longitude: c.longitude,
+      timezone: c.timezone,
+      ayanamsa: c.ayanamsa || "lahiri",
+    };
+    setForm(next);
+    setNativeName(c.name);
+    onLocationChange({
+      place_name: c.place_name,
+      latitude: c.latitude,
+      longitude: c.longitude,
+      timezone: c.timezone,
+    });
+    calculate(next);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const onPrint = async () => {
     if (!Number.isFinite(form.latitude) || !Number.isFinite(form.longitude)) {
       setError("Please enter valid latitude and longitude, or pick a city.");
@@ -374,6 +433,35 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
                 {printing ? t("preparing_pdf") : t("print_pdf")}
               </button>
             </div>
+            {auth.enabled && auth.status === "ready" && (
+              <div className="mt-3 space-y-3" data-testid="saved-charts-panel">
+                <button
+                  type="button"
+                  data-testid="save-chart"
+                  onClick={onSaveChart}
+                  disabled={saveState === "saving" || loading}
+                  className="btn-ghost w-full"
+                >
+                  {!auth.user
+                    ? t("saved_signin_to_save")
+                    : saveState === "saved"
+                      ? t("saved_saved")
+                      : saveState === "saving"
+                        ? t("auth_working")
+                        : t("saved_save")}
+                </button>
+                {auth.user && (
+                  <SavedChartList
+                    compact
+                    charts={saved.charts}
+                    limit={saved.limit}
+                    loading={saved.loading}
+                    onOpen={openSavedChart}
+                    onDelete={(c) => saved.remove(c.id).catch((e) => setError(t(authErrorKey(e))))}
+                  />
+                )}
+              </div>
+            )}
             {error && (
               <div
                 data-testid="error-banner"

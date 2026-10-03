@@ -1,6 +1,9 @@
 User-agent: *
 Allow: /
 
+# Signed-in area, nothing to index
+Disallow: /account
+
 # Common asset paths
 Allow: /assets/
 Allow: /og-image.png
