@@ -117,11 +117,15 @@ CHANGELOG.
    `checkout.session.completed` and `customer.subscription.*`. Enable the
    Customer Portal. Paste `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
    `STRIPE_PRICE_MONTHLY`, `STRIPE_PRICE_YEARLY`.
-3. **Resend**: verify the sending domain, create a sending API key; paste
+3. **Resend**: done 2026-10-03 (domain verified, send-only key, one test mail
+   delivered from `no-reply@vedicpanchanga.com`). On the server paste
    `RESEND_API_KEY` and `MAIL_FROM`. Without it "Forgot password" is hidden.
-4. **D1**: `wrangler d1 create panchanga-accounts`, an API token with D1 Edit;
-   paste `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `D1_DATABASE_ID`.
-   Run `sudo systemctl start panchanga-backup` once and check
+4. **D1**: done 2026-10-03. Database `panchanga-accounts` (id
+   `e460132e-bacf-451e-a024-842fe569538b`, region WNAM) in account
+   `52f26e3b7ab8801b5cdd15b6190633ef`; schema applied; a D1 Edit token exists
+   (kept in `.env.local` only). On the server paste `CLOUDFLARE_ACCOUNT_ID`,
+   `CLOUDFLARE_API_TOKEN`, `D1_DATABASE_ID`, run
+   `sudo systemctl start panchanga-backup` once and check
    `venv/bin/python -m accounts.backup status` shows matching counts.
 5. `sudo systemctl restart panchanga-backend`, then check
    `/api/auth/config` reports `enabled: true` and `billing: true`.
@@ -147,13 +151,21 @@ CHANGELOG.
   the form.
 - **The `/account` page is treated like the legal pages: no ads.**
 
+## Exercised live so far
+
+On 2026-10-03, from a dev machine against the real services: a throwaway
+local database (user with quotes and emoji in the name, a 3 KB chart note, a
+billing event) was pushed to the production D1 with `sync`, a second `sync`
+was skipped as unchanged, `restore` produced a byte-identical copy, and a
+final `sync` after deleting the rows left D1 empty again. One Resend mail was
+sent through `mailer.send_mail` and delivered.
+
 ## Not exercised live
 
-Real Google token verification, real Stripe Checkout / webhooks, real D1
-requests and real Resend delivery were all stubbed in tests (the Resend key was
-checked read-only; D1 SQL is validated against an in-memory SQLite). The code paths are
-covered, but the first production run of each integration should be watched
-(`journalctl -u panchanga-backend`, Stripe webhook dashboard).
+Real Google token verification and real Stripe Checkout / webhooks are still
+stubbed in tests. Watch the first production run of each
+(`journalctl -u panchanga-backend`, Stripe webhook dashboard), and the first
+timer-driven `panchanga-backup` run on the VPS.
 
 ## Follow-ups worth considering
 
