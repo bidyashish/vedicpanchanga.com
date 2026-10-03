@@ -87,3 +87,6 @@ frontend/.env.production
 
 # accounts database (SQLite + WAL) and local backup snapshots
 backend/data/
+
+# wrangler CLI local state (D1 admin commands)
+.wrangler/
