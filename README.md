@@ -26,7 +26,7 @@ Drik Panchang calculator with a modern web interface. Computes traditional Hindu
 | Frontend | Vite 8 · React 19 · TypeScript · Tailwind CSS v4 · clean-URL SPA on port 3121 |
 | Infra | Cloudflare, then Nginx (TLS, static-file host), then FastAPI on loopback · optional Prometheus + Grafana stack |
 
-All calculations are stateless and persist nothing. The only state is an optional SQLite database (`backend/accounts/`) for user accounts, saved charts and Premium status, backed up nightly to Cloudflare R2. It is switched on by setting `SESSION_SECRET`; without it the site has no sign-in UI and writes nothing.
+All calculations are stateless and persist nothing. The only state is an optional SQLite database (`backend/accounts/`) for user accounts, saved charts and Premium status, mirrored to Cloudflare D1 every 15 minutes. It is switched on by setting `SESSION_SECRET`; without it the site has no sign-in UI and writes nothing.
 
 Per-folder docs:
 [`backend/README.md`](backend/README.md) ·
@@ -71,7 +71,7 @@ Without `make`, the equivalent commands are documented in the backend and fronte
 | `backend/.env` | `CORS_ORIGINS` | Comma-separated allowlist. Dev: `http://localhost:3121`. Prod: written by `setup-vps.sh` with the public domain only. |
 | `backend/.env.local` | `API_KEYS`, `AUTH_EXEMPT_ORIGINS` | Optional API-key auth for third-party clients. Unset means the API is open. Never rewritten by the deploy script. |
 | `backend/.env.local` | `SESSION_SECRET` | Master switch for accounts (sign-in, saved charts, Premium) and the session-cookie signing key. Unset = accounts off. `setup-vps.sh` generates one on first deploy. |
-| `backend/.env.local` | `GOOGLE_CLIENT_ID`, `SMTP_*`, `STRIPE_*`, `R2_*`, `DATABASE_PATH`, `PUBLIC_URL` | Google Sign-In, password-reset mail, Stripe subscription, R2 backups. Each is optional and independently hides its UI when unset. Full list with comments in `backend/.env.example`. |
+| `backend/.env.local` | `GOOGLE_CLIENT_ID`, `RESEND_API_KEY`, `STRIPE_*`, `CLOUDFLARE_*` + `D1_DATABASE_ID`, `DATABASE_PATH`, `PUBLIC_URL` | Google Sign-In, password-reset mail (Resend), Stripe subscription, D1 replica of the database. Each is optional and independently hides its UI when unset. Full list with comments in `backend/.env.example`. |
 | `frontend/.env` | `VITE_BACKEND_URL` | Backend origin. Leave empty in prod: same-origin `/api` via Nginx. |
 
 Vite bakes `VITE_*` vars in at **build time**, so edit `.env` and rebuild. Restarting is not enough.
@@ -132,7 +132,7 @@ sudo bash infra/grafana/install.sh
 
 While steps 3 and 4 are pending, set Cloudflare's SSL/TLS mode to **Flexible** so the site loads over Cloudflare-edge HTTPS with plain HTTP at the origin.
 
-`setup-vps.sh` writes `panchanga-backend.service` (runs `uvicorn server:app` on `127.0.0.1:8001`) and an Nginx vhost that serves the static Vite build from `frontend/dist/` with a one-year cache on fingerprinted `/assets/`. It also rewrites `backend/.env` with a tight `CORS_ORIGINS` allowlist; secrets go in `backend/.env.local`, which it seeds once (fresh `SESSION_SECRET`, commented placeholders for Google / Stripe / SMTP / R2) and never rewrites. It creates `backend/data/` for the SQLite accounts database and installs `panchanga-backup.timer`, a daily snapshot of that database to Cloudflare R2 (or `backend/data/backups/` when R2 is not configured).
+`setup-vps.sh` writes `panchanga-backend.service` (runs `uvicorn server:app` on `127.0.0.1:8001`) and an Nginx vhost that serves the static Vite build from `frontend/dist/` with a one-year cache on fingerprinted `/assets/`. It also rewrites `backend/.env` with a tight `CORS_ORIGINS` allowlist; secrets go in `backend/.env.local`, which it seeds once (fresh `SESSION_SECRET`, commented placeholders for Google / Stripe / Resend / D1) and never rewrites. It creates `backend/data/` for the SQLite accounts database and installs `panchanga-backup.timer`, which mirrors that database to Cloudflare D1 every 15 minutes (a no-op until the Cloudflare variables are set).
 
 ### Manual redeploy
 
@@ -163,7 +163,7 @@ vedicpanchanga.com/
 │   ├── server.py            # entry: uvicorn server:app
 │   ├── auth.py              # optional API-key dependency
 │   ├── accounts/            # users, sessions, Google sign-in, saved charts, Stripe billing,
-│   │                        # SQLite db + R2 backup CLI (the only stateful code)
+│   │                        # SQLite db + D1 mirror CLI (the only stateful code)
 │   ├── calculator.py        # compute_chart (planets, vargas, dasha, ashtakavarga, ...)
 │   ├── advanced_panchang.py # detailed Drik panchang
 │   ├── muhurta.py           # muhurta scoring engine + vetoes
@@ -221,7 +221,7 @@ All endpoints are mounted under `/api` (not `/api/v1`). In production the browse
 | GET | `/api/auth/config` | Which account features are enabled (Google client id, billing plans, chart limits) |
 | POST | `/api/auth/signup`, `/api/auth/login`, `/api/auth/google`, `/api/auth/logout` | Email + password or Google ID-token sign-in; sets / clears the session cookie |
 | GET | `/api/auth/me` | Current user or `{"user": null}` |
-| POST | `/api/auth/forgot-password`, `/api/auth/reset-password`, `/api/auth/change-password` | Password lifecycle (reset mail needs `SMTP_*`) |
+| POST | `/api/auth/forgot-password`, `/api/auth/reset-password`, `/api/auth/change-password` | Password lifecycle (reset mail needs `RESEND_API_KEY`) |
 | DELETE | `/api/auth/account` | Delete the account, its charts and cancel any subscription |
 | GET / POST / PUT / DELETE | `/api/charts`, `/api/charts/{id}` | Saved birth details for the signed-in user (10 free, 200 Premium) |
 | POST | `/api/billing/checkout`, `/api/billing/portal` | Stripe Checkout session for a plan; Stripe customer portal link |

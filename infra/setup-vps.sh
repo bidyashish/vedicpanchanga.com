@@ -88,7 +88,7 @@ chmod 640 "$APP_DIR/backend/.env"
 # Server-side secrets live in .env.local (gitignored, loaded on top of .env).
 # This file is created once and never rewritten by later deploys. A fresh
 # SESSION_SECRET turns the accounts feature on (sign-in, saved charts); add
-# GOOGLE_CLIENT_ID / STRIPE_* / SMTP_* / R2_* by hand - see backend/.env.example.
+# GOOGLE_CLIENT_ID / STRIPE_* / RESEND_API_KEY / CLOUDFLARE_* by hand - see backend/.env.example.
 ENV_LOCAL="$APP_DIR/backend/.env.local"
 if [ ! -f "$ENV_LOCAL" ]; then
     SESSION_SECRET="$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))')"
@@ -102,8 +102,8 @@ PUBLIC_URL=https://vedicpanchanga.com
 # STRIPE_WEBHOOK_SECRET=
 # STRIPE_PRICE_MONTHLY=
 # STRIPE_PRICE_YEARLY=
-# SMTP_HOST= SMTP_PORT=587 SMTP_USER= SMTP_PASSWORD= SMTP_FROM=
-# R2_ACCOUNT_ID= R2_ACCESS_KEY_ID= R2_SECRET_ACCESS_KEY= R2_BUCKET=
+# RESEND_API_KEY= MAIL_FROM=Vedic Panchanga <no-reply@vedicpanchanga.com>
+# CLOUDFLARE_ACCOUNT_ID= CLOUDFLARE_API_TOKEN= D1_DATABASE_ID=
 EOF
     echo "  Created $ENV_LOCAL with a new SESSION_SECRET"
 fi
@@ -137,12 +137,13 @@ RestartSec=10
 WantedBy=multi-user.target
 EOF
 
-# Daily backup of the accounts database. Uploads a gzipped snapshot to
-# Cloudflare R2 when R2_* is set in .env.local, otherwise keeps it under
-# backend/data/backups/. See `python -m accounts.backup --help`.
+# Off-box replica of the accounts database: every 15 minutes push the local
+# SQLite file to Cloudflare D1 (CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_API_TOKEN /
+# D1_DATABASE_ID in .env.local; a no-op until they are set). The API only ever
+# reads the local file. See `python -m accounts.backup --help`.
 cat > /etc/systemd/system/panchanga-backup.service <<EOF
 [Unit]
-Description=Panchanga accounts DB backup (SQLite snapshot -> R2 / local)
+Description=Panchanga accounts DB mirror (local SQLite -> Cloudflare D1)
 After=network-online.target
 Wants=network-online.target
 
@@ -151,16 +152,16 @@ Type=oneshot
 User=$RUN_USER
 Group=$RUN_GROUP
 WorkingDirectory=$APP_DIR/backend
-ExecStart=$APP_DIR/backend/venv/bin/python -m accounts.backup backup
+ExecStart=$APP_DIR/backend/venv/bin/python -m accounts.backup sync
 EOF
 
 cat > /etc/systemd/system/panchanga-backup.timer <<EOF
 [Unit]
-Description=Daily Panchanga accounts DB backup
+Description=Panchanga accounts DB mirror to D1 every 15 minutes
 
 [Timer]
-OnCalendar=*-*-* 03:15:00
-RandomizedDelaySec=15m
+OnCalendar=*:0/15
+RandomizedDelaySec=60
 Persistent=true
 
 [Install]
@@ -640,7 +641,7 @@ fi
 echo "Useful commands:"
 echo "  sudo journalctl -u panchanga-backend -f      # backend logs"
 echo "  sudo systemctl restart panchanga-backend     # restart backend"
-echo "  sudo systemctl start panchanga-backup        # run a DB backup now"
-echo "  sudo nano $APP_DIR/backend/.env.local         # Google / Stripe / SMTP / R2 keys"
+echo "  sudo systemctl start panchanga-backup        # push the DB to D1 now"
+echo "  sudo nano $APP_DIR/backend/.env.local         # Google / Stripe / Resend / D1 keys"
 echo "  bash $APP_DIR/infra/auto-update-cron.sh       # rebuild & redeploy"
 echo

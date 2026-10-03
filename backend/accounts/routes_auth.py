@@ -222,7 +222,7 @@ def auth_forgot_password(body: ForgotBody, request: Request) -> dict[str, Any]:
         token = users.create_reset_token(user["id"])
         try:
             mailer.send_password_reset(user["email"], token)
-        except Exception as exc:  # SMTP down: log, still answer 200
+        except Exception as exc:  # mail provider down: log, still answer 200
             logger.error("password reset mail failed for %s: %s", user["id"], exc)
     return {"ok": True}
 

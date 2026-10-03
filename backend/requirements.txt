@@ -17,4 +17,4 @@ ruff==0.15.12
 PyJWT==2.15.1
 google-auth==2.59.1
 stripe==16.0.0
-boto3==1.43.108
+resend==2.49.1

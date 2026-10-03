@@ -5,8 +5,9 @@
 Until now vedicpanchanga.com was a pure calculator: no database, no sign-in,
 and the marketing copy said "no signup / no login required". The request was
 to add Google sign-in and email sign-up so visitors can save charts, a paid
-subscription that removes ads, durable storage in Cloudflare R2 and/or a local
-database, and to remove the "no login" wording.
+subscription that removes ads, a local database with an off-box copy in
+Cloudflare (first phrased as R2, then clarified: D1, pushed from the live
+SQLite file every 15 minutes), and to remove the "no login" wording.
 
 The constraints that shaped the design:
 
@@ -28,23 +29,24 @@ flowchart LR
   api -->|verify ID token| google[Google Identity]
   api -->|Checkout / Portal| stripe[Stripe]
   stripe -->|webhook, signed| nginx
-  timer[panchanga-backup.timer] --> backup[accounts.backup] --> r2[(Cloudflare R2)]
+  timer[panchanga-backup.timer<br/>every 15 min] --> backup[accounts.backup sync] --> d1[(Cloudflare D1<br/>replica)]
   db --> backup
 ```
 
-### Storage: SQLite primary, R2 for backups
+### Storage: SQLite primary, D1 as the 15-minute replica
 
 | Option | Verdict | Why |
 |---|---|---|
-| **SQLite file + nightly R2 snapshot** (chosen) | yes | Zero new services, stdlib only, transactional, trivially backed up. One box with two workers is well inside SQLite's comfort zone (WAL + 10 s busy timeout). |
-| R2 as the primary store (one object per chart) | no | No transactions or uniqueness constraints, every login is an HTTP round trip, listing is paginated and eventually consistent. Wrong tool for user rows. |
+| **SQLite file + row-level mirror to D1 every 15 min** (chosen) | yes | Zero new services, stdlib only, transactional. One box with two workers is well inside SQLite's comfort zone (WAL + 10 s busy timeout). D1 is itself SQLite, so the same `SCHEMA` text creates the replica and `restore` is a plain row copy. A dead VPS loses at most 15 minutes. |
+| D1 as the primary store (every request over the HTTP API) | no | Every login and chart read becomes a round trip to Cloudflare, the API runs with the single-statement / 100-parameter limits of the HTTP endpoint, and a Cloudflare outage takes sign-in down with it. The user asked for local SQLite to stay primary. |
+| R2 object storage (first idea) | no | S3-style blobs: no transactions or uniqueness constraints. Fine for a dump, wrong for user rows; superseded by D1 which understands the schema. |
 | Postgres / managed DB | not yet | Adds an operational dependency for a few thousand rows. Migration path is open: `db.py` is the only module that speaks SQL. |
 
 ### Feature flag
 
 `SESSION_SECRET` unset means accounts are off. `GET /api/auth/config` returns
 `enabled: false`, the SPA hides every sign-in affordance and nothing is written
-to disk. Each integration (Google, SMTP, Stripe, R2) is independently optional
+to disk. Each integration (Google, Resend, Stripe, D1) is independently optional
 and hides its own UI when unconfigured. This is the same opt-in pattern as the
 existing `API_KEYS`.
 
@@ -88,9 +90,10 @@ Backend `detail` is a snake_case code; the frontend maps it to an
 
 Backend `backend/accounts/`: `db.py`, `users.py`, `sessions.py`,
 `google_auth.py`, `mailer.py`, `ratelimit.py`, `routes_auth.py`,
-`routes_charts.py`, `billing.py`, `storage.py`, `backup.py`. Wired into
+`routes_charts.py`, `billing.py`, `d1.py`, `backup.py`. Wired into
 `server.py`; webhook path added to `auth.EXEMPT_PATHS`. 32 tests in
-`tests/test_accounts.py` with Stripe / Google / SMTP stubbed.
+`tests/test_accounts.py` with Stripe / Google / Resend stubbed and D1 faked by
+an in-memory SQLite that executes the generated SQL.
 
 Frontend: `src/auth/` (provider, hook, saved-chart helpers),
 `src/components/account/` (AuthModal, AccountMenu, SavedChartList),
@@ -100,7 +103,7 @@ strings in all 15 locales, Privacy and Terms rewritten.
 
 Infra: `setup-vps.sh` seeds `.env.local` once with a generated
 `SESSION_SECRET`, creates `backend/data/`, installs
-`panchanga-backup.service` + `.timer` (03:15 daily). Docs updated across
+`panchanga-backup.service` + `.timer` (`OnCalendar=*:0/15`). Docs updated across
 README, backend / frontend / infra READMEs, CONTRIBUTING, CLAUDE.md,
 CHANGELOG.
 
@@ -114,9 +117,12 @@ CHANGELOG.
    `checkout.session.completed` and `customer.subscription.*`. Enable the
    Customer Portal. Paste `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
    `STRIPE_PRICE_MONTHLY`, `STRIPE_PRICE_YEARLY`.
-3. **SMTP**: any relay; paste `SMTP_*`. Without it "Forgot password" is hidden.
-4. **R2**: bucket + token scoped to it; paste `R2_*`. Run
-   `sudo systemctl start panchanga-backup` once and confirm the object lands.
+3. **Resend**: verify the sending domain, create a sending API key; paste
+   `RESEND_API_KEY` and `MAIL_FROM`. Without it "Forgot password" is hidden.
+4. **D1**: `wrangler d1 create panchanga-accounts`, an API token with D1 Edit;
+   paste `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `D1_DATABASE_ID`.
+   Run `sudo systemctl start panchanga-backup` once and check
+   `venv/bin/python -m accounts.backup status` shows matching counts.
 5. `sudo systemctl restart panchanga-backend`, then check
    `/api/auth/config` reports `enabled: true` and `billing: true`.
 6. Do one real test purchase in Stripe test mode and watch the webhook turn
@@ -143,8 +149,9 @@ CHANGELOG.
 
 ## Not exercised live
 
-Real Google token verification, real Stripe Checkout / webhooks, real R2
-uploads and real SMTP delivery were all stubbed in tests. The code paths are
+Real Google token verification, real Stripe Checkout / webhooks, real D1
+requests and real Resend delivery were all stubbed in tests (the Resend key was
+checked read-only; D1 SQL is validated against an in-memory SQLite). The code paths are
 covered, but the first production run of each integration should be watched
 (`journalctl -u panchanga-backend`, Stripe webhook dashboard).
 
@@ -155,6 +162,8 @@ covered, but the first production run of each integration should be watched
 - Shared rate limiter (nginx `limit_req` on `/api/auth/`) so limits are exact
   across workers.
 - Promo / coupon support via Stripe `allow_promotion_codes`.
-- Lifecycle rule on the R2 bucket as belt-and-braces alongside `BACKUP_KEEP`.
+- Alert when `panchanga-backup` fails twice in a row (systemd `OnFailure=`
+  into the existing Grafana / Loki stack) so a silently stale replica is
+  noticed before it matters.
 - If the user base outgrows one box: swap `db.py` for Postgres; nothing else
   speaks SQL.

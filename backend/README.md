@@ -38,9 +38,9 @@ Interactive Swagger UI: <http://localhost:8001/docs>.
 | `.env.local` | `DATABASE_PATH` | SQLite file. Default `backend/data/app.db` (WAL mode, created on first use). |
 | `.env.local` | `PUBLIC_URL` | Origin used in reset emails and Stripe redirects. Default `https://vedicpanchanga.com`. |
 | `.env.local` | `GOOGLE_CLIENT_ID` | OAuth 2.0 Web client id. Unset = no Google button. |
-| `.env.local` | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` | Password-reset mail. Unset `SMTP_HOST` = reset endpoint returns 503 and the UI hides "Forgot password". |
+| `.env.local` | `RESEND_API_KEY`, `MAIL_FROM` | Password-reset mail through [Resend](https://resend.com/docs/send-with-python). `MAIL_FROM` must be on a domain verified in Resend. Unset `RESEND_API_KEY` = reset endpoint returns 503 and the UI hides "Forgot password". |
 | `.env.local` | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_MONTHLY`, `STRIPE_PRICE_YEARLY` | Premium subscription. All four needed for the upgrade UI. |
-| `.env.local` | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PREFIX`, `BACKUP_KEEP` | Nightly database backup target (`python -m accounts.backup`). Unset = snapshots stay in `backend/data/backups/`. |
+| `.env.local` | `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN` (D1 Edit), `D1_DATABASE_ID` | Cloudflare D1 replica that `python -m accounts.backup sync` pushes to every 15 minutes from `panchanga-backup.timer`. Unset = the job exits without doing anything. |
 
 Both files are gitignored. `.env.local` is loaded on top of `.env` and is
 never touched by the deploy script, so server-side secrets live there.
@@ -162,13 +162,13 @@ accounts/
 ├── users.py          user rows, scrypt hashing, premium check, chart limits, reset tokens
 ├── sessions.py       vp_session JWT cookie; current_user / require_user dependencies
 ├── google_auth.py    Google Identity Services ID-token verification
-├── mailer.py         SMTP password-reset mail
+├── mailer.py         password-reset mail through the Resend SDK
 ├── ratelimit.py      in-process sliding-window limiter (per IP, per bucket)
 ├── routes_auth.py    /api/auth/*
 ├── routes_charts.py  /api/charts
 ├── billing.py        Stripe Checkout, customer portal, webhook -> premium_until
-├── storage.py        boto3 client for Cloudflare R2 (S3 API)
-└── backup.py         CLI: python -m accounts.backup backup [--keep N] | list | restore KEY [--to PATH]
+├── d1.py             Cloudflare D1 HTTP API client (stdlib urllib)
+└── backup.py         CLI: python -m accounts.backup sync [--force] | status | restore [--to PATH] [--force]
 ```
 
 Design notes: the Stripe webhook is the only code that grants or revokes
@@ -177,8 +177,14 @@ the page. Saved charts store birth details only and are recomputed on open, so
 old entries always reflect current calculation code. The rate limiter is
 per-process; with two uvicorn workers the effective limit is roughly double
 the configured one, which is acceptable for brute-force protection but is
-not a billing control. Tests: `tests/test_accounts.py` (in-process, temporary
-database, Stripe / Google / SMTP stubbed).
+not a billing control. The local SQLite file is the only database the API
+reads; `backup.py` mirrors it row by row into Cloudflare D1 every 15 minutes
+(upsert + delete of stale ids, skipped when a fingerprint shows nothing
+changed) so a dead VPS costs at most 15 minutes of account data, and
+`restore` rebuilds the file from D1 on a new box. Tests:
+`tests/test_accounts.py` (in-process, temporary database, Stripe / Google /
+Resend stubbed, D1 faked by an in-memory SQLite that executes the generated
+SQL).
 
 ### `pdf/` sub-package
 

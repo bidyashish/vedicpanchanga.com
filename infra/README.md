@@ -31,8 +31,8 @@ Nginx :80 -> 301 -> :443 (TLS 1.2/1.3, HSTS, real-IP from CF, X-Frame-Options,
                                        |
                               backend/data/app.db  (SQLite: accounts, saved charts)
                                        |
-                              panchanga-backup.timer (03:15 daily)
-                                       -> Cloudflare R2 bucket (gzipped snapshots)
+                              panchanga-backup.timer (every 15 min)
+                                       -> Cloudflare D1 (row-level mirror, 30-day Time Travel)
 ```
 
 > `/grafana/` is the **Grafana** monitoring UI. The application's own readiness
@@ -63,10 +63,10 @@ What it does, in order:
 3. **Backend** - creates venv, installs `requirements.txt`, writes
    `backend/.env` with a tight `CORS_ORIGINS` allowlist, seeds
    `backend/.env.local` **once** (fresh `SESSION_SECRET`, commented
-   placeholders for Google / Stripe / SMTP / R2; mode 600; never rewritten),
+   placeholders for Google / Stripe / Resend / D1; mode 600; never rewritten),
    creates `backend/data/` for the SQLite accounts database, writes
    `panchanga-backend.service` on port 8001 plus `panchanga-backup.service`
-   + `.timer` (daily `python -m accounts.backup backup`).
+   + `.timer` (`python -m accounts.backup sync` every 15 minutes).
 4. **Frontend** - writes `.env.production` with empty `VITE_BACKEND_URL`
    (browser hits same-origin `/api`), runs `npm ci && npm run build`.
 5. **Nginx** - installs the JSON `security` log format and a 365-day
@@ -87,24 +87,31 @@ independent: leave a block commented out and its UI simply does not appear.
 | Integration | Where to configure | What to paste into `.env.local` |
 |---|---|---|
 | Google Sign-In | Google Cloud Console, APIs & Services, Credentials, OAuth 2.0 Client (Web). Authorized JavaScript origins: `https://vedicpanchanga.com` (+ `http://localhost:3121` for dev). No redirect URI needed (ID-token flow). | `GOOGLE_CLIENT_ID` |
-| Password-reset mail | Any SMTP relay (STARTTLS on 587 or implicit TLS on 465) | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` |
+| Password-reset mail | [Resend](https://resend.com): verify the sending domain (DNS records shown in the dashboard), create an API key with sending access. | `RESEND_API_KEY`, `MAIL_FROM` (address on the verified domain) |
 | Premium (Stripe) | One Product with a monthly and a yearly recurring Price. Webhook endpoint `https://vedicpanchanga.com/api/billing/webhook` subscribed to `checkout.session.completed` and `customer.subscription.*`. Enable the Customer Portal in Stripe settings. | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_MONTHLY`, `STRIPE_PRICE_YEARLY` |
-| DB backups | Cloudflare R2 bucket + an API token scoped to that bucket (Object Read & Write). Add a lifecycle rule or rely on `BACKUP_KEEP` (default 30 newest). | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, optional `R2_PREFIX` |
+| DB replica | Cloudflare D1: `wrangler d1 create panchanga-accounts` (or dashboard, Storage & Databases, D1) gives the `database_id`; an API token with the **D1 Edit** permission (My Profile, API Tokens); account id from the dashboard sidebar. D1 keeps 30 days of point-in-time history. | `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `D1_DATABASE_ID` |
 
 After editing `.env.local`: `sudo systemctl restart panchanga-backend`. The
 webhook path is exempt from `API_KEYS`; it is protected by Stripe's
 signature instead. Cookies are only marked `Secure` when Nginx forwards
 `X-Forwarded-Proto: https`, which the shipped vhost does.
 
-Restore drill, run as the deploy user (the one that ran `setup-vps.sh`,
-owner of `backend/data/`), never against the live file:
+The mirror runs every 15 minutes (`panchanga-backup.timer`) and pushes only
+when rows changed; `sudo systemctl start panchanga-backup` pushes now. Restore
+drill, run as the deploy user (the one that ran `setup-vps.sh`, owner of
+`backend/data/`), never against the live file:
 
 ```bash
 cd /apps/panchanga/backend
-venv/bin/python -m accounts.backup list
-venv/bin/python -m accounts.backup restore backups/app-20261003T031500Z.db.gz --to /tmp/app.db
+venv/bin/python -m accounts.backup status                 # local vs D1 row counts
+venv/bin/python -m accounts.backup restore --to /tmp/app.db
 sqlite3 /tmp/app.db 'select count(*) from users;'
 ```
+
+On a replacement server: deploy, fill `.env.local` with the same Cloudflare
+variables, stop the backend, `restore --to backend/data/app.db`, start it. To
+undo an unwanted deletion that already reached D1, wind D1 back first with
+`wrangler d1 time-travel restore <name> --timestamp=<ISO>` and then restore.
 
 ### Cloudflare Origin Certificate
 
@@ -164,9 +171,9 @@ an SSH tunnel. The blackbox job probes `https://vedicpanchanga.com/api/health`
 ```bash
 sudo journalctl -u panchanga-backend -f      # tail backend logs
 sudo systemctl restart panchanga-backend     # restart backend
-sudo systemctl start panchanga-backup        # run a DB backup now
-sudo systemctl list-timers panchanga-backup.timer   # next scheduled backup
-sudo journalctl -u panchanga-backup -e       # last backup run output
+sudo systemctl start panchanga-backup        # mirror the DB to D1 now
+sudo systemctl list-timers panchanga-backup.timer   # next 15-minute run
+sudo journalctl -u panchanga-backup -e       # last mirror run output
 sudo systemctl reload nginx                  # reload nginx (no downtime)
 sudo nginx -t                                # validate nginx config
 sudo tail -f /var/log/nginx/vedicpanchanga/access.log   # JSON request log
@@ -194,8 +201,10 @@ bash /apps/panchanga/infra/auto-update-cron.sh   # manual deploy
 * **Stripe webhook returns 400** - signature mismatch: `STRIPE_WEBHOOK_SECRET`
   does not match the endpoint in the Stripe dashboard. `500` means the handler
   failed and Stripe will retry; see `journalctl -u panchanga-backend`.
-* **Backup timer fails** - `journalctl -u panchanga-backup -e`. With no `R2_*`
-  the snapshot is still written to `backend/data/backups/`.
+* **Backup timer fails** - `journalctl -u panchanga-backup -e`. `D1 HTTP 401/403`
+  means the API token lacks D1 Edit or the account id is wrong; `no such
+  table` on `status` just means nothing has been pushed yet. Without the
+  `CLOUDFLARE_*` variables the job exits 0 doing nothing.
 
 ## Layout
 

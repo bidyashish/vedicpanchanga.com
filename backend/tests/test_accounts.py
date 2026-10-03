@@ -6,7 +6,7 @@ monkeypatched env vars (all account settings are read per request).
 
 from __future__ import annotations
 
-import os
+import sqlite3
 from datetime import datetime, timedelta, timezone
 
 import pytest
@@ -14,9 +14,10 @@ from fastapi.testclient import TestClient
 
 import accounts.billing as billing
 import accounts.google_auth as google_auth
+import accounts.d1 as d1
 import accounts.mailer as mailer
 import accounts.ratelimit as ratelimit
-from accounts import db, users
+from accounts import backup, db, users
 from server import app
 
 SECRET = "test-session-secret-not-for-prod"
@@ -35,7 +36,7 @@ def accounts_env(monkeypatch, db_file):
     monkeypatch.delenv("API_KEYS", raising=False)
     monkeypatch.delenv("GOOGLE_CLIENT_ID", raising=False)
     monkeypatch.delenv("STRIPE_SECRET_KEY", raising=False)
-    monkeypatch.delenv("SMTP_HOST", raising=False)
+    monkeypatch.delenv("RESEND_API_KEY", raising=False)
     db.reset_schema_cache()
     ratelimit.reset()
 
@@ -363,14 +364,14 @@ def test_chart_limit_free_vs_premium(client, monkeypatch):
 # ── password reset ───────────────────────────────────────────────────────
 
 
-def test_forgot_password_503_without_smtp(client):
+def test_forgot_password_503_without_resend(client):
     r = client.post("/api/auth/forgot-password", json={"email": "x@example.com"})
     assert r.status_code == 503
     assert r.json()["detail"] == "reset_disabled"
 
 
 def test_password_reset_flow(client, monkeypatch):
-    monkeypatch.setenv("SMTP_HOST", "smtp.example.com")
+    monkeypatch.setenv("RESEND_API_KEY", "re_test_key")
     sent: list[tuple[str, str]] = []
     monkeypatch.setattr(
         mailer, "send_password_reset", lambda to, tok: sent.append((to, tok))
@@ -587,27 +588,185 @@ def test_portal_without_customer_is_404(client, monkeypatch):
     assert r.status_code == 404 and r.json()["detail"] == "no_billing_account"
 
 
-# ── backup ───────────────────────────────────────────────────────────────
+# ── D1 mirror ────────────────────────────────────────────────────────────
 
 
-def test_backup_writes_local_snapshot_without_r2(client, tmp_path, monkeypatch):
-    from accounts import backup
+class FakeD1:
+    """Stands in for Cloudflare D1: runs the SQL that backup.py generates on an
+    in-memory SQLite so the generated statements are really validated, and
+    enforces D1's per-statement size cap."""
 
-    _signup(client, "backup@example.com")
-    for var in (
-        "R2_ACCOUNT_ID",
-        "R2_ACCESS_KEY_ID",
-        "R2_SECRET_ACCESS_KEY",
-        "R2_BUCKET",
-    ):
+    def __init__(self):
+        self.conn = sqlite3.connect(":memory:")
+        self.conn.row_factory = sqlite3.Row
+        self.requests = 0
+
+    @staticmethod
+    def _split(sql):
+        stmts, buf = [], ""
+        for line in sql.splitlines(keepends=True):
+            buf += line
+            if sqlite3.complete_statement(buf):
+                stmts.append(buf.strip())
+                buf = ""
+        if buf.strip():
+            stmts.append(buf.strip())
+        return stmts
+
+    def query(self, sql):
+        self.requests += 1
+        out = []
+        for stmt in self._split(sql):
+            assert len(stmt.encode()) < 100_000, "D1 rejects statements over 100 KB"
+            try:
+                cur = self.conn.execute(stmt)
+            except sqlite3.Error as exc:  # real D1 answers success=false
+                raise d1.D1Error(str(exc)) from exc
+            rows = [dict(r) for r in cur.fetchall()] if cur.description else []
+            out.append({"results": rows, "success": True})
+        self.conn.commit()
+        return out
+
+    def count(self, table):
+        return self.conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+
+
+@pytest.fixture
+def fake_d1(monkeypatch):
+    fake = FakeD1()
+    monkeypatch.setenv("CLOUDFLARE_ACCOUNT_ID", "acc")
+    monkeypatch.setenv("CLOUDFLARE_API_TOKEN", "tok")
+    monkeypatch.setenv("D1_DATABASE_ID", "db-id")
+    monkeypatch.setattr(d1, "query", fake.query)
+    backup.state_path().unlink(missing_ok=True)
+    return fake
+
+
+def _local_rows(table):
+    with db.connect() as conn:
+        pk = backup.PRIMARY_KEY[table]
+        return [tuple(r) for r in conn.execute(f"SELECT * FROM {table} ORDER BY {pk}")]
+
+
+def test_sync_is_noop_without_d1_config(monkeypatch):
+    for var in ("CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_API_TOKEN", "D1_DATABASE_ID"):
         monkeypatch.delenv(var, raising=False)
-    msg = backup.run_backup(keep=2)
-    assert "local snapshot" in msg
-    backups = list((db.db_path().parent / "backups").glob("app-*.db.gz"))
-    assert len(backups) == 1
-    # a second run prunes down to `keep`
-    backup.run_backup(keep=1)
-    backup.run_backup(keep=1)
-    backups = list((db.db_path().parent / "backups").glob("app-*.db.gz"))
-    assert len(backups) == 1
-    assert os.path.getsize(backups[0]) > 0
+    assert "not configured" in backup.run_sync()
+
+
+def test_sync_mirrors_inserts_updates_and_deletes(client, fake_d1):
+    _signup(client, "mirror@example.com", name="O'Mirror")
+    chart_id = client.post("/api/charts", json=CHART).json()["chart"]["id"]
+
+    msg = backup.run_sync()
+    assert msg.startswith("synced to D1")
+    assert fake_d1.count("users") == _local_rows("users").__len__()
+    assert fake_d1.count("charts") == len(_local_rows("charts"))
+    assert (
+        fake_d1.conn.execute(
+            "SELECT name FROM users WHERE email='mirror@example.com'"
+        ).fetchone()[0]
+        == "O'Mirror"
+    )
+
+    # nothing changed: one cheap request (remote counts), no writes
+    before = fake_d1.requests
+    assert backup.run_sync().startswith("unchanged")
+    assert fake_d1.requests == before + 1
+
+    # update + delete propagate; deleting the chart must not touch the user
+    client.put(f"/api/charts/{chart_id}", json={**CHART, "name": "Renamed"})
+    other = client.post("/api/charts", json={**CHART, "name": "Second"}).json()["chart"]
+    client.delete(f"/api/charts/{other['id']}")
+    backup.run_sync(force=True)
+    assert (
+        fake_d1.conn.execute(
+            "SELECT name FROM charts WHERE id=?", (chart_id,)
+        ).fetchone()[0]
+        == "Renamed"
+    )
+    assert fake_d1.count("charts") == len(_local_rows("charts"))
+
+    # the mirror never has rows the primary lost
+    client.delete("/api/auth/account")
+    msg = backup.run_sync()
+    assert "removed" in msg
+    assert (
+        fake_d1.conn.execute(
+            "SELECT COUNT(*) FROM users WHERE email='mirror@example.com'"
+        ).fetchone()[0]
+        == 0
+    )
+    assert fake_d1.count("charts") == len(_local_rows("charts"))
+    for table in backup.TABLES:
+        assert fake_d1.count(table) == len(_local_rows(table))
+
+
+def test_sync_batches_large_tables(client, fake_d1, monkeypatch):
+    monkeypatch.setattr(backup, "MAX_STATEMENT_BYTES", 600)
+    monkeypatch.setattr(backup, "DELETE_CHUNK", 3)
+    _signup(client, "bulk@example.com")
+    for i in range(12):
+        client.post("/api/charts", json={**CHART, "name": f"Chart {i}"})
+    backup.run_sync()
+    assert fake_d1.count("charts") == len(_local_rows("charts"))
+    # drop most of them locally; the mirror follows in chunked deletes
+    for c in client.get("/api/charts").json()["charts"][:10]:
+        client.delete(f"/api/charts/{c['id']}")
+    backup.run_sync()
+    assert fake_d1.count("charts") == len(_local_rows("charts"))
+    client.delete("/api/auth/account")
+
+
+def test_literal_round_trips_through_sqlite():
+    conn = sqlite3.connect(":memory:")
+    for value in (
+        None,
+        0,
+        -17,
+        2**40,
+        28.6139,
+        -0.0,
+        "plain",
+        "O'Brien's \"quoted\" text",
+        "new\nline\ttab",
+        "देवनागरी и 中文 😀",
+        b"\x00\xff\x10",
+    ):
+        got = conn.execute(f"SELECT {backup._literal(value)}").fetchone()[0]
+        assert got == value, value
+    with pytest.raises(ValueError):
+        backup._literal("has\x00nul")
+
+
+def test_restore_rebuilds_identical_database(client, fake_d1, tmp_path, monkeypatch):
+    monkeypatch.setattr(backup, "RESTORE_PAGE", 2)
+    _signup(client, "restore@example.com")
+    for i in range(5):
+        client.post("/api/charts", json={**CHART, "name": f"R{i}", "notes": "n" * i})
+    backup.run_sync()
+
+    target = tmp_path / "restored.db"
+    msg = backup.run_restore(target)
+    assert "restored D1" in msg and target.exists()
+    with pytest.raises(FileExistsError):
+        backup.run_restore(target)
+
+    restored = sqlite3.connect(target)
+    try:
+        assert restored.execute("PRAGMA user_version").fetchone()[0] >= 1
+        for table in backup.TABLES:
+            pk = backup.PRIMARY_KEY[table]
+            rows = [
+                tuple(r)
+                for r in restored.execute(f"SELECT * FROM {table} ORDER BY {pk}")
+            ]
+            assert rows == _local_rows(table), table
+    finally:
+        restored.close()
+    client.delete("/api/auth/account")
+
+
+def test_status_reports_both_sides(client, fake_d1):
+    text = backup.run_status()
+    assert "local" in text and "remote D1 db-id" in text and "last sync" in text

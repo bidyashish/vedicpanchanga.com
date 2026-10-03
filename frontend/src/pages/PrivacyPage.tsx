@@ -117,13 +117,15 @@ export function PrivacyPage() {
             </li>
           </ul>
           <p>
-            This data lives in a database on our server. Encrypted backups of that database are
-            written to Cloudflare R2 object storage and automatically expire after about 30 days.
+            This data lives in a database on our server. Every 15 minutes a copy is written to a
+            Cloudflare D1 database in our own Cloudflare account so that it survives a server
+            failure; Cloudflare keeps 30 days of history for that copy.
           </p>
           <p>
             <strong>Deleting your account</strong> (Account page, "Delete account") removes your
             profile, saved charts and billing references immediately and cancels any active
-            subscription. Copies in expired backups disappear within the backup retention window.
+            subscription. The deletion reaches the Cloudflare copy within 15 minutes; its 30-day
+            history then ages out.
           </p>
         </div>
       </Section>
@@ -151,8 +153,8 @@ export function PrivacyPage() {
               Standard request metadata is processed under their policy.
             </li>
             <li>
-              <strong>Cloudflare</strong> - provides TLS, caching, and DDoS protection, and stores
-              our encrypted database backups (R2). May process IP and user-agent transiently.
+              <strong>Cloudflare</strong> - provides TLS, caching, and DDoS protection, and hosts
+              the replica of our account database (D1). May process IP and user-agent transiently.
             </li>
             <li>
               <strong>Google Sign-In</strong> - loaded only when the sign-in dialog is open. If you
@@ -165,6 +167,19 @@ export function PrivacyPage() {
                 className="text-saffron hover:text-saffron-dark underline"
               >
                 Google's privacy policy
+              </a>
+              .
+            </li>
+            <li>
+              <strong>Resend</strong> - delivers our transactional email (password resets only).
+              Resend processes the recipient address and message under{" "}
+              <a
+                href="https://resend.com/legal/privacy-policy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-saffron hover:text-saffron-dark underline"
+              >
+                Resend's privacy policy
               </a>
               .
             </li>

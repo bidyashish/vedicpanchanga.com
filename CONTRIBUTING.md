@@ -51,7 +51,7 @@ backend/
 ├── tamil_calendar.py      Tamil calendar (year, month, weekday).
 ├── tyajyam.py             Inauspicious time periods.
 ├── accounts/              Users, sessions, saved charts, Stripe billing, SQLite +
-│                          R2 backup. The only stateful code; off until SESSION_SECRET.
+│                          D1 mirror. The only stateful code; off until SESSION_SECRET.
 ├── pdf/                   PDF report renderer (its own subpackage).
 ├── ephe/                  Swiss Ephemeris data files. NEVER move or delete.
 └── tests/                 pytest suites + conftest.

@@ -16,15 +16,16 @@ All notable changes to this project are documented here. The format follows
   (10 charts free, 200 on Premium). **Premium** is a Stripe subscription
   (monthly or yearly) that removes AdSense and raises the chart limit; the
   Stripe webhook is the only writer of Premium status and billing is managed
-  through the Stripe customer portal. Password reset by email (SMTP), account
-  deletion that also cancels the subscription, per-IP rate limits. Nightly
-  gzipped snapshots of the database go to Cloudflare R2 via
-  `panchanga-backup.timer` (`python -m accounts.backup backup | list |
-  restore`). The whole feature is a flag: with `SESSION_SECRET` unset the
+  through the Stripe customer portal. Password reset by email (Resend), account
+  deletion that also cancels the subscription, per-IP rate limits. The local
+  SQLite file stays the only database the API reads; `panchanga-backup.timer`
+  mirrors it row by row into Cloudflare D1 every 15 minutes
+  (`python -m accounts.backup sync | status | restore`) so a lost server
+  costs at most 15 minutes of account data. The whole feature is a flag: with `SESSION_SECRET` unset the
   site behaves exactly as before. New endpoints `GET /api/auth/config`,
   `/api/auth/*`, `/api/charts`, `/api/billing/*`; 84 new UI strings in all
   15 locales; `backend/tests/test_accounts.py` (32 tests, Stripe / Google /
-  SMTP stubbed). `infra/setup-vps.sh` now seeds `backend/.env.local` once
+  Resend stubbed, D1 faked). `infra/setup-vps.sh` now seeds `backend/.env.local` once
   with a generated `SESSION_SECRET`, creates `backend/data/` and installs the
   backup timer. Design notes in `plan/accounts-subscriptions.md`.
 
@@ -49,7 +50,7 @@ All notable changes to this project are documented here. The format follows
   they now say the calculators are free and an optional account saves charts.
   `/account` is disallowed in `robots.txt` and marked noindex.
 - **Privacy Policy and Terms of Use rewritten** (dated October 2026) to
-  cover account data, the session cookie, Stripe payments, R2 backups,
+  cover account data, the session cookie, Stripe payments, the D1 replica,
   refunds and cancellation, saved-chart limits and the age requirement.
 - **AdSense loader is gated on auth state:** it waits for the session check
   and is never injected for Premium users or on `/account`.
