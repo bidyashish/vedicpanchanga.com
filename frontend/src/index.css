@@ -783,6 +783,9 @@
   overflow-y: auto;
   overscroll-behavior: contain;
 }
+.modal-dialog-wide {
+  width: min(64rem, calc(100vw - 2rem));
+}
 .modal-dialog::backdrop {
   background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(2px);

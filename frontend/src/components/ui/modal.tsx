@@ -4,9 +4,11 @@ interface ModalProps {
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  /** Wider panel for table-heavy content (see .modal-dialog-wide). */
+  wide?: boolean;
 }
 
-export function Modal({ open, onClose, children }: ModalProps) {
+export function Modal({ open, onClose, children, wide = false }: ModalProps) {
   const ref = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -29,7 +31,12 @@ export function Modal({ open, onClose, children }: ModalProps) {
   );
 
   return (
-    <dialog ref={ref} onClose={handleClose} onClick={handleBackdrop} className="modal-dialog">
+    <dialog
+      ref={ref}
+      onClose={handleClose}
+      onClick={handleBackdrop}
+      className={wide ? "modal-dialog modal-dialog-wide" : "modal-dialog"}
+    >
       {/* The dialog itself is transparent (see .modal-dialog); this card is the opaque panel. */}
       {open && <div className="card p-5 sm:p-6">{children}</div>}
     </dialog>

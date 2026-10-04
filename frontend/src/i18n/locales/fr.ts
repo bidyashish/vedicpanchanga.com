@@ -1075,6 +1075,20 @@ const fr: Record<string, string> = {
   saved_name_fallback: "Thème sans nom",
   saved_signin_to_save: "Connectez-vous pour enregistrer",
   saved_loading: "Chargement des thèmes enregistrés…",
+  saved_manage: "Gérer les thèmes",
+  saved_search: "Rechercher par nom ou lieu",
+  saved_col_name: "Nom du thème",
+  saved_col_action: "Action",
+  saved_col_last_saved: "Dernier enregistrement",
+  saved_edit: "Modifier",
+  saved_update: "Mettre à jour le thème",
+  saved_editing: "Modification du thème enregistré : {0}",
+  saved_cancel_edit: "Annuler la modification",
+  saved_no_match: "Aucun thème enregistré ne correspond à votre recherche.",
+  gender: "Sexe",
+  gender_male: "Masculin",
+  gender_female: "Féminin",
+  gender_unspecified: "Non précisé",
 };
 
 export default fr;

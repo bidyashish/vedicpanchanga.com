@@ -1071,6 +1071,20 @@ const de: Record<string, string> = {
   saved_name_fallback: "Unbenanntes Horoskop",
   saved_signin_to_save: "Zum Speichern anmelden",
   saved_loading: "Gespeicherte Horoskope werden geladen…",
+  saved_manage: "Horoskope verwalten",
+  saved_search: "Nach Name oder Ort suchen",
+  saved_col_name: "Horoskopname",
+  saved_col_action: "Aktion",
+  saved_col_last_saved: "Zuletzt gespeichert",
+  saved_edit: "Bearbeiten",
+  saved_update: "Horoskop aktualisieren",
+  saved_editing: "Gespeichertes Horoskop wird bearbeitet: {0}",
+  saved_cancel_edit: "Bearbeitung abbrechen",
+  saved_no_match: "Kein gespeichertes Horoskop passt zu deiner Suche.",
+  gender: "Geschlecht",
+  gender_male: "Männlich",
+  gender_female: "Weiblich",
+  gender_unspecified: "Keine Angabe",
 };
 
 export default de;

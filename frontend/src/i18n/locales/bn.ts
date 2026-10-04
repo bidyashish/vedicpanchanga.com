@@ -1046,6 +1046,20 @@ const bn: Record<string, string> = {
   saved_name_fallback: "নামহীন কুণ্ডলী",
   saved_signin_to_save: "সংরক্ষণ করতে সাইন ইন",
   saved_loading: "সংরক্ষিত কুণ্ডলী লোড হচ্ছে…",
+  saved_manage: "কুণ্ডলী পরিচালনা করুন",
+  saved_search: "নাম বা স্থান দিয়ে খুঁজুন",
+  saved_col_name: "কুণ্ডলীর নাম",
+  saved_col_action: "ক্রিয়া",
+  saved_col_last_saved: "শেষ সংরক্ষণ",
+  saved_edit: "সম্পাদনা",
+  saved_update: "কুণ্ডলী হালনাগাদ করুন",
+  saved_editing: "সংরক্ষিত কুণ্ডলী সম্পাদনা হচ্ছে: {0}",
+  saved_cancel_edit: "সম্পাদনা বাতিল",
+  saved_no_match: "আপনার খোঁজের সাথে মেলে এমন কোনো সংরক্ষিত কুণ্ডলী নেই।",
+  gender: "লিঙ্গ",
+  gender_male: "পুরুষ",
+  gender_female: "মহিলা",
+  gender_unspecified: "উল্লেখ করা হয়নি",
 };
 
 export default bn;

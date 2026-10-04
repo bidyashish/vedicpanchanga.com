@@ -1053,6 +1053,20 @@ const ta: Record<string, string> = {
   saved_name_fallback: "பெயரிடப்படாத ஜாதகம்",
   saved_signin_to_save: "சேமிக்க உள்நுழைக",
   saved_loading: "சேமித்த ஜாதகங்கள் ஏற்றப்படுகின்றன…",
+  saved_manage: "ஜாதகங்களை நிர்வகி",
+  saved_search: "பெயர் அல்லது இடத்தால் தேடுங்கள்",
+  saved_col_name: "ஜாதகப் பெயர்",
+  saved_col_action: "செயல்",
+  saved_col_last_saved: "கடைசியாகச் சேமித்தது",
+  saved_edit: "திருத்து",
+  saved_update: "ஜாதகத்தைப் புதுப்பி",
+  saved_editing: "சேமித்த ஜாதகம் திருத்தப்படுகிறது: {0}",
+  saved_cancel_edit: "திருத்தத்தை ரத்துசெய்",
+  saved_no_match: "உங்கள் தேடலுக்குப் பொருந்தும் சேமித்த ஜாதகம் எதுவும் இல்லை.",
+  gender: "பாலினம்",
+  gender_male: "ஆண்",
+  gender_female: "பெண்",
+  gender_unspecified: "குறிப்பிடப்படவில்லை",
 };
 
 export default ta;

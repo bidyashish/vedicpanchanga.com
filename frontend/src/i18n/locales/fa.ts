@@ -1056,6 +1056,20 @@ const fa: Record<string, string> = {
   saved_name_fallback: "نقشهٔ بی‌نام",
   saved_signin_to_save: "برای ذخیره وارد شوید",
   saved_loading: "بارگذاری نقشه‌های ذخیره‌شده…",
+  saved_manage: "مدیریت نقشه‌ها",
+  saved_search: "جستجو بر اساس نام یا مکان",
+  saved_col_name: "نام نقشه",
+  saved_col_action: "عملیات",
+  saved_col_last_saved: "آخرین ذخیره",
+  saved_edit: "ویرایش",
+  saved_update: "به‌روزرسانی نقشه",
+  saved_editing: "در حال ویرایش نقشهٔ ذخیره‌شده: {0}",
+  saved_cancel_edit: "لغو ویرایش",
+  saved_no_match: "هیچ نقشهٔ ذخیره‌شده‌ای با جستجوی شما مطابقت ندارد.",
+  gender: "جنسیت",
+  gender_male: "مرد",
+  gender_female: "زن",
+  gender_unspecified: "مشخص نشده",
 };
 
 export default fa;

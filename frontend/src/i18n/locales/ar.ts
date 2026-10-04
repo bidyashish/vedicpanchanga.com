@@ -1049,6 +1049,20 @@ const ar: Record<string, string> = {
   saved_name_fallback: "خريطة بلا اسم",
   saved_signin_to_save: "سجّل الدخول للحفظ",
   saved_loading: "جارٍ تحميل الخرائط المحفوظة…",
+  saved_manage: "إدارة الخرائط",
+  saved_search: "ابحث بالاسم أو المكان",
+  saved_col_name: "اسم الخريطة",
+  saved_col_action: "الإجراء",
+  saved_col_last_saved: "آخر حفظ",
+  saved_edit: "تعديل",
+  saved_update: "تحديث الخريطة",
+  saved_editing: "جارٍ تعديل الخريطة المحفوظة: {0}",
+  saved_cancel_edit: "إلغاء التعديل",
+  saved_no_match: "لا توجد خرائط محفوظة تطابق بحثك.",
+  gender: "الجنس",
+  gender_male: "ذكر",
+  gender_female: "أنثى",
+  gender_unspecified: "غير محدد",
 };
 
 export default ar;

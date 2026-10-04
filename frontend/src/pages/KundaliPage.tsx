@@ -18,12 +18,13 @@ import { DrishtiPanel } from "@/components/kundali/DrishtiPanel";
 import { JaiminiSection } from "@/components/kundali/JaiminiSection";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { ShareLinkButton } from "@/components/common/ShareLinkButton";
-import { SavedChartList } from "@/components/account/SavedChartList";
+import { ManageChartsModal } from "@/components/account/ManageChartsModal";
 import { authErrorKey, useAuth } from "@/auth";
 import { useSavedCharts } from "@/auth/savedCharts";
 import { calculateChart, printPdf } from "@/lib/api";
 import {
   parseDate,
+  parseEnum,
   parseFloat3,
   parseStr,
   parseTime,
@@ -88,6 +89,9 @@ interface Props {
   onLocationChange: (loc: LocationChoice) => void;
 }
 
+// Values the PDF report understands (it prints "Female" for anything not starting with M).
+const GENDERS = ["Male", "Female"] as const;
+
 export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   const { t, lang } = useI18n();
 
@@ -99,6 +103,8 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
     const lon = parseFloat3(sp.get("lon"), -180, 180);
     return {
       name: parseStr(sp.get("name"), 80),
+      sex: parseEnum(sp.get("sex"), GENDERS),
+      edit: parseStr(sp.get("edit"), 40),
       birth_date: parseDate(sp.get("birth_date")),
       birth_time: parseTime(sp.get("birth_time")),
       lat,
@@ -138,10 +144,15 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [nativeName, setNativeName] = useState<string>(initialParams.name ?? "");
+  const [sex, setSex] = useState<string>(initialParams.sex ?? "");
   const [printing, setPrinting] = useState(false);
   const auth = useAuth();
   const saved = useSavedCharts();
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
+  // Edit mode: while set (and the chart still exists), Save updates it instead of creating.
+  const [editingId, setEditingId] = useState<string | null>(initialParams.edit);
+  const [manageOpen, setManageOpen] = useState(false);
+  const editingChart = editingId ? saved.charts.find((c) => c.id === editingId) : undefined;
   const [selectedPlanet, setSelectedPlanet] = useState<string | null>(null);
   const [detailPlanetAbbr, setDetailPlanetAbbr] = useState<string | null>(null);
   const [detailDivision, setDetailDivision] = useState(1);
@@ -280,8 +291,9 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
     setSaveState("saving");
     setError(null);
     try {
-      await saved.save({
+      const input = {
         name: nativeName.trim(),
+        sex: sex || null,
         birth_date: form.birth_date,
         birth_time: form.birth_time,
         latitude: form.latitude,
@@ -289,7 +301,9 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
         timezone: form.timezone,
         place_name: form.place_name,
         ayanamsa: form.ayanamsa,
-      });
+      };
+      if (editingChart) await saved.update(editingChart.id, input);
+      else await saved.save(input);
       setSaveState("saved");
       window.setTimeout(() => setSaveState("idle"), 1800);
     } catch (e) {
@@ -298,7 +312,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
     }
   };
 
-  const openSavedChart = (c: SavedChart) => {
+  const loadSavedChart = (c: SavedChart, edit: boolean) => {
     const next: BirthFormState = {
       birth_date: c.birth_date,
       birth_time: c.birth_time,
@@ -310,6 +324,8 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
     };
     setForm(next);
     setNativeName(c.name);
+    setSex(c.sex ?? "");
+    setEditingId(edit ? c.id : null);
     onLocationChange({
       place_name: c.place_name,
       latitude: c.latitude,
@@ -349,7 +365,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
     try {
       const blob = await printPdf({
         name: nativeName,
-        sex: "Male",
+        sex: sex || "Male",
         birth_date: form.birth_date,
         birth_time: form.birth_time,
         latitude: form.latitude,
@@ -421,6 +437,22 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
                 autoComplete="name"
               />
             </div>
+            <div className="mb-3">
+              <label className="field-label" htmlFor="gender-select">
+                {t("gender")}
+              </label>
+              <select
+                id="gender-select"
+                data-testid="gender-select"
+                value={sex}
+                onChange={(e) => setSex(e.target.value)}
+                className="field"
+              >
+                <option value="">{t("gender_unspecified")}</option>
+                <option value="Male">{t("gender_male")}</option>
+                <option value="Female">{t("gender_female")}</option>
+              </select>
+            </div>
             <BirthForm form={form} setForm={setForm} onSubmit={onSubmit} loading={loading} />
             <div className="mt-3">
               <button
@@ -435,6 +467,26 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
             </div>
             {auth.enabled && auth.status === "ready" && (
               <div className="mt-3 space-y-3" data-testid="saved-charts-panel">
+                {editingChart && (
+                  <div
+                    className="flex items-center justify-between gap-2 text-mini text-ink-soft"
+                    data-testid="editing-banner"
+                  >
+                    <span className="truncate">
+                      {t("saved_editing").replace(
+                        "{0}",
+                        editingChart.name || t("saved_name_fallback"),
+                      )}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setEditingId(null)}
+                      className="shrink-0 text-saffron hover:underline"
+                    >
+                      {t("saved_cancel_edit")}
+                    </button>
+                  </div>
+                )}
                 <button
                   type="button"
                   data-testid="save-chart"
@@ -448,17 +500,44 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
                       ? t("saved_saved")
                       : saveState === "saving"
                         ? t("auth_working")
-                        : t("saved_save")}
+                        : editingChart
+                          ? t("saved_update")
+                          : t("saved_save")}
                 </button>
                 {auth.user && (
-                  <SavedChartList
-                    compact
-                    charts={saved.charts}
-                    limit={saved.limit}
-                    loading={saved.loading}
-                    onOpen={openSavedChart}
-                    onDelete={(c) => saved.remove(c.id).catch((e) => setError(t(authErrorKey(e))))}
-                  />
+                  <>
+                    <button
+                      type="button"
+                      data-testid="manage-charts"
+                      onClick={() => setManageOpen(true)}
+                      className="btn-ghost w-full"
+                    >
+                      {t("saved_manage")}
+                      <span className="text-mini text-ink-soft">
+                        {t("saved_count")
+                          .replace("{0}", String(saved.charts.length))
+                          .replace("{1}", String(saved.limit))}
+                      </span>
+                    </button>
+                    <ManageChartsModal
+                      open={manageOpen}
+                      onClose={() => setManageOpen(false)}
+                      charts={saved.charts}
+                      limit={saved.limit}
+                      loading={saved.loading}
+                      onOpen={(c) => {
+                        setManageOpen(false);
+                        loadSavedChart(c, false);
+                      }}
+                      onEdit={(c) => {
+                        setManageOpen(false);
+                        loadSavedChart(c, true);
+                      }}
+                      onDelete={(c) =>
+                        saved.remove(c.id).catch((e) => setError(t(authErrorKey(e))))
+                      }
+                    />
+                  </>
                 )}
               </div>
             )}

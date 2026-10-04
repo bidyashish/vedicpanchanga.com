@@ -1060,6 +1060,20 @@ const ru: Record<string, string> = {
   saved_name_fallback: "Карта без названия",
   saved_signin_to_save: "Войдите, чтобы сохранить",
   saved_loading: "Загрузка сохранённых карт…",
+  saved_manage: "Управление картами",
+  saved_search: "Поиск по имени или месту",
+  saved_col_name: "Название карты",
+  saved_col_action: "Действие",
+  saved_col_last_saved: "Последнее сохранение",
+  saved_edit: "Изменить",
+  saved_update: "Обновить карту",
+  saved_editing: "Редактирование сохранённой карты: {0}",
+  saved_cancel_edit: "Отменить редактирование",
+  saved_no_match: "Нет сохранённых карт, соответствующих запросу.",
+  gender: "Пол",
+  gender_male: "Мужской",
+  gender_female: "Женский",
+  gender_unspecified: "Не указан",
 };
 
 export default ru;

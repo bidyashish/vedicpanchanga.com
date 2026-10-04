@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Section } from "@/components/panchang/Section";
-import { SavedChartList } from "@/components/account/SavedChartList";
+import { ManageChartsModal } from "@/components/account/ManageChartsModal";
 import { useI18n } from "@/i18n";
 import { authErrorKey, useAuth } from "@/auth";
 import { useSavedCharts } from "@/auth/savedCharts";
@@ -9,10 +9,13 @@ import { formatShortDate } from "@/lib/format";
 import { readSearch, round4, shareUrlFor } from "@/lib/urlState";
 import type { SavedChart } from "@/types/api";
 
-function openSavedChart(c: SavedChart) {
+// Saved charts open on /kundali with their inputs in the URL; `edit` tells the
+// Kundali page that Save should update this chart rather than create a new one.
+function goToKundali(c: SavedChart, edit: boolean) {
   window.location.assign(
     shareUrlFor("/kundali", {
       name: c.name || undefined,
+      sex: c.sex || undefined,
       birth_date: c.birth_date,
       birth_time: c.birth_time,
       lat: round4(c.latitude),
@@ -20,6 +23,7 @@ function openSavedChart(c: SavedChart) {
       tz: c.timezone || undefined,
       place: c.place_name || undefined,
       ayanamsa: c.ayanamsa === "lahiri" ? undefined : c.ayanamsa,
+      edit: edit ? c.id : undefined,
     }),
   );
 }
@@ -29,6 +33,7 @@ export function AccountPage() {
   const auth = useAuth();
   const { user, config, status, enabled, openAuthModal, refresh, setUser } = auth;
   const saved = useSavedCharts();
+  const [manageOpen, setManageOpen] = useState(false);
 
   // One-shot query params: Stripe redirect outcome and password-reset token.
   const params = useMemo(() => {
@@ -329,11 +334,29 @@ export function AccountPage() {
       </Section>
 
       <Section title={t("saved_title")} testId="account-saved">
-        <SavedChartList
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-meta text-ink-soft">
+            {t("saved_count")
+              .replace("{0}", String(saved.charts.length))
+              .replace("{1}", String(saved.limit))}
+          </span>
+          <button
+            type="button"
+            className="btn-ghost"
+            data-testid="manage-charts"
+            onClick={() => setManageOpen(true)}
+          >
+            {t("saved_manage")}
+          </button>
+        </div>
+        <ManageChartsModal
+          open={manageOpen}
+          onClose={() => setManageOpen(false)}
           charts={saved.charts}
           limit={saved.limit}
           loading={saved.loading}
-          onOpen={openSavedChart}
+          onOpen={(c) => goToKundali(c, false)}
+          onEdit={(c) => goToKundali(c, true)}
           onDelete={(c) => saved.remove(c.id).catch((e) => setErrorKey(authErrorKey(e)))}
         />
       </Section>

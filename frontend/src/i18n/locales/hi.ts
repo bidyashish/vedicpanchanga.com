@@ -1048,6 +1048,20 @@ const hi: Record<string, string> = {
   saved_name_fallback: "बिना नाम की कुण्डली",
   saved_signin_to_save: "सहेजने के लिए साइन इन करें",
   saved_loading: "सहेजी गई कुण्डलियाँ लोड हो रही हैं…",
+  saved_manage: "कुण्डलियाँ प्रबंधित करें",
+  saved_search: "नाम या स्थान से खोजें",
+  saved_col_name: "कुण्डली का नाम",
+  saved_col_action: "कार्रवाई",
+  saved_col_last_saved: "अंतिम बार सहेजी गई",
+  saved_edit: "संपादित करें",
+  saved_update: "कुण्डली अपडेट करें",
+  saved_editing: "सहेजी गई कुण्डली संपादित की जा रही है: {0}",
+  saved_cancel_edit: "संपादन रद्द करें",
+  saved_no_match: "आपकी खोज से मेल खाती कोई सहेजी गई कुण्डली नहीं है।",
+  gender: "लिंग",
+  gender_male: "पुरुष",
+  gender_female: "स्त्री",
+  gender_unspecified: "निर्दिष्ट नहीं",
 };
 
 export default hi;

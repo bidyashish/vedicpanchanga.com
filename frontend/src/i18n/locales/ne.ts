@@ -1046,6 +1046,20 @@ const ne: Record<string, string> = {
   saved_name_fallback: "नामविनाको कुण्डली",
   saved_signin_to_save: "सुरक्षित गर्न साइन इन",
   saved_loading: "सुरक्षित कुण्डली लोड हुँदैछ…",
+  saved_manage: "कुण्डली व्यवस्थापन",
+  saved_search: "नाम वा स्थानबाट खोज्नुहोस्",
+  saved_col_name: "कुण्डलीको नाम",
+  saved_col_action: "कार्य",
+  saved_col_last_saved: "अन्तिम पटक सुरक्षित",
+  saved_edit: "सम्पादन",
+  saved_update: "कुण्डली अद्यावधिक गर्नुहोस्",
+  saved_editing: "सुरक्षित कुण्डली सम्पादन गर्दै: {0}",
+  saved_cancel_edit: "सम्पादन रद्द गर्नुहोस्",
+  saved_no_match: "तपाईंको खोजसँग मिल्ने कुनै सुरक्षित कुण्डली छैन।",
+  gender: "लिङ्ग",
+  gender_male: "पुरुष",
+  gender_female: "महिला",
+  gender_unspecified: "उल्लेख गरिएको छैन",
 };
 
 export default ne;

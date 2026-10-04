@@ -1066,6 +1066,20 @@ const es: Record<string, string> = {
   saved_name_fallback: "Carta sin nombre",
   saved_signin_to_save: "Inicia sesión para guardar",
   saved_loading: "Cargando cartas guardadas…",
+  saved_manage: "Gestionar cartas",
+  saved_search: "Buscar por nombre o lugar",
+  saved_col_name: "Nombre de la carta",
+  saved_col_action: "Acción",
+  saved_col_last_saved: "Último guardado",
+  saved_edit: "Editar",
+  saved_update: "Actualizar carta",
+  saved_editing: "Editando la carta guardada: {0}",
+  saved_cancel_edit: "Cancelar edición",
+  saved_no_match: "Ninguna carta guardada coincide con tu búsqueda.",
+  gender: "Sexo",
+  gender_male: "Masculino",
+  gender_female: "Femenino",
+  gender_unspecified: "Sin especificar",
 };
 
 export default es;

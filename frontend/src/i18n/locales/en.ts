@@ -1083,6 +1083,20 @@ const en: Record<string, string> = {
   saved_name_fallback: "Untitled chart",
   saved_signin_to_save: "Sign in to save",
   saved_loading: "Loading saved charts…",
+  saved_manage: "Manage charts",
+  saved_search: "Search by name or place",
+  saved_col_name: "Chart name",
+  saved_col_action: "Action",
+  saved_col_last_saved: "Last saved",
+  saved_edit: "Edit",
+  saved_update: "Update chart",
+  saved_editing: "Editing saved chart: {0}",
+  saved_cancel_edit: "Cancel editing",
+  saved_no_match: "No saved charts match your search.",
+  gender: "Gender",
+  gender_male: "Male",
+  gender_female: "Female",
+  gender_unspecified: "Not specified",
 };
 
 export default en;

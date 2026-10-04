@@ -1046,6 +1046,20 @@ const he: Record<string, string> = {
   saved_name_fallback: "מפה ללא שם",
   saved_signin_to_save: "התחברו כדי לשמור",
   saved_loading: "טוען מפות שמורות…",
+  saved_manage: "ניהול מפות",
+  saved_search: "חיפוש לפי שם או מקום",
+  saved_col_name: "שם המפה",
+  saved_col_action: "פעולה",
+  saved_col_last_saved: "שמירה אחרונה",
+  saved_edit: "עריכה",
+  saved_update: "עדכון המפה",
+  saved_editing: "עורכים מפה שמורה: {0}",
+  saved_cancel_edit: "ביטול העריכה",
+  saved_no_match: "אין מפות שמורות התואמות לחיפוש.",
+  gender: "מין",
+  gender_male: "זכר",
+  gender_female: "נקבה",
+  gender_unspecified: "לא צוין",
 };
 
 export default he;

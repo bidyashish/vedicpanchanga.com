@@ -1060,6 +1060,20 @@ const ja: Record<string, string> = {
   saved_name_fallback: "無題のチャート",
   saved_signin_to_save: "保存するにはログイン",
   saved_loading: "保存したチャートを読み込み中…",
+  saved_manage: "チャートを管理",
+  saved_search: "名前または場所で検索",
+  saved_col_name: "チャート名",
+  saved_col_action: "操作",
+  saved_col_last_saved: "最終保存",
+  saved_edit: "編集",
+  saved_update: "チャートを更新",
+  saved_editing: "保存したチャートを編集中：{0}",
+  saved_cancel_edit: "編集をキャンセル",
+  saved_no_match: "検索に一致する保存したチャートはありません。",
+  gender: "性別",
+  gender_male: "男性",
+  gender_female: "女性",
+  gender_unspecified: "未指定",
 };
 
 export default ja;

@@ -1064,6 +1064,20 @@ const pt: Record<string, string> = {
   saved_name_fallback: "Mapa sem nome",
   saved_signin_to_save: "Inicie sessão para guardar",
   saved_loading: "A carregar mapas guardados…",
+  saved_manage: "Gerir mapas",
+  saved_search: "Pesquisar por nome ou local",
+  saved_col_name: "Nome do mapa",
+  saved_col_action: "Ação",
+  saved_col_last_saved: "Última gravação",
+  saved_edit: "Editar",
+  saved_update: "Atualizar mapa",
+  saved_editing: "A editar o mapa guardado: {0}",
+  saved_cancel_edit: "Cancelar edição",
+  saved_no_match: "Nenhum mapa guardado corresponde à sua pesquisa.",
+  gender: "Sexo",
+  gender_male: "Masculino",
+  gender_female: "Feminino",
+  gender_unspecified: "Não indicado",
 };
 
 export default pt;

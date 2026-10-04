@@ -1038,6 +1038,20 @@ const zh: Record<string, string> = {
   saved_name_fallback: "未命名星图",
   saved_signin_to_save: "登录以保存",
   saved_loading: "正在加载已保存星图…",
+  saved_manage: "管理星图",
+  saved_search: "按名称或地点搜索",
+  saved_col_name: "星图名称",
+  saved_col_action: "操作",
+  saved_col_last_saved: "最后保存",
+  saved_edit: "编辑",
+  saved_update: "更新星图",
+  saved_editing: "正在编辑已保存星图：{0}",
+  saved_cancel_edit: "取消编辑",
+  saved_no_match: "没有与搜索匹配的已保存星图。",
+  gender: "性别",
+  gender_male: "男",
+  gender_female: "女",
+  gender_unspecified: "未指定",
 };
 
 export default zh;
