@@ -109,9 +109,14 @@ CHANGELOG.
 
 ## Go-live checklist (manual, outside the repo)
 
-1. **Google**: OAuth 2.0 Web client in Google Cloud Console. Authorized
-   JavaScript origins `https://vedicpanchanga.com` (+ `http://localhost:3121`
-   for dev). Paste `GOOGLE_CLIENT_ID`.
+1. **Google**: done 2026-10-03. GCP project `vedic-panchanga-510600`,
+   consent screen "Vedic Panchanga" (External, published to production; only
+   openid/email/profile scopes so no verification needed), OAuth 2.0 Web
+   client "vedicpanchanga.com web" with JavaScript origins
+   `https://vedicpanchanga.com`, `https://www.vedicpanchanga.com`,
+   `http://localhost:3121`, `http://localhost`. No redirect URIs (GIS popup
+   flow). The button renders on localhost; a full sign-in has not been
+   exercised yet. On the server paste `GOOGLE_CLIENT_ID`.
 2. **Stripe**: one Product, two recurring Prices (monthly, yearly). Webhook
    endpoint `https://vedicpanchanga.com/api/billing/webhook` on
    `checkout.session.completed` and `customer.subscription.*`. Enable the
