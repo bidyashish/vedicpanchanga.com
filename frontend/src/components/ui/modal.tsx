@@ -30,7 +30,8 @@ export function Modal({ open, onClose, children }: ModalProps) {
 
   return (
     <dialog ref={ref} onClose={handleClose} onClick={handleBackdrop} className="modal-dialog">
-      {open && children}
+      {/* The dialog itself is transparent (see .modal-dialog); this card is the opaque panel. */}
+      {open && <div className="card p-5 sm:p-6">{children}</div>}
     </dialog>
   );
 }

@@ -97,7 +97,7 @@ export function AuthModal() {
 
   return (
     <Modal open={modal.open} onClose={closeAuthModal}>
-      <div className="w-[min(92vw,26rem)]" data-testid="auth-modal">
+      <div data-testid="auth-modal">
         <ModalHeader onClose={closeAuthModal} closeLabel={t("pd_close")}>
           <h2 className="font-serif text-lead text-ink font-semibold">{title}</h2>
         </ModalHeader>

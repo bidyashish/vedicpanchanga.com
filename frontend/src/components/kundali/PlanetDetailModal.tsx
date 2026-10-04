@@ -139,7 +139,7 @@ export function PlanetDetailModal({ planet, data, division = 1, onClose }: Props
 
   return (
     <Modal open={!!planet} onClose={onClose}>
-      <div className="card p-5 sm:p-6">
+      <div>
         <ModalHeader onClose={onClose} closeLabel={t("pd_close")}>
           <div className="flex items-center gap-3">
             <span
