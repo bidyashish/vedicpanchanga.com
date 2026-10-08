@@ -44,6 +44,7 @@ from panchang_constants import (
     CHANDRA_VASA,
     DISHA_SHOOL,
     DUR_MUHURTA,
+    DUR_MUHURTA_NIGHT,
     GOOD_CHANDRA_HOUSES,
     GOOD_TARA_POSITIONS,
     NIRAYANA_MONTHS,
@@ -789,22 +790,30 @@ def _muhurta_timings(sunrise_jd, sunset_jd, next_sunrise_jd, tz, vara_iso=None):
     }
 
 
-def _dur_muhurtam(sunrise_jd, sunset_jd, vara_iso, tz):
-    """Dur Muhurtam periods by weekday."""
+def _dur_muhurtam(sunrise_jd, sunset_jd, next_sunrise_jd, vara_iso, tz):
+    """Dur Muhurtam windows by weekday.
+
+    Each entry is one of the 15 muhurtas of the day (sunrise to sunset) or,
+    on Tuesday, of the night (sunset to next sunrise); `period` says which
+    span `muhurta_number` counts in.
+    """
     if not (sunrise_jd and sunset_jd):
         return []
-    muhurta_day = (sunset_jd - sunrise_jd) / 15
+    spans = [("day", sunrise_jd, sunset_jd, DUR_MUHURTA)]
+    if next_sunrise_jd:
+        spans.append(("night", sunset_jd, next_sunrise_jd, DUR_MUHURTA_NIGHT))
     result = []
-    for idx in DUR_MUHURTA.get(vara_iso, []):
-        start = sunrise_jd + (idx - 1) * muhurta_day
-        end = sunrise_jd + idx * muhurta_day
-        result.append(
-            {
-                "muhurta_number": idx,
-                "start": _iso(start, tz),
-                "end": _iso(end, tz),
-            }
-        )
+    for period, span_start, span_end, table in spans:
+        muhurta = (span_end - span_start) / 15
+        for idx in table.get(vara_iso, []):
+            result.append(
+                {
+                    "muhurta_number": idx,
+                    "period": period,
+                    "start": _iso(span_start + (idx - 1) * muhurta, tz),
+                    "end": _iso(span_start + idx * muhurta, tz),
+                }
+            )
     return result
 
 
@@ -1052,7 +1061,7 @@ def _compute_detailed_panchang_locked(
     rahu = segs[RAHU_KAAL_SEGMENT[vara_iso] - 1] if segs else None
     yama = segs[YAMAGANDA_SEGMENT[vara_iso] - 1] if segs else None
     gulika = segs[GULIKA_SEGMENT[vara_iso] - 1] if segs else None
-    dur_muhurtas = _dur_muhurtam(sunrise_jd, sunset_jd, vara_iso, tz)
+    dur_muhurtas = _dur_muhurtam(sunrise_jd, sunset_jd, next_sunrise_jd, vara_iso, tz)
 
     aus = _muhurta_timings(sunrise_jd, sunset_jd, next_sunrise_jd, tz, vara_iso)
 

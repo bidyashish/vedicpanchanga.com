@@ -469,6 +469,8 @@ const ru: Record<string, string> = {
   muhurta_gulika_desc: "Сын Сатурна · нейтрально-неблагоприятно",
   muhurta_dur: "Дур Мухуртам",
   muhurta_dur_desc: "Избегайте благих дел",
+  muhurta_dur_night: "Ночной Дур Мухуртам",
+  muhurta_abhijit_none: "В среду не отмечается: 8-я мухурта является Дур Мухуртам",
   muhurta_bhadra: "Бхадра (Вишти)",
   muhurta_bhadra_desc: "Вишти карана · неблагоприятно",
   muhurta_varjyam: "Варджям",

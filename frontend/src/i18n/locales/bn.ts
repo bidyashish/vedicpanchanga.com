@@ -467,6 +467,8 @@ const bn: Record<string, string> = {
   muhurta_gulika_desc: "শনিপুত্র · নিরপেক্ষ-অশুভ",
   muhurta_dur: "দুর্মুহূর্ত",
   muhurta_dur_desc: "শুভ কাজ এড়িয়ে চলুন",
+  muhurta_dur_night: "রাতের দুর্মুহূর্ত",
+  muhurta_abhijit_none: "বুধবার পালিত হয় না: 8ম মুহূর্ত দুর্মুহূর্ত",
   muhurta_bhadra: "ভদ্রা (বিষ্টি)",
   muhurta_bhadra_desc: "বিষ্টি করণ · অশুভ",
   muhurta_varjyam: "বর্জ্যম্",

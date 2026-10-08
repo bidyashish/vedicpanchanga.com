@@ -100,6 +100,17 @@ All notable changes to this project are documented here. The format follows
   them apart. The PDF now uses the same chart abbreviations as the web UI
   (சந், குரு, சுக், சனி), and a test guards every PDF locale against two
   bodies sharing a label.
+- **Dur Muhurtam windows** (#97): the weekday table was missing the second
+  Thursday window (12th muhurta) and the second Friday window (9th muhurta),
+  and Tuesday's night Dur Muhurtam (7th muhurta of the night, roughly 23:00
+  to midnight) was not computed at all. Each entry now carries
+  `period: "day" | "night"`, the night window is counted from sunset to the
+  real next sunrise, and the panchang page labels it "Night Dur Muhurtam".
+  On Wednesday the Abhijit card now explains why it is empty (the 8th muhurta
+  is Dur Muhurtam) instead of showing a bare "-". All seven weekdays plus the
+  Tuesday night window are pinned to DrikPanchang New Delhi for 14 days in
+  Feb / Jun / Oct 2026 in `backend/tests/test_dur_muhurtam.py`, including the
+  invariant that no Dur Muhurtam ever coincides with Abhijit or Vijaya.
 
 ## [1.2.0] - 2026-09-17
 

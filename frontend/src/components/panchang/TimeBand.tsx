@@ -6,14 +6,17 @@ export function TimeBand({
   window,
   color,
   desc,
+  emptyText,
   tz,
   refDate,
   testId,
 }: {
   title: string;
-  window?: MuhurtaWindow;
+  window?: MuhurtaWindow | null;
   color: string;
   desc?: string;
+  /** Shown instead of "-" when the window is absent for a known reason. */
+  emptyText?: string;
   tz?: string;
   refDate?: string;
   testId?: string;
@@ -35,11 +38,15 @@ export function TimeBand({
         </p>
         <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
       </div>
-      <p className="value-strong num mt-0.5">
-        {window
-          ? `${formatTimeWithDate(window.start, tz, refDate)} - ${formatTimeWithDate(window.end, tz, refDate)}`
-          : "-"}
-      </p>
+      {window ? (
+        <p className="value-strong num mt-0.5">
+          {`${formatTimeWithDate(window.start, tz, refDate)} - ${formatTimeWithDate(window.end, tz, refDate)}`}
+        </p>
+      ) : emptyText ? (
+        <p className="value mt-0.5">{emptyText}</p>
+      ) : (
+        <p className="value-strong num mt-0.5">-</p>
+      )}
       {desc && <p className="meta mt-0.5">{desc}</p>}
     </div>
   );

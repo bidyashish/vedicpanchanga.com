@@ -41,6 +41,9 @@ export function AuspiciousTimings({
           testId="band-abhijit"
           title={t("muhurta_abhijit_full")}
           window={data.auspicious_timings.abhijit}
+          emptyText={
+            data.auspicious_timings.abhijit === null ? t("muhurta_abhijit_none") : undefined
+          }
           color="var(--success)"
           desc={t("muhurta_abhijit_desc")}
           tz={tz}

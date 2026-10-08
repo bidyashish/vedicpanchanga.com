@@ -468,6 +468,8 @@ const ta: Record<string, string> = {
   muhurta_gulika_desc: "சனியின் மகன் · நடுநிலை-அசுபம்",
   muhurta_dur: "துர் முகூர்த்தம்",
   muhurta_dur_desc: "சுபமான வேலைகளைத் தவிர்க்கவும்",
+  muhurta_dur_night: "இரவு துர் முகூர்த்தம்",
+  muhurta_abhijit_none: "புதன்கிழமை கடைப்பிடிக்கப்படுவதில்லை: 8வது முகூர்த்தம் துர் முகூர்த்தம்",
   muhurta_bhadra: "பத்ரா (விஷ்டி)",
   muhurta_bhadra_desc: "விஷ்டி கரணம் · அசுபம்",
   muhurta_varjyam: "வர்ஜ்யம்",

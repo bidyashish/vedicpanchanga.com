@@ -468,6 +468,8 @@ const ar: Record<string, string> = {
   muhurta_gulika_desc: "ابن زحل · محايد-غير ميمون",
   muhurta_dur: "دور موهورتام",
   muhurta_dur_desc: "تجنّب الأعمال الميمونة",
+  muhurta_dur_night: "دور موهورتام الليلي",
+  muhurta_abhijit_none: "لا يُعتمد يوم الأربعاء: الموهورتا الثامنة هي دور موهورتام",
   muhurta_bhadra: "بهادرا (فيشتي)",
   muhurta_bhadra_desc: "كارانا فيشتي · غير ميمون",
   muhurta_varjyam: "فارجيام",

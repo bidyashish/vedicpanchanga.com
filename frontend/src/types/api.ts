@@ -407,7 +407,8 @@ export interface PanchangData {
   auspicious_timings: {
     brahma_muhurta?: MuhurtaWindow;
     pratah_sandhya?: MuhurtaWindow;
-    abhijit?: MuhurtaWindow;
+    /** null on Wednesday: the 8th muhurta is Dur Muhurtam, so Abhijit is not observed. */
+    abhijit?: MuhurtaWindow | null;
     vijay_muhurta?: MuhurtaWindow;
     godhuli_muhurta?: MuhurtaWindow;
     sayahna_sandhya?: MuhurtaWindow;
@@ -420,7 +421,7 @@ export interface PanchangData {
     rahu_kalam?: MuhurtaWindow;
     yamaganda?: MuhurtaWindow;
     gulika_kalam?: MuhurtaWindow;
-    dur_muhurtam: (MuhurtaWindow & { muhurta_number: number })[];
+    dur_muhurtam: (MuhurtaWindow & { muhurta_number: number; period?: "day" | "night" })[];
     bhadra: MuhurtaWindow[];
     varjyam?: AuspiciousWindow[];
   };

@@ -468,6 +468,8 @@ const zh: Record<string, string> = {
   muhurta_gulika_desc: "土星之子 · 中性偏凶",
   muhurta_dur: "凶时",
   muhurta_dur_desc: "避免吉事",
+  muhurta_dur_night: "夜间凶时",
+  muhurta_abhijit_none: "周三不适用: 第8个时段为凶时",
   muhurta_bhadra: "跋陀罗（毗湿底）",
   muhurta_bhadra_desc: "毗湿底迦罗那 · 凶时",
   muhurta_varjyam: "凶时段",

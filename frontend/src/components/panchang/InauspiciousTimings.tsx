@@ -50,7 +50,7 @@ export function InauspiciousTimings({
           <TimeBand
             key={i}
             testId={`band-dur-${i}`}
-            title={`${t("muhurta_dur")} #${a.num(dm.muhurta_number)}`}
+            title={`${t(dm.period === "night" ? "muhurta_dur_night" : "muhurta_dur")} #${a.num(dm.muhurta_number)}`}
             window={dm}
             color="var(--danger)"
             desc={t("muhurta_dur_desc")}

@@ -184,19 +184,25 @@ CHANDRA_VASA = {
     12: "South",  # Meena
 }
 
-# Dur Muhurtam: muhurta index (1..15) of the day, keyed by isoweekday (1=Mon..7=Sun).
-# Verified against drikpanchang.com daily panchang (New Delhi, Jun 2026). Note that
-# Wednesday's Dur Muhurtam is the 8th muhurta, which is the same slot as Abhijit -
-# by classical rule Abhijit is therefore unavailable on Wednesday (handled in
-# advanced_panchang._auspicious_times via ABHIJIT_MUHURTA_INDEX).
+# Dur Muhurtam: muhurta index (1..15) within the day (sunrise to sunset), keyed by
+# isoweekday (1=Mon..7=Sun). Verified against drikpanchang.com daily panchang
+# (New Delhi, Feb / Jun / Oct 2026). Wednesday's Dur Muhurtam is the 8th muhurta,
+# the same slot as Abhijit, so Abhijit is not observed on Wednesday (handled in
+# advanced_panchang._muhurta_timings via ABHIJIT_MUHURTA_INDEX).
 DUR_MUHURTA = {
     1: [9, 12],  # Mon
-    2: [4],  # Tue
+    2: [4],  # Tue (plus a night window, see DUR_MUHURTA_NIGHT)
     3: [8],  # Wed (coincides with Abhijit -> Abhijit suppressed)
-    4: [6],  # Thu
-    5: [4],  # Fri
+    4: [6, 12],  # Thu
+    5: [4, 9],  # Fri
     6: [1, 2],  # Sat
     7: [14],  # Sun
+}
+
+# Night Dur Muhurtam: muhurta index (1..15) within the night (sunset to next
+# sunrise), same weekday keys. Only Tuesday has one, the 7th night muhurta.
+DUR_MUHURTA_NIGHT = {
+    2: [7],  # Tue
 }
 
 # Abhijit is always the middle (8th) of the 15 daytime muhurtas. When a weekday's

@@ -469,6 +469,8 @@ const ja: Record<string, string> = {
   muhurta_gulika_desc: "土星の子 · 中性的に凶",
   muhurta_dur: "凶時",
   muhurta_dur_desc: "吉事を避ける",
+  muhurta_dur_night: "夜の凶時",
+  muhurta_abhijit_none: "水曜日は適用なし: 第8ムフールタが凶時のため",
   muhurta_bhadra: "バドラー（ヴィシュティ）",
   muhurta_bhadra_desc: "ヴィシュティ・カラナ · 凶",
   muhurta_varjyam: "凶時間帯",

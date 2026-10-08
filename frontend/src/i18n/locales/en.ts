@@ -471,6 +471,8 @@ const en: Record<string, string> = {
   muhurta_gulika_desc: "Son of Saturn · neutral-inauspicious",
   muhurta_dur: "Dur Muhurtam",
   muhurta_dur_desc: "Avoid auspicious work",
+  muhurta_dur_night: "Night Dur Muhurtam",
+  muhurta_abhijit_none: "Not observed on Wednesday: the 8th muhurta is Dur Muhurtam",
   muhurta_bhadra: "Bhadra (Vishti)",
   muhurta_bhadra_desc: "Vishti karana · inauspicious",
   muhurta_varjyam: "Varjyam",

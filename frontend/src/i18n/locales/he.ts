@@ -468,6 +468,8 @@ const he: Record<string, string> = {
   muhurta_gulika_desc: "בנו של שבתאי · ניטרלי-בלתי מבורך",
   muhurta_dur: "דור מוהורתם",
   muhurta_dur_desc: "הימנע מעבודות מבורכות",
+  muhurta_dur_night: "דור מוהורתם לילי",
+  muhurta_abhijit_none: "לא נצפה ביום רביעי: המוהורתה השמינית היא דור מוהורתם",
   muhurta_bhadra: "בהדרה (וישטי)",
   muhurta_bhadra_desc: "וישטי קרנה · בלתי מבורך",
   muhurta_varjyam: "ורג'יים",

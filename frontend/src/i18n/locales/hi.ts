@@ -467,6 +467,8 @@ const hi: Record<string, string> = {
   muhurta_gulika_desc: "शनि-पुत्र · तटस्थ-अशुभ",
   muhurta_dur: "दुर्मुहूर्त",
   muhurta_dur_desc: "शुभ कार्य त्यागें",
+  muhurta_dur_night: "रात्रि दुर्मुहूर्त",
+  muhurta_abhijit_none: "बुधवार को नहीं माना जाता: 8वाँ मुहूर्त दुर्मुहूर्त है",
   muhurta_bhadra: "भद्रा (विष्टि)",
   muhurta_bhadra_desc: "विष्टि करण · अशुभ",
   muhurta_varjyam: "वर्ज्यम्",

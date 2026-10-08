@@ -468,6 +468,8 @@ const fa: Record<string, string> = {
   muhurta_gulika_desc: "پسر کیوان · خنثای-نحس",
   muhurta_dur: "دور مهورتم",
   muhurta_dur_desc: "از کارهای فرخنده پرهیز کنید",
+  muhurta_dur_night: "دور مهورتم شبانه",
+  muhurta_abhijit_none: "چهارشنبه رعایت نمی‌شود: مهورته هشتم دور مهورتم است",
   muhurta_bhadra: "بهدره (ویشتی)",
   muhurta_bhadra_desc: "ویشتی کرنه · نحس",
   muhurta_varjyam: "ورجیم",
