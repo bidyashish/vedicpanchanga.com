@@ -7,6 +7,22 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- **Auspicious Time Heatmap rebuilt as a rule-based planner** (#92). Blocking
+  periods now override favourable yogas instead of being averaged against
+  them: a 15-minute slot inside Rahu Kalam, Yamagandam, Gulika, Durmuhurtam or
+  Varjyam / Nakshatra Tyajyam is always *Highly Inauspicious* (dark red), a
+  slot inside Bhadra or another Tyajyam portion is capped at *Inauspicious*
+  (orange), and only clean slots are graded Neutral / Auspicious / Highly
+  Auspicious from the positive windows and the running Hora. Each slot now
+  carries the active Udaya Lagna. The card gained an hour axis, a five-tier
+  legend with per-tier durations and percentages, a detailed Gantt timeline
+  (Lagna row plus one row per window type including benefic and malefic
+  Hora), a slot-by-slot table with favourable / unfavourable events, result
+  and recommendation, and the best window of the day with its Lagna. The
+  night strip now ends at the real next sunrise (`sun_moon.next_sunrise`).
+
 ### Added
 
 - **Accounts, saved charts and Premium.** Optional sign-in with Google or

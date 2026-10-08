@@ -365,6 +365,7 @@ export interface PanchangData {
   sun_moon: {
     sunrise: string;
     sunset: string;
+    next_sunrise?: string;
     moonrise?: string;
     moonset?: string;
     dinaman_hours?: number;

@@ -1,18 +1,28 @@
 // Auspicious-time heatmap model.
 //
 // Slices the day (sunrise -> sunset) and night (sunset -> next sunrise) into
-// fixed-length blocks and scores each block by overlapping it with the panchang
-// windows the backend already returns (Rahu Kalam, Abhijit, Nalla Neram, Hora,
-// Tyajyam, ...). No backend call is needed - everything here is derived from a
-// PanchangData payload that is already in the client.
+// fixed-length blocks and grades each block from the panchang windows the
+// backend already returns (Rahu Kalam, Abhijit, Nalla Neram, Hora, Tyajyam,
+// ...) plus the Udaya Lagna rising at that time. No backend call is needed -
+// everything here is derived from a PanchangData payload that is already in
+// the client.
 //
-// Each overlapping event contributes its weight; positives and negatives are
-// pooled separately with a diminishing factor (see scoreEvents) so one slot
-// covered by several windows of the same family doesn't run away. The block is
-// then bucketed into one of five categories. Weights are adapted from github
-// issue #92 and kept as named constants so they are easy to tune.
+// Grading is rule-based, not a blended score (github issue #92 review):
+//
+//   1. A block that overlaps any "block" window (Rahu Kalam, Yamagandam,
+//      Gulika, Durmuhurtam, Varjyam / Nakshatra Tyajyam) is Highly
+//      Inauspicious, whatever favourable yogas are active.
+//   2. Otherwise a block that overlaps any "avoid" window (the other Tyajyam
+//      portions, Bhadra) is Inauspicious.
+//   3. Only blocks free of both are graded by their favourable windows
+//      against the mild negatives (malefic Hora, unfavourable Gowri), using a
+//      small pooled score that maps to Excellent / Good / Neutral /
+//      Inauspicious.
+//
+// Weights only matter inside step 3 and for ordering; they are named
+// constants so they are easy to tune.
 
-import type { PanchangData } from "@/types/api";
+import type { LabelledSegment, PanchangData } from "@/types/api";
 
 export type HeatCategory =
   | "highly-auspicious"
@@ -21,12 +31,31 @@ export type HeatCategory =
   | "inauspicious"
   | "highly-inauspicious";
 
+// How an event takes part in the verdict (see categorize()).
+//   block - overrides everything: the slot is highly-inauspicious.
+//   avoid - caps the slot at inauspicious.
+//   soft  - mild negative, only lowers the score.
+//   major - favourable muhurta / yoga window.
+//   minor - favourable but weak (benefic Hora, favourable Gowri, ...).
+export type HeatKind = "block" | "avoid" | "major" | "minor" | "soft";
+
 // An event id is a stable, translatable key; `labelKey` resolves via t().
+// `name` is an optional backend name (Hora planet, Gowri segment) for the
+// timeline bars; the UI localizes it through useAstro().
 export interface HeatEvent {
   id: string;
   labelKey: string;
+  kind: HeatKind;
+  weight: number;
   startMs: number;
   endMs: number;
+  name?: string;
+}
+
+export interface HeatHit {
+  id: string;
+  labelKey: string;
+  kind: HeatKind;
   weight: number;
 }
 
@@ -35,8 +64,22 @@ export interface HeatSlot {
   endMs: number;
   score: number;
   category: HeatCategory;
-  // Event ids that overlap this slot, ordered strongest-effect first.
-  events: { id: string; labelKey: string; weight: number }[];
+  // Rashi name (as sent by the backend, e.g. "Mithuna") of the Udaya Lagna
+  // rising at the slot midpoint; null when the payload has no lagna data.
+  lagna: string | null;
+  // Event ids that overlap this slot, strongest effect first.
+  events: HeatHit[];
+}
+
+// Consecutive slots with the same verdict, lagna and event set, merged into
+// one row for the slot-by-slot table.
+export interface HeatRun {
+  startMs: number;
+  endMs: number;
+  category: HeatCategory;
+  lagna: string | null;
+  events: HeatHit[];
+  slotCount: number;
 }
 
 export interface HeatStrip {
@@ -45,52 +88,66 @@ export interface HeatStrip {
   startMs: number;
   endMs: number;
   slots: HeatSlot[];
+  runs: HeatRun[];
+  // Milliseconds of the strip spent in each category.
+  totals: Record<HeatCategory, number>;
 }
 
 export interface BestWindow {
   startMs: number;
   endMs: number;
   score: number;
+  // Distinct lagnas rising during the window, in order.
+  lagnas: string[];
+}
+
+export interface LagnaSpan {
+  rashi: string;
+  startMs: number;
+  endMs: number;
 }
 
 export interface HeatmapModel {
   day: HeatStrip | null;
   night: HeatStrip | null;
   best: BestWindow | null;
-  // True when at least one slot carries a non-neutral event - lets the UI hide
-  // the whole card when there is nothing meaningful to show.
+  // Every window that took part, for the timeline rows.
+  events: HeatEvent[];
+  lagnas: LagnaSpan[];
+  // True when at least one slot carries an event - lets the UI hide the
+  // whole card when there is nothing meaningful to show.
   hasSignal: boolean;
 }
 
-// ---- Scoring weights (adapted from issue #92). Positive = auspicious. ----
-// Magnitudes are deliberately moderate: classical "avoid" windows (Tyajyam,
-// Rahu Kalam, ...) each cover 1-2 hours, so if any single one pinned a slot to
-// the darkest tier the whole day would read as a wall of red. Instead a lone
-// strong negative lands a slot in "inauspicious", and only *stacking* (e.g.
-// Tyajyam during Rahu Kalam) pushes it to "highly-inauspicious". See
-// scoreSlot() for how positives and negatives are combined.
+// ---- Weights (favourable > 0, mild negatives < 0). ----
+// Block / avoid windows carry a weight only so lists sort consistently; the
+// verdict for them never depends on it.
 const W = {
+  // major favourable
   amrita_yoga: 50,
-  sarvartha_siddhi: 45,
-  abhijit: 45,
+  abhijit: 50,
+  sarvartha: 45,
   brahma_muhurta: 30,
   nalla_neram: 30,
   amrit_kalam: 30,
   ravi_yoga: 25,
-  shubha_hora: 18,
-  gowri_shubha: 12,
+  // minor favourable
+  shubha_hora: 20,
   vijay_muhurta: 18,
   godhuli: 12,
-  // Negatives
-  tyajyam: -45,
-  durmuhurtam: -45,
-  rahu_kalam: -45,
-  yamaganda: -40,
-  varjyam: -35,
-  gulika: -30,
-  bhadra: -25,
-  gowri_ashubha: -14,
+  gowri_shubha: 12,
+  // mild negatives
+  ashubha_hora: -15,
+  gowri_ashubha: -15,
+  // caps (avoid) and overrides (block)
+  avoid: -50,
+  block: -100,
 } as const;
+
+// Score thresholds for slots free of block / avoid windows.
+const EXCELLENT_AT = 60;
+const GOOD_AT = 25;
+const INAUSPICIOUS_BELOW = -20;
 
 const SLOT_MINUTES = 15;
 const SLOT_MS = SLOT_MINUTES * 60_000;
@@ -98,6 +155,16 @@ const SLOT_MS = SLOT_MINUTES * 60_000;
 // Hora lords / Gowri labels considered benefic.
 const SHUBHA_HORA = new Set(["Jupiter", "Venus", "Mercury", "Moon"]);
 const SHUBHA_GOWRI = new Set(["Amridha", "Dhanam", "Sugam", "Labam"]);
+
+const KIND_RANK: Record<HeatKind, number> = { block: 0, avoid: 1, major: 2, minor: 3, soft: 4 };
+
+export const CATEGORIES: HeatCategory[] = [
+  "highly-auspicious",
+  "auspicious",
+  "neutral",
+  "inauspicious",
+  "highly-inauspicious",
+];
 
 function ms(iso?: string | null): number | null {
   if (!iso) return null;
@@ -109,28 +176,39 @@ function pushWindow(
   out: HeatEvent[],
   id: string,
   labelKey: string,
+  kind: HeatKind,
   weight: number,
   start?: string | null,
   end?: string | null,
+  name?: string,
 ): void {
   const a = ms(start);
   const b = ms(end);
   if (a === null || b === null || b <= a) return;
-  out.push({ id, labelKey, startMs: a, endMs: b, weight });
+  out.push({ id, labelKey, kind, weight, startMs: a, endMs: b, name });
 }
 
-// Collect every scored window from the panchang payload as flat HeatEvents.
+// Collect every window from the panchang payload as flat HeatEvents.
 function collectEvents(data: PanchangData): HeatEvent[] {
   const ev: HeatEvent[] = [];
   const aus = data.auspicious_timings ?? {};
   const inaus = data.inauspicious_timings ?? {};
 
-  // Auspicious single windows
-  pushWindow(ev, "abhijit", "heat_ev_abhijit", W.abhijit, aus.abhijit?.start, aus.abhijit?.end);
+  // ---- Favourable single windows ----
+  pushWindow(
+    ev,
+    "abhijit",
+    "heat_ev_abhijit",
+    "major",
+    W.abhijit,
+    aus.abhijit?.start,
+    aus.abhijit?.end,
+  );
   pushWindow(
     ev,
     "brahma_muhurta",
     "heat_ev_brahma",
+    "major",
     W.brahma_muhurta,
     aus.brahma_muhurta?.start,
     aus.brahma_muhurta?.end,
@@ -139,6 +217,7 @@ function collectEvents(data: PanchangData): HeatEvent[] {
     ev,
     "vijay_muhurta",
     "heat_ev_vijay",
+    "minor",
     W.vijay_muhurta,
     aus.vijay_muhurta?.start,
     aus.vijay_muhurta?.end,
@@ -147,30 +226,33 @@ function collectEvents(data: PanchangData): HeatEvent[] {
     ev,
     "godhuli",
     "heat_ev_godhuli",
+    "minor",
     W.godhuli,
     aus.godhuli_muhurta?.start,
     aus.godhuli_muhurta?.end,
   );
   (aus.amrit_kalam ?? []).forEach((w) =>
-    pushWindow(ev, "amrit_kalam", "heat_ev_amrit", W.amrit_kalam, w.start, w.end),
+    pushWindow(ev, "amrit_kalam", "heat_ev_amrit", "major", W.amrit_kalam, w.start, w.end),
   );
   (aus.sarvartha_siddhi_yoga ?? []).forEach((w) =>
-    pushWindow(ev, "sarvartha", "heat_ev_sarvartha", W.sarvartha_siddhi, w.start, w.end),
+    pushWindow(ev, "sarvartha", "heat_ev_sarvartha", "major", W.sarvartha, w.start, w.end),
   );
   (aus.amrita_siddhi_yoga ?? []).forEach((w) =>
-    pushWindow(ev, "amrita_yoga", "heat_ev_amrita", W.amrita_yoga, w.start, w.end),
+    pushWindow(ev, "amrita_yoga", "heat_ev_amrita", "major", W.amrita_yoga, w.start, w.end),
+  );
+  const ravi = data.yogas_extra?.ravi_yoga;
+  if (ravi) pushWindow(ev, "ravi_yoga", "heat_ev_ravi", "major", W.ravi_yoga, ravi.start, ravi.end);
+  (data.nalla_neram ?? []).forEach((w) =>
+    pushWindow(ev, "nalla_neram", "heat_ev_nalla", "major", W.nalla_neram, w.start, w.end),
   );
 
-  // Ravi Yoga (extra)
-  const ravi = data.yogas_extra?.ravi_yoga;
-  if (ravi) pushWindow(ev, "ravi_yoga", "heat_ev_ravi", W.ravi_yoga, ravi.start, ravi.end);
-
-  // Inauspicious single windows
+  // ---- Blocking windows (override everything) ----
   pushWindow(
     ev,
     "rahu_kalam",
     "heat_ev_rahu",
-    W.rahu_kalam,
+    "block",
+    W.block,
     inaus.rahu_kalam?.start,
     inaus.rahu_kalam?.end,
   );
@@ -178,7 +260,8 @@ function collectEvents(data: PanchangData): HeatEvent[] {
     ev,
     "yamaganda",
     "heat_ev_yama",
-    W.yamaganda,
+    "block",
+    W.block,
     inaus.yamaganda?.start,
     inaus.yamaganda?.end,
   );
@@ -186,93 +269,182 @@ function collectEvents(data: PanchangData): HeatEvent[] {
     ev,
     "gulika",
     "heat_ev_gulika",
-    W.gulika,
+    "block",
+    W.block,
     inaus.gulika_kalam?.start,
     inaus.gulika_kalam?.end,
   );
   (inaus.dur_muhurtam ?? []).forEach((w) =>
-    pushWindow(ev, "durmuhurtam", "heat_ev_durmuhurtam", W.durmuhurtam, w.start, w.end),
-  );
-  (inaus.bhadra ?? []).forEach((w) =>
-    pushWindow(ev, "bhadra", "heat_ev_bhadra", W.bhadra, w.start, w.end),
+    pushWindow(ev, "durmuhurtam", "heat_ev_durmuhurtam", "block", W.block, w.start, w.end),
   );
   (inaus.varjyam ?? []).forEach((w) =>
-    pushWindow(ev, "varjyam", "heat_ev_varjyam", W.varjyam, w.start, w.end),
+    pushWindow(ev, "varjyam", "heat_ev_varjyam", "block", W.block, w.start, w.end),
   );
 
-  // Tyajyam family (all negative, strongest avoid)
+  // ---- Tyajyam family and Bhadra ----
+  // Nakshatra Tyajyam is the same avoidance as Varjyam (a second table for
+  // the same window) so it blocks too; the finer Tamil portions (tithi, vara,
+  // lagna, tithi-lagna, karana) and Bhadra cap the slot at inauspicious.
+  // Labels reuse the Tyajyam section keys so both read the same.
   const ty = data.tyajyam;
   if (ty) {
-    const tyLists = [
-      ty.nakshatra_tyajyam,
-      ty.tithi_tyajyam,
-      ty.lagna_tyajyam,
-      ty.karana_tyajyam ?? [],
-      ty.tithi_lagna_tyajyam ?? [],
-    ];
-    tyLists.forEach((list) =>
-      (list ?? []).forEach((w) =>
-        pushWindow(ev, "tyajyam", "heat_ev_tyajyam", W.tyajyam, w.start, w.end),
-      ),
+    (ty.nakshatra_tyajyam ?? []).forEach((w) =>
+      pushWindow(ev, "tyajyam_nakshatra", "tyajyam_nakshatra", "block", W.block, w.start, w.end),
+    );
+    (ty.tithi_tyajyam ?? []).forEach((w) =>
+      pushWindow(ev, "tyajyam_tithi", "tyajyam_tithi", "avoid", W.avoid, w.start, w.end),
     );
     if (ty.vara_tyajyam)
       pushWindow(
         ev,
-        "tyajyam",
-        "heat_ev_tyajyam",
-        W.tyajyam,
+        "tyajyam_vara",
+        "tyajyam_vara",
+        "avoid",
+        W.avoid,
         ty.vara_tyajyam.start,
         ty.vara_tyajyam.end,
       );
+    (ty.lagna_tyajyam ?? []).forEach((w) =>
+      pushWindow(ev, "tyajyam_lagna", "tyajyam_lagna", "avoid", W.avoid, w.start, w.end),
+    );
+    (ty.tithi_lagna_tyajyam ?? []).forEach((w) =>
+      pushWindow(
+        ev,
+        "tyajyam_tithi_lagna",
+        "tyajyam_tithi_lagna",
+        "avoid",
+        W.avoid,
+        w.start,
+        w.end,
+      ),
+    );
+    // Karana Tyajyam for Vishti is exactly the Bhadra span below - keep the
+    // other inauspicious karanas (Chatushpada, Naga) only.
+    (ty.karana_tyajyam ?? [])
+      .filter((w) => w.karana !== "Vishti")
+      .forEach((w) =>
+        pushWindow(ev, "tyajyam_karana", "tyajyam_karana", "avoid", W.avoid, w.start, w.end),
+      );
   }
-
-  // Nalla Neram (Tamil auspicious slices)
-  (data.nalla_neram ?? []).forEach((w) =>
-    pushWindow(ev, "nalla_neram", "heat_ev_nalla", W.nalla_neram, w.start, w.end),
+  (inaus.bhadra ?? []).forEach((w) =>
+    pushWindow(ev, "bhadra", "heat_ev_bhadra", "avoid", W.avoid, w.start, w.end),
   );
 
-  // Hora - benefic lords only contribute a positive bump.
-  const horaSegs = [...(data.hora?.day ?? []), ...(data.hora?.night ?? [])];
+  // ---- Hora: benefic lords lift, malefic lords (Sun, Mars, Saturn) weigh down ----
+  const horaSegs: LabelledSegment[] = [...(data.hora?.day ?? []), ...(data.hora?.night ?? [])];
   horaSegs.forEach((s) => {
     if (SHUBHA_HORA.has(s.name))
-      pushWindow(ev, "shubha_hora", "heat_ev_shubha_hora", W.shubha_hora, s.start, s.end);
+      pushWindow(
+        ev,
+        "shubha_hora",
+        "heat_ev_shubha_hora",
+        "minor",
+        W.shubha_hora,
+        s.start,
+        s.end,
+        s.name,
+      );
+    else
+      pushWindow(
+        ev,
+        "ashubha_hora",
+        "heat_ev_ashubha_hora",
+        "soft",
+        W.ashubha_hora,
+        s.start,
+        s.end,
+        s.name,
+      );
   });
 
-  // Gowri Panchangam - tag benefic / malefic segments.
-  const gowriSegs = [...(data.gowri_panchang?.day ?? []), ...(data.gowri_panchang?.night ?? [])];
+  // ---- Gowri Panchangam - favourable / unfavourable segments ----
+  const gowriSegs: LabelledSegment[] = [
+    ...(data.gowri_panchang?.day ?? []),
+    ...(data.gowri_panchang?.night ?? []),
+  ];
   gowriSegs.forEach((s) => {
     if (s.auspicious || SHUBHA_GOWRI.has(s.name))
-      pushWindow(ev, "gowri_shubha", "heat_ev_gowri_shubha", W.gowri_shubha, s.start, s.end);
-    else pushWindow(ev, "gowri_ashubha", "heat_ev_gowri_ashubha", W.gowri_ashubha, s.start, s.end);
+      pushWindow(
+        ev,
+        "gowri_shubha",
+        "heat_ev_gowri_shubha",
+        "minor",
+        W.gowri_shubha,
+        s.start,
+        s.end,
+        s.name,
+      );
+    else
+      pushWindow(
+        ev,
+        "gowri_ashubha",
+        "heat_ev_gowri_ashubha",
+        "soft",
+        W.gowri_ashubha,
+        s.start,
+        s.end,
+        s.name,
+      );
   });
 
   return ev;
 }
 
-export function categoryFor(score: number): HeatCategory {
-  if (score >= 60) return "highly-auspicious";
-  if (score >= 25) return "auspicious";
-  if (score > -25) return "neutral";
-  if (score > -70) return "inauspicious";
-  return "highly-inauspicious";
+function collectLagnas(data: PanchangData): LagnaSpan[] {
+  const out: LagnaSpan[] = [];
+  for (const l of data.udaya_lagna ?? []) {
+    const a = ms(l.start);
+    const b = ms(l.end);
+    if (a === null || b === null || b <= a) continue;
+    out.push({ rashi: l.rashi, startMs: a, endMs: b });
+  }
+  return out;
 }
 
-// Combine a slot's deduped events into one score. Positives and negatives are
-// pooled separately: the strongest of each sign counts in full, additional ones
-// of the same sign contribute at a diminishing 50% so a slot covered by several
-// overlapping windows of the same family (e.g. two Tyajyam spans) doesn't run
-// away, but genuine stacking (Tyajyam + Rahu Kalam) still compounds.
-function scoreEvents(events: { weight: number }[]): number {
+export function lagnaAt(lagnas: LagnaSpan[], t: number): string | null {
+  const hit = lagnas.find((l) => l.startMs <= t && t < l.endMs);
+  return hit ? hit.rashi : null;
+}
+
+// Pooled score of the favourable and mild-negative hits: the strongest of
+// each sign counts in full, the rest at a diminishing 50% so three
+// overlapping favourable windows don't run away. Block / avoid hits are
+// ignored here - they decide the verdict directly in categorize().
+export function scoreEvents(events: HeatHit[]): number {
+  const pool = (xs: number[]) => xs.reduce((acc, w, i) => acc + (i === 0 ? w : w * 0.5), 0);
   const pos = events
-    .filter((e) => e.weight > 0)
+    .filter((e) => e.kind === "major" || e.kind === "minor")
     .map((e) => e.weight)
     .sort((a, b) => b - a);
   const neg = events
-    .filter((e) => e.weight < 0)
+    .filter((e) => e.kind === "soft")
     .map((e) => e.weight)
     .sort((a, b) => a - b);
-  const pool = (xs: number[]) => xs.reduce((acc, w, i) => acc + (i === 0 ? w : w * 0.5), 0);
   return pool(pos) + pool(neg);
+}
+
+export function categorize(events: HeatHit[], score: number): HeatCategory {
+  if (events.some((e) => e.kind === "block")) return "highly-inauspicious";
+  if (events.some((e) => e.kind === "avoid")) return "inauspicious";
+  if (score >= EXCELLENT_AT) return "highly-auspicious";
+  if (score >= GOOD_AT) return "auspicious";
+  if (score > INAUSPICIOUS_BELOW) return "neutral";
+  return "inauspicious";
+}
+
+function emptyTotals(): Record<HeatCategory, number> {
+  return {
+    "highly-auspicious": 0,
+    auspicious: 0,
+    neutral: 0,
+    inauspicious: 0,
+    "highly-inauspicious": 0,
+  };
+}
+
+function sameEvents(a: HeatHit[], b: HeatHit[]): boolean {
+  if (a.length !== b.length) return false;
+  return a.every((h, i) => h.id === b[i].id);
 }
 
 // Build the slots for one [start, end] strip.
@@ -281,32 +453,59 @@ function buildStrip(
   startMs: number,
   endMs: number,
   events: HeatEvent[],
+  lagnas: LagnaSpan[],
 ): HeatStrip {
   const slots: HeatSlot[] = [];
+  const totals = emptyTotals();
   for (let t = startMs; t < endMs; t += SLOT_MS) {
     const slotEnd = Math.min(t + SLOT_MS, endMs);
-    // Dedupe overlapping windows by id - a slot covered by two Tyajyam spans
-    // counts Tyajyam once. We keep the strongest-magnitude weight per id.
-    const hits: { id: string; labelKey: string; weight: number }[] = [];
+    // Dedupe overlapping windows by id - a slot covered by two Varjyam spans
+    // counts Varjyam once.
+    const hits: HeatHit[] = [];
     for (const e of events) {
-      // Overlap test against [t, slotEnd).
-      if (e.startMs < slotEnd && e.endMs > t) {
-        const prev = hits.find((h) => h.id === e.id);
-        if (!prev) hits.push({ id: e.id, labelKey: e.labelKey, weight: e.weight });
-        else if (Math.abs(e.weight) > Math.abs(prev.weight)) prev.weight = e.weight;
-      }
+      if (e.startMs < slotEnd && e.endMs > t && !hits.some((h) => h.id === e.id))
+        hits.push({ id: e.id, labelKey: e.labelKey, kind: e.kind, weight: e.weight });
     }
-    hits.sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight));
+    hits.sort(
+      (a, b) => KIND_RANK[a.kind] - KIND_RANK[b.kind] || Math.abs(b.weight) - Math.abs(a.weight),
+    );
     const score = Math.round(scoreEvents(hits));
+    const category = categorize(hits, score);
+    totals[category] += slotEnd - t;
     slots.push({
       startMs: t,
       endMs: slotEnd,
       score,
-      category: categoryFor(score),
+      category,
+      lagna: lagnaAt(lagnas, (t + slotEnd) / 2),
       events: hits,
     });
   }
-  return { period, startMs, endMs, slots };
+
+  const runs: HeatRun[] = [];
+  for (const s of slots) {
+    const last = runs[runs.length - 1];
+    if (
+      last &&
+      last.category === s.category &&
+      last.lagna === s.lagna &&
+      sameEvents(last.events, s.events)
+    ) {
+      last.endMs = s.endMs;
+      last.slotCount += 1;
+    } else {
+      runs.push({
+        startMs: s.startMs,
+        endMs: s.endMs,
+        category: s.category,
+        lagna: s.lagna,
+        events: s.events,
+        slotCount: 1,
+      });
+    }
+  }
+
+  return { period, startMs, endMs, slots, runs, totals };
 }
 
 // Longest contiguous run of auspicious-or-better slots, tie-broken by total
@@ -314,34 +513,30 @@ function buildStrip(
 function findBestWindow(strips: HeatStrip[]): BestWindow | null {
   const all = strips.flatMap((s) => s.slots);
   let best: BestWindow | null = null;
-  let runStart = -1;
-  let runScore = 0;
-  let runLen = 0;
-  const flush = (endMs: number) => {
-    if (runLen > 0 && runStart >= 0) {
-      const candidate: BestWindow = { startMs: runStart, endMs, score: runScore };
+  let run: HeatSlot[] = [];
+  const flush = () => {
+    if (run.length) {
+      const startMs = run[0].startMs;
+      const endMs = run[run.length - 1].endMs;
+      const score = run.reduce((acc, s) => acc + s.score, 0);
+      const lagnas: string[] = [];
+      for (const s of run) if (s.lagna && !lagnas.includes(s.lagna)) lagnas.push(s.lagna);
+      const len = endMs - startMs;
       if (
         !best ||
-        endMs - runStart > best.endMs - best.startMs ||
-        (endMs - runStart === best.endMs - best.startMs && runScore > best.score)
+        len > best.endMs - best.startMs ||
+        (len === best.endMs - best.startMs && score > best.score)
       )
-        best = candidate;
+        best = { startMs, endMs, score, lagnas };
     }
-    runStart = -1;
-    runScore = 0;
-    runLen = 0;
+    run = [];
   };
   for (const slot of all) {
-    const good = slot.score >= 25; // auspicious or highly-auspicious
-    if (good) {
-      if (runStart < 0) runStart = slot.startMs;
-      runScore += slot.score;
-      runLen += 1;
-    } else {
-      flush(slot.startMs);
-    }
+    const good = slot.category === "auspicious" || slot.category === "highly-auspicious";
+    if (good) run.push(slot);
+    else flush();
   }
-  if (runLen > 0 && all.length) flush(all[all.length - 1].endMs);
+  flush();
   return best;
 }
 
@@ -349,29 +544,30 @@ export function buildHeatmap(data: PanchangData): HeatmapModel {
   const sunrise = ms(data.sun_moon?.sunrise);
   const sunset = ms(data.sun_moon?.sunset);
   const events = collectEvents(data);
+  const lagnas = collectLagnas(data);
 
   let day: HeatStrip | null = null;
   let night: HeatStrip | null = null;
 
   if (sunrise !== null && sunset !== null && sunset > sunrise) {
-    day = buildStrip("day", sunrise, sunset, events);
+    day = buildStrip("day", sunrise, sunset, events, lagnas);
   }
 
-  // Night strip: sunset -> next sunrise. We derive next sunrise from the latest
-  // event end if no explicit value is present; fall back to sunset + 12h.
+  // Night strip: sunset -> next sunrise. Prefer the backend's next_sunrise;
+  // older payloads fall back to the end of the night Hora, then sunset + 12h.
   if (sunset !== null) {
-    const explicitNext = ms(data.sun_moon?.moonrise) ? null : null; // no next-sunrise field
     const horaNightEnds = (data.hora?.night ?? [])
       .map((s) => ms(s.end))
       .filter((x): x is number => x !== null);
     const nextSunrise =
-      explicitNext ?? (horaNightEnds.length ? Math.max(...horaNightEnds) : sunset + 12 * 3_600_000);
-    if (nextSunrise > sunset) night = buildStrip("night", sunset, nextSunrise, events);
+      ms(data.sun_moon?.next_sunrise) ??
+      (horaNightEnds.length ? Math.max(...horaNightEnds) : sunset + 12 * 3_600_000);
+    if (nextSunrise > sunset) night = buildStrip("night", sunset, nextSunrise, events, lagnas);
   }
 
   const strips = [day, night].filter((s): s is HeatStrip => s !== null);
   const best = findBestWindow(strips);
   const hasSignal = strips.some((s) => s.slots.some((sl) => sl.events.length > 0));
 
-  return { day, night, best, hasSignal };
+  return { day, night, best, events, lagnas, hasSignal };
 }

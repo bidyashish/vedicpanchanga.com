@@ -154,6 +154,20 @@ export function hoursToHMS(h?: number): string {
   return `${hh}${sfx.h} ${String(mm).padStart(2, "0")}${sfx.m} ${String(ss).padStart(2, "0")}${sfx.s}`;
 }
 
+// "2h 05m" - hoursToHMS without the seconds, for durations that are only
+// known to the minute (heatmap category totals).
+export function hoursToHM(h?: number): string {
+  if (!h && h !== 0) return "-";
+  const totalMin = Math.round(h * 60);
+  const sfx = HMS_SUFFIX[activeLang()] ?? { h: "h", m: "m", s: "s" };
+  return `${Math.floor(totalMin / 60)}${sfx.h} ${String(totalMin % 60).padStart(2, "0")}${sfx.m}`;
+}
+
+// Hour-only label for a time axis ("6 AM"), in the given zone.
+export function formatHour(epochMs: number, tz?: string): string {
+  return formatIntl(new Date(epochMs), { hour: "numeric", hour12: true, timeZone: tz });
+}
+
 export function todayISO(): string {
   const d = new Date();
   const y = d.getFullYear();
