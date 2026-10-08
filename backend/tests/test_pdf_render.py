@@ -171,6 +171,37 @@ def test_render_pdf_tamil_keeps_technical_values_latin(delhi_chart, panchang_mod
         assert not re.search(r"[௦-௯]", page_text), f"Tamil digit on page {i + 1}"
 
 
+CHART_ABBR_KEYS = (
+    "abbr_as",
+    "abbr_su",
+    "abbr_mo",
+    "abbr_ma",
+    "abbr_me",
+    "abbr_ju",
+    "abbr_ve",
+    "abbr_sa",
+    "abbr_ra",
+    "abbr_ke",
+    "abbr_ur",
+    "abbr_ne",
+    "abbr_pl",
+)
+
+
+def test_chart_abbreviations_are_distinct_in_every_locale():
+    """Every body drawn into a chart cell needs its own label. The Tamil
+    locale shipped with Moon and Saturn both abbreviated to the bare letter
+    that starts their names, so a Tamil chart could not tell them apart
+    (issue #86). The labels now follow the web UI's chart abbreviations."""
+    from pdf.core.i18n import LOCALES
+
+    for lang, labels in LOCALES.items():
+        values = [labels[k] for k in CHART_ABBR_KEYS]
+        dupes = sorted({v for v in values if values.count(v) > 1})
+        assert not dupes, f"{lang}: shared chart abbreviation(s) {dupes}"
+    assert LOCALES["ta"]["abbr_mo"] != LOCALES["ta"]["abbr_sa"]
+
+
 def test_render_pdf_hindi_keeps_all_digits_latin(delhi_chart, panchang_module):
     """Same rule for Devanagari: every numeral in the Hindi report is Latin."""
     pdfium = pytest.importorskip("pypdfium2")

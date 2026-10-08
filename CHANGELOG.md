@@ -95,6 +95,11 @@ All notable changes to this project are documented here. The format follows
   "mixed", the window picker weighs the native's Tarabalam / Chandrabalam, and
   the reasons name the tara ("Sampat tara") and the house ("Moon in house 8
   from native's rashi (Chandrashtama)").
+- **Tamil PDF chart labels** (#86): Moon and Saturn were both abbreviated to
+  the bare letter "ச" in the printed charts, so a Tamil report could not tell
+  them apart. The PDF now uses the same chart abbreviations as the web UI
+  (சந், குரு, சுக், சனி), and a test guards every PDF locale against two
+  bodies sharing a label.
 
 ## [1.2.0] - 2026-09-17
 
