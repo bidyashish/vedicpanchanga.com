@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import {
   buildHeatmap,
   CATEGORIES,
+  categorize,
   type HeatCategory,
   type HeatEvent,
   type HeatHit,
@@ -64,6 +65,9 @@ const KIND_COLOR: Record<HeatKind, string> = {
   major: CAT_COLOR["highly-auspicious"],
   minor: "#33691e",
 };
+
+// Bars narrower than this (% of the strip) get no inline text.
+const MIN_LABEL_PCT = 3.5;
 
 const KIND_RANK: Record<HeatKind, number> = { block: 0, avoid: 1, major: 2, minor: 3, soft: 4 };
 
@@ -408,7 +412,7 @@ function Timeline({
                         row.id === "lagna" ? "1px solid var(--color-parchment-200)" : undefined,
                     }}
                   >
-                    {bar.text}
+                    {width >= MIN_LABEL_PCT ? bar.text : ""}
                   </button>
                 );
               })}
@@ -444,7 +448,7 @@ function RunTable({
     : -1;
   const showAll = expanded || selIdx >= TABLE_LIMIT;
   const shown = showAll ? runs : runs.slice(0, TABLE_LIMIT);
-  const cols = "lg:grid-cols-[9.5rem_7rem_1fr_1fr_13rem]";
+  const cols = "lg:grid-cols-[11.5rem_7rem_1fr_1fr_13rem]";
 
   return (
     <div data-testid="heat-table">
@@ -478,7 +482,7 @@ function RunTable({
               )}
               style={{ boxShadow: isSel ? `inset 3px 0 0 ${CAT_COLOR[run.category]}` : undefined }}
             >
-              <span className="value num">
+              <span className="value num whitespace-nowrap">
                 {formatTime(iso(run.startMs), tz)} - {formatTime(iso(run.endMs), tz)}
               </span>
               <span className="font-serif text-ink text-end lg:text-start">
@@ -524,6 +528,8 @@ export function AuspiciousHeatmap({ data, tz }: { data: PanchangData; tz?: strin
 
   const strip = (period === "day" ? model.day : model.night) ?? model.day ?? model.night!;
 
+  const bestColor = model.best ? CAT_COLOR[categorize([], model.best.score)] : undefined;
+
   const selectTime = (ms: number) => {
     const slot = strip.slots.find((s) => s.startMs <= ms && ms < s.endMs) ?? null;
     setSelected(slot);
@@ -560,10 +566,10 @@ export function AuspiciousHeatmap({ data, tz }: { data: PanchangData; tz?: strin
       {model.best && (
         <div
           className="rounded-sm border-l-[3px] border border-parchment-200 bg-parchment-50 px-3 py-2"
-          style={{ borderLeftColor: CAT_COLOR["highly-auspicious"] }}
+          style={{ borderLeftColor: bestColor }}
           data-testid="heat-best-window"
         >
-          <p className="eyebrow-lg" style={{ color: CAT_COLOR["highly-auspicious"] }}>
+          <p className="eyebrow-lg" style={{ color: bestColor }}>
             {t("heat_best_window")}
           </p>
           <p className="value-strong num mt-0.5">
