@@ -300,6 +300,8 @@ const ne: Record<string, string> = {
   show_panchang: "पञ्चाङ्ग देखाउनुहोस्",
   loading: "लोड हुँदैछ...",
   use_my_location: "मेरो स्थान प्रयोग गर्नुहोस्",
+  birth_now: "अहिले",
+  birth_now_hint: "हालको मिति, समय र मेरो स्थान प्रयोग गर्नुहोस्",
   live_mode: "लाइभ मोड",
   live_mode_hint: "हरेक मिनेटमा स्वतः ताजा गर्ने",
   live_badge: "लाइभ",

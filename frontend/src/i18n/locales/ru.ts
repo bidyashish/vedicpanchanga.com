@@ -302,6 +302,8 @@ const ru: Record<string, string> = {
   show_panchang: "Показать Панчангу",
   loading: "Загрузка...",
   use_my_location: "Моё местоположение",
+  birth_now: "Сейчас",
+  birth_now_hint: "Текущие дата, время и моё местоположение",
   live_mode: "Прямой эфир",
   live_mode_hint: "Автообновление каждую минуту",
   live_badge: "В эфире",

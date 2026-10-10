@@ -288,6 +288,8 @@ const pt: Record<string, string> = {
   show_panchang: "Mostrar Panchang",
   loading: "A carregar…",
   use_my_location: "Usar a minha localização",
+  birth_now: "Agora",
+  birth_now_hint: "Usar a data, hora e localização atuais",
   live_mode: "Modo ao vivo",
   live_mode_hint: "Atualização automática a cada minuto",
   live_badge: "Ao vivo",

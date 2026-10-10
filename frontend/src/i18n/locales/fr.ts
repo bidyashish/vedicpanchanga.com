@@ -289,6 +289,8 @@ const fr: Record<string, string> = {
   show_panchang: "Afficher le Panchang",
   loading: "Chargement…",
   use_my_location: "Utiliser ma position",
+  birth_now: "Maintenant",
+  birth_now_hint: "Utiliser la date, l'heure et ma position actuelles",
   live_mode: "Mode direct",
   live_mode_hint: "Actualisation automatique chaque minute",
   live_badge: "En direct",

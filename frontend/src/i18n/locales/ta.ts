@@ -291,6 +291,8 @@ const ta: Record<string, string> = {
   show_panchang: "பஞ்சாங்கம் காட்டு",
   loading: "ஏற்றப்படுகிறது…",
   use_my_location: "என் இடத்தைப் பயன்படுத்து",
+  birth_now: "இப்போது",
+  birth_now_hint: "தற்போதைய தேதி, நேரம் மற்றும் என் இடத்தைப் பயன்படுத்து",
   live_mode: "நேரடி பயன்முறை",
   live_mode_hint: "ஒவ்வொரு நிமிடமும் தானாக புதுப்பிக்கப்படும்",
   live_badge: "நேரடி",

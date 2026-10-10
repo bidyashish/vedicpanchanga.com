@@ -288,6 +288,8 @@ const es: Record<string, string> = {
   show_panchang: "Mostrar Panchang",
   loading: "Cargando…",
   use_my_location: "Usar mi ubicación",
+  birth_now: "Ahora",
+  birth_now_hint: "Usar la fecha, hora y ubicación actuales",
   live_mode: "Modo en vivo",
   live_mode_hint: "Actualización automática cada minuto",
   live_badge: "En vivo",

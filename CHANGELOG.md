@@ -22,8 +22,18 @@ All notable changes to this project are documented here. The format follows
   Hora), a slot-by-slot table with favourable / unfavourable events, result
   and recommendation, and the best window of the day with its Lagna. The
   night strip now ends at the real next sunrise (`sun_moon.next_sunrise`).
+- **Date pickers reach 10 years ahead.** The year dropdown on the Transits,
+  Panchang and Muhurta date fields stopped at next year; it now offers the
+  current year plus ten (`FUTURE_YEARS` in `ui/date-picker.tsx`, raise it to
+  go further; the ephemeris covers up to 2399). The Kundali birth-date field
+  still caps at next year.
 
 ### Added
+
+- **"Now" shortcut on the Kundali form.** A small button beside "Date of
+  Birth" fills in the current date and time at once and, when the browser
+  allows it, the visitor's own position via reverse geocoding. Handy for
+  horary / prashna charts and for checking the sky right now.
 
 - **Accounts, saved charts and Premium.** Optional sign-in with Google or
   email + password (`backend/accounts/`, SQLite via stdlib `sqlite3`, scrypt

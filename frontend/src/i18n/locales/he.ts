@@ -301,6 +301,8 @@ const he: Record<string, string> = {
   show_panchang: "הצג פנצ'נגה",
   loading: "טוען...",
   use_my_location: "השתמש במיקום שלי",
+  birth_now: "עכשיו",
+  birth_now_hint: "השתמש בתאריך ובשעה הנוכחיים ובמיקום שלי",
   live_mode: "מצב חי",
   live_mode_hint: "רענון אוטומטי בכל דקה",
   live_badge: "חי",

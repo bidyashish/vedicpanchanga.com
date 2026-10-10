@@ -287,6 +287,8 @@ const ja: Record<string, string> = {
   show_panchang: "パンチャーンガを表示",
   loading: "読み込み中…",
   use_my_location: "現在地を使用",
+  birth_now: "今",
+  birth_now_hint: "現在の日時と現在地を使用",
   live_mode: "ライブモード",
   live_mode_hint: "1分ごとに自動更新",
   live_badge: "ライブ",

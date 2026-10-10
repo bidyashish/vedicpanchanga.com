@@ -18,6 +18,13 @@ function toISO(d: Date): string {
   return `${pad4(d.getFullYear())}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 }
 
+/** How many years past the current one the year dropdown offers by default.
+ * The bundled Swiss Ephemeris files (`backend/ephe/*_18.se1`) cover 1800 to
+ * 2399, so this is a usability choice, not a calculation limit: raise it if
+ * users need to plan further ahead. Pass `maxYear` to override per field
+ * (the birth-date field caps at next year). */
+export const FUTURE_YEARS = 10;
+
 interface Props {
   value: string;
   onChange: (iso: string) => void;
@@ -37,7 +44,7 @@ export function DatePicker({
 }: Props) {
   const { lang } = useI18n();
   const today = new Date();
-  const ymax = maxYear ?? today.getFullYear() + 1;
+  const ymax = maxYear ?? today.getFullYear() + FUTURE_YEARS;
   const selected = parseISO(value);
   const display = selected
     ? selected.toLocaleDateString(localeFor(lang), {

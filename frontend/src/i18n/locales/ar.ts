@@ -301,6 +301,8 @@ const ar: Record<string, string> = {
   show_panchang: "عرض البانشانغا",
   loading: "يحمل...",
   use_my_location: "استخدم موقعي",
+  birth_now: "الآن",
+  birth_now_hint: "استخدم التاريخ والوقت الحاليين وموقعي",
   live_mode: "الوضع المباشر",
   live_mode_hint: "تحديث تلقائي كل دقيقة",
   live_badge: "مباشر",

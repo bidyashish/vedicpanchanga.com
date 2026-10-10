@@ -304,6 +304,8 @@ const en: Record<string, string> = {
   show_panchang: "Show Panchang",
   loading: "Loading…",
   use_my_location: "Use My Location",
+  birth_now: "Now",
+  birth_now_hint: "Use the current date, time and my location",
   live_mode: "Live mode",
   live_mode_hint: "Auto-refresh every minute",
   live_badge: "Live",

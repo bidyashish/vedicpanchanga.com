@@ -290,6 +290,8 @@ const hi: Record<string, string> = {
   show_panchang: "पञ्चाङ्ग दिखाएँ",
   loading: "लोड हो रहा है…",
   use_my_location: "मेरा स्थान उपयोग करें",
+  birth_now: "अभी",
+  birth_now_hint: "वर्तमान तिथि, समय और मेरा स्थान उपयोग करें",
   live_mode: "लाइव मोड",
   live_mode_hint: "हर मिनट स्वतः अद्यतन",
   live_badge: "लाइव",

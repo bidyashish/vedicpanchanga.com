@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
+import { LocateFixed } from "lucide-react";
 import { useI18n } from "@/i18n";
 import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { DatePicker } from "@/components/ui/date-picker";
 import { TimePicker } from "@/components/ui/time-picker";
-import { fetchAyanamsaOptions } from "@/lib/api";
+import { fetchAyanamsaOptions, reverseGeocode } from "@/lib/api";
+import { nowTimeInTz, todayISO } from "@/lib/format";
 import type { AyanamsaOption } from "@/types/api";
 
 export interface BirthFormState {
@@ -56,6 +58,28 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
   const update = <K extends keyof BirthFormState>(k: K, v: BirthFormState[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
+  // "Now": fill in the current wall-clock date and time straight away, then
+  // the visitor's own position once the browser grants it. The date and time
+  // land first so the form stays usable if geolocation is denied or slow.
+  const [locating, setLocating] = useState(false);
+  const useNow = () => {
+    setForm((f) => ({ ...f, birth_date: todayISO(), birth_time: nowTimeInTz(), timezone: null }));
+    if (locating || !navigator.geolocation) return;
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        const name =
+          (await reverseGeocode(latitude, longitude)) ??
+          `${latitude.toFixed(3)}, ${longitude.toFixed(3)}`;
+        setForm((f) => ({ ...f, place_name: name, latitude, longitude, timezone: null }));
+        setLocating(false);
+      },
+      () => setLocating(false),
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
+  };
+
   return (
     <form
       data-testid="birth-form"
@@ -66,11 +90,26 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
       className="space-y-3"
     >
       <div>
-        <label className="field-label">{t("date_of_birth")}</label>
+        <div className="flex items-center justify-between mb-[0.45rem]">
+          <label className="field-label mb-0">{t("date_of_birth")}</label>
+          <button
+            type="button"
+            data-testid="birth-now-btn"
+            onClick={useNow}
+            disabled={locating}
+            title={t("birth_now_hint")}
+            aria-label={t("birth_now_hint")}
+            className="inline-flex items-center gap-1 text-xs font-medium text-ink-muted hover:text-saffron-dark disabled:opacity-60 transition-colors"
+          >
+            <LocateFixed className={`h-3.5 w-3.5 ${locating ? "animate-pulse" : ""}`} aria-hidden />
+            {t("birth_now")}
+          </button>
+        </div>
         <DatePicker
           value={form.birth_date}
           onChange={(iso) => update("birth_date", iso)}
           testIdPrefix="birth-date"
+          maxYear={new Date().getFullYear() + 1}
         />
       </div>
       <div>

@@ -300,6 +300,8 @@ const bn: Record<string, string> = {
   show_panchang: "পঞ্জিকা দেখান",
   loading: "লোড হচ্ছে...",
   use_my_location: "আমার অবস্থান ব্যবহার করুন",
+  birth_now: "এখন",
+  birth_now_hint: "বর্তমান তারিখ, সময় ও আমার অবস্থান ব্যবহার করুন",
   live_mode: "লাইভ মোড",
   live_mode_hint: "প্রতি মিনিটে স্বয়ংক্রিয় রিফ্রেশ",
   live_badge: "লাইভ",

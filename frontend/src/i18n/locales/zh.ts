@@ -286,6 +286,8 @@ const zh: Record<string, string> = {
   show_panchang: "显示历法",
   loading: "加载中…",
   use_my_location: "使用我的位置",
+  birth_now: "现在",
+  birth_now_hint: "使用当前日期、时间和我的位置",
   live_mode: "实时模式",
   live_mode_hint: "每分钟自动刷新",
   live_badge: "实时",

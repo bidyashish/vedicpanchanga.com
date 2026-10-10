@@ -301,6 +301,8 @@ const fa: Record<string, string> = {
   show_panchang: "نمایش پنچانگه",
   loading: "بارگذاری...",
   use_my_location: "از موقعیت من استفاده کن",
+  birth_now: "اکنون",
+  birth_now_hint: "از تاریخ و زمان کنونی و موقعیت من استفاده کن",
   live_mode: "حالت زنده",
   live_mode_hint: "به‌روزرسانی خودکار هر دقیقه",
   live_badge: "زنده",
