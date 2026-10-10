@@ -61,6 +61,8 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
   // "Now": fill in the current wall-clock date and time straight away, then
   // the visitor's own position once the browser grants it. The date and time
   // land first so the form stays usable if geolocation is denied or slow.
+  // The button is never disabled: while a permission prompt is pending the
+  // browser fires neither callback, so a disabled button could stick.
   const [locating, setLocating] = useState(false);
   const useNow = () => {
     setForm((f) => ({ ...f, birth_date: todayISO(), birth_time: nowTimeInTz(), timezone: null }));
@@ -96,10 +98,9 @@ export function BirthForm({ form, setForm, onSubmit, loading }: Props) {
             type="button"
             data-testid="birth-now-btn"
             onClick={useNow}
-            disabled={locating}
             title={t("birth_now_hint")}
             aria-label={t("birth_now_hint")}
-            className="inline-flex items-center gap-1 text-xs font-medium text-ink-muted hover:text-saffron-dark disabled:opacity-60 transition-colors"
+            className="inline-flex items-center gap-1 text-xs font-medium text-ink-muted hover:text-saffron-dark transition-colors"
           >
             <LocateFixed className={`h-3.5 w-3.5 ${locating ? "animate-pulse" : ""}`} aria-hidden />
             {t("birth_now")}
