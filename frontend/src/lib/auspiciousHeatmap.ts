@@ -10,17 +10,26 @@
 // Grading is rule-based, not a blended score (github issue #92 review):
 //
 //   1. A block that overlaps any "block" window (Rahu Kalam, Yamagandam,
-//      Gulika, Durmuhurtam, Varjyam / Nakshatra Tyajyam) is Highly
-//      Inauspicious, whatever favourable yogas are active.
+//      Gulika, Durmuhurtam, Varjyam / Nakshatra Tyajyam, Dosha periods such
+//      as eclipses and Guru / Sukra Asthamanam) is Highly Inauspicious,
+//      whatever favourable yogas are active.
 //   2. Otherwise a block that overlaps any "avoid" window (the other Tyajyam
-//      portions, Bhadra) is Inauspicious.
-//   3. Only blocks free of both are graded by their favourable windows
-//      against the mild negatives (malefic Hora, unfavourable Gowri), using a
-//      small pooled score that maps to Excellent / Good / Neutral /
+//      portions, Tamil-month avoidables, Bhadra, Prabalarishta Yogam) is
 //      Inauspicious.
+//   3. Only blocks free of both are graded by their favourable windows
+//      against the mild negatives (malefic Hora, unfavourable Gowri, Marana
+//      Yogam, an inauspicious running limb), using a small pooled score that
+//      maps to Excellent / Good / Neutral / Inauspicious. The quality of the
+//      running Nakshatra / Tithi / Karana / Yoga (issue #48 tables) only
+//      tilts this score - a favourable limb never makes a slot Excellent on
+//      its own.
 //
 // Weights only matter inside step 3 and for ordering; they are named
 // constants so they are easy to tune.
+//
+// On top of the strips, favourableWindows() lists every span of at least
+// MIN_FAVOURABLE_MINUTES graded Favourable or better, split by the rising
+// Lagna - the "Favourable timings" list the Muhurta page reuses.
 
 import type { LabelledSegment, PanchangData } from "@/types/api";
 
@@ -39,9 +48,23 @@ export type HeatCategory =
 //   minor - favourable but weak (benefic Hora, favourable Gowri, ...).
 export type HeatKind = "block" | "avoid" | "major" | "minor" | "soft";
 
+// How the UI localizes an event's `name` (planet via useAstro().planet, a
+// dosha code via t("dosha_<code>"), ...).
+export type HeatNameKind =
+  | "planet"
+  | "gowri"
+  | "nakshatra"
+  | "tithi"
+  | "karana"
+  | "yoga"
+  | "yogam"
+  | "sign"
+  | "dosha";
+
 // An event id is a stable, translatable key; `labelKey` resolves via t().
-// `name` is an optional backend name (Hora planet, Gowri segment) for the
-// timeline bars; the UI localizes it through useAstro().
+// `name` is an optional backend name (Hora planet, Gowri segment, the
+// nakshatra a Tyajyam belongs to, ...) shown on the timeline bars and in the
+// slot detail; `nameKind` tells the UI how to localize it.
 export interface HeatEvent {
   id: string;
   labelKey: string;
@@ -50,6 +73,7 @@ export interface HeatEvent {
   startMs: number;
   endMs: number;
   name?: string;
+  nameKind?: HeatNameKind;
 }
 
 export interface HeatHit {
@@ -57,6 +81,8 @@ export interface HeatHit {
   labelKey: string;
   kind: HeatKind;
   weight: number;
+  name?: string;
+  nameKind?: HeatNameKind;
 }
 
 export interface HeatSlot {
@@ -93,12 +119,15 @@ export interface HeatStrip {
   totals: Record<HeatCategory, number>;
 }
 
-export interface BestWindow {
+// A contiguous span graded Favourable or better, split by rising Lagna.
+export interface FavourableWindow {
   startMs: number;
   endMs: number;
-  score: number;
-  // Distinct lagnas rising during the window, in order.
-  lagnas: string[];
+  // Rashi name of the Lagna rising throughout; null when the payload has no
+  // lagna data.
+  lagna: string | null;
+  // "highly-auspicious" when every slot is Excellent, else "auspicious".
+  category: HeatCategory;
 }
 
 export interface LagnaSpan {
@@ -110,7 +139,8 @@ export interface LagnaSpan {
 export interface HeatmapModel {
   day: HeatStrip | null;
   night: HeatStrip | null;
-  best: BestWindow | null;
+  // Favourable spans of MIN_FAVOURABLE_MINUTES or more, in time order.
+  favourable: FavourableWindow[];
   // Every window that took part, for the timeline rows.
   events: HeatEvent[];
   lagnas: LagnaSpan[];
@@ -131,14 +161,17 @@ const W = {
   nalla_neram: 30,
   amrit_kalam: 30,
   ravi_yoga: 25,
+  amritadi_amrita: 30,
   // minor favourable
   shubha_hora: 20,
   vijay_muhurta: 18,
   godhuli: 12,
   gowri_shubha: 12,
+  amritadi_siddha: 12,
   // mild negatives
   ashubha_hora: -15,
   gowri_ashubha: -15,
+  amritadi_marana: -20,
   // caps (avoid) and overrides (block)
   avoid: -50,
   block: -100,
@@ -149,8 +182,119 @@ const EXCELLENT_AT = 60;
 const GOOD_AT = 25;
 const INAUSPICIOUS_BELOW = -20;
 
-const SLOT_MINUTES = 15;
+// 5-minute blocks (issue #92 follow-up: 15-minute blocks hid short
+// favourable spans because any overlap marks the whole block).
+export const SLOT_MINUTES = 5;
 const SLOT_MS = SLOT_MINUTES * 60_000;
+
+// Shortest span worth listing under "Favourable timings".
+export const MIN_FAVOURABLE_MINUTES = 30;
+
+// ---- Quality of the running panchang limbs (issue #48 tables) ----
+// Weighted by the classical importance parts (Nakshatra 4, Yoga 3, Karana 2,
+// Tithi 1, scaled x2): "Highly Auspicious" adds the full weight, "Auspicious"
+// half of it, "Inauspicious" subtracts the full weight as a mild negative
+// and "Mixed" limbs add nothing (and are not shown). Names follow the
+// backend spellings in constants.py.
+type LimbClass = "high" | "good" | "mixed" | "bad";
+
+const NAKSHATRA_CLASS: Record<string, LimbClass> = {
+  Ashwini: "high",
+  Rohini: "high",
+  Mrigashira: "high",
+  Punarvasu: "high",
+  Pushya: "high",
+  Hasta: "high",
+  Anuradha: "high",
+  Shravana: "high",
+  Revati: "high",
+  "Uttara Phalguni": "good",
+  "Uttara Ashadha": "good",
+  "Uttara Bhadrapada": "good",
+  Swati: "good",
+  Chitra: "good",
+  Dhanishta: "good",
+  Bharani: "mixed",
+  Krittika: "mixed",
+  Ardra: "mixed",
+  "Purva Phalguni": "mixed",
+  Vishakha: "mixed",
+  Shatabhisha: "mixed",
+  Ashlesha: "bad",
+  Magha: "bad",
+  Jyeshtha: "bad",
+  Mula: "bad",
+  "Purva Ashadha": "bad",
+  "Purva Bhadrapada": "bad",
+};
+
+// Keyed by the tithi ordinal without its paksha ("Shukla Navami" -> "Navami").
+const TITHI_CLASS: Record<string, LimbClass> = {
+  Dwitiya: "high",
+  Tritiya: "high",
+  Panchami: "high",
+  Saptami: "high",
+  Dashami: "high",
+  Ekadashi: "high",
+  Trayodashi: "high",
+  Pratipada: "good",
+  Shashthi: "good",
+  Dwadashi: "good",
+  Navami: "mixed",
+  Purnima: "mixed",
+  Chaturthi: "bad",
+  Ashtami: "bad",
+  Chaturdashi: "bad",
+  Amavasya: "bad",
+};
+
+const KARANA_CLASS: Record<string, LimbClass> = {
+  Bava: "high",
+  Balava: "high",
+  Kaulava: "high",
+  Taitila: "high",
+  Gara: "good",
+  Vanija: "good",
+  Shakuni: "mixed",
+  Kimstughna: "mixed",
+  Vishti: "bad",
+  Chatushpada: "bad",
+  Naga: "bad",
+};
+
+// Shobhana, Siddhi and Shukla are missing from the issue #48 table; they are
+// classed Auspicious here as in the standard nitya-yoga lists.
+const YOGA_CLASS: Record<string, LimbClass> = {
+  Siddha: "high",
+  Shubha: "high",
+  Brahma: "high",
+  Indra: "high",
+  Dhruva: "high",
+  Harshana: "high",
+  Saubhagya: "good",
+  Shiva: "good",
+  Sadhya: "good",
+  Variyana: "good",
+  Priti: "good",
+  Shobhana: "good",
+  Siddhi: "good",
+  Shukla: "good",
+  Vishkumbha: "mixed",
+  Ayushman: "mixed",
+  Sukarma: "mixed",
+  Dhriti: "mixed",
+  Vriddhi: "mixed",
+  Atiganda: "bad",
+  Shula: "bad",
+  Ganda: "bad",
+  Vyaghata: "bad",
+  Vajra: "bad",
+  Vyatipata: "bad",
+  Parigha: "bad",
+  Vaidhriti: "bad",
+};
+
+const LIMB_WEIGHT = { nakshatra: 8, yoga: 6, karana: 4, tithi: 2 } as const;
 
 // Hora lords / Gowri labels considered benefic.
 const SHUBHA_HORA = new Set(["Jupiter", "Venus", "Mercury", "Moon"]);
@@ -181,12 +325,42 @@ function pushWindow(
   start?: string | null,
   end?: string | null,
   name?: string,
+  nameKind?: HeatNameKind,
 ): void {
   const a = ms(start);
   const b = ms(end);
   if (a === null || b === null || b <= a) return;
-  out.push({ id, labelKey, kind, weight, startMs: a, endMs: b, name });
+  out.push({ id, labelKey, kind, weight, startMs: a, endMs: b, name, nameKind });
 }
+
+// One event per limb span, graded by its class. Mixed limbs emit nothing.
+function pushLimb(
+  out: HeatEvent[],
+  id: "limb_nakshatra" | "limb_tithi" | "limb_karana" | "limb_yoga",
+  nameKind: HeatNameKind,
+  cls: LimbClass | undefined,
+  weight: number,
+  start?: string | null,
+  end?: string | null,
+  name?: string,
+): void {
+  if (!cls || cls === "mixed") return;
+  if (cls === "bad") pushWindow(out, id, id, "soft", -weight, start, end, name, nameKind);
+  else
+    pushWindow(
+      out,
+      id,
+      id,
+      "minor",
+      cls === "high" ? weight : weight / 2,
+      start,
+      end,
+      name,
+      nameKind,
+    );
+}
+
+const tithiOrdinal = (name: string) => name.replace(/^(Shukla|Krishna)\s+/, "");
 
 // Collect every window from the panchang payload as flat HeatEvents.
 function collectEvents(data: PanchangData): HeatEvent[] {
@@ -283,16 +457,52 @@ function collectEvents(data: PanchangData): HeatEvent[] {
 
   // ---- Tyajyam family and Bhadra ----
   // Nakshatra Tyajyam is the same avoidance as Varjyam (a second table for
-  // the same window) so it blocks too; the finer Tamil portions (tithi, vara,
-  // lagna, tithi-lagna, karana) and Bhadra cap the slot at inauspicious.
-  // Labels reuse the Tyajyam section keys so both read the same.
+  // the same window) so it blocks, and so do the Dosha periods (eclipses,
+  // Guru / Sukra Asthamanam). The finer Tamil portions (tithi, vara, lagna,
+  // tithi-lagna, karana), the Tamil-month avoidables and Bhadra cap the slot
+  // at inauspicious. Labels reuse the Tyajyam section keys so both read the
+  // same; Gowri Tyajyam is skipped because the Gowri rows below already
+  // carry those segments.
   const ty = data.tyajyam;
   if (ty) {
     (ty.nakshatra_tyajyam ?? []).forEach((w) =>
-      pushWindow(ev, "tyajyam_nakshatra", "tyajyam_nakshatra", "block", W.block, w.start, w.end),
+      pushWindow(
+        ev,
+        "tyajyam_nakshatra",
+        "tyajyam_nakshatra",
+        "block",
+        W.block,
+        w.start,
+        w.end,
+        w.nakshatra,
+        "nakshatra",
+      ),
+    );
+    (ty.dosha_tyajyam ?? []).forEach((w) =>
+      pushWindow(
+        ev,
+        "tyajyam_dosha",
+        "tyajyam_dosha",
+        "block",
+        W.block,
+        w.start,
+        w.end,
+        w.dosha,
+        "dosha",
+      ),
     );
     (ty.tithi_tyajyam ?? []).forEach((w) =>
-      pushWindow(ev, "tyajyam_tithi", "tyajyam_tithi", "avoid", W.avoid, w.start, w.end),
+      pushWindow(
+        ev,
+        "tyajyam_tithi",
+        "tyajyam_tithi",
+        "avoid",
+        W.avoid,
+        w.start,
+        w.end,
+        w.tithi,
+        "tithi",
+      ),
     );
     if (ty.vara_tyajyam)
       pushWindow(
@@ -305,7 +515,17 @@ function collectEvents(data: PanchangData): HeatEvent[] {
         ty.vara_tyajyam.end,
       );
     (ty.lagna_tyajyam ?? []).forEach((w) =>
-      pushWindow(ev, "tyajyam_lagna", "tyajyam_lagna", "avoid", W.avoid, w.start, w.end),
+      pushWindow(
+        ev,
+        "tyajyam_lagna",
+        "tyajyam_lagna",
+        "avoid",
+        W.avoid,
+        w.start,
+        w.end,
+        w.sign,
+        "sign",
+      ),
     );
     (ty.tithi_lagna_tyajyam ?? []).forEach((w) =>
       pushWindow(
@@ -316,6 +536,8 @@ function collectEvents(data: PanchangData): HeatEvent[] {
         W.avoid,
         w.start,
         w.end,
+        w.sign,
+        "sign",
       ),
     );
     // Karana Tyajyam for Vishti is exactly the Bhadra span below - keep the
@@ -323,12 +545,137 @@ function collectEvents(data: PanchangData): HeatEvent[] {
     (ty.karana_tyajyam ?? [])
       .filter((w) => w.karana !== "Vishti")
       .forEach((w) =>
-        pushWindow(ev, "tyajyam_karana", "tyajyam_karana", "avoid", W.avoid, w.start, w.end),
+        pushWindow(
+          ev,
+          "tyajyam_karana",
+          "tyajyam_karana",
+          "avoid",
+          W.avoid,
+          w.start,
+          w.end,
+          w.karana,
+          "karana",
+        ),
       );
+    (ty.tamil_month_avoidables?.windows ?? []).forEach((w) =>
+      pushWindow(
+        ev,
+        "tyajyam_tamil_month",
+        "tyajyam_tamil_month",
+        "avoid",
+        W.avoid,
+        w.start,
+        w.end,
+        w.name,
+        w.kind === "lagna" ? "sign" : w.kind,
+      ),
+    );
+    // Amritadi Yogam (weekday x nakshatra): Amrita lifts strongly, Siddha
+    // mildly, Marana weighs down and Prabalarishta caps at inauspicious.
+    (ty.amritadi_yogam ?? []).forEach((w) => {
+      const y = w.yogam;
+      if (y === "Amrita")
+        pushWindow(
+          ev,
+          "amritadi",
+          "amritadi_title",
+          "major",
+          W.amritadi_amrita,
+          w.start,
+          w.end,
+          y,
+          "yogam",
+        );
+      else if (y === "Siddha")
+        pushWindow(
+          ev,
+          "amritadi",
+          "amritadi_title",
+          "minor",
+          W.amritadi_siddha,
+          w.start,
+          w.end,
+          y,
+          "yogam",
+        );
+      else if (y === "Marana")
+        pushWindow(
+          ev,
+          "amritadi",
+          "amritadi_title",
+          "soft",
+          W.amritadi_marana,
+          w.start,
+          w.end,
+          y,
+          "yogam",
+        );
+      else if (y === "Prabalarishta")
+        pushWindow(ev, "amritadi", "amritadi_title", "avoid", W.avoid, w.start, w.end, y, "yogam");
+    });
   }
   (inaus.bhadra ?? []).forEach((w) =>
     pushWindow(ev, "bhadra", "heat_ev_bhadra", "avoid", W.avoid, w.start, w.end),
   );
+
+  // ---- Running limbs: Nakshatra / Tithi / Karana / Yoga quality ----
+  // The *_sequence lists cover the whole local day with starts_at / ends_at.
+  const pan = data.panchang;
+  if (pan) {
+    const w = LIMB_WEIGHT;
+    (pan.nakshatra_sequence ?? []).forEach((n) => {
+      if (n.name)
+        pushLimb(
+          ev,
+          "limb_nakshatra",
+          "nakshatra",
+          NAKSHATRA_CLASS[n.name],
+          w.nakshatra,
+          n.starts_at,
+          n.ends_at,
+          n.name,
+        );
+    });
+    (pan.tithi_sequence ?? []).forEach((x) => {
+      if (x.name)
+        pushLimb(
+          ev,
+          "limb_tithi",
+          "tithi",
+          TITHI_CLASS[tithiOrdinal(x.name)],
+          w.tithi,
+          x.starts_at,
+          x.ends_at,
+          x.name,
+        );
+    });
+    (pan.karana_sequence ?? []).forEach((k) => {
+      if (k.name)
+        pushLimb(
+          ev,
+          "limb_karana",
+          "karana",
+          KARANA_CLASS[k.name],
+          w.karana,
+          k.starts_at,
+          k.ends_at,
+          k.name,
+        );
+    });
+    (pan.yoga_sequence ?? []).forEach((y) => {
+      if (y.name)
+        pushLimb(
+          ev,
+          "limb_yoga",
+          "yoga",
+          YOGA_CLASS[y.name],
+          w.yoga,
+          y.starts_at,
+          y.ends_at,
+          y.name,
+        );
+    });
+  }
 
   // ---- Hora: benefic lords lift, malefic lords (Sun, Mars, Saturn) weigh down ----
   const horaSegs: LabelledSegment[] = [...(data.hora?.day ?? []), ...(data.hora?.night ?? [])];
@@ -343,6 +690,7 @@ function collectEvents(data: PanchangData): HeatEvent[] {
         s.start,
         s.end,
         s.name,
+        "planet",
       );
     else
       pushWindow(
@@ -354,6 +702,7 @@ function collectEvents(data: PanchangData): HeatEvent[] {
         s.start,
         s.end,
         s.name,
+        "planet",
       );
   });
 
@@ -373,6 +722,7 @@ function collectEvents(data: PanchangData): HeatEvent[] {
         s.start,
         s.end,
         s.name,
+        "gowri",
       );
     else
       pushWindow(
@@ -384,6 +734,7 @@ function collectEvents(data: PanchangData): HeatEvent[] {
         s.start,
         s.end,
         s.name,
+        "gowri",
       );
   });
 
@@ -444,7 +795,7 @@ function emptyTotals(): Record<HeatCategory, number> {
 
 function sameEvents(a: HeatHit[], b: HeatHit[]): boolean {
   if (a.length !== b.length) return false;
-  return a.every((h, i) => h.id === b[i].id);
+  return a.every((h, i) => h.id === b[i].id && h.name === b[i].name);
 }
 
 // Build the slots for one [start, end] strip.
@@ -464,7 +815,14 @@ function buildStrip(
     const hits: HeatHit[] = [];
     for (const e of events) {
       if (e.startMs < slotEnd && e.endMs > t && !hits.some((h) => h.id === e.id))
-        hits.push({ id: e.id, labelKey: e.labelKey, kind: e.kind, weight: e.weight });
+        hits.push({
+          id: e.id,
+          labelKey: e.labelKey,
+          kind: e.kind,
+          weight: e.weight,
+          name: e.name,
+          nameKind: e.nameKind,
+        });
     }
     hits.sort(
       (a, b) => KIND_RANK[a.kind] - KIND_RANK[b.kind] || Math.abs(b.weight) - Math.abs(a.weight),
@@ -508,36 +866,42 @@ function buildStrip(
   return { period, startMs, endMs, slots, runs, totals };
 }
 
-// Longest contiguous run of auspicious-or-better slots, tie-broken by total
-// score. Returns null when nothing qualifies.
-function findBestWindow(strips: HeatStrip[]): BestWindow | null {
-  const all = strips.flatMap((s) => s.slots);
-  let best: BestWindow | null = null;
+// Every contiguous span of auspicious-or-better slots, split where the
+// rising Lagna changes, that lasts MIN_FAVOURABLE_MINUTES or more. Strips are
+// walked in order (day, then night) so a span across sunset stays whole.
+export function favourableWindows(strips: HeatStrip[]): FavourableWindow[] {
+  const out: FavourableWindow[] = [];
   let run: HeatSlot[] = [];
   const flush = () => {
     if (run.length) {
       const startMs = run[0].startMs;
       const endMs = run[run.length - 1].endMs;
-      const score = run.reduce((acc, s) => acc + s.score, 0);
-      const lagnas: string[] = [];
-      for (const s of run) if (s.lagna && !lagnas.includes(s.lagna)) lagnas.push(s.lagna);
-      const len = endMs - startMs;
-      if (
-        !best ||
-        len > best.endMs - best.startMs ||
-        (len === best.endMs - best.startMs && score > best.score)
-      )
-        best = { startMs, endMs, score, lagnas };
+      if (endMs - startMs >= MIN_FAVOURABLE_MINUTES * 60_000)
+        out.push({
+          startMs,
+          endMs,
+          lagna: run[0].lagna,
+          category: run.every((s) => s.category === "highly-auspicious")
+            ? "highly-auspicious"
+            : "auspicious",
+        });
     }
     run = [];
   };
-  for (const slot of all) {
-    const good = slot.category === "auspicious" || slot.category === "highly-auspicious";
-    if (good) run.push(slot);
-    else flush();
+  for (const strip of strips) {
+    for (const slot of strip.slots) {
+      const good = slot.category === "auspicious" || slot.category === "highly-auspicious";
+      if (!good) {
+        flush();
+        continue;
+      }
+      const last = run[run.length - 1];
+      if (last && (last.lagna !== slot.lagna || last.endMs !== slot.startMs)) flush();
+      run.push(slot);
+    }
   }
   flush();
-  return best;
+  return out;
 }
 
 export function buildHeatmap(data: PanchangData): HeatmapModel {
@@ -566,8 +930,8 @@ export function buildHeatmap(data: PanchangData): HeatmapModel {
   }
 
   const strips = [day, night].filter((s): s is HeatStrip => s !== null);
-  const best = findBestWindow(strips);
+  const favourable = favourableWindows(strips);
   const hasSignal = strips.some((s) => s.slots.some((sl) => sl.events.length > 0));
 
-  return { day, night, best, events, lagnas, hasSignal };
+  return { day, night, favourable, events, lagnas, hasSignal };
 }

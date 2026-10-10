@@ -233,6 +233,9 @@ const es: Record<string, string> = {
   muhurta_matches_found: "coincidencias",
   muhurta_location: "Ubicación",
   muhurta_none: "- Ninguno -",
+  muhurta_fav_show: "Mostrar horarios favorables",
+  muhurta_fav_hide: "Ocultar horarios favorables",
+  muhurta_fav_error: "No se pudieron cargar los horarios de este día",
 
   birth_details: "Datos de nacimiento",
   enter_native_time_place: "Introduce la hora y el lugar de nacimiento del nativo",
@@ -568,12 +571,15 @@ const es: Record<string, string> = {
     "Horas auspiciosas (Jupiter, Venus, Mercurio, Luna) sin Rahu Kalam, Yamagandam ni Gulika",
 
   heat_title: "Mapa de calor de tiempos auspiciosos",
-  heat_sub: "Bloques de 15 min, del amanecer al siguiente amanecer",
+  heat_sub: "Bloques de 5 min, del amanecer al siguiente amanecer",
   heat_help:
-    "Cada bloque de 15 minutos se califica por reglas, no por promedio: un bloque dentro de Rahu Kalam, Yamagandam, Gulika, Durmuhurtam o Varjyam siempre queda bloqueado, una porción de Tyajyam o Bhadra siempre lo vuelve inauspicioso, y solo después las ventanas favorables (Abhijit, Amrit Kalam, yogas Siddhi, Nalla Neram, Hora benéfica) deciden entre neutral, auspicioso y muy auspicioso. El verde oscuro es lo mejor; el rojo oscuro, bloqueado. Toca un bloque para ver el Lagna activo y lo que afecta a esa hora.",
+    "Cada bloque de 5 minutos se califica por reglas, no por promedio: un bloque dentro de Rahu Kalam, Yamagandam, Gulika, Durmuhurtam, Varjyam, Nakshatra Tyajyam o un periodo de Dosha (eclipse, Guru o Sukra Asthamanam) siempre queda bloqueado; una porción de Tithi, Vara, Lagna, Karana o Tithi-Lagna Tyajyam, un evitable del mes tamil, Bhadra o Prabalarishta Yogam siempre lo vuelve inauspicioso. Solo después las ventanas favorables (Abhijit, Amrit Kalam, yogas Siddhi, Nalla Neram, Amritadi Yogam, Hora benéfica) y la calidad del Nakshatra, Tithi, Karana y Yoga en curso deciden entre neutral, auspicioso y muy auspicioso. El verde oscuro es lo mejor; el rojo oscuro, bloqueado. Toca un bloque para ver el Lagna activo y lo que afecta a esa hora.",
   heat_period_day: "Día (del amanecer al atardecer)",
   heat_period_night: "Noche (del atardecer al amanecer)",
-  heat_best_window: "Mejor franja de hoy",
+  heat_fav_title: "Horarios favorables",
+  heat_fav_sub:
+    "Tramos de 30 minutos o más calificados como auspiciosos o mejor, por Lagna ascendente",
+  heat_fav_none: "No hay ningún tramo favorable de 30 minutos o más en este día",
   heat_tap_hint: "Toca un bloque para ver qué afecta a esa hora.",
   heat_no_events: "Sin tiempos especiales - bloque ordinario.",
   heat_favourable: "Favorable",
@@ -607,7 +613,7 @@ const es: Record<string, string> = {
   heat_timeline_title: "Cronología detallada",
   heat_table_title: "Bloque a bloque",
   heat_rules:
-    "Los periodos bloqueantes siempre prevalecen sobre los yogas favorables: un bloque dentro de Rahu Kalam, Yamagandam, Gulika, Durmuhurtam o Varjyam queda bloqueado, y uno dentro de una porción de Tyajyam o de Bhadra es inauspicioso, sea lo que sea lo demás que esté activo.",
+    "Los periodos bloqueantes siempre prevalecen sobre los yogas favorables: un bloque dentro de Rahu Kalam, Yamagandam, Gulika, Durmuhurtam, Varjyam, Nakshatra Tyajyam o un periodo de Dosha queda bloqueado, y uno dentro de cualquier otra porción de Tyajyam, un evitable del mes tamil, Bhadra o Prabalarishta Yogam es inauspicioso, sea lo que sea lo demás que esté activo. El Nakshatra, Tithi, Karana, Yoga en curso y el Amritadi Yogam solo inclinan ligeramente los bloques restantes.",
   heat_rec_highly_auspicious: "Muy adecuado para todas las actividades importantes",
   heat_rec_auspicious: "Bueno para trabajo, estudio y tareas importantes",
   heat_rec_neutral: "Adecuado para actividades rutinarias",

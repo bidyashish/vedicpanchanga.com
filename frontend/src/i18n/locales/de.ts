@@ -233,6 +233,9 @@ const de: Record<string, string> = {
   muhurta_matches_found: "Treffer",
   muhurta_location: "Ort",
   muhurta_none: "- Keiner -",
+  muhurta_fav_show: "Günstige Zeiten anzeigen",
+  muhurta_fav_hide: "Günstige Zeiten ausblenden",
+  muhurta_fav_error: "Die Zeiten für diesen Tag konnten nicht geladen werden",
 
   birth_details: "Geburtsdaten",
   enter_native_time_place: "Geburtszeit und -ort der Person eingeben",
@@ -568,12 +571,15 @@ const de: Record<string, string> = {
     "Glueckliche Hora-Fenster (Jupiter, Venus, Merkur, Mond) ohne Rahu Kalam, Yamagandam und Gulika",
 
   heat_title: "Heatmap günstiger Zeiten",
-  heat_sub: "15-Minuten-Blöcke, Sonnenaufgang bis nächster Sonnenaufgang",
+  heat_sub: "5-Minuten-Blöcke, Sonnenaufgang bis nächster Sonnenaufgang",
   heat_help:
-    "Jeder 15-Minuten-Block wird nach Regeln bewertet, nicht per Durchschnitt: Ein Block innerhalb von Rahu Kalam, Yamagandam, Gulika, Durmuhurtam oder Varjyam ist immer gesperrt, ein Tyajyam-Abschnitt oder Bhadra macht ihn immer ungünstig, und erst danach entscheiden die günstigen Fenster (Abhijit, Amrit Kalam, Siddhi-Yogas, Nalla Neram, günstige Hora) zwischen neutral, günstig und sehr günstig. Dunkelgrün ist am besten, Dunkelrot ist gesperrt. Tippe auf einen Block, um das aktive Lagna und die Einflüsse dieser Zeit zu sehen.",
+    "Jeder 5-Minuten-Block wird nach Regeln bewertet, nicht per Durchschnitt: Ein Block innerhalb von Rahu Kalam, Yamagandam, Gulika, Durmuhurtam, Varjyam, Nakshatra Tyajyam oder einer Dosha-Periode (Finsternis, Guru oder Sukra Asthamanam) ist immer gesperrt; ein Tithi-, Vara-, Lagna-, Karana- oder Tithi-Lagna-Tyajyam-Abschnitt, ein zu meidender Abschnitt des tamilischen Monats, Bhadra oder Prabalarishta Yogam macht ihn immer ungünstig. Erst danach entscheiden die günstigen Fenster (Abhijit, Amrit Kalam, Siddhi-Yogas, Nalla Neram, Amritadi Yogam, günstige Hora) und die Qualität von laufendem Nakshatra, Tithi, Karana und Yoga zwischen neutral, günstig und sehr günstig. Dunkelgrün ist am besten, Dunkelrot ist gesperrt. Tippe auf einen Block, um das aktive Lagna und die Einflüsse dieser Zeit zu sehen.",
   heat_period_day: "Tag (Sonnenaufgang bis Sonnenuntergang)",
   heat_period_night: "Nacht (Sonnenuntergang bis Sonnenaufgang)",
-  heat_best_window: "Bestes Zeitfenster heute",
+  heat_fav_title: "Günstige Zeiten",
+  heat_fav_sub:
+    "Abschnitte von 30 Minuten oder mehr, die günstig oder besser bewertet sind, nach aufgehendem Lagna",
+  heat_fav_none: "An diesem Tag gibt es keinen günstigen Abschnitt von 30 Minuten oder mehr",
   heat_tap_hint: "Tippe auf einen Block, um zu sehen, was diese Zeit beeinflusst.",
   heat_no_events: "Keine besonderen Zeiten - gewöhnlicher Block.",
   heat_favourable: "Günstig",
@@ -607,7 +613,7 @@ const de: Record<string, string> = {
   heat_timeline_title: "Detaillierte Zeitleiste",
   heat_table_title: "Block für Block",
   heat_rules:
-    "Sperrzeiten haben immer Vorrang vor günstigen Yogas: Ein Block innerhalb von Rahu Kalam, Yamagandam, Gulika, Durmuhurtam oder Varjyam ist gesperrt, und einer innerhalb eines Tyajyam-Abschnitts oder von Bhadra ist ungünstig, was auch immer sonst aktiv ist.",
+    "Sperrzeiten haben immer Vorrang vor günstigen Yogas: Ein Block innerhalb von Rahu Kalam, Yamagandam, Gulika, Durmuhurtam, Varjyam, Nakshatra Tyajyam oder einer Dosha-Periode ist gesperrt, und einer innerhalb eines anderen Tyajyam-Abschnitts, eines zu meidenden Abschnitts des tamilischen Monats, von Bhadra oder Prabalarishta Yogam ist ungünstig, was auch immer sonst aktiv ist. Laufendes Nakshatra, Tithi, Karana, Yoga und Amritadi Yogam verschieben die übrigen Blöcke nur leicht.",
   heat_rec_highly_auspicious: "Sehr gut geeignet für alle wichtigen Vorhaben",
   heat_rec_auspicious: "Gut für Arbeit, Studium und wichtige Aufgaben",
   heat_rec_neutral: "In Ordnung für Routinetätigkeiten",

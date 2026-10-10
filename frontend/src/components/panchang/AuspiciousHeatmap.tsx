@@ -2,18 +2,18 @@ import { useMemo, useState } from "react";
 import { useI18n } from "@/i18n";
 import { useAstro } from "@/i18n/astro";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { FavourableTimingsList } from "@/components/panchang/FavourableTimings";
 import { formatHour, formatTime, hoursToHM } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import {
   buildHeatmap,
   CATEGORIES,
-  categorize,
   type HeatCategory,
   type HeatEvent,
   type HeatHit,
   type HeatKind,
+  type HeatNameKind,
   type HeatRun,
-  type HeatSlot,
   type HeatStrip,
   type LagnaSpan,
 } from "@/lib/auspiciousHeatmap";
@@ -21,12 +21,13 @@ import type { PanchangData } from "@/types/api";
 
 // Auspicious Time Planner for one panchang day (github issue #92).
 //
-//   period toggle + best window
-//   15-minute strip with an hour axis
+//   period toggle + favourable timings (30 min or more, per Lagna)
+//   5-minute strip with an hour axis (drawn as merged runs, so the DOM stays
+//   small; tapping a run selects it)
 //   per-category totals (doubles as the legend)
-//   detail card for the tapped block
+//   detail card for the tapped run
 //   timeline: one row per window type, Lagna on top
-//   slot-by-slot table with verdict and recommendation
+//   run-by-run table with verdict and recommendation
 //
 // All of it is derived client-side by lib/auspiciousHeatmap.ts.
 
@@ -76,6 +77,38 @@ const isFavourable = (h: { kind: HeatKind }) => h.kind === "major" || h.kind ===
 const tint = (color: string, pct: number) => `color-mix(in oklab, ${color} ${pct}%, transparent)`;
 
 const iso = (ms: number) => new Date(ms).toISOString();
+
+// Localize an event's backend name by its kind (planet, nakshatra, dosha
+// code, ...). Returns undefined when the event carries no name.
+function useEventName() {
+  const { t } = useI18n();
+  const a = useAstro();
+  return (e: { name?: string; nameKind?: HeatNameKind }): string | undefined => {
+    if (!e.name) return undefined;
+    switch (e.nameKind) {
+      case "planet":
+        return a.planet(e.name);
+      case "gowri":
+        return a.gowri(e.name);
+      case "nakshatra":
+        return a.nakshatra(e.name);
+      case "tithi":
+        return a.tithi(e.name);
+      case "karana":
+        return a.karana(e.name);
+      case "yoga":
+        return a.yoga(e.name);
+      case "yogam":
+        return a.yogam(e.name);
+      case "sign":
+        return a.sign(e.name);
+      case "dosha":
+        return t(`dosha_${e.name}`);
+      default:
+        return e.name;
+    }
+  };
+}
 
 const pctOf = (t: number, startMs: number, endMs: number) =>
   ((t - startMs) / (endMs - startMs)) * 100;
@@ -145,8 +178,8 @@ function Strip({
 }: {
   strip: HeatStrip;
   tz?: string;
-  selected: HeatSlot | null;
-  onSelect: (s: HeatSlot) => void;
+  selected: HeatRun | null;
+  onSelect: (r: HeatRun) => void;
 }) {
   const { t } = useI18n();
   const label = strip.period === "day" ? t("heat_period_day") : t("heat_period_night");
@@ -155,19 +188,19 @@ function Strip({
     <div dir="ltr">
       <HourAxis ticks={ticks} startMs={strip.startMs} endMs={strip.endMs} tz={tz} />
       <div className="flex gap-px rounded-sm overflow-hidden" role="list" aria-label={label}>
-        {strip.slots.map((slot) => {
-          const isSel = selected?.startMs === slot.startMs;
+        {strip.runs.map((run) => {
+          const isSel = selected?.startMs === run.startMs;
           return (
             <button
-              key={slot.startMs}
+              key={run.startMs}
               type="button"
               role="listitem"
-              aria-label={`${formatTime(iso(slot.startMs), tz)} ${t(CAT_LABEL_KEY[slot.category])}`}
-              onClick={() => onSelect(slot)}
+              aria-label={`${formatTime(iso(run.startMs), tz)} - ${formatTime(iso(run.endMs), tz)} ${t(CAT_LABEL_KEY[run.category])}`}
+              onClick={() => onSelect(run)}
               className="relative h-7 sm:h-8 basis-0 min-w-0 transition-transform focus:outline-none focus:z-10"
               style={{
-                flexGrow: slot.endMs - slot.startMs,
-                backgroundColor: CAT_COLOR[slot.category],
+                flexGrow: run.endMs - run.startMs,
+                backgroundColor: CAT_COLOR[run.category],
                 outline: isSel ? "2px solid var(--ink)" : undefined,
                 outlineOffset: isSel ? "-2px" : undefined,
                 transform: isSel ? "scaleY(1.12)" : undefined,
@@ -214,20 +247,25 @@ function Totals({ strip }: { strip: HeatStrip }) {
 
 function EventList({ hits, mark, color }: { hits: HeatHit[]; mark: string; color: string }) {
   const { t } = useI18n();
+  const nameOf = useEventName();
   if (hits.length === 0) return <span className="text-mini text-ink-soft">-</span>;
   return (
     <span className="text-mini" style={{ color }}>
-      {hits.map((h, i) => (
-        <span key={h.id} className="inline-block me-2">
-          {mark} {t(h.labelKey)}
-          {i < hits.length - 1 ? "," : ""}
-        </span>
-      ))}
+      {hits.map((h, i) => {
+        const name = nameOf(h);
+        return (
+          <span key={h.id} className="inline-block me-2">
+            {mark} {t(h.labelKey)}
+            {name ? `: ${name}` : ""}
+            {i < hits.length - 1 ? "," : ""}
+          </span>
+        );
+      })}
     </span>
   );
 }
 
-function SlotDetail({ slot, tz }: { slot: HeatSlot; tz?: string }) {
+function SlotDetail({ slot, tz }: { slot: HeatRun; tz?: string }) {
   const { t } = useI18n();
   const a = useAstro();
   const pos = slot.events.filter(isFavourable);
@@ -299,11 +337,12 @@ function Timeline({
   events: HeatEvent[];
   lagnas: LagnaSpan[];
   tz?: string;
-  selected: HeatSlot | null;
+  selected: HeatRun | null;
   onSelectTime: (ms: number) => void;
 }) {
   const { t } = useI18n();
   const a = useAstro();
+  const nameOf = useEventName();
   const { startMs, endMs } = strip;
   const ticks = useMemo(() => hourTicks(startMs, endMs, tz), [startMs, endMs, tz]);
 
@@ -334,20 +373,19 @@ function Timeline({
     );
     for (const list of groups) {
       const first = list[0];
-      const name = (e: HeatEvent) => {
-        if (!e.name) return range(e);
-        if (e.id === "shubha_hora" || e.id === "ashubha_hora") return a.planet(e.name);
-        return a.gowri(e.name);
-      };
       out.push({
         id: first.id,
         label: t(first.labelKey),
         color: KIND_COLOR[first.kind],
-        bars: list.map((e) => ({ startMs: e.startMs, endMs: e.endMs, text: name(e) })),
+        bars: list.map((e) => ({
+          startMs: e.startMs,
+          endMs: e.endMs,
+          text: nameOf(e) ?? range(e),
+        })),
       });
     }
     return out;
-  }, [events, lagnas, startMs, endMs, tz, t, a]);
+  }, [events, lagnas, startMs, endMs, tz, t, a, nameOf]);
 
   return (
     <div className="overflow-x-auto" data-testid="heat-timeline">
@@ -436,7 +474,7 @@ function RunTable({
 }: {
   strip: HeatStrip;
   tz?: string;
-  selected: HeatSlot | null;
+  selected: HeatRun | null;
   onSelectTime: (ms: number) => void;
 }) {
   const { t } = useI18n();
@@ -519,20 +557,24 @@ function RunTable({
 
 export function AuspiciousHeatmap({ data, tz }: { data: PanchangData; tz?: string }) {
   const { t } = useI18n();
-  const a = useAstro();
   const model = useMemo(() => buildHeatmap(data), [data]);
   const [period, setPeriod] = useState<"day" | "night">("day");
-  const [selected, setSelected] = useState<HeatSlot | null>(null);
+  const [selected, setSelected] = useState<HeatRun | null>(null);
 
   if (!model.hasSignal || (!model.day && !model.night)) return null;
 
   const strip = (period === "day" ? model.day : model.night) ?? model.day ?? model.night!;
 
-  const bestColor = model.best ? CAT_COLOR[categorize([], model.best.score)] : undefined;
-
-  const selectTime = (ms: number) => {
-    const slot = strip.slots.find((s) => s.startMs <= ms && ms < s.endMs) ?? null;
-    setSelected(slot);
+  const findRun = (s: HeatStrip, ms: number) =>
+    s.runs.find((r) => r.startMs <= ms && ms < r.endMs) ?? null;
+  const selectTime = (ms: number) => setSelected(findRun(strip, ms));
+  // A favourable window may sit in the other strip: switch to it first.
+  const jumpTo = (ms: number) => {
+    const target = [model.day, model.night].find(
+      (s): s is HeatStrip => s !== null && s.startMs <= ms && ms < s.endMs,
+    );
+    if (target && target.period !== strip.period) setPeriod(target.period);
+    setSelected(target ? findRun(target, ms) : null);
   };
   const switchPeriod = (p: "day" | "night") => {
     setPeriod(p);
@@ -563,29 +605,19 @@ export function AuspiciousHeatmap({ data, tz }: { data: PanchangData; tz?: strin
         </span>
       </div>
 
-      {model.best && (
-        <div
-          className="rounded-sm border-l-[3px] border border-parchment-200 bg-parchment-50 px-3 py-2"
-          style={{ borderLeftColor: bestColor }}
-          data-testid="heat-best-window"
-        >
-          <p className="eyebrow-lg" style={{ color: bestColor }}>
-            {t("heat_best_window")}
-          </p>
-          <p className="value-strong num mt-0.5">
-            {formatTime(iso(model.best.startMs), tz)} - {formatTime(iso(model.best.endMs), tz)}
-            {model.best.lagnas.length > 0 && (
-              <span className="text-meta font-normal text-ink-soft">
-                {" "}
-                · {t("heat_lagna")}:{" "}
-                <span className="font-serif text-ink">
-                  {model.best.lagnas.map((l) => a.sign(l)).join(", ")}
-                </span>
-              </span>
-            )}
-          </p>
-        </div>
-      )}
+      <div
+        className="rounded-sm border border-parchment-200 bg-parchment-50 px-3 py-2"
+        data-testid="heat-favourable"
+      >
+        <p className="eyebrow-lg text-ink-soft">{t("heat_fav_title")}</p>
+        <p className="meta mb-1.5">{t("heat_fav_sub")}</p>
+        <FavourableTimingsList
+          windows={model.favourable}
+          tz={tz}
+          onSelectTime={jumpTo}
+          testId="heat-favourable-list"
+        />
+      </div>
 
       <Strip strip={strip} tz={tz} selected={selected} onSelect={setSelected} />
 

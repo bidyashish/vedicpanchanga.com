@@ -234,6 +234,9 @@ const en: Record<string, string> = {
   muhurta_matches_found: "matches",
   muhurta_location: "Location",
   muhurta_none: "- None -",
+  muhurta_fav_show: "Show favourable timings",
+  muhurta_fav_hide: "Hide favourable timings",
+  muhurta_fav_error: "Could not load the timings for this day",
 
   birth_details: "Birth Details",
   enter_native_time_place: "Enter the native's time & place of birth",
@@ -570,12 +573,14 @@ const en: Record<string, string> = {
     "Auspicious hora windows (Jupiter, Venus, Mercury, Moon) after removing Rahu Kalam, Yamagandam and Gulika",
 
   heat_title: "Auspicious Time Heatmap",
-  heat_sub: "15-min blocks, sunrise to next sunrise",
+  heat_sub: "5-min blocks, sunrise to next sunrise",
   heat_help:
-    "Each 15-minute block is graded by rule, not by averaging: a slot inside Rahu Kalam, Yamagandam, Gulika, Durmuhurtam or Varjyam is always blocked, a Tyajyam portion or Bhadra always makes it inauspicious, and only then do the favourable windows (Abhijit, Amrit Kalam, Siddhi yogas, Nalla Neram, benefic Hora) decide between neutral, good and excellent. Dark green is best, dark red is blocked. Tap a block to see the active Lagna and what affects that time.",
+    "Each 5-minute block is graded by rule, not by averaging: a block inside Rahu Kalam, Yamagandam, Gulika, Durmuhurtam, Varjyam, Nakshatra Tyajyam or a Dosha period (eclipse, Guru or Sukra Asthamanam) is always blocked; a Tithi, Vara, Lagna, Karana or Tithi-Lagna Tyajyam portion, a Tamil-month avoidable, Bhadra or Prabalarishta Yogam always makes it inauspicious. Only then do the favourable windows (Abhijit, Amrit Kalam, Siddhi yogas, Nalla Neram, Amritadi Yogam, benefic Hora) and the quality of the running Nakshatra, Tithi, Karana and Yoga decide between neutral, good and excellent. Dark green is best, dark red is blocked. Tap a block to see the active Lagna and what affects that time.",
   heat_period_day: "Day (sunrise to sunset)",
   heat_period_night: "Night (sunset to sunrise)",
-  heat_best_window: "Best window today",
+  heat_fav_title: "Favourable timings",
+  heat_fav_sub: "Spans of 30 minutes or more graded Favourable or better, by rising Lagna",
+  heat_fav_none: "No favourable span of 30 minutes or more on this day",
   heat_tap_hint: "Tap a block to see what affects that time.",
   heat_no_events: "No special timings - an ordinary slot.",
   heat_favourable: "Favourable",
@@ -609,7 +614,7 @@ const en: Record<string, string> = {
   heat_timeline_title: "Detailed timeline",
   heat_table_title: "Slot by slot",
   heat_rules:
-    "Blocking periods always take precedence over favourable yogas: a slot inside Rahu Kalam, Yamagandam, Gulika, Durmuhurtam or Varjyam is blocked, and one inside a Tyajyam portion or Bhadra is inauspicious, whatever else is active.",
+    "Blocking periods always take precedence over favourable yogas: a block inside Rahu Kalam, Yamagandam, Gulika, Durmuhurtam, Varjyam, Nakshatra Tyajyam or a Dosha period is blocked, and one inside any other Tyajyam portion, a Tamil-month avoidable, Bhadra or Prabalarishta Yogam is inauspicious, whatever else is active. The running Nakshatra, Tithi, Karana, Yoga and Amritadi Yogam only tilt the remaining blocks.",
   heat_rec_highly_auspicious: "Highly suitable for all important activities",
   heat_rec_auspicious: "Good for work, study and important tasks",
   heat_rec_neutral: "Fine for routine activities",

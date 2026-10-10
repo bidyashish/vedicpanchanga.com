@@ -9,6 +9,20 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- **Auspicious Time Heatmap: 5-minute blocks, more categories, favourable
+  timings per Lagna** (#92 follow-up). Slots shrank from 15 to 5 minutes so
+  short favourable spans are no longer swallowed by a neighbouring block. New
+  rows and rules: the running Nakshatra, Tithi, Karana and Yoga tilt clean
+  slots by their classical quality (Mixed limbs stay silent), Amritadi Yogam
+  lifts (Amrita, Siddha) or weighs down (Marana) and Prabalarishta caps at
+  Inauspicious, Dosha Tyajyam (eclipses, Guru / Sukra Asthamanam) blocks,
+  Tamil-month avoidables cap at Inauspicious, and every Tyajyam, Hora and
+  Gowri row now names the Nakshatra / Tithi / Karana / Lagna / planet it
+  comes from. The single "best window" became a **Favourable timings** list:
+  every span of 30 minutes or more graded Favourable or better, split by
+  rising Lagna (tap a row to jump the timeline there). The same list appears
+  on each Muhurta result card (first card auto-loads, others on demand) so a
+  found muhurta can be checked against the day's favourable spans.
 - **Auspicious Time Heatmap rebuilt as a rule-based planner** (#92). Blocking
   periods now override favourable yogas instead of being averaged against
   them: a 15-minute slot inside Rahu Kalam, Yamagandam, Gulika, Durmuhurtam or

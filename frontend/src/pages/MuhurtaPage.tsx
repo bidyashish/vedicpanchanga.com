@@ -4,8 +4,10 @@ import { CitySearch } from "@/components/common/CitySearch";
 import { MandalaLoader } from "@/components/common/MandalaLoader";
 import { MandalaMark } from "@/components/common/MandalaMark";
 import { ShareLinkButton } from "@/components/common/ShareLinkButton";
+import { FavourableTimingsList } from "@/components/panchang/FavourableTimings";
 import { DatePicker } from "@/components/ui/date-picker";
-import { fetchMuhurtaPurposes, findMuhurtas } from "@/lib/api";
+import { fetchMuhurtaPurposes, fetchPanchang, findMuhurtas } from "@/lib/api";
+import { buildHeatmap, type FavourableWindow } from "@/lib/auspiciousHeatmap";
 import { formatDayMonthYear, formatTimeRange, todayISO, daysFromNow } from "@/lib/format";
 import {
   parseDate,
@@ -24,6 +26,7 @@ import type {
   MuhurtaResponse,
   MuhurtaResult,
   MuhurtaWindow,
+  PanchangData,
 } from "@/types/api";
 
 const RASHI_OPTIONS = [
@@ -71,7 +74,92 @@ const NAKSHATRA_OPTIONS = [
   "Revati",
 ];
 
-function ResultCard({ m, tz }: { m: MuhurtaResult; tz?: string }) {
+// Favourable timings for one recommended day (issue #92 follow-up): the
+// same per-Lagna windows the panchang planner lists, derived from that day's
+// panchang. Each day is a separate /api/get-panchang call, so only the first
+// card loads on its own; the others load when opened. Payloads are cached
+// per day + place so toggling never refetches.
+const panchangCache = new Map<string, Promise<PanchangData>>();
+
+function FavourableTimings({
+  date,
+  latitude,
+  longitude,
+  tz,
+  autoLoad,
+}: {
+  date: string;
+  latitude: number;
+  longitude: number;
+  tz?: string;
+  autoLoad: boolean;
+}) {
+  const { t } = useI18n();
+  const [open, setOpen] = useState(autoLoad);
+  const [windows, setWindows] = useState<FavourableWindow[] | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    if (!open || windows) return;
+    let alive = true;
+    const key = `${date}|${latitude}|${longitude}|${tz ?? ""}`;
+    let pending = panchangCache.get(key);
+    if (!pending) {
+      pending = fetchPanchang({ latitude, longitude, date, timezone: tz });
+      panchangCache.set(key, pending);
+    }
+    pending
+      .then((d) => alive && setWindows(buildHeatmap(d).favourable))
+      .catch(() => {
+        panchangCache.delete(key);
+        if (alive) setFailed(true);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [open, windows, date, latitude, longitude, tz]);
+
+  return (
+    <div className="mt-5 pt-4 border-t border-parchment-200" data-testid="muhurta-favourable">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <p className="eyebrow-accent">{t("heat_fav_title")}</p>
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          className="text-mini font-medium text-saffron hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron rounded-2xs"
+        >
+          {open ? t("muhurta_fav_hide") : t("muhurta_fav_show")}
+        </button>
+      </div>
+      {open && (
+        <div className="mt-2">
+          {windows ? (
+            <FavourableTimingsList
+              windows={windows}
+              tz={tz}
+              testId={`muhurta-favourable-${date}`}
+            />
+          ) : (
+            <p className="meta">{failed ? t("muhurta_fav_error") : t("loading")}</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ResultCard({
+  m,
+  tz,
+  loc,
+  autoLoad,
+}: {
+  m: MuhurtaResult;
+  tz?: string;
+  loc: { latitude: number; longitude: number };
+  autoLoad: boolean;
+}) {
   const { t } = useI18n();
   return (
     <div data-testid={`muhurta-result-${m.date}`} className="card card-lift p-6">
@@ -105,6 +193,14 @@ function ResultCard({ m, tz }: { m: MuhurtaResult; tz?: string }) {
           value={formatTimeRange(m.sunrise, m.sunset, tz)}
         />
       </div>
+
+      <FavourableTimings
+        date={m.date}
+        latitude={loc.latitude}
+        longitude={loc.longitude}
+        tz={tz}
+        autoLoad={autoLoad}
+      />
 
       <ShubhMuhuratGrid m={m} tz={tz} />
 
@@ -264,6 +360,8 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MuhurtaResponse | null>(null);
+  // Place the current results were searched for (the form may change later).
+  const [resultLoc, setResultLoc] = useState({ latitude: 0, longitude: 0 });
 
   // Guard against React 18 StrictMode's double-mount in dev so the purposes
   // list is fetched once.
@@ -308,6 +406,7 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
         min_score: 60,
         limit: 30,
       });
+      setResultLoc({ latitude: loc.latitude, longitude: loc.longitude });
       setResult(r);
     } catch (e) {
       setError((e as Error).message || "Failed to search muhurtas");
@@ -529,9 +628,14 @@ export function MuhurtaPage({ defaultLocation }: { defaultLocation: LocationChoi
             )}
 
             <div className="space-y-4" data-testid="muhurta-results-list">
-              {result.muhurtas.map((m) => (
+              {result.muhurtas.map((m, i) => (
                 <Fragment key={m.date}>
-                  <ResultCard m={m} tz={result.location?.timezone} />
+                  <ResultCard
+                    m={m}
+                    tz={result.location?.timezone}
+                    loc={resultLoc}
+                    autoLoad={i === 0}
+                  />
                 </Fragment>
               ))}
             </div>
